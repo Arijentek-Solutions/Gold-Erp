@@ -142,35 +142,35 @@
   "item_attribute_values": [
    {
     "abbr": "24K",
-    "attribute_value": "24K",
+    "attribute_value": "24 Karat",
     "parent": "Purity",
     "parentfield": "item_attribute_values",
     "parenttype": "Item Attribute"
    },
    {
     "abbr": "22K",
-    "attribute_value": "22K",
+    "attribute_value": "22 Karat",
     "parent": "Purity",
     "parentfield": "item_attribute_values",
     "parenttype": "Item Attribute"
    },
    {
     "abbr": "18K",
-    "attribute_value": "18K",
+    "attribute_value": "18 Karat",
     "parent": "Purity",
     "parentfield": "item_attribute_values",
     "parenttype": "Item Attribute"
    },
    {
     "abbr": "14K",
-    "attribute_value": "14K",
+    "attribute_value": "14 Karat",
     "parent": "Purity",
     "parentfield": "item_attribute_values",
     "parenttype": "Item Attribute"
    },
    {
     "abbr": "10K",
-    "attribute_value": "10K",
+    "attribute_value": "10 Karat",
     "parent": "Purity",
     "parentfield": "item_attribute_values",
     "parenttype": "Item Attribute"
@@ -197,7 +197,7 @@
     "parenttype": "Item Attribute"
    }
   ],
-  "modified": "2025-12-22 03:34:09.007168",
+  "modified": "2025-12-23 00:47:39.048583",
   "name": "Purity",
   "numeric_values": 0,
   "to_range": 0.0
