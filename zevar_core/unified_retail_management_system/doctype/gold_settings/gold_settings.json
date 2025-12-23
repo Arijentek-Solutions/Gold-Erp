@@ -1,0 +1,84 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-12-23 00:19:15.210476",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_jkdp",
+  "api_endpoint",
+  "api_key",
+  "automation_section",
+  "auto_update",
+  "update_frequency",
+  "base_currency"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_jkdp",
+   "fieldtype": "Section Break",
+   "label": "API Configuration"
+  },
+  {
+   "fieldname": "api_endpoint",
+   "fieldtype": "Data",
+   "label": "API Endpoint",
+   "options": "URL of the provider"
+  },
+  {
+   "fieldname": "api_key",
+   "fieldtype": "Password",
+   "label": "API Key",
+   "options": "Stores key securely"
+  },
+  {
+   "fieldname": "automation_section",
+   "fieldtype": "Section Break",
+   "label": "Automation"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_update",
+   "fieldtype": "Check",
+   "label": "Auto Update"
+  },
+  {
+   "fieldname": "update_frequency",
+   "fieldtype": "Select",
+   "label": "Update Frequency",
+   "options": "15 min, 30 min, 60 min"
+  },
+  {
+   "fieldname": "base_currency",
+   "fieldtype": "Link",
+   "label": "Base Currency",
+   "options": "Currency"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-12-23 00:23:05.323913",
+ "modified_by": "Administrator",
+ "module": "Unified Retail Management System",
+ "name": "Gold Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
