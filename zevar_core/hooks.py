@@ -248,3 +248,5 @@ app_license = "mit"
 # ignore_translatable_strings_from = []
 
 fixtures = ["Item Attribute", "Custom Field", "Property Setter"]
+
+doc_events = {"Item": {"validate": "zevar_core.item_events.calculate_net_weight_g"}}
