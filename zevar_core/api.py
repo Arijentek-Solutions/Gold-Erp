@@ -58,3 +58,82 @@ def get_item_price(item_code):
         "making_charges": making_charges,
         "final_price": final_price,
     }
+
+@frappe.whitelist()
+def get_pos_items(item_group=None):
+    """
+    Returns a list of items optimized for the POS Grid.
+    Includes: Basic Info, Stock Levels, and Live Price.
+    """
+    # 1. Base Filters: Only show items that are 'Jewelry' (have a metal type)
+    filters = {
+        "custom_metal_type": ["is", "set"],
+        "disabled": 0
+    }
+    if item_group:
+        filters["item_group"] = item_group
+
+    # 2. Fetch Basic Data
+    items = frappe.get_list("Item",
+        filters=filters,
+        fields=["name", "item_name", "item_group", "image", "custom_metal_type", "custom_purity", "custom_gross_weight_g"]
+    )
+
+    pos_items = []
+    
+    # 3. Enhance with Live Price & Stock
+    # Note: For MVP we loop. For production with 10k items, we will optimize this later.
+    for item in items:
+        # Get Stock Quantity
+        bin_qty = frappe.db.get_value("Bin", {"item_code": item.name}, "actual_qty") or 0
+        
+        # Get Live Price (Re-using your logic from Day 3!)
+        # We wrap in try/except so one bad item doesn't crash the whole POS
+        try:
+            price_data = get_item_price(item.name)
+            final_price = price_data.get("final_price")
+        except Exception:
+            final_price = 0.0
+
+        pos_items.append({
+            "item_code": item.name,
+            "item_name": item.item_name,
+            "item_group": item.item_group,
+            "image": item.image,
+            "stock_qty": bin_qty,
+            "currency": "USD", # Or fetch from settings
+            "price": final_price,
+            "metal": item.custom_metal_type,
+            "purity": item.custom_purity
+        })
+
+    return pos_items
+
+@frappe.whitelist()
+def create_pos_invoice(customer, items, payments):
+    """
+    Receives the cart from Frontend and creates the transaction.
+    """
+    import json
+    
+    # 1. Parse Data (Frontend sends JSON strings usually)
+    if isinstance(items, str):
+        items = json.loads(items)
+    if isinstance(payments, str):
+        payments = json.loads(payments)
+
+    # 2. Basic Validation
+    if not customer:
+        frappe.throw("Customer is required")
+    if not items:
+        frappe.throw("Cart is empty")
+
+    # 3. TODO: Next Sprint - Create Sales Invoice logic here.
+    # For now, we just return success to unblock the frontend dev.
+    
+    return {
+        "status": "success",
+        "message": "Order Received (Backend Logic Pending)",
+        "invoice_name": "TBD-12345"
+    }
+
