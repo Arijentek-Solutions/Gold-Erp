@@ -59,55 +59,91 @@ def get_item_price(item_code):
         "final_price": final_price,
     }
 
-@frappe.whitelist()
-def get_pos_items(item_group=None):
-    """
-    Returns a list of items optimized for the POS Grid.
-    Includes: Basic Info, Stock Levels, and Live Price.
-    """
-    # 1. Base Filters: Only show items that are 'Jewelry' (have a metal type)
-    filters = {
-        "custom_metal_type": ["is", "set"],
-        "disabled": 0
-    }
-    if item_group:
-        filters["item_group"] = item_group
 
-    # 2. Fetch Basic Data
-    items = frappe.get_list("Item",
+@frappe.whitelist()
+def get_pos_items(start=0, page_length=20, warehouse=None, search_term=None):
+    """
+    Returns a paginated list of items with warehouse-specific stock.
+    Optimized to avoid N+1 Query problems.
+    """
+    # 1. Prepare Filters
+    filters = [
+        ["custom_metal_type", "is", "set"],
+        ["disabled", "=", 0],
+        ["has_variants", "=", 0],  # Usually POS sells the variants, not the template
+    ]
+
+    if search_term:
+        filters.append(["item_name", "like", f"%{search_term}%"])
+
+    # 2. Fetch the "Page" of Items (Fast Query)
+    items = frappe.get_list(
+        "Item",
         filters=filters,
-        fields=["name", "item_name", "item_group", "image", "custom_metal_type", "custom_purity", "custom_gross_weight_g"]
+        fields=[
+            "name",
+            "item_name",
+            "item_group",
+            "image",
+            "custom_metal_type",
+            "custom_purity",
+            "custom_gross_weight_g",
+            "custom_net_weight_g",
+            "custom_making_charge_type",
+            "custom_making_charge_value",
+        ],
+        start=start,
+        limit=page_length,
     )
 
+    if not items:
+        return []
+
+    # 3. BATCH FETCH STOCK (The "Senior Dev" Optimization) ⚡
+    # Instead of querying inside the loop, we get all stock for these items in one go.
+    item_codes = [item.name for item in items]
+    stock_map = {}
+
+    if warehouse:
+        bin_entries = frappe.db.get_all(
+            "Bin",
+            filters={"item_code": ["in", item_codes], "warehouse": warehouse},
+            fields=["item_code", "actual_qty"],
+        )
+        # Convert list to a dictionary for instant lookup: {'RING-01': 10, 'CHAIN-02': 5}
+        stock_map = {b.item_code: b.actual_qty for b in bin_entries}
+
+    # 4. Assemble the Data
     pos_items = []
-    
-    # 3. Enhance with Live Price & Stock
-    # Note: For MVP we loop. For production with 10k items, we will optimize this later.
+
     for item in items:
-        # Get Stock Quantity
-        bin_qty = frappe.db.get_value("Bin", {"item_code": item.name}, "actual_qty") or 0
-        
-        # Get Live Price (Re-using your logic from Day 3!)
-        # We wrap in try/except so one bad item doesn't crash the whole POS
+        # Get Stock from our map (0 if not found)
+        qty = stock_map.get(item.name, 0)
+
+        # Calculate Live Price
+        # (We use a try/except block to ensure one bad price doesn't break the whole grid)
         try:
             price_data = get_item_price(item.name)
-            final_price = price_data.get("final_price")
+            final_price = price_data.get("final_price", 0.0)
         except Exception:
             final_price = 0.0
 
-        pos_items.append({
-            "item_code": item.name,
-            "item_name": item.item_name,
-            "item_group": item.item_group,
-            "image": item.image,
-            "stock_qty": bin_qty,
-            "currency": "USD", # Or fetch from settings
-            "price": final_price,
-            "metal": item.custom_metal_type,
-            "purity": item.custom_purity
-        })
+        pos_items.append(
+            {
+                "item_code": item.name,
+                "item_name": item.item_name,
+                "item_group": item.item_group,
+                "image": item.image,
+                "stock_qty": qty,
+                "price": final_price,
+                "metal": item.custom_metal_type,
+                "purity": item.custom_purity,
+                "gross_weight": item.custom_gross_weight_g,
+            }
+        )
 
     return pos_items
+
 
 @frappe.whitelist()
 def create_pos_invoice(customer, items, payments):
@@ -115,7 +151,7 @@ def create_pos_invoice(customer, items, payments):
     Receives the cart from Frontend and creates the transaction.
     """
     import json
-    
+
     # 1. Parse Data (Frontend sends JSON strings usually)
     if isinstance(items, str):
         items = json.loads(items)
@@ -130,10 +166,9 @@ def create_pos_invoice(customer, items, payments):
 
     # 3. TODO: Next Sprint - Create Sales Invoice logic here.
     # For now, we just return success to unblock the frontend dev.
-    
+
     return {
         "status": "success",
         "message": "Order Received (Backend Logic Pending)",
-        "invoice_name": "TBD-12345"
+        "invoice_name": "TBD-12345",
     }
-
