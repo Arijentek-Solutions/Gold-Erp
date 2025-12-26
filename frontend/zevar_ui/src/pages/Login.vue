@@ -1,59 +1,70 @@
 <template>
-  <div class="flex h-screen w-screen bg-gray-50">
-    <div class="w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div class="h-16 flex items-center justify-center border-b border-gray-100">
-        <h1 class="text-xl font-bold text-gray-800">Zevar POS</h1>
-      </div>
-      <div class="p-4 space-y-2">
-        <button class="w-full text-left px-4 py-2 bg-gray-100 text-gray-900 rounded-md font-medium">
-          💍 New Sale
-        </button>
-        <button class="w-full text-left px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md">
-          📜 History
-        </button>
-      </div>
-    </div>
+  <div class="flex h-screen w-screen items-center justify-center bg-gray-100">
+    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
+      <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Zevar POS Login</h2>
+      
+      <form @submit.prevent="login.submit">
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Username or Email</label>
+            <input 
+              v-model="email" 
+              type="email" 
+              class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+              required
+              placeholder="e.g. Administrator"
+            />
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Password</label>
+            <input 
+              v-model="password" 
+              type="password" 
+              class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
+              required 
+            />
+          </div>
 
-    <div class="flex-1 flex flex-col">
-      <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8">
-        <span class="text-lg font-medium text-gray-700">Today's Dashboard</span>
-        <button @click="logout" class="text-sm text-red-600 hover:text-red-800 font-medium">
-          Logout
-        </button>
-      </header>
+          <div v-if="login.error" class="text-red-500 text-sm text-center">
+            {{ login.error.message }}
+          </div>
 
-      <main class="p-8">
-        <div class="bg-white p-8 rounded-lg shadow-sm border border-gray-200 text-center">
-          <h2 class="text-2xl font-bold text-gray-800 mb-2">Welcome, {{ user.data ? user.data.full_name : 'User' }}!</h2>
-          <p class="text-gray-500">You are ready to start selling.</p>
+          <button 
+            type="submit" 
+            :disabled="login.loading"
+            class="w-full bg-gray-900 text-white py-2 rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50"
+          >
+            {{ login.loading ? 'Logging in...' : 'Login' }}
+          </button>
         </div>
-      </main>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { createResource } from 'frappe-ui';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
+const email = ref('');
+const password = ref('');
 
-// 1. Fetch the logged-in user's details
-const user = createResource({
-  url: 'frappe.auth.get_logged_user',
-  auto: true,
-});
-
-// 2. Logout Logic
-const session = createResource({
-  url: 'logout',
-  onSuccess() {
-    router.push('/login');
-    window.location.reload(); // Hard reload to clear cache
+const login = createResource({
+  url: 'login',
+  makeParams() {
+    return {
+      usr: email.value,
+      pwd: password.value,
+    };
+  },
+  onSuccess(data) {
+    router.push('/pos');
+  },
+  onError(err) {
+    console.error(err);
   }
 });
-
-function logout() {
-  session.submit();
-}
 </script>
