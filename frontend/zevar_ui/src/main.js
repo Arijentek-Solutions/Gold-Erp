@@ -1,15 +1,18 @@
 import './index.css'
 
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import router from './router'
 import App from './App.vue'
 
 import { Button, setConfig, frappeRequest, resourcesPlugin } from 'frappe-ui'
 
-let app = createApp(App)
+const app = createApp(App)
+const pinia = createPinia()
 
 setConfig('resourceFetcher', frappeRequest)
 
+app.use(pinia)
 app.use(router)
 app.use(resourcesPlugin)
 
