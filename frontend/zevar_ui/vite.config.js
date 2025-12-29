@@ -10,7 +10,10 @@ export default defineConfig({
       '^/(app|api|assets|files|private)': {
         target: 'http://127.0.0.1:8000',
         ws: true,
-        changeOrigin: true
+        changeOrigin: true,
+        headers: {
+            "X-Frappe-Site-Name": "zevar.localhost" 
+        }
       }
     }
   },

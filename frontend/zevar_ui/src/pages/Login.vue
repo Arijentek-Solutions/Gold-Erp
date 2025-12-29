@@ -1,43 +1,43 @@
 <template>
   <div class="flex h-screen w-screen items-center justify-center bg-gray-100">
-    <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-      <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Zevar POS Login</h2>
+    <div class="w-full max-w-md overflow-hidden rounded-lg bg-white shadow-xl">
+      <div class="bg-gray-900 px-8 py-6">
+        <h2 class="text-2xl font-bold text-white">Zevar POS</h2>
+        <p class="text-gray-400">Sign in to start your shift</p>
+      </div>
       
-      <form @submit.prevent="login.submit">
-        <div class="space-y-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Username or Email</label>
-            <input 
-              v-model="email" 
-              type="email" 
-              class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-              required
-              placeholder="e.g. Administrator"
-            />
-          </div>
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700">Password</label>
-            <input 
-              v-model="password" 
-              type="password" 
-              class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 focus:border-blue-500 focus:outline-none"
-              required 
-            />
-          </div>
-
-          <div v-if="login.error" class="text-red-500 text-sm text-center">
-            {{ login.error.message }}
-          </div>
-
-          <button 
-            type="submit" 
-            :disabled="login.loading"
-            class="w-full bg-gray-900 text-white py-2 rounded-md hover:bg-gray-800 transition-colors disabled:opacity-50"
+      <form @submit.prevent="login" class="p-8">
+        <div class="mb-4">
+          <label class="mb-2 block text-sm font-semibold text-gray-700">Username</label>
+          <input 
+            v-model="email" 
+            type="text" 
+            class="w-full rounded border border-gray-300 px-3 py-2 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900" 
+            placeholder="Administrator"
           >
-            {{ login.loading ? 'Logging in...' : 'Login' }}
-          </button>
         </div>
+        
+        <div class="mb-6">
+          <label class="mb-2 block text-sm font-semibold text-gray-700">Password</label>
+          <input 
+            v-model="password" 
+            type="password" 
+            class="w-full rounded border border-gray-300 px-3 py-2 focus:border-gray-900 focus:outline-none focus:ring-1 focus:ring-gray-900" 
+            placeholder="••••••••"
+          >
+        </div>
+        
+        <button 
+          type="submit" 
+          class="w-full rounded bg-gray-900 px-4 py-2 font-bold text-white hover:bg-gray-800 focus:outline-none disabled:bg-gray-400"
+          :disabled="auth.loading"
+        >
+          {{ auth.loading ? 'Signing in...' : 'Sign In' }}
+        </button>
+
+        <p v-if="auth.error" class="mt-4 text-center text-sm text-red-600">
+          {{ auth.error.message }}
+        </p>
       </form>
     </div>
   </div>
@@ -48,11 +48,11 @@ import { ref } from 'vue';
 import { createResource } from 'frappe-ui';
 import { useRouter } from 'vue-router';
 
-const router = useRouter();
 const email = ref('');
 const password = ref('');
+const router = useRouter();
 
-const login = createResource({
+const auth = createResource({
   url: 'login',
   makeParams() {
     return {
@@ -61,10 +61,11 @@ const login = createResource({
     };
   },
   onSuccess(data) {
-    router.push('/pos');
-  },
-  onError(err) {
-    console.error(err);
+    router.push('/'); 
   }
 });
+
+function login() {
+  auth.submit();
+}
 </script>
