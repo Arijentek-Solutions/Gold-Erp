@@ -1,20 +1,27 @@
 <script setup>
 import AppLayout from '@/components/AppLayout.vue'
 import ItemCard from '@/components/ItemCard.vue'
+import FilterSidebar from '@/components/FilterSidebar.vue'
+import ProductModal from '@/components/ProductModal.vue'
 import { useSessionStore } from '@/stores/session.js'
 import { createResource } from 'frappe-ui'
-import { watch, ref, computed } from 'vue'
+import { watch, ref } from 'vue'
 
 const session = useSessionStore()
+const activeFilters = ref({})
 
-// State for Pagination & Search
-const catalog = ref([]) // Our main bucket of items
-const start = ref(0)    // How many items we have loaded so far
+// Modal State
+const showModal = ref(false)
+const selectedItemCode = ref(null)
+
+// Data State
+const catalog = ref([]) 
+const start = ref(0)
 const searchQuery = ref('')
-const PAGE_LENGTH = 20  // Load 20 at a time (snappy)
-const hasMore = ref(true) // Do we have more items to load?
+const PAGE_LENGTH = 20
+const hasMore = ref(true)
 
-// 1. The Resource (Fetcher)
+// 1. Fetch Items
 const items = createResource({
   url: 'zevar_core.api.get_pos_items', 
   makeParams() {
@@ -22,21 +29,17 @@ const items = createResource({
       warehouse: session.currentWarehouse,
       page_length: PAGE_LENGTH,
       start: start.value,
-      search_term: searchQuery.value
+      search_term: searchQuery.value,
+      filters: JSON.stringify(activeFilters.value)
     }
   },
   onSuccess(data) {
-    // If we got fewer items than requested, we reached the end
     if (data.length < PAGE_LENGTH) {
       hasMore.value = false
     }
-
-    // If it's a fresh search (start=0), replace the catalog
     if (start.value === 0) {
       catalog.value = data
-    } 
-    // Otherwise, append to existing list
-    else {
+    } else {
       catalog.value.push(...data)
     }
   }
@@ -44,19 +47,29 @@ const items = createResource({
 
 // 2. Actions
 function loadMore() {
-  if (!hasMore.value) return
+  if (!hasMore.value || items.loading) return
   start.value += PAGE_LENGTH
   items.fetch()
 }
 
 function triggerSearch() {
-  // Reset everything for a new search
   start.value = 0
   hasMore.value = true
   items.fetch()
 }
 
-// Watcher: If store changes, reset and fetch
+function handleFilterUpdate(newFilters) {
+  activeFilters.value = { ...newFilters }
+  triggerSearch()
+}
+
+// ✅ Open Modal Function
+function openItemDetails(itemCode) {
+  selectedItemCode.value = itemCode
+  showModal.value = true
+}
+
+// Watcher: Reset if warehouse changes
 watch(
   () => session.currentWarehouse, 
   (newVal) => {
@@ -72,71 +85,81 @@ watch(
 
 <template>
   <AppLayout>
-    <div class="max-w-6xl mx-auto">
-      
-      <div v-if="!session.currentWarehouse" class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r">
-        <div class="flex">
-          <div class="ml-3">
-            <p class="text-sm text-yellow-700">
-              ⚠️ Please select a <strong>Store Location</strong> from the top bar to start selling.
-            </p>
-          </div>
-        </div>
+    
+    <div v-if="!session.currentWarehouse" class="max-w-4xl mx-auto mt-10">
+      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r">
+        <p class="text-sm text-yellow-700">⚠️ Please select a <strong>Store Location</strong> to start.</p>
       </div>
-
-      <div v-else>
-        
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-          <h2 class="text-2xl font-bold text-gray-800">Catalog</h2>
-          
-          <div class="relative">
-            <input 
-              v-model="searchQuery"
-              @keydown.enter="triggerSearch()"
-              type="text" 
-              placeholder="Search (e.g. Ring, 22K)..." 
-              class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg w-full md:w-64 focus:ring-gray-900 focus:border-gray-900 transition-colors"
-            >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400 absolute left-3 top-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          <ItemCard 
-            v-for="item in catalog" 
-            :key="item.item_code" 
-            :item="item" 
-          />
-        </div>
-
-        <div v-if="catalog.length === 0 && !items.loading" class="text-center py-20 bg-gray-50 rounded-lg mt-6">
-           <p class="text-gray-500">No items found.</p>
-           <button @click="searchQuery = ''; triggerSearch()" class="text-blue-600 text-sm mt-2 hover:underline">
-             Clear Search
-           </button>
-        </div>
-
-        <div class="mt-8 flex justify-center pb-10">
-          
-          <div v-if="items.loading" class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
-          
-          <button 
-            v-else-if="hasMore && catalog.length > 0" 
-            @click="loadMore()"
-            class="bg-gray-100 text-gray-700 px-6 py-2 rounded-full font-medium hover:bg-gray-200 transition-colors"
-          >
-            Load More items...
-          </button>
-          
-          <p v-else-if="catalog.length > 0" class="text-sm text-gray-400">
-            You've reached the end of the list.
-          </p>
-
-        </div>
-      </div>
-
     </div>
+
+    <div v-else class="flex h-[calc(100vh-64px)] -m-6"> 
+      
+      <div class="hidden md:block w-64 flex-shrink-0">
+        <FilterSidebar @update="handleFilterUpdate" />
+      </div>
+
+      <div class="flex-1 flex flex-col min-w-0 bg-gray-50">
+        
+        <div class="p-4 bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm flex items-center gap-4">
+          <div class="relative flex-1 max-w-lg">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">🔍</span>
+            <input 
+              v-model="searchQuery" 
+              @input="triggerSearch"
+              type="text" 
+              placeholder="Search items..." 
+              class="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:border-gray-500"
+            >
+          </div>
+          <div class="text-sm text-gray-500">
+            Showing {{ catalog.length }} items
+          </div>
+        </div>
+
+        <div class="flex-1 overflow-y-auto p-6">
+          
+          <div v-if="items.loading && start === 0" class="py-20 text-center">
+            <span class="text-gray-400 animate-pulse">Loading Catalog...</span>
+          </div>
+
+          <div v-else-if="catalog.length === 0" class="py-20 text-center bg-white rounded-lg border border-dashed border-gray-300">
+            <p class="text-gray-500">No items found.</p>
+          </div>
+
+          <div v-else>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+              <div 
+                v-for="item in catalog" 
+                :key="item.item_code"
+                @click="openItemDetails(item.item_code)"
+                class="cursor-pointer transition-transform hover:scale-105"
+              >
+                <ItemCard :item="item" />
+              </div>
+            </div>
+
+            <div class="mt-8 text-center pb-10">
+              <button 
+                v-if="hasMore" 
+                @click="loadMore" 
+                :disabled="items.loading"
+                class="px-6 py-2 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50 disabled:opacity-50 text-sm font-medium"
+              >
+                {{ items.loading ? 'Loading...' : 'Load More' }}
+              </button>
+              <p v-else class="text-xs text-gray-400 mt-4">End of catalog.</p>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <ProductModal 
+      :show="showModal" 
+      :itemCode="selectedItemCode"
+      @close="showModal = false"
+    />
+
   </AppLayout>
 </template>
