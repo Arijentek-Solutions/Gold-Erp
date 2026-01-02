@@ -133,60 +133,68 @@ def get_item_details(item_code):
     }
 
 
+@frappe.whitelist()
 def get_item_price(item_code):
     """
-    Calculates the live price of an item based on the latest Gold Rate.
-    Formula: (Net Weight * Current Gold Rate) + Making Charges
+    Calculates live price: (Gold Value) + (Making Charges) + (Gemstone Value).
     """
-    # 1. Fetch Item Details
-    # We need Metal & Purity to find the right rate
-    item = frappe.db.get_value(
-        "Item",
-        item_code,
-        [
-            "custom_metal_type",
-            "custom_purity",
-            "custom_net_weight_g",
-            "custom_making_charge_value",
-            "custom_making_charge_type",
-        ],
-        as_dict=True,
-    )
-
-    if not item:
+    if not item_code:
         return {}
 
-    # 2. Find the Latest Gold Rate
-    # We look for the newest entry for this specific Metal & Purity
+    try:
+        # Fetch the Item document
+        item = frappe.get_doc("Item", item_code)
+    except frappe.DoesNotExistError:
+        return {"error": "Item not found"}
+
+    # --- 1. METAL VALUE ---
+    gross = item.custom_gross_weight_g or 0.0
+    stone = item.custom_stone_weight_g or 0.0
+    net_weight = item.custom_net_weight_g or (gross - stone)
+
+    # Normalize Metal Type
+    pricing_metal = item.custom_metal_type
+    if pricing_metal in ["Rose Gold", "White Gold", "Gold"]:
+        pricing_metal = "Yellow Gold"
+
+    # Fetch Gold Rate
     rate_entry = frappe.db.get_value(
         "Gold Rate Log",
-        {"metal": item.custom_metal_type, "purity": item.custom_purity},
+        {"metal": pricing_metal, "purity": item.custom_purity},
         "rate_per_gram",
-        order_by="timestamp desc",  # Get the most recent one
+        order_by="creation desc",
     )
-
-    # Fallback: If no rate found, return 0 (or a safe default)
     current_gold_rate = float(rate_entry) if rate_entry else 0.0
-
-    # 3. Calculate Values
-    net_weight = item.custom_net_weight_g or 0.0
     gold_value = net_weight * current_gold_rate
 
-    # Calculate Making Charges
+    # --- 2. MAKING CHARGES ---
     mc_value = item.custom_making_charge_value or 0.0
     making_charges = 0.0
 
     if item.custom_making_charge_type == "Fixed Amount":
         making_charges = mc_value
     elif item.custom_making_charge_type == "Percentage":
-        # Example: 10% of Gold Value
-        making_charges = gold_value * (mc_value / 100)
+        making_charges = gold_value * (mc_value / 100.0)
 
-    final_price = gold_value + making_charges
+    # --- 3. GEMSTONE VALUE (Diamond Engine) 💎 ---
+    gemstone_value = 0.0
+
+    # We access 'custom_gemstones' because you added it via Customize Form
+    if hasattr(item, "custom_gemstones") and item.custom_gemstones:
+        for gem in item.custom_gemstones:
+            # Formula: Carat * Rate
+            # We use (gem.carat or 0) to prevent errors if field is empty
+            qty = gem.carat or 0.0
+            rate = gem.rate or 0.0
+            gemstone_value += qty * rate
+
+    # --- TOTAL ---
+    final_price = gold_value + making_charges + gemstone_value
 
     return {
         "gold_rate_used": current_gold_rate,
         "gold_value": round(gold_value, 2),
         "making_charges": round(making_charges, 2),
+        "gemstone_value": round(gemstone_value, 2),
         "final_price": round(final_price, 2),
     }
