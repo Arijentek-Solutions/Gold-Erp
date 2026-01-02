@@ -43,9 +43,7 @@
 		</aside>
 
 		<div class="flex-1 flex flex-col overflow-hidden">
-			<header
-				class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm z-10"
-			>
+			<header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6 shadow-sm z-10">
 				<div class="flex items-center gap-4">
 					<label class="text-sm text-gray-500 font-medium">Store Location:</label>
 					<select
@@ -59,58 +57,30 @@
 						</option>
 					</select>
 				</div>
-				
-		<div class="hidden lg:flex items-center gap-4 bg-gray-50 px-4 py-1.5 rounded-full border border-gray-200">
-          <div class="flex items-center gap-2">
-            <span class="relative flex h-2 w-2">
+
+		<div class="hidden lg:flex items-center gap-4 bg-gray-50 px-4 py-1.5 rounded-full border border-gray-200 mx-4 overflow-x-auto max-w-2xl no-scrollbar">
+  		  <div class="flex items-center gap-2 flex-shrink-0">
+			<span class="relative flex h-2 w-2">
 				<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
 				<span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
 			</span>
-            <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Live Rates</span>
-          </div>
-          
-          <div class="flex flex-col leading-none border-l border-gray-300 pl-4">
-            <span class="text-[10px] text-gray-400 font-semibold">24K</span>
-            <span class="text-sm font-bold text-gray-800">
-              ${{ goldStore.rates['Gold-24K'] || '---' }}
-            </span>
-          </div>
+			<span class="text-xs font-bold text-gray-500 uppercase tracking-wide whitespace-nowrap">Live Rates</span>
+		  </div>
 
-          <div class="flex flex-col leading-none border-l border-gray-300 pl-4">
-            <span class="text-[10px] text-gray-400 font-semibold">22K</span>
-            <span class="text-sm font-bold text-gray-800">
-              ${{ goldStore.rates['Gold-22K'] || '---' }}
-            </span>
-          </div>
+		  <div 
+			v-for="(rate, key) in goldStore.rates" 
+			:key="key"
+			class="flex flex-col leading-none border-l border-gray-300 pl-4 min-w-[80px]"
+		  >
+			<span class="text-[10px] text-gray-400 font-semibold uppercase truncate">
+			  {{ key.replace('-', ' ') }}
+			</span>
+			<span class="text-sm font-bold text-gray-800">
+			  ${{ rate }}
+			</span>
+		</div>
 
-		  <div class="flex flex-col leading-none border-l border-gray-300 pl-4">
-            <span class="text-[10px] text-gray-400 font-semibold">18K</span>
-            <span class="text-sm font-bold text-gray-800">
-              ${{ goldStore.rates['Gold-18K'] || '---' }}
-            </span>
-          </div>
-
-		  <div class="flex flex-col leading-none border-l border-gray-300 pl-4">
-            <span class="text-[10px] text-gray-400 font-semibold">14K</span>
-            <span class="text-sm font-bold text-gray-800">
-              ${{ goldStore.rates['Gold-14K'] || '---' }}
-            </span>
-          </div>
-
-		  <div class="flex flex-col leading-none border-l border-gray-300 pl-4">
-            <span class="text-[10px] text-gray-400 font-semibold">10K</span>
-            <span class="text-sm font-bold text-gray-800">
-              ${{ goldStore.rates['Gold-10K'] || '---' }}
-            </span>
-          </div>
-
-           <div class="flex flex-col leading-none border-l border-gray-300 pl-4">
-            <span class="text-[10px] text-gray-400 font-semibold">PLATINUM</span>
-            <span class="text-sm font-bold text-gray-800">
-              ${{ goldStore.rates['Platinum-PT850'] || '---' }}
-            </span>
-          </div>
-        </div>
+		</div>
 
 				<div class="flex items-center gap-3">
 					<div class="text-right hidden md:block">

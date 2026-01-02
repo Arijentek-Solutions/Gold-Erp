@@ -6,19 +6,19 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "pure_gold_content_"
+  "fine_metal_content"
  ],
  "fields": [
   {
-   "fieldname": "pure_gold_content_",
+   "fieldname": "fine_metal_content",
    "fieldtype": "Float",
-   "label": "Pure Gold Content %"
+   "label": "Fine Metal Content"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-12-23 01:23:46.339921",
+ "modified": "2026-01-01 23:11:54.697175",
  "modified_by": "Administrator",
  "module": "Unified Retail Management System",
  "name": "Zevar Purity",
