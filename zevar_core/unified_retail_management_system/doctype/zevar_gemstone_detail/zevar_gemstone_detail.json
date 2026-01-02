@@ -1,0 +1,92 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-01-02 01:55:41.027879",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "gem_type",
+  "carat",
+  "count",
+  "cut",
+  "color",
+  "clarity",
+  "rate",
+  "amount"
+ ],
+ "fields": [
+  {
+   "columns": 2,
+   "fieldname": "gem_type",
+   "fieldtype": "Select",
+   "label": "Gem Type",
+   "options": "Diamond\nRuby\nEmerald\nSapphire\nPolki\nKundan"
+  },
+  {
+   "columns": 1,
+   "fieldname": "carat",
+   "fieldtype": "Float",
+   "label": "Carat",
+   "options": "Precision: 3",
+   "precision": "3"
+  },
+  {
+   "columns": 1,
+   "default": "1",
+   "fieldname": "count",
+   "fieldtype": "Int",
+   "label": "Count"
+  },
+  {
+   "fieldname": "cut",
+   "fieldtype": "Select",
+   "label": "Cut",
+   "options": "Excellent\nVery Good\nGood"
+  },
+  {
+   "description": "e.g. D, E, F",
+   "fieldname": "color",
+   "fieldtype": "Select",
+   "label": "Color",
+   "options": "D\nE\nF\nG\nH\nI\nJ\nK\nL\nM\nN-Z (Yellow Tint)\nOther"
+  },
+  {
+   "description": "e.g. VVS1, VS1",
+   "fieldname": "clarity",
+   "fieldtype": "Select",
+   "label": "Clarity",
+   "options": "FL (Flawless)\nIF (Internally Flawless)\nVVS1\nVVS2\nVS1\nVS2\nSI1\nSI2\nI1\nI2\nI3"
+  },
+  {
+   "columns": 2,
+   "fieldname": "rate",
+   "fieldtype": "Currency",
+   "label": "Rate (Per Carat/Piece)",
+   "options": "(Price per Carat)"
+  },
+  {
+   "columns": 2,
+   "fieldname": "amount",
+   "fieldtype": "Currency",
+   "label": "Amount",
+   "options": "(Read Only usually, but leave editable for now)",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "istable": 1,
+ "links": [],
+ "modified": "2026-01-02 06:34:42.830287",
+ "modified_by": "Administrator",
+ "module": "Unified Retail Management System",
+ "name": "Zevar Gemstone Detail",
+ "owner": "Administrator",
+ "permissions": [],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
