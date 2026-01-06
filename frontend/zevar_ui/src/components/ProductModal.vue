@@ -106,7 +106,9 @@
             </div>
           </div>
 
-          <button class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform active:scale-95">
+          <button 
+          @click="addToCart"
+          class="w-full bg-gray-900 text-white py-4 rounded-xl font-bold text-lg hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl transform active:scale-95">
             Add to Cart
           </button>
         </div>
@@ -119,32 +121,51 @@
 <script setup>
 import { createResource } from 'frappe-ui'
 import { watch, ref } from 'vue'
+import { useCartStore } from '@/stores/cart.js'
 
 const props = defineProps(['show', 'itemCode'])
 const emit = defineEmits(['close'])
+const cart = useCartStore()
 
 const details = ref({})
 const loading = ref(false)
 
 // Fetcher
 const itemFetcher = createResource({
-  url: 'zevar_core.api.get_item_details',
+  url: 'zevar_core.api.get_item_price',
   makeParams() {
     return { item_code: props.itemCode }
   },
   onSuccess(data) {
-    details.value = data
-    loading.value = false
+    // 1. Merge API data with Item Code
+    details.value = { ...data, item_code: props.itemCode }
+    
+    // 2. STOP LOADING (This was the missing line!) 🛑
+    loading.value = false 
+    
+    console.log("✅ Data Loaded:", details.value)
   }
 })
 
-// Watch for Modal Opening
+// Watcher
 watch(() => props.show, (isOpen) => {
   if (isOpen && props.itemCode) {
     loading.value = true
+    details.value = {} // Clear old data
     itemFetcher.fetch()
   }
 })
+
+function addToCart() {
+  if (!details.value.item_code) return
+  
+  // Add to Store
+  cart.addItem(details.value)
+  
+  // Alert and Close
+  alert("Added to Cart!")
+  emit('close')
+}
 
 function close() {
   emit('close')
