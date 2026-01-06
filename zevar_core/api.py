@@ -20,8 +20,6 @@ def get_pos_items(
         # Use Frappe's built-in helper. It handles Strings, Dicts, and None safely.
         filters_dict = frappe.parse_json(filters)
 
-        print(f"🕵️ DEBUG: Parsed Filters: {filters_dict}")  # Watch this log!
-
         if isinstance(filters_dict, dict):
             for key, value in filters_dict.items():
                 # Only apply if value is "Real" (not empty string, not None)
@@ -198,11 +196,18 @@ def get_item_price(item_code):
     # print(f"💎 DEBUG: Item: {item_code} | Stone Value: {stone_value}")
 
     return {
+        "item_code": item.name,
+        # "item_name": item.item_name,
+        "image": item.image,
+        "metal": item.custom_metal_type,
+        "purity": item.custom_purity,
+        "gross_weight": item.custom_gross_weight_g,
+        "net_weight": item.custom_net_weight_g,
+        "stone_weight": item.custom_stone_weight_g,
+        # 2. Pricing Details
         "gold_rate_used": current_gold_rate,
         "gold_value": round(gold_value, 2),
         "making_charges": round(making_charges, 2),
-        "gemstone_value": round(
-            stone_value, 2
-        ),  # <--- Front-end looks for this exact key!
+        "gemstone_value": round(stone_value, 2),
         "final_price": round(final_price, 2),
     }
