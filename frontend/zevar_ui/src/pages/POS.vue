@@ -52,14 +52,10 @@ function loadMore() {
   items.fetch()
 }
 
-function triggerSearch() {
-  start.value = 0
-  hasMore.value = true
-  items.fetch()
-}
-
 function handleFilterUpdate(newFilters) {
+  console.log("⚡ Sidebar sent:", newFilters)
   activeFilters.value = { ...newFilters }
+  console.log("🚀 Sending to API:", JSON.stringify(activeFilters.value))
   triggerSearch()
 }
 
@@ -67,6 +63,20 @@ function handleFilterUpdate(newFilters) {
 function openItemDetails(itemCode) {
   selectedItemCode.value = itemCode
   showModal.value = true
+}
+
+let searchTimeout = null // Variable to hold the timer
+
+function triggerSearch() {
+  // Clear the previous timer (cancel the previous search request)
+  if (searchTimeout) clearTimeout(searchTimeout)
+
+  // Set a new timer
+  searchTimeout = setTimeout(() => {
+    start.value = 0
+    hasMore.value = true
+    items.fetch()
+  }, 500) // 500ms delay
 }
 
 // Watcher: Reset if warehouse changes
