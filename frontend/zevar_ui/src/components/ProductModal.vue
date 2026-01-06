@@ -41,7 +41,7 @@
             <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-bold uppercase">{{ details.purity }}</span>
           </div>
 
-          <div class="bg-gray-50 rounded-lg p-4 mb-6 text-sm">
+          <div class="bg-gray-50 rounded-lg p-4 mb-6 text-sm border border-gray-100">
             <div class="flex justify-between mb-2">
               <span class="text-gray-500">Gross Weight</span>
               <span class="font-medium">{{ details.gross_weight }} g</span>
@@ -56,15 +56,50 @@
             </div>
           </div>
 
+          <div v-if="details.gemstones && details.gemstones.length > 0" class="mb-6 bg-gray-50 rounded-lg border border-gray-100 p-3">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Zevar Gemstone Detail</h4>
+            <table class="w-full text-sm text-left">
+              <thead>
+                <tr class="text-xs text-gray-500 uppercase border-b border-gray-200">
+                  <th class="pb-1">Stone</th>
+                  <th class="pb-1 text-right">Carat</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(gem, i) in details.gemstones" :key="i" class="border-b last:border-0 border-gray-100">
+                  <td class="py-2 font-medium text-gray-800">
+                    {{ gem.gem_type }}
+                    <span class="block text-[10px] text-gray-500 font-normal">
+                       {{ gem.cut }} • {{ gem.color }} • {{ gem.clarity }}
+                    </span>
+                  </td>
+                  <td class="py-2 text-right font-mono">{{ gem.carat }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
           <div class="space-y-3 mb-8">
             <div class="flex justify-between text-sm">
               <span class="text-gray-500">Gold Rate (Live)</span>
               <span>{{ formatCurrency(details.gold_rate) }} /g</span>
             </div>
+            
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Gold Value</span>
+              <span>{{ formatCurrency(details.gold_value) }}</span>
+            </div>
+
             <div class="flex justify-between text-sm">
               <span class="text-gray-500">Making Charges</span>
               <span>{{ formatCurrency(details.making_charges) }}</span>
             </div>
+
+            <div v-if="details.gemstone_value > 0" class="flex justify-between text-sm">
+              <span class="text-purple-600 font-medium">💎 Gemstone Value</span>
+              <span class="text-purple-700 font-bold">{{ formatCurrency(details.gemstone_value) }}</span>
+            </div>
+
             <div class="flex justify-between items-end pt-4 border-t border-gray-100">
               <span class="text-lg font-bold text-gray-900">Total</span>
               <span class="text-3xl font-bold text-gray-900">{{ formatCurrency(details.final_price) }}</span>
