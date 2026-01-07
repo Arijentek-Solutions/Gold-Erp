@@ -211,3 +211,41 @@ def get_item_price(item_code):
         "gemstone_value": round(stone_value, 2),
         "final_price": round(final_price, 2),
     }
+
+
+@frappe.whitelist(allow_guest=True)
+def get_pos_settings():
+    """
+    Fetches essential POS configurations:
+    1. Default Company Tax Rate
+    2. Company Currency
+    """
+    settings = {
+        "tax_rate": 0.0,
+        "currency": frappe.defaults.get_global_default("currency") or "USD",
+    }
+
+    # Fetch the default Sales Taxes Template for the Company
+    company = frappe.defaults.get_user_default("Company") or frappe.db.get_value(
+        "Company", {"is_default": 1}
+    )
+
+    if company:
+        # Find the default tax template for this company
+        tax_template_name = frappe.db.get_value(
+            "Sales Taxes and Charges Template",
+            {"company": company, "is_default": 1, "disabled": 0},
+            "name",
+        )
+
+        if tax_template_name:
+            # Sum up the rates from the template rows
+            tax_rows = frappe.get_all(
+                "Sales Taxes and Charges",
+                filters={"parent": tax_template_name},
+                fields=["rate"],
+            )
+            total_rate = sum([row.rate for row in tax_rows])
+            settings["tax_rate"] = total_rate
+
+    return settings
