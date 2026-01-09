@@ -1,14 +1,14 @@
 <script setup>
 import AppLayout from '@/components/AppLayout.vue'
 import ItemCard from '@/components/ItemCard.vue'
-import FilterSidebar from '@/components/FilterSidebar.vue'
 import ProductModal from '@/components/ProductModal.vue'
 import { useSessionStore } from '@/stores/session.js'
+import { useUIStore } from '@/stores/ui.js' // Import UI Store
 import { createResource } from 'frappe-ui'
 import { watch, ref } from 'vue'
 
 const session = useSessionStore()
-const activeFilters = ref({})
+const ui = useUIStore() // Use the store
 
 // Modal State
 const showModal = ref(false)
@@ -17,7 +17,6 @@ const selectedItemCode = ref(null)
 // Data State
 const catalog = ref([]) 
 const start = ref(0)
-const searchQuery = ref('')
 const PAGE_LENGTH = 20
 const hasMore = ref(true)
 
@@ -29,8 +28,9 @@ const items = createResource({
       warehouse: session.currentWarehouse,
       page_length: PAGE_LENGTH,
       start: start.value,
-      search_term: searchQuery.value,
-      filters: JSON.stringify(activeFilters.value)
+      // FIX: Read directly from the UI Store, not local vars
+      search_term: ui.searchQuery,
+      filters: JSON.stringify(ui.activeFilters)
     }
   },
   onSuccess(data) {
@@ -52,39 +52,35 @@ function loadMore() {
   items.fetch()
 }
 
-function handleFilterUpdate(newFilters) {
-  console.log("⚡ Sidebar sent:", newFilters)
-  activeFilters.value = { ...newFilters }
-  console.log("🚀 Sending to API:", JSON.stringify(activeFilters.value))
-  triggerSearch()
-}
+// FIX: We don't need handleFilterUpdate anymore because the Store handles it!
 
-// ✅ Open Modal Function
 function openItemDetails(itemCode) {
   selectedItemCode.value = itemCode
   showModal.value = true
 }
 
-let searchTimeout = null // Variable to hold the timer
+// Watchers
+let searchTimeout = null
 
-function triggerSearch() {
-  // Clear the previous timer (cancel the previous search request)
-  if (searchTimeout) clearTimeout(searchTimeout)
+// FIX: Watch the UI STORE for changes (Search or Filters)
+watch(() => [ui.searchQuery, ui.activeFilters], () => {
+    if (searchTimeout) clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => {
+        start.value = 0
+        hasMore.value = true
+        items.fetch()
+    }, 400) // Debounce search
+}, { deep: true })
 
-  // Set a new timer
-  searchTimeout = setTimeout(() => {
-    start.value = 0
-    hasMore.value = true
-    items.fetch()
-  }, 500) // 500ms delay
-}
-
-// Watcher: Reset if warehouse changes
+// Watch: Warehouse changes
 watch(
   () => session.currentWarehouse, 
   (newVal) => {
     if (newVal) {
-      triggerSearch()
+      // items.fetch() will be triggered by the watcher above if needed, 
+      // or we call it directly here if store is static.
+      start.value = 0
+      items.fetch()
     } else {
       catalog.value = []
     }
@@ -95,81 +91,73 @@ watch(
 
 <template>
   <AppLayout>
-    
-    <div v-if="!session.currentWarehouse" class="max-w-4xl mx-auto mt-10">
-      <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-r">
-        <p class="text-sm text-yellow-700">⚠️ Please select a <strong>Store Location</strong> to start.</p>
-      </div>
+    <div v-if="!session.currentWarehouse" class="h-full flex flex-col items-center justify-center text-center opacity-50">
+       <div class="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mb-4">
+          <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+       </div>
+       <h3 class="text-lg font-bold text-gray-900 dark:text-white">Select Store Location</h3>
+       <p class="text-sm text-gray-500">Choose a location from the top menu to view inventory.</p>
     </div>
 
-    <div v-else class="flex h-[calc(100vh-64px)] -m-6"> 
+    <div v-else class="h-full flex flex-col">
       
-      <div class="hidden md:block w-64 flex-shrink-0">
-        <FilterSidebar @update="handleFilterUpdate" />
-      </div>
-
-      <div class="flex-1 flex flex-col min-w-0 bg-gray-50">
-        
-        <div class="p-4 bg-white border-b border-gray-200 sticky top-0 z-10 shadow-sm flex items-center gap-4">
-          <div class="relative flex-1 max-w-lg">
-            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">🔍</span>
-            <input 
-              v-model="searchQuery" 
-              @input="triggerSearch"
-              type="text" 
-              placeholder="Search items..." 
-              class="w-full py-2 pl-10 pr-4 text-sm text-gray-700 bg-gray-100 border-transparent rounded-lg focus:bg-white focus:border-gray-500"
-            >
-          </div>
-          <div class="text-sm text-gray-500">
-            Showing {{ catalog.length }} items
-          </div>
+        <div class="flex items-center gap-4 mb-6">
+            <h2 class="text-2xl font-serif font-bold text-gray-900 dark:text-white transition-colors">Collection</h2>
+            
+            <span class="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-3 py-1 rounded-full shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+                {{ catalog.length }} Items Found
+            </span>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-6">
-          
-          <div v-if="items.loading && start === 0" class="py-20 text-center">
-            <span class="text-gray-400 animate-pulse">Loading Catalog...</span>
-          </div>
+        <div class="flex-1 overflow-y-auto pb-20 pr-2 custom-scrollbar">
+            
+            <div v-if="items.loading && start === 0" class="py-20 text-center">
+                <div class="animate-spin rounded-full h-8 w-8 border-2 border-gray-900 dark:border-white border-t-transparent mx-auto mb-4"></div>
+                <span class="text-gray-400 text-sm font-medium">Curating Collection...</span>
+            </div>
 
-          <div v-else-if="catalog.length === 0" class="py-20 text-center bg-white rounded-lg border border-dashed border-gray-300">
-            <p class="text-gray-500">No items found.</p>
-          </div>
+            <div v-else-if="catalog.length === 0" class="py-20 text-center bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
+                <p class="text-gray-500">No pieces found matching your criteria.</p>
+            </div>
 
-          <div v-else>
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-              <div 
+            <div v-else class="smart-grid">
+                <div 
                 v-for="item in catalog" 
                 :key="item.item_code"
                 @click="openItemDetails(item.item_code)"
-                class="cursor-pointer transition-transform hover:scale-105"
-              >
+                class="group"
+                >
                 <ItemCard :item="item" />
-              </div>
+                </div>
             </div>
 
-            <div class="mt-8 text-center pb-10">
-              <button 
-                v-if="hasMore" 
-                @click="loadMore" 
-                :disabled="items.loading"
-                class="px-6 py-2 bg-white border border-gray-300 rounded-full shadow-sm hover:bg-gray-50 disabled:opacity-50 text-sm font-medium"
-              >
-                {{ items.loading ? 'Loading...' : 'Load More' }}
-              </button>
-              <p v-else class="text-xs text-gray-400 mt-4">End of catalog.</p>
+            <div v-if="hasMore && catalog.length > 0" class="flex justify-center pt-12 pb-12">
+                <button 
+                    @click="loadMore" 
+                    :disabled="items.loading"
+                    class="px-8 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-full shadow-sm hover:shadow-md hover:border-gray-900 dark:hover:border-white transition-all text-sm font-bold uppercase tracking-wider disabled:opacity-50"
+                >
+                    {{ items.loading ? 'Loading...' : 'Load More' }}
+                </button>
             </div>
-          </div>
-
         </div>
-      </div>
     </div>
 
     <ProductModal 
       :show="showModal" 
-      :itemCode="selectedItemCode"
-      @close="showModal = false"
+      :itemCode="selectedItemCode" 
+      @close="showModal = false" 
     />
-
   </AppLayout>
 </template>
+
+<style scoped>
+/* MAGIC CSS: This creates the smart zoom effect. 
+   It ensures cards are at least 240px wide but fills the space automatically. 
+   No media queries needed. */
+.smart-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+</style>
