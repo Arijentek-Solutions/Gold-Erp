@@ -1,2 +1,60 @@
-@import './assets/Inter/inter.css';
 @import 'frappe-ui/src/style.css';
+
+/* 1. Define Luxury Fonts */
+:root {
+  --font-display: 'Cinzel', serif; /* Luxury Headings */
+  --font-body: 'Inter', sans-serif; /* Clean Data */
+  --color-gold: #D4AF37;
+  --color-dark: #0F1115;
+}
+
+/* 2. Apply Defaults */
+body {
+  font-family: var(--font-body);
+  @apply text-gray-900 dark:text-gray-100 bg-[#F8F9FA] dark:bg-[#050505];
+}
+
+/* 3. Utility Class for Serif Headings */
+/* Use class="font-serif" in your Vue components to trigger this */
+.font-serif {
+  font-family: var(--font-display) !important;
+}
+
+/* 4. Global Sophisticated Scrollbar */
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #CBD5E1 transparent;
+}
+.dark * {
+  scrollbar-color: #333 #15171e;
+}
+
+/* Chrome/Edge/Safari */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold); /* Gold on hover */
+}
+
+/* Dark Mode Scrollbar Overrides */
+.dark ::-webkit-scrollbar-thumb {
+  background: #333;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+/* 5. Smooth Transitions */
+button, a {
+  transition: all 0.2s ease-in-out;
+}

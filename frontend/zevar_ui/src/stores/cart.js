@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { createResource } from 'frappe-ui'
 
 export const useCartStore = defineStore('cart', () => {
@@ -23,11 +23,10 @@ export const useCartStore = defineStore('cart', () => {
     return items.value.reduce((total, item) => total + (item.qty || 1), 0)
   })
   
-  // Fix: Calculate simple Subtotal (Price * Qty)
   const subtotal = computed(() => {
     return items.value.reduce((sum, item) => {
         const qty = item.qty || 1
-        const price = item.amount || 0 // Use stored price
+        const price = item.amount || 0 
         return sum + (price * qty)
     }, 0)
   })
@@ -38,15 +37,12 @@ export const useCartStore = defineStore('cart', () => {
 
   // 3. ACTIONS
   
-  // Renamed back to 'addItem' to match ItemCard.vue
   function addItem(item) {
     if (!item.item_code) {
       console.error("Missing item_code", item)
       return
     }
 
-    // Determine Price (Handle different API structures)
-    // Priority: final_price (Modal) > price (Grid) > amount (Gemstones)
     const priceToUse = item.final_price || item.price || item.amount || 0
 
     // Check for duplicates
@@ -55,14 +51,13 @@ export const useCartStore = defineStore('cart', () => {
     if (existingItem) {
         existingItem.qty++
     } else {
-        // Push new item WITH price
         items.value.push({
             item_code: item.item_code,
             item_name: item.item_name,
             image: item.image,
             metal: item.metal || item.custom_metal_type,
             purity: item.purity || item.custom_purity,
-            amount: priceToUse,
+            amount: priceToUse, 
             weight: item.gross_weight || item.custom_gross_weight_g,
             qty: 1 
         })
@@ -70,24 +65,22 @@ export const useCartStore = defineStore('cart', () => {
     saveToStorage()
   }
 
-  // Renamed back to 'removeItem' (Index based) to match CartSidebar.vue
   function removeItem(index) {
     items.value.splice(index, 1)
     saveToStorage()
   }
 
+  // FIX: Removed 'confirm()' so "New Order" wipes cart silently
   function clearCart() {
-    if(confirm("Clear cart?")) {
-        items.value = []
-        saveToStorage()
-    }
+    items.value = []
+    saveToStorage()
   }
 
   function saveToStorage() {
     localStorage.setItem('zevar_cart_items', JSON.stringify(items.value))
   }
 
-  // 4. DAY 2: FETCH SETTINGS
+  // --- FETCH SETTINGS ---
   const fetchSettings = createResource({
     url: 'zevar_core.api.get_pos_settings',
     auto: true,
@@ -100,6 +93,45 @@ export const useCartStore = defineStore('cart', () => {
     }
   })
 
+  // --- SUBMIT ORDER ---
+  async function submitOrder(paymentMode) {
+    // 1. Prepare Items
+    const itemsPayload = items.value.map(i => ({
+        item_code: i.item_code,
+        qty: i.qty || 1,
+        rate: i.amount || 0
+    }))
+
+    // 2. Prepare Payment
+    const paymentsPayload = [{
+        mode: paymentMode, 
+        amount: grandTotal.value
+    }]
+
+    console.log("🚀 Sending Order...", { items: itemsPayload, payment: paymentsPayload })
+
+    // 3. Call Python API (Short Path)
+    try {
+        const r = await createResource({
+            url: 'zevar_core.api.create_pos_invoice',
+            method: 'POST',
+            params: {
+                items: JSON.stringify(itemsPayload),
+                payments: JSON.stringify(paymentsPayload),
+                customer: "Walk-In Customer" 
+            }
+        }).fetch()
+
+        console.log("✅ Order Success:", r)
+        // FIX: Removed alert() so flow is uninterrupted
+        return r
+
+    } catch (e) {
+        console.error("❌ Order Failed:", e)
+        throw e
+    }
+  }
+
   return {
     items,
     taxRate,
@@ -109,8 +141,9 @@ export const useCartStore = defineStore('cart', () => {
     tax,
     grandTotal,
     fetchSettings,
-    addItem,   
-    removeItem,
-    clearCart
+    addItem,    
+    removeItem, 
+    clearCart,
+    submitOrder 
   }
 })
