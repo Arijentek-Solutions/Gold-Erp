@@ -398,3 +398,29 @@ def create_pos_invoice(items, payments, customer=None, discount_amount=0):
             "total_paid": sum([p.get("amount", 0) for p in payments]),
         },
     }
+
+@frappe.whitelist()
+def get_pos_settings(warehouse=None):
+    """
+    Fetches POS settings like Tax Rate and Currency.
+    Called by cart.js on initialization.
+    """
+    # 1. Default Values
+    tax_rate = 0.0
+    currency = "USD"
+    
+    # 2. Logic: You can make this dynamic later based on the Warehouse/State.
+    # For now, we return a standard rate so the calculations work.
+    if warehouse and "Miami" in warehouse:
+        tax_rate = 7.00
+    elif warehouse and "Los Angeles" in warehouse:
+        tax_rate = 9.50
+    else:
+        tax_rate = 8.875 # Default (e.g. New York)
+
+    return {
+        "tax_rate": tax_rate,
+        "currency": currency,
+        "allow_discount": 1,
+        "company": frappe.defaults.get_user_default("Company") or "Zevar Jewelers"
+    }

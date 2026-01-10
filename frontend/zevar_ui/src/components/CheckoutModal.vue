@@ -86,7 +86,7 @@
                             </div>
                             <div class="text-left">
                                 <div class="font-bold text-gray-900 dark:text-white">Card Terminal</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">Stripe / Square</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400">Square</div>
                             </div>
                         </div>
                          <div v-if="paymentMethod === 'Card Terminal'" class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
