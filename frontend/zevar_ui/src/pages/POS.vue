@@ -1,94 +1,3 @@
-<script setup>
-import AppLayout from '@/components/AppLayout.vue'
-import ItemCard from '@/components/ItemCard.vue'
-import ProductModal from '@/components/ProductModal.vue'
-import { useSessionStore } from '@/stores/session.js'
-import { useUIStore } from '@/stores/ui.js' // Import UI Store
-import { createResource } from 'frappe-ui'
-import { watch, ref } from 'vue'
-
-const session = useSessionStore()
-const ui = useUIStore() // Use the store
-
-// Modal State
-const showModal = ref(false)
-const selectedItemCode = ref(null)
-
-// Data State
-const catalog = ref([]) 
-const start = ref(0)
-const PAGE_LENGTH = 20
-const hasMore = ref(true)
-
-// 1. Fetch Items
-const items = createResource({
-  url: 'zevar_core.api.get_pos_items', 
-  makeParams() {
-    return {
-      warehouse: session.currentWarehouse,
-      page_length: PAGE_LENGTH,
-      start: start.value,
-      // FIX: Read directly from the UI Store, not local vars
-      search_term: ui.searchQuery,
-      filters: JSON.stringify(ui.activeFilters)
-    }
-  },
-  onSuccess(data) {
-    if (data.length < PAGE_LENGTH) {
-      hasMore.value = false
-    }
-    if (start.value === 0) {
-      catalog.value = data
-    } else {
-      catalog.value.push(...data)
-    }
-  }
-})
-
-// 2. Actions
-function loadMore() {
-  if (!hasMore.value || items.loading) return
-  start.value += PAGE_LENGTH
-  items.fetch()
-}
-
-// FIX: We don't need handleFilterUpdate anymore because the Store handles it!
-
-function openItemDetails(itemCode) {
-  selectedItemCode.value = itemCode
-  showModal.value = true
-}
-
-// Watchers
-let searchTimeout = null
-
-// FIX: Watch the UI STORE for changes (Search or Filters)
-watch(() => [ui.searchQuery, ui.activeFilters], () => {
-    if (searchTimeout) clearTimeout(searchTimeout)
-    searchTimeout = setTimeout(() => {
-        start.value = 0
-        hasMore.value = true
-        items.fetch()
-    }, 400) // Debounce search
-}, { deep: true })
-
-// Watch: Warehouse changes
-watch(
-  () => session.currentWarehouse, 
-  (newVal) => {
-    if (newVal) {
-      // items.fetch() will be triggered by the watcher above if needed, 
-      // or we call it directly here if store is static.
-      start.value = 0
-      items.fetch()
-    } else {
-      catalog.value = []
-    }
-  },
-  { immediate: true }
-)
-</script>
-
 <template>
   <AppLayout>
     <div v-if="!session.currentWarehouse" class="h-full flex flex-col items-center justify-center text-center opacity-50">
@@ -151,10 +60,97 @@ watch(
   </AppLayout>
 </template>
 
+<script setup>
+/**
+ * POS Page Component
+ *
+ * Main Point of Sale page displaying item catalog with filtering and search.
+ */
+
+import AppLayout from '@/components/AppLayout.vue'
+import ItemCard from '@/components/ItemCard.vue'
+import ProductModal from '@/components/ProductModal.vue'
+import { useSessionStore } from '@/stores/session.js'
+import { useUIStore } from '@/stores/ui.js'
+import { createResource } from 'frappe-ui'
+import { watch, ref } from 'vue'
+
+const session = useSessionStore()
+const ui = useUIStore()
+
+// Modal State
+const showModal = ref(false)
+const selectedItemCode = ref(null)
+
+// Data State
+const catalog = ref([])
+const start = ref(0)
+const PAGE_LENGTH = 20
+const hasMore = ref(true)
+
+// Fetch Items Resource
+const items = createResource({
+  url: 'zevar_core.api.get_pos_items',
+  makeParams() {
+    return {
+      warehouse: session.currentWarehouse,
+      page_length: PAGE_LENGTH,
+      start: start.value,
+      search_term: ui.searchQuery,
+      filters: JSON.stringify(ui.activeFilters)
+    }
+  },
+  onSuccess(data) {
+    if (data.length < PAGE_LENGTH) {
+      hasMore.value = false
+    }
+    if (start.value === 0) {
+      catalog.value = data
+    } else {
+      catalog.value.push(...data)
+    }
+  }
+})
+
+// Actions
+function loadMore() {
+  if (!hasMore.value || items.loading) return
+  start.value += PAGE_LENGTH
+  items.fetch()
+}
+
+function openItemDetails(itemCode) {
+  selectedItemCode.value = itemCode
+  showModal.value = true
+}
+
+// Watchers
+let searchTimeout = null
+
+watch(() => [ui.searchQuery, ui.activeFilters], () => {
+    if (searchTimeout) clearTimeout(searchTimeout)
+    searchTimeout = setTimeout(() => {
+        start.value = 0
+        hasMore.value = true
+        items.fetch()
+    }, 400)
+}, { deep: true })
+
+watch(
+  () => session.currentWarehouse,
+  (newVal) => {
+    if (newVal) {
+      start.value = 0
+      items.fetch()
+    } else {
+      catalog.value = []
+    }
+  },
+  { immediate: true }
+)
+</script>
+
 <style scoped>
-/* MAGIC CSS: This creates the smart zoom effect. 
-   It ensures cards are at least 240px wide but fills the space automatically. 
-   No media queries needed. */
 .smart-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
