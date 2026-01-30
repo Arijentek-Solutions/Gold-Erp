@@ -1,12 +1,21 @@
+/**
+ * UI Store
+ *
+ * Manages UI state including search, filters, and theme preferences.
+ */
+
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useUIStore = defineStore('ui', () => {
-  // Existing State
+
+  // ==========================================================================
+  // STATE
+  // ==========================================================================
+
   const searchQuery = ref('')
   const activeFilters = ref({})
-  
-  // NEW: Dark Mode State
+
   // Check localStorage or system preference on load
   const isDark = ref(localStorage.getItem('theme') === 'dark')
 
@@ -17,7 +26,10 @@ export const useUIStore = defineStore('ui', () => {
     document.documentElement.classList.remove('dark')
   }
 
-  // Actions
+  // ==========================================================================
+  // ACTIONS
+  // ==========================================================================
+
   function toggleTheme() {
     isDark.value = !isDark.value
     if (isDark.value) {
@@ -29,12 +41,11 @@ export const useUIStore = defineStore('ui', () => {
     }
   }
 
-  // Keep existing filter actions...
   function setFilter(key, value) {
     if (!value) {
-        delete activeFilters.value[key]
+      delete activeFilters.value[key]
     } else {
-        activeFilters.value[key] = value
+      activeFilters.value[key] = value
     }
   }
 
@@ -46,8 +57,8 @@ export const useUIStore = defineStore('ui', () => {
   return {
     searchQuery,
     activeFilters,
-    isDark,     // Export state
-    toggleTheme,// Export action
+    isDark,
+    toggleTheme,
     setFilter,
     resetFilters
   }

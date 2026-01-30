@@ -6,13 +6,15 @@ import frappeui from 'frappe-ui/vite';
 export default defineConfig({
   server: {
     port: 8080,
+    strictPort: true,
+    host: true,
     proxy: {
       '^/(app|api|assets|files|private)': {
         target: 'http://127.0.0.1:8000',
         ws: true,
         changeOrigin: true,
         headers: {
-            "X-Frappe-Site-Name": "zevar.localhost" 
+          "X-Frappe-Site-Name": "zevar.localhost"
         }
       }
     }

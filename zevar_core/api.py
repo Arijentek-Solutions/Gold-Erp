@@ -1,35 +1,77 @@
+"""
+Zevar Core API Module
+
+This module provides API endpoints for the Zevar POS system, including
+item retrieval, pricing calculations, POS invoice creation, and settings.
+"""
+
 import json
 
 import frappe
+
+
+# =============================================================================
+# ITEM RETRIEVAL
+# =============================================================================
 
 
 @frappe.whitelist()
 def get_pos_items(
     start=0, page_length=20, warehouse=None, search_term=None, filters=None
 ):
-    # 1. Base Filters
-    # We use a list of lists for filters
+    """
+    Fetches items for the POS catalog with filtering, search, and pagination.
+
+    Args:
+        start: Starting index for pagination
+        page_length: Number of items to return
+        warehouse: Warehouse to check stock levels for
+        search_term: Search term to filter item names
+        filters: JSON string of additional filters (metal, purity, gemstone)
+
+    Returns:
+        List of item dictionaries with stock and price information
+    """
+    # Base Filters
     query_filters = [["disabled", "=", 0], ["has_variants", "=", 0]]
 
-    # 2. Search Term
+    # Search Term
     if search_term:
         query_filters.append(["item_name", "like", f"%{search_term}%"])
 
-    # 3. Dynamic Filters (FIXED 🛠️)
+    # Dynamic Filters
     if filters:
-        # Use Frappe's built-in helper. It handles Strings, Dicts, and None safely.
         filters_dict = frappe.parse_json(filters)
-
         if isinstance(filters_dict, dict):
+
+            # Gemstone filtering logic
+            gem_filter = filters_dict.pop("custom_gemstone", None)
+
+            if gem_filter:
+                if gem_filter == "No Stone":
+                    items_with_stones = frappe.get_all(
+                        "Zevar Gemstone Detail", pluck="parent"
+                    )
+                    if items_with_stones:
+                        query_filters.append(["name", "not in", items_with_stones])
+                else:
+                    matching_items = frappe.get_all(
+                        "Zevar Gemstone Detail",
+                        filters={"gem_type": gem_filter},
+                        pluck="parent",
+                    )
+
+                    if not matching_items:
+                        return []
+
+                    query_filters.append(["name", "in", matching_items])
+
+            # Apply remaining filters (Metal, Purity, etc.)
             for key, value in filters_dict.items():
-                # Only apply if value is "Real" (not empty string, not None)
                 if value:
-                    print(f"   👉 Applying: {key} = {value}")
                     query_filters.append([key, "=", value])
 
-    # 4. Fetch Items
-    # Note: We removed 'custom_metal_type is set' from base filters
-    # because it might conflict if we filter for a specific metal.
+    # Fetch Items
     items = frappe.get_list(
         "Item",
         filters=query_filters,
@@ -50,15 +92,13 @@ def get_pos_items(
         page_length=page_length,
     )
 
-    # ... (Keep your existing stock fetching & loop logic below unchanged) ...
-    # (If you need the rest of the function again, let me know, but the bottom half is fine)
-
-    # ------------------ COPY FROM HERE FOR THE REST ------------------
     if not items:
         return []
 
+    # Fetch Stock
     item_codes = [item.name for item in items]
     stock_map = {}
+
     if warehouse:
         bin_entries = frappe.db.get_all(
             "Bin",
@@ -67,13 +107,12 @@ def get_pos_items(
         )
         stock_map = {b.item_code: b.actual_qty for b in bin_entries}
 
+    # Build response with prices
     pos_items = []
     for item in items:
         qty = stock_map.get(item.name, 0)
 
-        # Safe Price Calculation
         try:
-            # We call your existing get_item_price function
             price_data = get_item_price(item.name)
             final_price = price_data.get("final_price", 0.0)
         except Exception:
@@ -96,25 +135,35 @@ def get_pos_items(
     return pos_items
 
 
+# =============================================================================
+# ITEM DETAILS & PRICING
+# =============================================================================
+
+
 @frappe.whitelist()
 def get_item_details(item_code):
+    """
+    Fetches detailed information for a specific item.
+
+    Args:
+        item_code: The unique identifier of the item
+
+    Returns:
+        Dictionary with complete item details including gemstones and pricing
+    """
     item = frappe.get_doc("Item", item_code)
     price_data = get_item_price(item_code)
 
     gemstones_list = []
 
-    # 🔍 TRICK: Look for the field name found in your screenshot
+    # Check for gemstone table (custom or standard)
     table_field = None
 
-    # Check 1: The most likely name (from your screenshot)
     if hasattr(item, "custom_gemstones") and item.custom_gemstones:
         table_field = item.custom_gemstones
-
-    # Check 2: The standard name (fallback)
     elif hasattr(item, "gemstones") and item.gemstones:
         table_field = item.gemstones
 
-    # Process the table if found
     if table_field:
         for gem in table_field:
             gemstones_list.append(
@@ -150,17 +199,22 @@ def get_item_details(item_code):
 @frappe.whitelist(allow_guest=True)
 def get_item_price(item_code):
     """
-    Calculates live price AND returns item details + gemstone breakdown.
+    Calculates live price for an item including gold value, gemstones, and making charges.
+
+    Args:
+        item_code: The unique identifier of the item
+
+    Returns:
+        Dictionary with complete price breakdown and item details
     """
-    # 1. Fetch Item Details
     item = frappe.get_doc("Item", item_code)
     if not item:
         return {}
 
-    # --- A. METAL VALUE ---
+    # Metal Value Calculation
     pricing_metal = item.custom_metal_type
     if pricing_metal in ["Rose Gold", "White Gold"]:
-        pricing_metal = "Yellow Gold"  # Use Yellow Gold rate for variants
+        pricing_metal = "Yellow Gold"
 
     rate_entry = frappe.db.get_value(
         "Gold Rate Log",
@@ -173,11 +227,10 @@ def get_item_price(item_code):
     net_weight = item.custom_net_weight_g or 0.0
     gold_value = net_weight * current_gold_rate
 
-    # --- B. GEMSTONE VALUE & DETAILS ---
+    # Gemstone Value & Details
     stone_value = 0.0
     gemstones_list = []
 
-    # Identify the correct child table (custom vs standard)
     table_field = None
     if hasattr(item, "custom_gemstones") and item.custom_gemstones:
         table_field = item.custom_gemstones
@@ -186,10 +239,8 @@ def get_item_price(item_code):
 
     if table_field:
         for gem in table_field:
-            # 1. Sum up value for price
             stone_value += gem.amount or 0.0
 
-            # 2. Build list for UI Table
             gemstones_list.append(
                 {
                     "gem_type": gem.gem_type,
@@ -202,7 +253,7 @@ def get_item_price(item_code):
                 }
             )
 
-    # --- C. MAKING CHARGES ---
+    # Making Charges Calculation
     mc_value = item.custom_making_charge_value or 0.0
     making_charges = 0.0
 
@@ -211,184 +262,60 @@ def get_item_price(item_code):
     elif item.custom_making_charge_type == "Percentage":
         making_charges = gold_value * (mc_value / 100)
 
-    # --- D. TOTAL ---
+    # Total Price
     final_price = gold_value + making_charges + stone_value
 
     return {
-        # Basic Info
         "item_code": item.name,
-        "item_name": item.item_name,  # Ensure title is returned
+        "item_name": item.item_name,
         "image": item.image,
         "metal": item.custom_metal_type,
         "purity": item.custom_purity,
-        # Weights
         "gross_weight": item.custom_gross_weight_g,
         "net_weight": item.custom_net_weight_g,
         "stone_weight": item.custom_stone_weight_g,
-        # Pricing Breakdown
         "gold_rate": current_gold_rate,
         "gold_value": round(gold_value, 2),
         "making_charges": round(making_charges, 2),
         "gemstone_value": round(stone_value, 2),
         "final_price": round(final_price, 2),
-        # FIX: Return the list so the Modal Table works
         "gemstones": gemstones_list,
     }
 
 
-import json
-
-import frappe
-
-
-@frappe.whitelist()
-def get_pos_items(
-    start=0, page_length=20, warehouse=None, search_term=None, filters=None
-):
-    # 1. Base Filters
-    query_filters = [["disabled", "=", 0], ["has_variants", "=", 0]]
-
-    # 2. Search Term
-    if search_term:
-        query_filters.append(["item_name", "like", f"%{search_term}%"])
-
-    # 3. Dynamic Filters (With Gemstone Logic)
-    if filters:
-        filters_dict = frappe.parse_json(filters)
-        if isinstance(filters_dict, dict):
-
-            # --- GEMSTONE LOGIC START ---
-            # We pop 'custom_gemstone' so it doesn't get added to the generic loop below
-            gem_filter = filters_dict.pop("custom_gemstone", None)
-
-            if gem_filter:
-                if gem_filter == "No Stone":
-                    # Find items that appear in the gemstone table
-                    items_with_stones = frappe.get_all(
-                        "Zevar Gemstone Detail", pluck="parent"
-                    )
-                    if items_with_stones:
-                        query_filters.append(["name", "not in", items_with_stones])
-                else:
-                    # Find items that have this specific stone
-                    # We query the Child Table "Zevar Gemstone Detail"
-                    matching_items = frappe.get_all(
-                        "Zevar Gemstone Detail",
-                        filters={"gem_type": gem_filter},
-                        pluck="parent",
-                    )
-
-                    if not matching_items:
-                        # If no items match, force an empty result safely
-                        return []
-
-                    query_filters.append(["name", "in", matching_items])
-            # --- GEMSTONE LOGIC END ---
-
-            # Apply remaining filters (Metal, Purity, etc.)
-            for key, value in filters_dict.items():
-                if value:
-                    query_filters.append([key, "=", value])
-
-    # 4. Fetch Items
-    items = frappe.get_list(
-        "Item",
-        filters=query_filters,
-        fields=[
-            "name",
-            "item_name",
-            "item_group",
-            "image",
-            "custom_metal_type",
-            "custom_purity",
-            "custom_gross_weight_g",
-            "custom_net_weight_g",
-            "custom_making_charge_type",
-            "custom_making_charge_value",
-        ],
-        order_by="item_group asc, custom_net_weight_g desc",
-        start=start,
-        page_length=page_length,
-    )
-
-    if not items:
-        return []
-
-    # 5. Fetch Stock & Calculate Price
-    item_codes = [item.name for item in items]
-
-    # ... (Rest of your existing stock/price logic remains exactly the same) ...
-
-    stock_map = {}
-    if warehouse:
-        bin_entries = frappe.db.get_all(
-            "Bin",
-            filters={"item_code": ["in", item_codes], "warehouse": warehouse},
-            fields=["item_code", "actual_qty"],
-        )
-        stock_map = {b.item_code: b.actual_qty for b in bin_entries}
-
-    pos_items = []
-    for item in items:
-        qty = stock_map.get(item.name, 0)
-
-        # Get Price
-        try:
-            price_data = get_item_price(item.name)
-            final_price = price_data.get("final_price", 0.0)
-        except Exception:
-            final_price = 0.0
-
-        pos_items.append(
-            {
-                "item_code": item.name,
-                "item_name": item.item_name,
-                "item_group": item.item_group,
-                "image": item.image,
-                "stock_qty": qty,
-                "price": final_price,
-                "metal": item.custom_metal_type,
-                "purity": item.custom_purity,
-                "gross_weight": item.custom_gross_weight_g,
-            }
-        )
-
-    return pos_items
-
-
-# ... (Keep get_item_details, get_item_price, etc. exactly as they were) ...
+# =============================================================================
+# POS INVOICE & SETTINGS
+# =============================================================================
 
 
 @frappe.whitelist()
 def create_pos_invoice(items, payments, customer=None, discount_amount=0):
     """
     Creates a POS Invoice in ERPNext.
-    payload example:
-    items = [{"item_code": "Y-24K-123", "qty": 1, "rate": 5000}]
-    payments = [{"mode": "Cash", "amount": 5000}]
-    """
-    import json
 
-    # 1. Parse JSON if it comes as a string (common in Frappe API calls)
+    Args:
+        items: List of items [{item_code, qty, rate}]
+        payments: List of payments [{mode, amount}]
+        customer: Customer name (defaults to Walk-In Customer)
+        discount_amount: Optional discount amount
+
+    Returns:
+        Dictionary with status and order details
+    """
     if isinstance(items, str):
         items = json.loads(items)
     if isinstance(payments, str):
         payments = json.loads(payments)
 
-    # 2. Basic Validation
     if not items:
         frappe.throw("Cart is empty! Cannot process order.")
 
     if not payments:
         frappe.throw("No payment received.")
 
-    # 3. Defaults
     if not customer:
-        # Fetch the default 'Walk-In' customer from POS Profile (or hardcode for MVP)
         customer = "Walk-In Customer"
 
-    # 4. (For Today) Return a success echo so we know the frontend connected.
-    # Next week, we will replace this return with the actual Invoice Creation code.
     return {
         "status": "success",
         "message": "Payload Received",
@@ -399,28 +326,31 @@ def create_pos_invoice(items, payments, customer=None, discount_amount=0):
         },
     }
 
+
 @frappe.whitelist()
 def get_pos_settings(warehouse=None):
     """
     Fetches POS settings like Tax Rate and Currency.
-    Called by cart.js on initialization.
+
+    Args:
+        warehouse: Optional warehouse to determine tax rate by location
+
+    Returns:
+        Dictionary with tax_rate, currency, allow_discount, and company
     """
-    # 1. Default Values
     tax_rate = 0.0
     currency = "USD"
-    
-    # 2. Logic: You can make this dynamic later based on the Warehouse/State.
-    # For now, we return a standard rate so the calculations work.
+
     if warehouse and "Miami" in warehouse:
         tax_rate = 7.00
     elif warehouse and "Los Angeles" in warehouse:
         tax_rate = 9.50
     else:
-        tax_rate = 8.875 # Default (e.g. New York)
+        tax_rate = 8.875
 
     return {
         "tax_rate": tax_rate,
         "currency": currency,
         "allow_discount": 1,
-        "company": frappe.defaults.get_user_default("Company") or "Zevar Jewelers"
+        "company": frappe.defaults.get_user_default("Company") or "Zevar Jewelers",
     }

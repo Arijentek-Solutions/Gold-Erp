@@ -1,14 +1,27 @@
+/**
+ * Gold Store
+ *
+ * Manages live gold rate polling and caching for different metal/purity combinations.
+ */
+
 import { defineStore } from 'pinia'
 import { createResource } from 'frappe-ui'
 import { ref } from 'vue'
 
 export const useGoldStore = defineStore('gold', () => {
-  
-  // State: Holds rates like { "Gold-22K": 75.00, "Silver-925": 1.20 }
+
+  // ==========================================================================
+  // STATE
+  // ==========================================================================
+
+  // Holds rates like { "Gold-22K": 75.00, "Silver-925": 1.20 }
   const rates = ref({})
   const lastUpdated = ref(null)
 
-  // Fetcher: Get the latest rate for EVERY metal type
+  // ==========================================================================
+  // RESOURCES
+  // ==========================================================================
+
   const fetchRates = createResource({
     url: 'frappe.client.get_list',
     makeParams() {
@@ -16,12 +29,11 @@ export const useGoldStore = defineStore('gold', () => {
         doctype: 'Gold Rate Log',
         fields: ['metal', 'purity', 'rate_per_gram'],
         order_by: 'timestamp desc',
-        limit_page_length: 20 // Get recent logs
+        limit_page_length: 20
       }
     },
     onSuccess(data) {
       // Convert list to a clean map: "Metal-Purity" -> Rate
-      // Example: rates.value["Gold-22K"] = 75.00
       const newRates = {}
       data.forEach(log => {
         const key = `${log.metal}-${log.purity}`
@@ -35,12 +47,15 @@ export const useGoldStore = defineStore('gold', () => {
     }
   })
 
-  // Action: Start the "Heartbeat" (Poll every 60 seconds)
+  // ==========================================================================
+  // ACTIONS
+  // ==========================================================================
+
   function startPolling() {
-    fetchRates.fetch() // Fetch immediately
+    fetchRates.fetch()
     setInterval(() => {
       fetchRates.fetch()
-    }, 60000) // 60,000ms = 1 minute
+    }, 60000)
   }
 
   return {

@@ -1,44 +1,3 @@
-<script setup>
-import { useSessionStore } from '@/stores/session'
-import { useGoldStore } from '@/stores/gold.js'
-import { useCartStore } from '@/stores/cart.js'
-import { useUIStore } from '@/stores/ui'
-import { createResource } from 'frappe-ui'
-import { onMounted, ref, computed } from 'vue'
-import CartSidebar from '@/components/CartSidebar.vue'
-import FilterSidebar from '@/components/FilterSidebar.vue'
-
-const session = useSessionStore()
-const goldStore = useGoldStore()
-const cartStore = useCartStore()
-const ui = useUIStore()
-
-const isCartOpen = ref(false)
-
-// Sorted Rates Logic (Unchanged)
-const sortedRates = computed(() => {
-  if (!goldStore.rates) return []
-  const priority = ['Yellow Gold-22K', 'Yellow Gold-24K', 'Yellow Gold-18K', 'Rose Gold-18K', 'White Gold-18K', 'Platinum-950', 'Silver-925 Sterling']
-  return Object.entries(goldStore.rates).sort((a, b) => {
-    const indexA = priority.indexOf(a[0]); const indexB = priority.indexOf(b[0])
-    if (indexA !== -1 && indexB !== -1) return indexA - indexB
-    if (indexA !== -1) return -1
-    if (indexB !== -1) return 1
-    return a[0].localeCompare(b[0])
-  })
-})
-
-const warehouses = createResource({
-  url: 'frappe.client.get_list',
-  params: { doctype: 'Warehouse', filters: { is_group: 0, parent_warehouse: ['like', '%Zevar US Stores%'] }, fields: ['name'] },
-  auto: true,
-})
-
-onMounted(() => {
-  goldStore.startPolling()
-})
-</script>
-
 <template>
   <div class="flex h-screen w-screen bg-[#F8F9FA] dark:bg-[#050505] font-sans overflow-hidden transition-colors duration-300">
     
@@ -171,16 +130,60 @@ onMounted(() => {
   </div>
 </template>
 
+<script setup>
+/**
+ * AppLayout Component
+ *
+ * Main application layout with sidebar navigation, header, and cart drawer.
+ */
+
+import { useSessionStore } from '@/stores/session'
+import { useGoldStore } from '@/stores/gold.js'
+import { useCartStore } from '@/stores/cart.js'
+import { useUIStore } from '@/stores/ui'
+import { createResource } from 'frappe-ui'
+import { onMounted, ref, computed } from 'vue'
+import CartSidebar from '@/components/CartSidebar.vue'
+import FilterSidebar from '@/components/FilterSidebar.vue'
+
+const session = useSessionStore()
+const goldStore = useGoldStore()
+const cartStore = useCartStore()
+const ui = useUIStore()
+
+const isCartOpen = ref(false)
+
+const sortedRates = computed(() => {
+  if (!goldStore.rates) return []
+  const priority = ['Yellow Gold-22K', 'Yellow Gold-24K', 'Yellow Gold-18K', 'Rose Gold-18K', 'White Gold-18K', 'Platinum-950', 'Silver-925 Sterling']
+  return Object.entries(goldStore.rates).sort((a, b) => {
+    const indexA = priority.indexOf(a[0]); const indexB = priority.indexOf(b[0])
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB
+    if (indexA !== -1) return -1
+    if (indexB !== -1) return 1
+    return a[0].localeCompare(b[0])
+  })
+})
+
+const warehouses = createResource({
+  url: 'frappe.client.get_list',
+  params: { doctype: 'Warehouse', filters: { is_group: 0, parent_warehouse: ['like', '%Zevar US Stores%'] }, fields: ['name'] },
+  auto: true,
+})
+
+onMounted(() => {
+  goldStore.startPolling()
+})
+</script>
+
 <style scoped>
-/* Scrollbar Logic */
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
 .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 10px; }
 
-/* Horizontal Scrollbar Logic */
 .custom-scrollbar-horizontal::-webkit-scrollbar { height: 4px; }
 .custom-scrollbar-horizontal::-webkit-scrollbar-track { background: transparent; margin: 0 10px; }
-.custom-scrollbar-horizontal::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; } /* Light gray thumb default */
-.dark .custom-scrollbar-horizontal::-webkit-scrollbar-thumb { background: #333; } /* Dark thumb in dark mode */
+.custom-scrollbar-horizontal::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+.dark .custom-scrollbar-horizontal::-webkit-scrollbar-thumb { background: #333; }
 .custom-scrollbar-horizontal::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
 </style>
