@@ -250,3 +250,12 @@ app_license = "mit"
 fixtures = ["Item Attribute", "Custom Field", "Property Setter"]
 
 doc_events = {"Item": {"validate": "zevar_core.item_events.calculate_net_weight_g"}}
+
+# Scheduler events
+scheduler_events = {
+    "cron": {
+        "*/15 * * * *": [
+            "zevar_core.tasks.fetch_live_gold_rate"
+        ]
+    }
+}
