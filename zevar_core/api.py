@@ -354,3 +354,99 @@ def get_pos_settings(warehouse=None):
         "allow_discount": 1,
         "company": frappe.defaults.get_user_default("Company") or "Zevar Jewelers",
     }
+
+
+# =============================================================================
+# LIVE GOLD RATE
+# =============================================================================
+
+
+@frappe.whitelist()
+def refresh_gold_rates():
+    """
+    Manually triggers gold rate refresh.
+    Returns the latest rates after update.
+    """
+    from zevar_core.tasks import fetch_live_gold_rate
+    
+    fetch_live_gold_rate()
+    
+    # Return latest rates
+    rates = frappe.get_all(
+        "Gold Rate Log",
+        filters={"metal": "Yellow Gold"},
+        fields=["purity", "rate_per_gram", "creation"],
+        order_by="creation desc",
+        limit=5
+    )
+    
+    return {
+        "status": "success",
+        "rates": rates
+    }
+
+
+# =============================================================================
+# CUSTOMER LOOKUP
+# =============================================================================
+
+
+@frappe.whitelist()
+def search_customers(query):
+    """
+    Searches customers by name, phone, or email.
+    Returns top 10 matching customers.
+    """
+    if not query or len(query) < 2:
+        return []
+    
+    search_pattern = f"%{query}%"
+    
+    customers = frappe.get_all(
+        "Customer",
+        filters=[
+            ["Customer", "disabled", "=", 0],
+            [
+                ["Customer", "customer_name", "like", search_pattern],
+                ["Customer", "mobile_no", "like", search_pattern],
+                ["Customer", "email_id", "like", search_pattern],
+            ]
+        ],
+        or_filters=[
+            ["customer_name", "like", search_pattern],
+            ["mobile_no", "like", search_pattern],
+            ["email_id", "like", search_pattern],
+        ],
+        fields=["name", "customer_name", "mobile_no", "email_id", "customer_group"],
+        limit=10,
+        order_by="customer_name asc"
+    )
+    
+    return customers
+
+
+@frappe.whitelist()
+def get_customer_details(customer_name):
+    """
+    Fetches detailed customer info including purchase history summary.
+    """
+    if not customer_name:
+        return None
+    
+    customer = frappe.get_doc("Customer", customer_name)
+    
+    # Get purchase summary
+    total_spent = frappe.db.sql("""
+        SELECT COALESCE(SUM(grand_total), 0) as total
+        FROM `tabSales Invoice`
+        WHERE customer = %s AND docstatus = 1
+    """, customer_name, as_dict=True)[0].total
+    
+    return {
+        "name": customer.name,
+        "customer_name": customer.customer_name,
+        "mobile_no": customer.mobile_no,
+        "email_id": customer.email_id,
+        "customer_group": customer.customer_group,
+        "total_spent": total_spent
+    }

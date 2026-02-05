@@ -1,7 +1,7 @@
 <template>
   <div class="flex h-screen w-screen bg-[#F8F9FA] dark:bg-[#050505] font-sans overflow-hidden transition-colors duration-300">
     
-    <aside class="w-20 lg:w-72 bg-[#1a1c23] dark:bg-black border-r border-white/5 flex flex-col shadow-2xl z-30 relative transition-all duration-300">
+    <aside class="w-16 sm:w-20 lg:w-72 bg-[#1a1c23] dark:bg-black border-r border-white/5 flex flex-col shadow-2xl z-30 relative transition-all duration-300">
        
        <div class="h-24 flex items-center justify-center lg:justify-start lg:px-8 border-b border-white/5">
         <div class="flex items-center gap-4 group cursor-default">
@@ -71,7 +71,7 @@
 
     <div class="flex-1 flex flex-col relative min-w-0">
       
-      <header class="h-20 bg-white dark:bg-[#0F1115] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-6 z-20 sticky top-0 shadow-sm transition-colors duration-300">
+      <header class="h-16 sm:h-20 bg-white dark:bg-[#0F1115] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-3 sm:px-6 z-20 sticky top-0 shadow-sm transition-colors duration-300">
         
         <div class="flex items-center gap-4 flex-1 max-w-3xl">
             
@@ -95,7 +95,7 @@
         </div>
 
         <div class="flex items-center gap-6">
-            <div class="hidden md:flex items-center gap-0 bg-gray-100 dark:bg-black text-gray-900 dark:text-white pl-4 pr-2 py-2 rounded-xl border border-gray-200 dark:border-gray-800 max-w-xl overflow-hidden transition-colors duration-300">
+            <div class="hidden lg:flex items-center gap-0 bg-gray-100 dark:bg-black text-gray-900 dark:text-white pl-4 pr-2 py-2 rounded-xl border border-gray-200 dark:border-gray-800 flex-1 max-w-2xl overflow-hidden transition-colors duration-300">
                  <div class="flex items-center gap-2 border-r border-gray-300 dark:border-gray-800 pr-3 mr-3 flex-shrink-0">
                     <span class="relative flex h-2 w-2">
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
@@ -105,9 +105,9 @@
                  </div>
                  
                  <div class="flex items-center gap-8 overflow-x-auto pr-2 custom-scrollbar-horizontal pb-2 pt-1">
-                     <div v-for="[key, rate] in sortedRates" :key="key" class="flex flex-col leading-tight flex-shrink-0">
-                         <span class="text-[10px] text-gray-500 dark:text-gray-400 uppercase font-bold whitespace-nowrap mb-0.5">{{ key.replace(/-/g, ' ') }}</span>
-                         <span class="text-base font-mono font-bold text-[#D4AF37] tracking-wide">${{ rate }}</span>
+                     <div v-for="[key, rate] in sortedRates" :key="key" class="flex flex-col leading-tight flex-shrink-0 px-3">
+                         <span class="text-[11px] text-gray-500 dark:text-gray-400 uppercase font-bold whitespace-nowrap mb-0.5">{{ key.replace(/-/g, ' ') }}</span>
+                         <span class="text-lg font-mono font-bold text-[#D4AF37] tracking-wide">${{ rate }}</span>
                      </div>
                  </div>
             </div>
@@ -121,7 +121,7 @@
         </div>
       </header>
 
-      <main class="flex-1 overflow-y-auto overflow-x-hidden p-6 bg-[#F8F9FA] dark:bg-[#050505] transition-colors duration-300">
+      <main class="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 lg:p-6 bg-[#F8F9FA] dark:bg-[#050505] transition-colors duration-300">
         <slot></slot>
       </main>
     </div>
@@ -155,8 +155,11 @@ const isCartOpen = ref(false)
 
 const sortedRates = computed(() => {
   if (!goldStore.rates) return []
-  const priority = ['Yellow Gold-22K', 'Yellow Gold-24K', 'Yellow Gold-18K', 'Rose Gold-18K', 'White Gold-18K', 'Platinum-950', 'Silver-925 Sterling']
-  return Object.entries(goldStore.rates).sort((a, b) => {
+  const priority = ['Yellow Gold-22K', 'Yellow Gold-24K', 'Yellow Gold-18K', 'Silver-925 Sterling']
+  // Filter out Platinum
+  return Object.entries(goldStore.rates)
+    .filter(([key]) => !key.includes('Platinum'))
+    .sort((a, b) => {
     const indexA = priority.indexOf(a[0]); const indexB = priority.indexOf(b[0])
     if (indexA !== -1 && indexB !== -1) return indexA - indexB
     if (indexA !== -1) return -1

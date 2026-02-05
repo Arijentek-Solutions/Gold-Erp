@@ -23,6 +23,8 @@ export const useCartStore = defineStore('cart', () => {
     storedItems = []
   }
 
+  // Customer linked to this sale
+  const customer = ref(null)
   const items = ref(storedItems)
   const taxRate = ref(0)
   const currency = ref('USD')
@@ -30,6 +32,7 @@ export const useCartStore = defineStore('cart', () => {
   // ==========================================================================
   // GETTERS
   // ==========================================================================
+
 
   const totalItems = computed(() => {
     return items.value.reduce((total, item) => total + (item.qty || 1), 0)
@@ -80,8 +83,17 @@ export const useCartStore = defineStore('cart', () => {
     saveToStorage()
   }
 
+  function setCustomer(customerData) {
+    customer.value = customerData
+  }
+
+  function clearCustomer() {
+    customer.value = null
+  }
+
   function clearCart() {
     items.value = []
+    customer.value = null
     saveToStorage()
   }
 
@@ -145,6 +157,9 @@ export const useCartStore = defineStore('cart', () => {
     addItem,
     removeItem,
     clearCart,
-    submitOrder
+    submitOrder,
+    customer,
+    setCustomer,
+    clearCustomer,
   }
 })

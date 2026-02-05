@@ -11,12 +11,6 @@ const routes = [
     name: 'POS',
     component: () => import('./pages/POS.vue'),
   },
-  {
-    path: '/transactions',
-    name: 'Transactions',
-    // We will build this page later, point to POS for now to prevent errors
-    component: () => import('./pages/POS.vue'), 
-  },
 ]
 
 const router = createRouter({
