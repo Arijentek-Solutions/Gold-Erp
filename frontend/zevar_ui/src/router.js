@@ -11,6 +11,11 @@ const routes = [
     name: 'POS',
     component: () => import('./pages/POS.vue'),
   },
+  {
+    path: '/catalogues',
+    name: 'Catalogues',
+    component: () => import('./pages/CatalogueDashboard.vue'),
+  },
 ]
 
 const router = createRouter({

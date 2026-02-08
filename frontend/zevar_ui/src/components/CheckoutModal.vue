@@ -5,7 +5,7 @@
       <div @click="close" class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
 
       <div class="relative bg-white dark:bg-[#1a1c23] rounded-2xl shadow-2xl w-full overflow-hidden flex flex-col md:flex-row transition-all duration-500 ease-in-out border border-transparent dark:border-white/10"
-           :class="step === 'success' ? 'max-w-md' : 'max-w-3xl h-[600px]'">
+           :class="step === 'success' ? 'max-w-md' : 'max-w-4xl h-[650px]'">
         
         <template v-if="step === 'review'">
             <div class="w-full md:w-1/2 bg-gray-50 dark:bg-[#15171e] p-6 border-r border-gray-100 dark:border-white/5 flex flex-col">
@@ -29,82 +29,112 @@
                     </div>
                 </div>
 
+                <!-- Tax Exempt Toggle -->
+                <div class="mt-4 pt-4 border-t border-gray-200 dark:border-white/10">
+                    <label class="flex items-center justify-between cursor-pointer group">
+                        <div>
+                            <span class="font-medium text-gray-700 dark:text-gray-300">Tax Exempt</span>
+                            <span class="text-xs text-gray-400 block">For resellers or tax-free sales</span>
+                        </div>
+                        <button 
+                            @click="taxExempt = !taxExempt"
+                            class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
+                            :class="taxExempt ? 'bg-green-500' : 'bg-gray-300 dark:bg-gray-600'"
+                        >
+                            <span 
+                                class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform"
+                                :class="taxExempt ? 'translate-x-6' : 'translate-x-1'"
+                            ></span>
+                        </button>
+                    </label>
+                </div>
+
                 <div class="mt-4 space-y-2 pt-4 border-t border-gray-200 dark:border-white/10">
                     <div class="flex justify-between text-sm text-gray-500 dark:text-gray-400">
                         <span>Subtotal</span>
                         <span>{{ formatCurrency(cart.subtotal) }}</span>
                     </div>
-                    <div class="flex justify-between text-sm text-gray-500 dark:text-gray-400">
-                        <span>Tax ({{ cart.taxRate }}%)</span>
-                        <span>{{ formatCurrency(cart.tax) }}</span>
+                    <div class="flex justify-between text-sm" :class="taxExempt ? 'text-green-500 line-through' : 'text-gray-500 dark:text-gray-400'">
+                        <span>Tax ({{ taxExempt ? '0' : cart.taxRate }}%)</span>
+                        <span>{{ formatCurrency(taxExempt ? 0 : cart.tax) }}</span>
                     </div>
                     <div class="flex justify-between text-2xl font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-white/10 mt-2">
                         <span>Total</span>
-                        <span>{{ formatCurrency(cart.grandTotal) }}</span>
+                        <span>{{ formatCurrency(grandTotalWithTaxExempt) }}</span>
                     </div>
                 </div>
             </div>
 
-            <div class="w-full md:w-1/2 p-8 flex flex-col bg-white dark:bg-[#1a1c23] relative">
+            <div class="w-full md:w-1/2 p-6 flex flex-col bg-white dark:bg-[#1a1c23] relative overflow-y-auto">
                 <button @click="close" class="absolute top-4 right-4 p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition">
                     <svg class="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
 
-                <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-1">Checkout</h2>
-                <p class="text-sm text-gray-500 dark:text-gray-400 mb-6">Select a payment method to complete the order.</p>
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white mb-1">Payment</h2>
+                <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Select payment method(s). Split payments allowed.</p>
 
-                <div class="space-y-3 flex-1">
+                <!-- Payment Methods -->
+                <div class="space-y-2 mb-4">
                     <button 
-                        @click="paymentMethod = 'Cash'"
-                        class="w-full flex items-center justify-between p-4 border rounded-xl transition-all group relative overflow-hidden"
-                        :class="paymentMethod === 'Cash' 
-                            ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900 dark:border-[#D4AF37] dark:bg-[#D4AF37]/10 dark:ring-[#D4AF37]' 
-                            : 'border-gray-200 hover:border-gray-900 dark:border-white/10 dark:hover:border-white/30'"
+                        v-for="mode in paymentModes" 
+                        :key="mode.mode"
+                        @click="togglePaymentMode(mode.mode)"
+                        class="w-full flex items-center justify-between p-3 border rounded-xl transition-all"
+                        :class="isPaymentSelected(mode.mode)
+                            ? 'border-[#D4AF37] bg-[#D4AF37]/10 ring-1 ring-[#D4AF37]' 
+                            : 'border-gray-200 hover:border-gray-400 dark:border-white/10 dark:hover:border-white/30'"
                     >
-                        <div class="flex items-center gap-4 z-10">
-                            <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full flex items-center justify-center"
+                                 :class="mode.type === 'Cash' ? 'bg-green-100 text-green-600' : 'bg-blue-100 text-blue-600'">
+                                <svg v-if="mode.type === 'Cash'" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                                <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
                             </div>
-                            <div class="text-left">
-                                <div class="font-bold text-gray-900 dark:text-white">Cash</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">Walk-in Customer</div>
-                            </div>
+                            <span class="font-medium text-gray-900 dark:text-white text-sm">{{ mode.mode }}</span>
                         </div>
-                        <div v-if="paymentMethod === 'Cash'" class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></div>
-                    </button>
-
-                    <button 
-                        @click="paymentMethod = 'Card Terminal'"
-                        class="w-full flex items-center justify-between p-4 border rounded-xl transition-all group relative overflow-hidden"
-                        :class="paymentMethod === 'Card Terminal' 
-                            ? 'border-gray-900 bg-gray-50 ring-1 ring-gray-900 dark:border-[#D4AF37] dark:bg-[#D4AF37]/10 dark:ring-[#D4AF37]' 
-                            : 'border-gray-200 hover:border-gray-900 dark:border-white/10 dark:hover:border-white/30'"
-                    >
-                         <div class="flex items-center gap-4 z-10">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                            </div>
-                            <div class="text-left">
-                                <div class="font-bold text-gray-900 dark:text-white">Card Terminal</div>
-                                <div class="text-xs text-gray-500 dark:text-gray-400">Square</div>
-                            </div>
-                        </div>
-                         <div v-if="paymentMethod === 'Card Terminal'" class="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]"></div>
+                        <div v-if="isPaymentSelected(mode.mode)" class="w-2 h-2 rounded-full bg-green-500"></div>
                     </button>
                 </div>
 
-                <button 
-                    @click="handlePayment"
-                    :disabled="!paymentMethod || processing"
-                    class="w-full mt-6 py-4 rounded-xl font-bold text-lg shadow-xl transition-all flex items-center justify-center gap-2 transform active:scale-95"
-                    :class="!paymentMethod || processing 
-                        ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-white/5 dark:text-gray-600' 
-                        : 'bg-gray-900 text-white hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f]'"
-                >
-                    <span v-if="processing" class="animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-white"></span>
-                    <span v-else-if="!paymentMethod">Select Payment Method</span>
-                    <span v-else>Confirm {{ formatCurrency(cart.grandTotal) }}</span>
-                </button>
+                <!-- Split Payment Amounts (if multiple selected) -->
+                <div v-if="selectedPayments.length > 1" class="bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 mb-4 border border-gray-100 dark:border-white/5">
+                    <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Split Amounts</h4>
+                    <div v-for="payment in selectedPayments" :key="payment.mode" class="flex items-center justify-between mb-2">
+                        <span class="text-sm text-gray-600 dark:text-gray-300">{{ payment.mode }}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-gray-400">$</span>
+                            <input 
+                                type="number" 
+                                v-model.number="payment.amount" 
+                                @input="recalculateSplit(payment.mode)"
+                                class="w-24 px-2 py-1 bg-white dark:bg-[#0F1115] border border-gray-200 dark:border-white/10 rounded text-right font-mono text-sm"
+                                min="0"
+                                :max="grandTotalWithTaxExempt"
+                            />
+                        </div>
+                    </div>
+                    <div class="flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-white/10 mt-2">
+                        <span class="text-gray-500">Remaining</span>
+                        <span :class="remainingAmount === 0 ? 'text-green-500 font-bold' : 'text-red-500 font-bold'">
+                            {{ formatCurrency(remainingAmount) }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mt-auto">
+                    <button 
+                        @click="handlePayment"
+                        :disabled="!canSubmit || processing"
+                        class="w-full py-4 rounded-xl font-bold text-lg shadow-xl transition-all flex items-center justify-center gap-2 transform active:scale-95"
+                        :class="!canSubmit || processing 
+                            ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-white/5 dark:text-gray-600' 
+                            : 'bg-gray-900 text-white hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f]'"
+                    >
+                        <span v-if="processing" class="animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-white"></span>
+                        <span v-else-if="!canSubmit">{{ selectedPayments.length === 0 ? 'Select Payment' : 'Enter Amounts' }}</span>
+                        <span v-else>Confirm {{ formatCurrency(grandTotalWithTaxExempt) }}</span>
+                    </button>
+                </div>
             </div>
         </template>
 
@@ -123,7 +153,11 @@
                     </div>
                     <div class="flex justify-between text-sm">
                         <span class="text-gray-500 dark:text-gray-400">Amount Paid</span>
-                        <span class="font-mono font-bold text-green-600 dark:text-green-400">{{ formatCurrency(cart.grandTotal) }}</span>
+                        <span class="font-mono font-bold text-green-600 dark:text-green-400">{{ formatCurrency(grandTotalWithTaxExempt) }}</span>
+                    </div>
+                    <div v-if="taxExempt" class="flex justify-between text-sm mt-2 pt-2 border-t border-gray-200 dark:border-white/10">
+                        <span class="text-gray-500 dark:text-gray-400">Tax Status</span>
+                        <span class="text-green-500 font-medium">Exempt</span>
                     </div>
                 </div>
 
@@ -145,59 +179,117 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useCartStore } from '@/stores/cart.js'
 
 const props = defineProps(['show'])
 const emit = defineEmits(['close'])
 const cart = useCartStore()
 
-const paymentMethod = ref('') 
+// State
 const processing = ref(false)
 const step = ref('review') // 'review' | 'success'
 const lastOrderId = ref(null)
+const taxExempt = ref(false)
+const selectedPayments = ref([]) // [{mode: 'Cash', amount: 100}, ...]
+
+// Available payment modes
+const paymentModes = [
+    { mode: 'Cash', type: 'Cash' },
+    { mode: 'Credit Card', type: 'Bank' },
+    { mode: 'Debit Card', type: 'Bank' },
+    { mode: 'Check', type: 'Bank' },
+    { mode: 'Wire Transfer', type: 'Bank' },
+    { mode: 'Zelle', type: 'Bank' },
+]
+
+// Computed: Grand total with tax exemption
+const grandTotalWithTaxExempt = computed(() => {
+    if (taxExempt.value) {
+        return cart.subtotal
+    }
+    return cart.grandTotal
+})
+
+// Computed: Remaining amount for split payments
+const remainingAmount = computed(() => {
+    const totalPaid = selectedPayments.value.reduce((sum, p) => sum + (p.amount || 0), 0)
+    return grandTotalWithTaxExempt.value - totalPaid
+})
+
+// Computed: Can submit the payment
+const canSubmit = computed(() => {
+    if (selectedPayments.value.length === 0) return false
+    if (selectedPayments.value.length === 1) return true
+    // For split payments, remaining must be 0
+    return Math.abs(remainingAmount.value) < 0.01
+})
+
+// Check if a payment mode is selected
+function isPaymentSelected(mode) {
+    return selectedPayments.value.some(p => p.mode === mode)
+}
+
+// Toggle payment mode selection
+function togglePaymentMode(mode) {
+    const index = selectedPayments.value.findIndex(p => p.mode === mode)
+    if (index >= 0) {
+        selectedPayments.value.splice(index, 1)
+    } else {
+        // Add new payment mode
+        if (selectedPayments.value.length === 0) {
+            // First payment gets full amount
+            selectedPayments.value.push({ mode, amount: grandTotalWithTaxExempt.value })
+        } else {
+            // Additional payments start at 0
+            selectedPayments.value.push({ mode, amount: 0 })
+        }
+    }
+}
+
+// Recalculate split when user edits an amount
+function recalculateSplit(changedMode) {
+    // No automatic recalculation - let user manually enter amounts
+}
 
 // Reset state when modal opens
 watch(() => props.show, (isOpen) => {
     if (isOpen) {
         step.value = 'review'
-        paymentMethod.value = ''
+        selectedPayments.value = []
         processing.value = false
+        taxExempt.value = false
     }
 })
 
 async function handlePayment() {
-  if (!paymentMethod.value) return 
-  
-  processing.value = true
-  try {
-    const result = await cart.submitOrder(paymentMethod.value)
-    // Extract Order ID from response if available
-    if(result && result.data && result.data.name) {
-        lastOrderId.value = result.data.name
+    if (!canSubmit.value) return 
+    
+    processing.value = true
+    try {
+        // Pass tax exempt status and payment details
+        const result = await cart.submitOrder(selectedPayments.value, taxExempt.value)
+        if(result && result.data && result.data.name) {
+            lastOrderId.value = result.data.name
+        }
+        step.value = 'success'
+    } catch (e) {
+        alert("Order failed: " + e.message)
+    } finally {
+        processing.value = false
     }
-    
-    // Switch to Success View
-    step.value = 'success'
-    
-  } catch (e) {
-    alert("Order failed: " + e.message)
-  } finally {
-    processing.value = false
-  }
 }
 
 function close() {
     emit('close')
-    // Reset cart if we finished a sale
     if (step.value === 'success') {
         cart.clearCart()
     }
 }
 
 function formatCurrency(val) {
-  if (!val) return '$0.00'
-  return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val)
+    if (!val) return '$0.00'
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val)
 }
 </script>
 
