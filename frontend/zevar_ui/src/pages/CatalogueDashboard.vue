@@ -1,283 +1,293 @@
 <template>
-  <div :key="themeKey" class="min-h-screen transition-colors duration-300" :style="{ backgroundColor: isDark ? '#08080a' : '#ffffff' }">
+  <div class="min-h-screen bg-white dark:bg-gray-900 transition-colors">
     
+    <!-- Header -->
     <Header 
       :isDark="isDark" 
       :activeCategory="activeCategory"
       @toggleTheme="toggleTheme"
       @search="performSearch"
       @selectCategory="handleCategorySelect"
-      @selectOccasion="handleOccasionSelect"
     />
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-      <div class="flex items-center gap-3">
-        <button 
-          @click="showPromoBanner = !showPromoBanner"
-          class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all"
-          :class="showPromoBanner 
-            ? 'bg-[#C9A962] text-black border-[#C9A962] hover:bg-[#b89d52]' 
-            : (isDark ? 'bg-transparent text-gray-400 border-white/10 hover:border-[#C9A962]/50' : 'bg-transparent text-gray-600 border-gray-200 hover:border-[#C9A962]')"
-        >
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-          </svg>
-          {{ showPromoBanner ? 'Hide Promo Banner' : 'Show Promo Banner' }}
-        </button>
-        
-        <button 
-          @click="showPartnerItems = !showPartnerItems"
-          class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all"
-          :class="showPartnerItems 
-            ? 'bg-purple-600 text-white border-purple-600 hover:bg-purple-700' 
-            : (isDark ? 'bg-transparent text-gray-400 border-white/10 hover:border-purple-500/50' : 'bg-transparent text-gray-600 border-gray-200 hover:border-purple-500')"
-        >
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-          </svg>
-          {{ showPartnerItems ? 'Hide Partner Catalog' : 'Show Partner Catalog' }}
-        </button>
-        <span class="text-xs" :class="isDark ? 'text-gray-600' : 'text-gray-400'">Demo toggles for clients</span>
+    <!-- Hero Banner -->
+    <section class="relative h-[500px] overflow-hidden">
+      <img 
+        src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1920&q=80" 
+        class="w-full h-full object-cover"
+        alt="Zevar Jewelry Collection"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-transparent">
+        <div class="max-w-7xl mx-auto px-6 h-full flex items-center">
+          <div class="max-w-xl">
+            <p class="text-[#C9A962] text-sm tracking-[0.3em] uppercase mb-4">New Collection</p>
+            <h1 class="text-5xl md:text-6xl font-serif font-bold text-white mb-6">
+              Celebrate Every <span class="text-[#C9A962]">Moment</span>
+            </h1>
+            <p class="text-gray-200 text-lg mb-8">
+              Discover our exquisite collection of handcrafted jewelry, designed to make every occasion special.
+            </p>
+            <button 
+              @click="scrollToSection('collections')" 
+              class="px-8 py-4 bg-[#C9A962] text-black font-bold rounded hover:bg-[#b89d52] transition-all shadow-lg"
+            >
+              Explore Now
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
 
-    <div v-if="showPromoBanner" class="max-w-7xl mx-auto px-4 sm:px-6 pb-6">
-      <PromoBanner :isDark="isDark" />
-    </div>
-
-    <main class="relative z-10">
-      <section class="relative overflow-hidden" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
-          <div class="grid md:grid-cols-2 gap-12 items-center">
-            <div class="text-left z-10">
-              <p class="text-xs font-medium tracking-[0.3em] uppercase mb-4 text-[#C9A962]">Timeless Elegance</p>
-              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-6 leading-tight text-white">
-                Discover Beauty <span class="block text-[#C9A962] mt-2">Crafted for You</span>
-              </h1>
-              <p class="text-lg text-gray-300 mb-8 max-w-md leading-relaxed">
-                Explore our curated collection of exquisite diamonds, gold jewelry, and timeless pieces.
-              </p>
-              <div class="flex flex-wrap gap-4">
-                <button @click="scrollToSection('trending')" class="px-8 py-4 bg-[#C9A962] text-black font-bold rounded-lg hover:bg-[#b89d52] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Shop Collection</button>
-                <button class="px-8 py-4 border-2 border-white/20 text-white font-bold rounded-lg hover:bg-white/10 transition-all">Book Appointment</button>
-              </div>
-            </div>
-            
-            <div class="relative">
-              <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80" alt="Jewelry Collection" class="rounded-2xl shadow-2xl w-full aspect-[4/5] object-cover" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent rounded-2xl"></div>
-            </div>
-          </div> </div> </section>
-
-      <section id="trending" class="py-16" :style="{ backgroundColor: isDark ? '#0a0a0c' : '#faf9f7' }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-          <div class="text-center mb-12">
-            <p class="text-xs tracking-[0.3em] uppercase mb-2" :class="isDark ? 'text-[#C9A962]' : 'text-[#8B7355]'">Trending Now</p>
-            <h2 class="text-3xl sm:text-4xl font-serif font-bold" :class="isDark ? 'text-white' : 'text-gray-900'">Jewelry Inspired by Your Style</h2>
-          </div>
-          <TrendingSection :category="activeCategory" :categoryLabel="activeCategoryLabel" @resetCategory="activeCategory = 'all'" @viewItem="openProduct" />
+    <!-- Category Grid -->
+    <section id="collections" class="py-16 bg-gray-50 dark:bg-gray-800">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-12">
+          <p class="text-[#C9A962] text-sm tracking-[0.3em] uppercase mb-2">Shop by Category</p>
+          <h2 class="text-4xl font-serif font-bold text-gray-900 dark:text-white">Explore Our Collections</h2>
         </div>
-      </section>
-
-      <section class="py-16" :style="{ backgroundColor: isDark ? '#08080a' : '#ffffff' }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-20">
-          
-          <div v-if="activeCategory === 'all' || activeCategory === 'rings'" class="space-y-8">
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl sm:text-3xl font-serif font-bold" :class="isDark ? 'text-white' : 'text-gray-900'">Rings</h3>
-              <button @click="handleCategorySelect('rings')" class="text-[#C9A962] hover:underline">View All</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div class="hidden lg:block relative rounded-2xl overflow-hidden aspect-[3/4]">
-                <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80" class="w-full h-full object-cover" />
-              </div>
-              <JewelryProductCard v-for="item in ringsItems.slice(0, 3)" :key="item.item_code" :product="item" :is-dark="isDark" @view="openProduct" />
-            </div>
-          </div>
-
-          <div v-if="activeCategory === 'all' || activeCategory === 'earrings'" class="space-y-8">
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl sm:text-3xl font-serif font-bold" :class="isDark ? 'text-white' : 'text-gray-900'">Earrings</h3>
-              <button @click="handleCategorySelect('earrings')" class="text-[#C9A962] hover:underline">View All</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <JewelryProductCard v-for="item in earringsItems.slice(0, 3)" :key="item.item_code" :product="item" :is-dark="isDark" @view="openProduct" />
-              <div class="hidden lg:block relative rounded-2xl overflow-hidden aspect-[3/4]">
-                <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&q=80" class="w-full h-full object-cover" />
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div 
+            v-for="cat in categories" 
+            :key="cat.id"
+            @click="handleCategorySelect(cat.id)"
+            class="group cursor-pointer"
+          >
+            <div class="relative overflow-hidden rounded-lg aspect-square">
+              <img 
+                :src="cat.image" 
+                :alt="cat.name"
+                class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                <h3 class="text-white font-bold text-lg">{{ cat.name }}</h3>
               </div>
             </div>
           </div>
-
-          <div v-if="activeCategory === 'all' || activeCategory === 'chains'" class="space-y-8">
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl sm:text-3xl font-serif font-bold" :class="isDark ? 'text-white' : 'text-gray-900'">Chains & Necklaces</h3>
-              <button @click="handleCategorySelect('chains')" class="text-[#C9A962] hover:underline">View All</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div class="hidden lg:block relative rounded-2xl overflow-hidden aspect-[3/4]">
-                <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80" class="w-full h-full object-cover" />
-              </div>
-              <JewelryProductCard v-for="item in chainsItems.slice(0, 3)" :key="item.item_code" :product="item" :is-dark="isDark" @view="openProduct" />
-            </div>
-          </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <section v-if="showPartnerItems" class="py-16 border-t" :class="isDark ? 'bg-[#0a0a0c] border-white/5' : 'bg-gray-50 border-gray-200'">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-          <div class="text-center mb-12">
-            <h2 class="text-3xl font-serif font-bold text-white">Explore Our Partners</h2>
+    <!-- Rings Collection -->
+    <section v-if="activeCategory === 'all' || activeCategory === 'rings'" class="py-16 bg-white dark:bg-gray-900">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-white">Rings</h2>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Symbols of love & commitment</p>
           </div>
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            <JewelryProductCard v-for="item in partnerItems.slice(0, 10)" :key="item.item_code" :product="item" :is-dark="isDark" :show-partner-badge="true" @view="openProduct" />
+          <button @click="handleCategorySelect('rings')" class="text-[#C9A962] font-medium hover:underline flex items-center gap-2">
+            View All
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <ProductCard 
+            v-for="item in displayItems.rings" 
+            :key="item.item_code" 
+            :product="item"
+            :isDark="isDark"
+            @click="openProduct(item)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Earrings Collection -->
+    <section v-if="activeCategory === 'all' || activeCategory === 'earrings'" class="py-16 bg-gray-50 dark:bg-gray-800">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-white">Earrings</h2>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Elegance that speaks volumes</p>
           </div>
+          <button @click="handleCategorySelect('earrings')" class="text-[#C9A962] font-medium hover:underline flex items-center gap-2">
+            View All
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
         </div>
-      </section>
-
-      <footer class="py-12 border-t" :class="isDark ? 'bg-[#0a0a0c] border-white/5' : 'bg-white border-gray-100'">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <p class="text-xs text-gray-500">© {{ new Date().getFullYear() }} ZEVAR Jewelers. All rights reserved.</p>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <ProductCard 
+            v-for="item in displayItems.earrings" 
+            :key="item.item_code" 
+            :product="item"
+            :isDark="isDark"
+            @click="openProduct(item)"
+          />
         </div>
-      </footer>
-    </main>
+      </div>
+    </section>
 
-    <ProductModal :show="showProductModal" :item-code="selectedItemCode" @close="showProductModal = false" />
+    <!-- Chains Collection -->
+    <section v-if="activeCategory === 'all' || activeCategory === 'chains'" class="py-16 bg-white dark:bg-gray-900">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-white">Chains & Necklaces</h2>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Classic pieces for every occasion</p>
+          </div>
+          <button @click="handleCategorySelect('chains')" class="text-[#C9A962] font-medium hover:underline flex items-center gap-2">
+            View All
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <ProductCard 
+            v-for="item in displayItems.chains" 
+            :key="item.item_code" 
+            :product="item"
+            :isDark="isDark"
+            @click="openProduct(item)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Bracelets Collection -->
+    <section v-if="activeCategory === 'all' || activeCategory === 'bracelets'" class="py-16 bg-gray-50 dark:bg-gray-800">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-white">Bracelets</h2>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Adorn your wrists with elegance</p>
+          </div>
+          <button @click="handleCategorySelect('bracelets')" class="text-[#C9A962] font-medium hover:underline flex items-center gap-2">
+            View All
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <ProductCard 
+            v-for="item in displayItems.bracelets" 
+            :key="item.item_code" 
+            :product="item"
+            :isDark="isDark"
+            @click="openProduct(item)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Pendants Collection -->
+    <section v-if="activeCategory === 'all' || activeCategory === 'pendants'" class="py-16 bg-white dark:bg-gray-900">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h2 class="text-3xl font-serif font-bold text-gray-900 dark:text-white">Pendants</h2>
+            <p class="text-gray-600 dark:text-gray-400 mt-1">Personal & meaningful</p>
+          </div>
+          <button @click="handleCategorySelect('pendants')" class="text-[#C9A962] font-medium hover:underline flex items-center gap-2">
+            View All
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <ProductCard 
+            v-for="item in displayItems.pendants" 
+            :key="item.item_code" 
+            :product="item"
+            :isDark="isDark"
+            @click="openProduct(item)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Modal -->
+    <ProductModal 
+      :show="showProductModal" 
+      :item-code="selectedItemCode"
+      @close="showProductModal = false; selectedItemCode = null"
+    />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import Header from '@/components/Header.vue'
-import TrendingSection from '@/components/TrendingSection.vue'
-import PromoBanner from '@/components/PromoBanner.vue'
-import JewelryProductCard from '@/components/JewelryProductCard.vue'
+import ProductCard from '@/components/JewelryProductCard.vue'
 import ProductModal from '@/components/ProductModal.vue'
 import { createResource } from 'frappe-ui'
 
 // Theme
-const isDark = ref(true)
-const themeKey = ref(0)
-const showPromoBanner = ref(false)
-const showPartnerItems = ref(true) // Default ON so client can evaluate
+const isDark = ref(false)
+const activeCategory = ref('all')
 const showProductModal = ref(false)
 const selectedItemCode = ref(null)
 
-// Catalog Data
-const allItems = ref([])
-const loading = ref(false)
+// Placeholder data with Unsplash images
+const categories = [
+  { id: 'rings', name: 'Rings', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=80' },
+  { id: 'earrings', name: 'Earrings', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80' },
+  { id: 'chains', name: 'Chains', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&q=80' },
+  { id: 'bracelets', name: 'Bracelets', image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&q=80' },
+  { id: 'pendants', name: 'Pendants', image: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=400&q=80' }
+]
 
-// Filters
-const activeCategory = ref('all')
-const activeCategoryLabel = computed(() => {
-  const catMap = {
-    'all': 'All Jewelry',
-    'rings': 'Rings',
-    'chains': 'Chains',
-    'earrings': 'Earrings',
-    'bracelets': 'Bracelets',
-    'pendants': 'Pendants',
-    'watches': 'Watches'
-  }
-  return catMap[activeCategory.value] || 'All Jewelry'
-})
-const lastSearchQuery = ref('')
-
-// Category-wise items (computed from allItems) - IN-STORE PRIORITY
-const ringsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Rings' || i.item_group === 'Rings') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
-const earringsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Earrings' || i.item_group === 'Earrings') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
-const chainsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Chains' || i.jewelry_type === 'Necklaces' || i.item_group === 'Chains') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
-const braceletsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Bracelets' || i.item_group === 'Bracelets') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
-const pendantsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Pendants' || i.item_group === 'Pendants') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
-
-// Partner items (custom_source from external partners, not in stock)
-const partnerItems = computed(() => 
-  allItems.value.filter(i => 
-    i.custom_source && ['QGold', 'Stuller', 'Demo'].includes(i.custom_source) && i.stock_qty === 0
-  )
-)
-
-onMounted(() => {
-  const stored = localStorage.getItem('zevar-theme')
-  if (stored) {
-    isDark.value = stored === 'dark'
-  } else {
-    isDark.value = true
-    localStorage.setItem('zevar-theme', 'dark')
-  }
-  updateDocumentClass()
-  fetchAllItems()
+// Sample product data with images
+const createDemoItem = (id, name, category, price, image) => ({
+  item_code: `DEMO-${id}`,
+  item_name: name,
+  jewelry_type: category,
+  price: price,
+  image: image,
+  metal: '14K Gold',
+  purity: '14K',
+  stock_qty: 5,
+  is_featured: Math.random() > 0.7
 })
 
-// Fetch all items at once (better for category showcase)
-const itemsFetcher = createResource({
-  url: 'zevar_core.api.get_pos_items',
-  makeParams() {
-    const filters = {}
-    
-    if (lastSearchQuery.value) {
-      // Apply search filter
-    }
-
-    return {
-      start: 0,
-      page_length: 100, // Fetch more for showcase
-      search_term: lastSearchQuery.value,
-      filters: JSON.stringify(filters),
-      in_stock_only: false, // Show all items including partner catalog
-      source_filter: null // No source restriction for main view
-    }
-  },
-  onSuccess(data) {
-    allItems.value = data || []
-    loading.value = false
-  }
-})
-
-// Separate fetcher for in-stock only items (for "Available Now" section)
-const inStockFetcher = createResource({
-  url: 'zevar_core.api.get_pos_items',
-  makeParams() {
-    return {
-      start: 0,
-      page_length: 50,
-      in_stock_only: true, // Only in-stock items
-      source_filter: null
-    }
-  },
-  onSuccess(data) {
-    // Update allItems with proper in-stock flag
-    if (data) {
-      data.forEach(item => {
-        item.in_store = true
-      })
-      allItems.value = [...data, ...allItems.value.filter(i => !data.find(d => d.item_code === i.item_code))]
-    }
-  }
-})
-
-function fetchAllItems() {
-  loading.value = true
-  itemsFetcher.fetch()
-}
+const displayItems = computed(() => ({
+  rings: [
+    createDemoItem(1, 'Diamond Solitaire Ring', 'Rings', 2499, 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80'),
+    createDemoItem(2, 'Gold Engagement Ring', 'Rings', 1899, 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80'),
+    createDemoItem(3, 'Rose Gold Band', 'Rings', 1299, 'https://images.unsplash.com/photo-1603561596112-0a132b757442?w=600&q=80'),
+    createDemoItem(4, 'Eternity Diamond Ring', 'Rings', 3299, 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80')
+  ],
+  earrings: [
+    createDemoItem(5, 'Diamond Stud Earrings', 'Earrings', 1799, 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&q=80'),
+    createDemoItem(6, 'Gold Hoop Earrings', 'Earrings', 899, 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600&q=80'),
+    createDemoItem(7, 'Pearl Drop Earrings', 'Earrings', 1299, 'https://images.unsplash.com/photo-1630019329417-60d5e968e02b?w=600&q=80'),
+    createDemoItem(8, 'Chandelier Earrings', 'Earrings', 2199, 'https://images.unsplash.com/photo-1596944924591-4e2f08656a2e?w=600&q=80')
+  ],
+  chains: [
+    createDemoItem(9, 'Gold Chain Necklace', 'Chains', 1599, 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80'),
+    createDemoItem(10, 'Diamond Pendant Chain', 'Necklaces', 2899, 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=600&q=80'),
+    createDemoItem(11, 'Layered Gold Necklace', 'Necklaces', 1799, 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80'),
+    createDemoItem(12, 'Statement Necklace', 'Necklaces', 3499, 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80')
+  ],
+  bracelets: [
+    createDemoItem(13, 'Tennis Bracelet', 'Bracelets', 2799, 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80'),
+    createDemoItem(14, 'Gold Bangle', 'Bracelets', 1499, 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=600&q=80'),
+    createDemoItem(15, 'Charm Bracelet', 'Bracelets', 1899, 'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?w=600&q=80'),
+    createDemoItem(16, 'Diamond Link Bracelet', 'Bracelets', 3299, 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80')
+  ],
+  pendants: [
+    createDemoItem(17, 'Heart Pendant', 'Pendants', 1299, 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=600&q=80'),
+    createDemoItem(18, 'Diamond Cross Pendant', 'Pendants', 1999, 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80'),
+    createDemoItem(19, 'Initial Pendant', 'Pendants', 899, 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80'),
+    createDemoItem(20, 'Gemstone Pendant', 'Pendants', 2299, 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80')
+  ]
+}))
 
 function handleCategorySelect(categoryId) {
   activeCategory.value = categoryId
-  scrollToSection('collection')
-}
-
-function performSearch(query) {
-  lastSearchQuery.value = query
-  fetchAllItems()
+  scrollToSection('collections')
 }
 
 function openProduct(item) {
@@ -294,27 +304,14 @@ function scrollToSection(id) {
 
 function toggleTheme() {
   isDark.value = !isDark.value
-  localStorage.setItem('zevar-theme', isDark.value ? 'dark' : 'light')
-  updateDocumentClass()
-  themeKey.value++
 }
 
-function updateDocumentClass() {
-  document.documentElement.classList.toggle('dark', isDark.value)
-  document.body.style.backgroundColor = isDark.value ? '#08080a' : '#ffffff'
+function performSearch(query) {
+  console.log('Search:', query)
 }
 
-function handleOccasionSelect(occasionId) {
-  // Future: Filter by occasion tags
-  console.log('Selected occasion:', occasionId)
-}
+onMounted(() => {
+  const theme = localStorage.getItem('zevar-theme')
+  isDark.value = theme === 'dark'
+})
 </script>
-
-<style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>
