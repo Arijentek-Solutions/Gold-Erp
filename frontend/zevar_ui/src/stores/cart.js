@@ -29,6 +29,18 @@ export const useCartStore = defineStore('cart', () => {
   const taxRate = ref(0)
   const currency = ref('USD')
 
+  // Sync state across tabs/windows
+  window.addEventListener('storage', (event) => {
+    if (event.key === 'zevar_cart_items') {
+      try {
+        const newVal = event.newValue ? JSON.parse(event.newValue) : []
+        items.value = newVal
+      } catch (e) {
+        items.value = []
+      }
+    }
+  })
+
   // ==========================================================================
   // GETTERS
   // ==========================================================================

@@ -65,6 +65,19 @@
         </span>
       </div>
 
+      <!-- Weight Breakdown -->
+      <div v-if="item.net_weight > 0 || item.gross_weight > 0" class="text-[10px] text-gray-500 dark:text-gray-400 mb-3 space-y-0.5 bg-gray-50 dark:bg-white/5 p-2 rounded">
+        <div v-if="item.gross_weight > 0" class="flex justify-between">
+          <span>Gross:</span> <span>{{ item.gross_weight }}g</span>
+        </div>
+        <div v-if="item.stone_weight > 0" class="flex justify-between text-red-400 dark:text-red-400/80">
+          <span>Stone:</span> <span>-{{ item.stone_weight }}g</span>
+        </div>
+        <div v-if="item.net_weight > 0" class="flex justify-between font-bold text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-white/10 pt-0.5 mt-0.5">
+          <span>Net:</span> <span>{{ item.net_weight }}g</span>
+        </div>
+      </div>
+
       <div class="mt-auto pt-3 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between">
         <div class="flex flex-col">
           <span class="text-xs text-gray-500 dark:text-gray-400">Price</span>

@@ -49,15 +49,15 @@
                 <div class="bg-gray-50 dark:bg-[#15171e] rounded-xl p-5 mb-6 text-sm border border-gray-100 dark:border-white/5">
                     <div class="flex justify-between mb-2 text-gray-600 dark:text-gray-400">
                         <span>Gross Weight</span>
-                        <span class="font-medium text-gray-900 dark:text-gray-200">{{ details.gross_weight }} g</span>
+                        <span class="font-medium text-gray-900 dark:text-gray-200">{{ formatWeight(details.gross_weight) }} g</span>
                     </div>
                     <div class="flex justify-between mb-2 text-red-400 dark:text-red-400/80">
                         <span>- Stone Weight</span>
-                        <span>{{ details.stone_weight }} g</span>
+                        <span>{{ formatWeight(details.stone_weight) }} g</span>
                     </div>
                     <div class="flex justify-between pt-3 border-t border-gray-200 dark:border-white/10 mt-1">
                         <span class="font-bold text-gray-700 dark:text-white">Net Weight</span>
-                        <span class="font-bold text-gray-900 dark:text-[#D4AF37] text-base">{{ details.net_weight }} g</span>
+                        <span class="font-bold text-gray-900 dark:text-[#D4AF37] text-base">{{ formatWeight(calculatedNetWeight) }} g</span>
                     </div>
                 </div>
 
@@ -85,25 +85,27 @@
                 </div>
 
                 <div class="space-y-3 mb-8 pt-2">
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500 dark:text-gray-400">Gold Rate (Live)</span>
-                        <span class="text-gray-900 dark:text-gray-300 font-medium">{{ formatCurrency(details.gold_rate) }} /g</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500 dark:text-gray-400">Gold Value</span>
-                        <span class="text-gray-900 dark:text-gray-300 font-medium">{{ formatCurrency(details.gold_value) }}</span>
-                    </div>
-                    <div class="flex justify-between text-sm">
-                        <span class="text-gray-500 dark:text-gray-400">Making Charges</span>
-                        <span class="text-gray-900 dark:text-gray-300 font-medium">{{ formatCurrency(details.making_charges) }}</span>
-                    </div>
+                    <!-- Only show gold rate and value if we have metal/weight data -->
+                    <template v-if="details.net_weight > 0 && details.gold_rate > 0">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">Gold Rate (Live)</span>
+                            <span class="text-gray-900 dark:text-gray-300 font-medium">{{ formatCurrency(details.gold_rate) }} /g</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500 dark:text-gray-400">Gold Value</span>
+                            <span class="text-gray-900 dark:text-gray-300 font-medium">{{ formatCurrency(details.gold_value) }}</span>
+                        </div>
+                    </template>
                     <div v-if="details.gemstone_value > 0" class="flex justify-between text-sm">
                         <span class="text-purple-600 dark:text-purple-400 font-medium">Gemstone Value</span>
                         <span class="text-purple-700 dark:text-purple-300 font-bold">{{ formatCurrency(details.gemstone_value) }}</span>
                     </div>
                     
                     <div class="flex justify-between items-end pt-4 border-t border-gray-100 dark:border-white/10 mt-2">
-                        <span class="text-lg font-bold text-gray-900 dark:text-white">Total Price</span>
+                        <div>
+                            <span class="text-lg font-bold text-gray-900 dark:text-white">Total Price</span>
+                            <span v-if="details.price_source" class="ml-2 text-xs text-gray-400">({{ details.price_source }})</span>
+                        </div>
                         <span class="text-3xl font-serif font-bold text-gray-900 dark:text-white tracking-tight">{{ formatCurrency(details.final_price) }}</span>
                     </div>
                 </div>
@@ -124,7 +126,7 @@
 
 <script setup>
 import { createResource } from 'frappe-ui'
-import { watch, ref } from 'vue'
+import { watch, ref, computed } from 'vue'
 import { useCartStore } from '@/stores/cart.js'
 
 const props = defineProps(['show', 'itemCode'])
@@ -133,6 +135,13 @@ const cart = useCartStore()
 
 const details = ref({})
 const loading = ref(false)
+
+// Computed net weight (gross - stone)
+const calculatedNetWeight = computed(() => {
+    const gross = details.value.gross_weight || 0
+    const stone = details.value.stone_weight || 0
+    return Math.max(0, gross - stone) // Ensure non-negative
+})
 
 const itemFetcher = createResource({
     url: 'zevar_core.api.get_item_price',
@@ -166,6 +175,11 @@ function close() {
 function formatCurrency(val) {
     if (!val) return '$0.00'
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(val)
+}
+
+function formatWeight(val) {
+    if (!val && val !== 0) return '0.000'
+    return parseFloat(val).toFixed(3)
 }
 </script>
 
