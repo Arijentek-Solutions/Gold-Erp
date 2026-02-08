@@ -7,7 +7,7 @@ from zevar_core.constants import DEFAULT_PAGE_LENGTH, PARTNER_SOURCES
 
 @frappe.whitelist()
 def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None, 
-                  search_term=None, filters=None, in_stock_only=False, source_filter=None):
+                  search_term=None, filters=None, in_stock_only=False, out_of_stock_only=False, source_filter=None):
     """
     Fetch items for POS catalog with filtering, search, and pagination.
     
@@ -18,12 +18,17 @@ def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None,
         search_term: Search term to filter item names
         filters: JSON string of additional filters
         in_stock_only: Only return items with stock_qty > 0
+        out_of_stock_only: Only return items with stock_qty <= 0
         source_filter: Filter by custom_source
     
     Returns:
         List of item dictionaries with stock and price information
     """
     from zevar_core.api.pricing import get_item_price
+    
+    # Convert string booleans from frontend
+    in_stock_only = in_stock_only in (True, 'true', '1', 1)
+    out_of_stock_only = out_of_stock_only in (True, 'true', '1', 1)
     
     # Build filters
     query_filters = [["disabled", "=", 0], ["has_variants", "=", 0]]
@@ -65,7 +70,18 @@ def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None,
             # Apply remaining filters
             for key, value in filters_dict.items():
                 if value:
-                    query_filters.append([key, "=", value])
+                    if isinstance(value, list) and len(value) == 2 and value[0] == 'like':
+                        # Handle 'like' operator: ["like", "%Gold%"]
+                        query_filters.append([key, "like", value[1]])
+                    elif isinstance(value, list):
+                        # Handle array of values: ["14K", "18K"] -> IN filter
+                        query_filters.append([key, "in", value])
+                    else:
+                        query_filters.append([key, "=", value])
+    
+    # When stock or price filters are active, overfetch to compensate for post-query filtering
+    has_post_filters = in_stock_only or out_of_stock_only or min_price or max_price
+    fetch_length = int(page_length) * 5 if has_post_filters else int(page_length)
     
     # Fetch items
     items = frappe.get_list(
@@ -73,14 +89,14 @@ def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None,
         filters=query_filters,
         fields=_get_item_fields(),
         order_by="custom_is_featured desc, custom_is_trending desc, item_group asc",
-        start=start,
-        page_length=page_length
+        start=int(start),
+        page_length=fetch_length
     )
     
     if not items:
         return []
     
-    # Fetch stock
+    # Fetch stock (aggregate across all warehouses if none specified)
     item_codes = [item.name for item in items]
     stock_map = {}
     
@@ -91,6 +107,15 @@ def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None,
             fields=["item_code", "actual_qty"]
         )
         stock_map = {b.item_code: b.actual_qty for b in bin_entries}
+    else:
+        # Sum stock across all warehouses
+        bin_entries = frappe.db.sql("""
+            SELECT item_code, SUM(actual_qty) as total_qty
+            FROM `tabBin`
+            WHERE item_code IN %s AND actual_qty > 0
+            GROUP BY item_code
+        """, (item_codes,), as_dict=True) if item_codes else []
+        stock_map = {b.item_code: b.total_qty for b in bin_entries}
     
     # Build response
     pos_items = []
@@ -110,11 +135,17 @@ def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None,
         if max_price and final_price > float(max_price):
             continue
         
-        # Apply stock filter
+        # Apply stock filters
         if in_stock_only and qty <= 0:
             continue
+        if out_of_stock_only and qty > 0:
+            continue
+        
         
         pos_items.append(_build_item_dict(item, qty, final_price))
+    
+    # Sort: In-stock items first, then out-of-stock
+    pos_items.sort(key=lambda x: (x['stock_qty'] <= 0, -x['stock_qty']))
     
     return pos_items
 
@@ -177,9 +208,12 @@ def get_catalog_filters():
 
 @frappe.whitelist()
 def get_item_details(item_code):
-    """Fetch full item details including gemstones."""
+    """Fetch full item details including gemstones and all product attributes."""
+    from zevar_core.api.pricing import get_item_price
+    
     item = frappe.get_doc("Item", item_code)
     
+    # Get gemstones
     gemstones = []
     if hasattr(item, 'gemstones'):
         for gem in item.gemstones:
@@ -194,6 +228,13 @@ def get_item_details(item_code):
                 "amount": gem.amount
             })
     
+    # Get price
+    try:
+        price_data = get_item_price(item_code)
+        price = price_data.get("final_price", item.custom_msrp or 0)
+    except Exception:
+        price = item.custom_msrp or 0
+    
     return {
         "item_code": item.name,
         "item_name": item.item_name,
@@ -204,9 +245,24 @@ def get_item_details(item_code):
         "gross_weight": item.custom_gross_weight_g,
         "stone_weight": item.custom_stone_weight_g,
         "net_weight": item.custom_net_weight_g,
+        "product_type": item.custom_product_type,
         "jewelry_type": item.custom_jewelry_type,
+        "jewelry_subtype": item.custom_jewelry_subtype,
+        "material_color": item.custom_material_color,
+        "finish": item.custom_finish,
+        "plating": item.custom_plating,
+        "length": f"{item.custom_length_value} {item.custom_length_unit}" if item.custom_length_value else None,
+        "width": f"{item.custom_width_value} {item.custom_width_unit}" if item.custom_width_value else None,
+        "size": item.custom_size,
+        "chain_type": item.custom_chain_type,
+        "clasp_type": item.custom_clasp_type,
+        "gender": item.custom_gender,
+        "completeness": "Complete (all stones included)" if item.custom_product_type else None,
+        "country_of_origin": item.custom_country_of_origin,
         "gemstones": gemstones,
-        "custom_source": item.custom_source
+        "custom_source": item.custom_source,
+        "price": price,
+        "msrp": item.custom_msrp
     }
 
 

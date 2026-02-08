@@ -4,119 +4,179 @@
       
       <div @click="close" class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"></div>
 
-      <div class="relative bg-white dark:bg-[#1a1c23] rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] border border-transparent dark:border-white/10 transition-all">
+      <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col md:flex-row max-h-[92vh] border transition-all">
         
-        <button @click="close" class="absolute top-4 right-4 z-10 p-2 bg-white/80 dark:bg-black/50 backdrop-blur rounded-full hover:bg-gray-100 dark:hover:bg-white/20 transition-colors group">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600 dark:text-white group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <button @click="close" class="absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-full hover:bg-gray-100 transition-colors group shadow-lg">
+            <svg class="h-6 w-6 text-gray-700 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
 
-        <div class="w-full md:w-1/2 bg-gray-50 dark:bg-[#0F1115] flex items-center justify-center p-8 border-r border-gray-100 dark:border-white/5 relative">
+        <!-- Left: Image -->
+        <div class="w-full md:w-5/12 bg-gray-50 flex items-center justify-center p-10 border-r relative">
             <img 
                 v-if="details.image" 
                 :src="details.image" 
-                class="max-h-[60vh] object-contain drop-shadow-xl transform hover:scale-105 transition-transform duration-500"
+                class="max-h-[55vh] object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"
             />
-            <div v-else class="text-gray-300 dark:text-gray-700">
-                <svg class="h-32 w-32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-            </div>
+            <div v-else class="text-7xl opacity-30">💎</div>
         </div>
 
-        <div class="w-full md:w-1/2 p-8 overflow-y-auto bg-white dark:bg-[#1a1c23]">
+        <!-- Right: Details -->
+        <div class="w-full md:w-7/12 p-8 overflow-y-auto bg-white">
             
             <div v-if="loading" class="h-full flex items-center justify-center">
-                <div class="animate-spin rounded-full h-8 w-8 border-2 border-gray-900 dark:border-[#D4AF37] border-t-transparent"></div>
+                <div class="animate-spin rounded-full h-10 w-10 border-3 border-[#8B6914] border-t-transparent"></div>
             </div>
 
-            <div v-else>
-                <div class="mb-6">
-                    <h2 class="text-2xl font-serif font-bold text-gray-900 dark:text-white leading-tight">{{ details.item_name }}</h2>
-                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1 font-mono tracking-wide">{{ details.item_code }}</p>
+            <div v-else class="space-y-6">
+                <!-- Title & SKU -->
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900 leading-tight mb-1">{{ details.item_name }}</h2>
+                    <p class="text-sm text-gray-500 font-mono">{{ details.item_code }}</p>
                 </div>
 
-                <div class="flex gap-2 mb-8">
-                    <span class="px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-500 rounded text-xs font-bold uppercase tracking-wider border border-yellow-200 dark:border-yellow-700/50">
+                <!-- Badges -->
+                <div class="flex flex-wrap gap-2">
+                    <span v-if="details.metal" class="px-3 py-1.5 bg-[#FDF6E3] text-[#8B6914] rounded-md text-xs font-bold uppercase tracking-wider border border-[#E5D4A1]">
                         {{ details.metal }}
                     </span>
-                    <span class="px-3 py-1 bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300 rounded text-xs font-bold uppercase tracking-wider border border-gray-200 dark:border-gray-700">
+                    <span v-if="details.purity" class="px-3 py-1.5 bg-gray-100 text-gray-800 rounded-md text-xs font-bold uppercase tracking-wider border border-gray-200">
                         {{ details.purity }}
                     </span>
                 </div>
 
-                <div class="bg-gray-50 dark:bg-[#15171e] rounded-xl p-5 mb-6 text-sm border border-gray-100 dark:border-white/5">
-                    <div class="flex justify-between mb-2 text-gray-600 dark:text-gray-400">
-                        <span>Gross Weight</span>
-                        <span class="font-medium text-gray-900 dark:text-gray-200">{{ formatWeight(details.gross_weight) }} g</span>
+                <!-- Weight Section -->
+                <div class="bg-gray-50 rounded-lg p-5 border border-gray-200">
+                    <div v-if="details.gross_weight" class="flex justify-between text-sm mb-2.5">
+                        <span class="text-gray-600">Gross Weight</span>
+                        <span class="font-semibold text-gray-900">{{ formatWeight(details.gross_weight) }} g</span>
                     </div>
-                    <div class="flex justify-between mb-2 text-red-400 dark:text-red-400/80">
+                    <div v-if="details.stone_weight" class="flex justify-between text-sm mb-2.5 text-red-600">
                         <span>- Stone Weight</span>
-                        <span>{{ formatWeight(details.stone_weight) }} g</span>
+                        <span class="font-medium">{{ formatWeight(details.stone_weight) }} g</span>
                     </div>
-                    <div class="flex justify-between pt-3 border-t border-gray-200 dark:border-white/10 mt-1">
-                        <span class="font-bold text-gray-700 dark:text-white">Net Weight</span>
-                        <span class="font-bold text-gray-900 dark:text-[#D4AF37] text-base">{{ formatWeight(calculatedNetWeight) }} g</span>
+                    <div v-if="details.net_weight || calculatedNetWeight > 0" class="flex justify-between pt-3 border-t border-gray-300">
+                        <span class="font-bold text-gray-800">Net Weight</span>
+                        <span class="font-bold text-[#8B6914] text-lg">{{ formatWeight(calculatedNetWeight) }} g</span>
                     </div>
                 </div>
 
-                <div v-if="details.gemstones && details.gemstones.length > 0" class="mb-6">
-                    <h4 class="text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3">Gemstone Details</h4>
-                    <div class="bg-white dark:bg-[#0F1115] rounded-lg border border-gray-100 dark:border-white/10 overflow-hidden">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-white/5">
-                                <tr class="text-xs text-gray-500 dark:text-gray-400 uppercase">
-                                    <th class="px-4 py-2 font-medium">Stone</th>
-                                    <th class="px-4 py-2 font-medium text-right">Carat</th>
+                <!-- Product Details Table -->
+                <div class="border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="bg-gray-100 px-4 py-2 border-b border-gray-200">
+                        <h3 class="font-bold text-gray-900 text-sm uppercase tracking-wide">Product Details</h3>
+                    </div>
+                    <div class="divide-y divide-gray-200">
+                        <div v-if="details.product_type" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Product Type</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.product_type }}</span>
+                        </div>
+                        <div v-if="details.jewelry_type" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Jewelry Type</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.jewelry_type }}</span>
+                        </div>
+                        <div v-if="details.jewelry_subtype" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Sub Type</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.jewelry_subtype }}</span>
+                        </div>
+                        <div v-if="details.material_color" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Material Color</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.material_color }}</span>
+                        </div>
+                        <div v-if="details.finish" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Finish</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.finish }}</span>
+                        </div>
+                        <div v-if="details.plating" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Plating</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.plating }}</span>
+                        </div>
+                        <div v-if="details.length" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Length of Item</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.length }}</span>
+                        </div>
+                        <div v-if="details.width" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Width of Item</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.width }}</span>
+                        </div>
+                        <div v-if="details.size" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Size</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.size }}</span>
+                        </div>
+                        <div v-if="details.chain_type" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Chain Type</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.chain_type }}</span>
+                        </div>
+                        <div v-if="details.clasp_type" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Clasp Type</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.clasp_type }}</span>
+                        </div>
+                        <div v-if="details.gender" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Gender</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.gender }}</span>
+                        </div>
+                        <div v-if="details.completeness" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Completeness</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.completeness }}</span>
+                        </div>
+                        <div v-if="details.country_of_origin" class="flex py-2.5 px-4">
+                            <span class="w-1/2 text-sm text-gray-600">Country of Origin</span>
+                            <span class="w-1/2 text-sm text-gray-900 font-medium">{{ details.country_of_origin || 'USA' }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Gemstone Details -->
+                <div v-if="details.gemstones && details.gemstones.length > 0" class="border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="bg-purple-50 px-4 py-2 border-b border-purple-100">
+                        <h3 class="font-bold text-purple-900 text-sm uppercase tracking-wide flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l8 5-8 13-8-13 8-5z"/></svg>
+                            Gemstone Details
+                        </h3>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr class="text-xs text-gray-600 uppercase">
+                                    <th class="px-4 py-2 text-left font-semibold">Stone</th>
+                                    <th class="px-4 py-2 text-left font-semibold">Cut</th>
+                                    <th class="px-4 py-2 text-left font-semibold">Color</th>
+                                    <th class="px-4 py-2 text-left font-semibold">Clarity</th>
+                                    <th class="px-4 py-2 text-right font-semibold">Carat</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-100 dark:divide-white/5">
-                                <tr v-for="(gem, i) in details.gemstones" :key="i">
-                                    <td class="px-4 py-2.5">
-                                        <div class="font-medium text-gray-900 dark:text-gray-200">{{ gem.gem_type }}</div>
-                                        <div class="text-[10px] text-gray-500 dark:text-gray-500">{{ gem.cut }} • {{ gem.color }} • {{ gem.clarity }}</div>
-                                    </td>
-                                    <td class="px-4 py-2.5 text-right font-mono text-gray-700 dark:text-gray-300">{{ gem.carat }}</td>
+                            <tbody class="divide-y divide-gray-100">
+                                <tr v-for="(gem, i) in details.gemstones" :key="i" class="hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-900">{{ gem.gem_type }}</td>
+                                    <td class="px-4 py-3 text-gray-600">{{ gem.cut || '-' }}</td>
+                                    <td class="px-4 py-3 text-gray-600">{{ gem.color || '-' }}</td>
+                                    <td class="px-4 py-3 text-gray-600">{{ gem.clarity || '-' }}</td>
+                                    <td class="px-4 py-3 text-right font-mono text-gray-900">{{ gem.carat || '0' }}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                 </div>
 
-                <div class="space-y-3 mb-8 pt-2">
-                    <!-- Only show gold rate and value if we have metal/weight data -->
-                    <template v-if="details.net_weight > 0 && details.gold_rate > 0">
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-500 dark:text-gray-400">Gold Rate (Live)</span>
-                            <span class="text-gray-900 dark:text-gray-300 font-medium">{{ formatCurrency(details.gold_rate) }} /g</span>
-                        </div>
-                        <div class="flex justify-between text-sm">
-                            <span class="text-gray-500 dark:text-gray-400">Gold Value</span>
-                            <span class="text-gray-900 dark:text-gray-300 font-medium">{{ formatCurrency(details.gold_value) }}</span>
-                        </div>
-                    </template>
-                    <div v-if="details.gemstone_value > 0" class="flex justify-between text-sm">
-                        <span class="text-purple-600 dark:text-purple-400 font-medium">Gemstone Value</span>
-                        <span class="text-purple-700 dark:text-purple-300 font-bold">{{ formatCurrency(details.gemstone_value) }}</span>
-                    </div>
-                    
-                    <div class="flex justify-between items-end pt-4 border-t border-gray-100 dark:border-white/10 mt-2">
+                <!-- Price Section -->
+                <div class="bg-[#faf5f0] rounded-lg p-5 border border-[#E5D4A1]">
+                    <div class="flex items-baseline justify-between mb-4">
                         <div>
-                            <span class="text-lg font-bold text-gray-900 dark:text-white">Total Price</span>
-                            <span v-if="details.price_source" class="ml-2 text-xs text-gray-400">({{ details.price_source }})</span>
+                            <p class="text-sm text-gray-600 mb-1">Total Price <span v-if="details.price_source" class="text-xs text-gray-400">({{ details.price_source }})</span></p>
+                            <p class="text-3xl font-bold text-gray-900">{{ formatCurrency(details.final_price) }}</p>
                         </div>
-                        <span class="text-3xl font-serif font-bold text-gray-900 dark:text-white tracking-tight">{{ formatCurrency(details.final_price) }}</span>
+                        <span v-if="details.msrp && details.msrp > details.final_price" class="text-sm text-gray-500 line-through">{{ formatCurrency(details.msrp) }}</span>
                     </div>
-                </div>
 
-                <button 
-                    @click="addToCart"
-                    class="w-full bg-gray-900 text-white dark:bg-[#D4AF37] dark:text-black py-4 rounded-xl font-bold text-lg hover:bg-gray-800 dark:hover:bg-[#b5952f] transition-all shadow-lg hover:shadow-xl transform active:scale-95 flex items-center justify-center gap-2"
-                >
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
-                    Add to Cart
-                </button>
+                    <button 
+                        @click="addToCart"
+                        class="w-full bg-[#8B6914] text-white py-3.5 rounded-lg font-bold text-base hover:bg-[#7a5c11] transition-all shadow-md hover:shadow-lg transform active:scale-95 flex items-center justify-center gap-2"
+                    >
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                        Add to Cart
+                    </button>
+                </div>
             </div>
         </div>
       </div>
@@ -136,20 +196,29 @@ const cart = useCartStore()
 const details = ref({})
 const loading = ref(false)
 
-// Computed net weight (gross - stone)
+// Computed net weight (gross - stone) or use provided net_weight
 const calculatedNetWeight = computed(() => {
+    if (details.value.net_weight) return details.value.net_weight
     const gross = details.value.gross_weight || 0
     const stone = details.value.stone_weight || 0
-    return Math.max(0, gross - stone) // Ensure non-negative
+    return Math.max(0, gross - stone)
 })
 
 const itemFetcher = createResource({
-    url: 'zevar_core.api.get_item_price',
+    url: 'zevar_core.api.catalog.get_item_details',
     makeParams() {
         return { item_code: props.itemCode }
     },
     onSuccess(data) {
-        details.value = { ...data, item_code: props.itemCode }
+        details.value = { 
+            ...data,
+            final_price: data.price || data.msrp || 0,
+            price_source: data.price ? 'Calculated' : 'MSRP'
+        }
+        loading.value = false
+    },
+    onError(error) {
+        console.error('Failed to load item:', error)
         loading.value = false
     }
 })
@@ -164,7 +233,12 @@ watch(() => props.show, (isOpen) => {
 
 function addToCart() {
     if (!details.value.item_code) return
-    cart.addItem(details.value)
+    cart.addItem({
+        item_code: details.value.item_code,
+        item_name: details.value.item_name,
+        price: details.value.final_price,
+        image: details.value.image
+    })
     emit('close')
 }
 

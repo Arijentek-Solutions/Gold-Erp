@@ -113,13 +113,13 @@
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
                     </span>
-                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">Live Rates</span>
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">Live Spot</span>
                  </div>
                  
                  <div class="flex items-center gap-8 overflow-x-auto pr-2 custom-scrollbar-horizontal pb-2 pt-1">
                      <div v-for="[key, rate] in sortedRates" :key="key" class="flex flex-col leading-tight flex-shrink-0 px-3">
                          <span class="text-[11px] text-gray-500 dark:text-gray-400 uppercase font-bold whitespace-nowrap mb-0.5">{{ key.replace(/-/g, ' ') }}</span>
-                         <span class="text-lg font-mono font-bold text-[#D4AF37] tracking-wide">${{ rate }}</span>
+                         <span class="text-lg font-mono font-bold text-[#D4AF37] tracking-wide">${{ rate }}<span class="text-[9px] text-gray-500 dark:text-gray-500 ml-0.5 font-normal">/oz</span></span>
                      </div>
                  </div>
             </div>
@@ -154,7 +154,7 @@ import { useGoldStore } from '@/stores/gold.js'
 import { useCartStore } from '@/stores/cart.js'
 import { useUIStore } from '@/stores/ui'
 import { createResource } from 'frappe-ui'
-import { onMounted, ref, computed } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import CartSidebar from '@/components/CartSidebar.vue'
 import FilterSidebar from '@/components/FilterSidebar.vue'
 
@@ -165,12 +165,15 @@ const ui = useUIStore()
 
 const isCartOpen = ref(false)
 
+const TROY_OZ_GRAMS = 31.1035
+
 const sortedRates = computed(() => {
   if (!goldStore.rates) return []
-  const priority = ['Yellow Gold-22K', 'Yellow Gold-24K', 'Yellow Gold-18K', 'Silver-925 Sterling']
-  // Filter out Platinum
+  const priority = ['Yellow Gold-24K', 'Yellow Gold-22K', 'Yellow Gold-18K', 'Silver-925 Sterling']
+  // Filter out Platinum, convert per-gram to per-troy-ounce (US standard)
   return Object.entries(goldStore.rates)
     .filter(([key]) => !key.includes('Platinum'))
+    .map(([key, ratePerGram]) => [key, (ratePerGram * TROY_OZ_GRAMS).toFixed(2)])
     .sort((a, b) => {
     const indexA = priority.indexOf(a[0]); const indexB = priority.indexOf(b[0])
     if (indexA !== -1 && indexB !== -1) return indexA - indexB
@@ -188,6 +191,17 @@ const warehouses = createResource({
 
 onMounted(() => {
   goldStore.startPolling()
+  // Load tax for current warehouse on mount
+  if (session.currentWarehouse) {
+    cartStore.loadTaxForWarehouse(session.currentWarehouse)
+  }
+})
+
+// Watch warehouse changes to update tax rate
+watch(() => session.currentWarehouse, (newWh) => {
+  if (newWh) {
+    cartStore.loadTaxForWarehouse(newWh)
+  }
 })
 </script>
 

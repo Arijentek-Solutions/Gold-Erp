@@ -8,6 +8,45 @@
         </button>
     </div>
 
+    <!-- Stock Status Filter -->
+    <div class="mb-6 pb-5 border-b border-white/5">
+        <label class="block text-[10px] font-bold text-gray-500 mb-3 px-1">Stock Status</label>
+        <div class="flex flex-col gap-2">
+            <button 
+                @click="updateStockFilter('all')"
+                :class="currentStockFilter === 'all'
+                    ? 'bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]' 
+                    : 'bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white'"
+                class="w-full px-3 py-2.5 text-[11px] rounded-lg border transition-all text-left shadow-sm flex items-center gap-2"
+            >
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                All Items
+            </button>
+            
+            <button 
+                @click="updateStockFilter('in-stock')"
+                :class="currentStockFilter === 'in-stock'
+                    ? 'bg-emerald-600 text-white font-bold border-emerald-600' 
+                    : 'bg-[#1C1F26] text-gray-400 border-white/5 hover:border-emerald-600 hover:text-emerald-400'"
+                class="w-full px-3 py-2.5 text-[11px] rounded-lg border transition-all text-left shadow-sm flex items-center gap-2"
+            >
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                In Stock Only
+            </button>
+            
+            <button 
+                @click="updateStockFilter('out-of-stock')"
+                :class="currentStockFilter === 'out-of-stock'
+                    ? 'bg-red-600 text-white font-bold border-red-600' 
+                    : 'bg-[#1C1F26] text-gray-400 border-white/5 hover:border-red-600 hover:text-red-400'"
+                class="w-full px-3 py-2.5 text-[11px] rounded-lg border transition-all text-left shadow-sm flex items-center gap-2"
+            >
+                <svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Out of Stock
+            </button>
+        </div>
+    </div>
+
     <div class="mb-6">
         <label class="block text-[10px] font-bold text-gray-500 mb-3 px-1">Metal</label>
         <div class="flex flex-wrap gap-2">
@@ -76,16 +115,29 @@
         </div>
     </div>
 
+    <!-- Low Stock Alert -->
+    <div v-if="lowStockCount > 0" class="mt-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+        <div class="flex items-start gap-3">
+            <svg class="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+            </svg>
+            <div>
+                <p class="text-amber-500 font-bold text-xs mb-1">Low Stock Alert</p>
+                <p class="text-gray-400 text-[10px] leading-relaxed">{{ lowStockCount }} item{{ lowStockCount > 1 ? 's' : '' }} need{{ lowStockCount === 1 ? 's' : '' }} restocking</p>
+            </div>
+        </div>
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useUIStore } from '@/stores/ui'
 
 const ui = useUIStore()
 
-// 1. Data Options
+// Data Options
 const gemstoneOptions = ['Diamond', 'Ruby', 'Sapphire', 'Emerald', 'Polki', 'Kundan', 'No Stone']
 
 const metalPurityMap = {
@@ -96,12 +148,20 @@ const metalPurityMap = {
     'Silver':      ['925 Sterling', '999 Fine']
 }
 
-// 2. Helpers
+// Local state for stock filter
+const currentStockFilter = ref('all')
+const lowStockCount = ref(0) // This would be fetched from API in production
+
+// Helpers
 const currentMetal = computed(() => ui.activeFilters.custom_metal_type || '')
 const currentGemstone = computed(() => ui.activeFilters.custom_gemstone || '')
-const hasActiveFilters = computed(() => Object.keys(ui.activeFilters).length > 0 || ui.searchQuery)
+const hasActiveFilters = computed(() => 
+    Object.keys(ui.activeFilters).length > 0 || 
+    ui.searchQuery || 
+    currentStockFilter.value !== 'all'
+)
 
-// 3. Smart Purity Logic
+// Smart Purity Logic
 const purityOptions = computed(() => {
     if (currentMetal.value && metalPurityMap[currentMetal.value]) {
         return metalPurityMap[currentMetal.value]
@@ -109,9 +169,22 @@ const purityOptions = computed(() => {
     return [...new Set(Object.values(metalPurityMap).flat())]
 })
 
-// 4. Actions
+// Actions
+function updateStockFilter(status) {
+    currentStockFilter.value = status
+    if (status === 'in-stock') {
+        ui.setFilter('in_stock_only', true)
+        ui.setFilter('out_of_stock_only', false)
+    } else if (status === 'out-of-stock') {
+        ui.setFilter('out_of_stock_only', true)
+        ui.setFilter('in_stock_only', false)
+    } else {
+        ui.setFilter('in_stock_only', false)
+        ui.setFilter('out_of_stock_only', false)
+    }
+}
+
 function updateMetal(val) {
-    // Reset purity if switching metals to avoid invalid combinations
     if (ui.activeFilters.custom_purity) {
         ui.setFilter('custom_purity', '')
     }

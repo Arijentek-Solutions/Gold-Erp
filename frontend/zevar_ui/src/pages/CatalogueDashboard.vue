@@ -1,283 +1,476 @@
 <template>
-  <div :key="themeKey" class="min-h-screen transition-colors duration-300" :style="{ backgroundColor: isDark ? '#08080a' : '#ffffff' }">
-    
-    <Header 
-      :isDark="isDark" 
-      :activeCategory="activeCategory"
-      @toggleTheme="toggleTheme"
-      @search="performSearch"
-      @selectCategory="handleCategorySelect"
-      @selectOccasion="handleOccasionSelect"
-    />
+<div class="min-h-screen" :class="isDark ? 'bg-[#0a0a0a] text-white' : 'bg-white text-gray-900'">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-3">
-      <div class="flex items-center gap-3">
-        <button 
-          @click="showPromoBanner = !showPromoBanner"
-          class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all"
-          :class="showPromoBanner 
-            ? 'bg-[#C9A962] text-black border-[#C9A962] hover:bg-[#b89d52]' 
-            : (isDark ? 'bg-transparent text-gray-400 border-white/10 hover:border-[#C9A962]/50' : 'bg-transparent text-gray-600 border-gray-200 hover:border-[#C9A962]')"
-        >
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-          </svg>
-          {{ showPromoBanner ? 'Hide Promo Banner' : 'Show Promo Banner' }}
-        </button>
-        
-        <button 
-          @click="showPartnerItems = !showPartnerItems"
-          class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all"
-          :class="showPartnerItems 
-            ? 'bg-purple-600 text-white border-purple-600 hover:bg-purple-700' 
-            : (isDark ? 'bg-transparent text-gray-400 border-white/10 hover:border-purple-500/50' : 'bg-transparent text-gray-600 border-gray-200 hover:border-purple-500')"
-        >
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-          </svg>
-          {{ showPartnerItems ? 'Hide Partner Catalog' : 'Show Partner Catalog' }}
-        </button>
-        <span class="text-xs" :class="isDark ? 'text-gray-600' : 'text-gray-400'">Demo toggles for clients</span>
+  <!-- Header -->
+  <Header 
+    :isDark="isDark" 
+    :activeCategory="activeCategory"
+    @toggleTheme="toggleTheme"
+    @search="performSearch"
+    @selectCategory="handleCategorySelect"
+  />
+
+  <!-- ======== 1. HERO CAROUSEL ======== -->
+  <section class="relative overflow-hidden" :class="isDark ? 'bg-[#111]' : 'bg-[#faf5f0]'" style="height: 520px">
+    <TransitionGroup name="hero-slide" tag="div" class="relative w-full h-full">
+      <div v-for="(slide, i) in heroSlides" :key="slide.id" v-show="currentSlide === i" class="absolute inset-0">
+        <img :src="slide.image" :alt="slide.title" class="w-full h-full object-cover" />
+        <div class="absolute inset-0" :style="{ background: isDark ? slide.overlayDark : slide.overlay }">
+          <div class="max-w-7xl mx-auto px-8 h-full flex items-center">
+            <div class="max-w-lg">
+              <p v-if="slide.subtitle" class="text-[#C9A962] text-xs tracking-[0.3em] uppercase mb-4 font-bold">{{ slide.subtitle }}</p>
+              <h2 class="text-4xl md:text-5xl font-serif font-bold mb-4 leading-tight" :class="isDark ? 'text-white' : 'text-gray-900'" v-html="slide.title"></h2>
+              <p v-if="slide.description" class="text-lg mb-8 font-light" :class="isDark ? 'text-gray-300' : 'text-gray-600'">{{ slide.description }}</p>
+              <button @click="scrollTo('shop-categories')" class="px-8 py-3.5 bg-[#8B6914] text-white font-bold tracking-wider uppercase text-sm rounded-sm hover:bg-[#7a5c11] transition-all shadow-lg">
+                {{ slide.cta || 'Explore Now' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </TransitionGroup>
+    <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-2.5 z-10">
+      <button v-for="(_, i) in heroSlides" :key="i" @click="currentSlide = i" class="w-2.5 h-2.5 rounded-full transition-all duration-300" :class="currentSlide === i ? 'bg-[#C9A962] w-7' : 'bg-white/40 hover:bg-white/60'"></button>
+    </div>
+    <button @click="prevSlide" class="absolute left-4 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 backdrop-blur rounded-full flex items-center justify-center shadow-lg hover:bg-white transition z-10">
+      <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    </button>
+    <button @click="nextSlide" class="absolute right-4 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/80 backdrop-blur rounded-full flex items-center justify-center shadow-lg hover:bg-white transition z-10">
+      <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </section>
+
+  <!-- ======== 2. SIGNATURE DIAMOND COLLECTION ======== -->
+  <section class="py-16" :class="isDark ? 'bg-[#0a0a0a]' : 'bg-white'">
+    <div class="max-w-6xl mx-auto px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-serif font-bold tracking-wide">Signature Diamond Collection</h2>
+        <p class="mt-3 font-light tracking-wide" :class="isDark ? 'text-gray-400' : 'text-gray-500'">Curated for the Modern Woman</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div v-for="col in signatureCollections" :key="col.name" class="group cursor-pointer" @click="handleCategorySelect(col.link)">
+          <div class="relative overflow-hidden rounded-2xl aspect-[3/4] shadow-sm">
+            <img :src="col.image" :alt="col.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            <p class="absolute bottom-5 left-0 right-0 text-center text-white font-semibold text-sm tracking-wider uppercase">{{ col.name }}</p>
+          </div>
+        </div>
       </div>
     </div>
+  </section>
 
-    <div v-if="showPromoBanner" class="max-w-7xl mx-auto px-4 sm:px-6 pb-6">
-      <PromoBanner :isDark="isDark" />
+  <!-- ======== 3. ZEVAR COLLECTIONS (asymmetric grid - FIXED) ======== -->
+  <section class="py-16" :class="isDark ? 'bg-[#111]' : 'bg-[#faf5f0]'">
+    <div class="max-w-6xl mx-auto px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-serif font-bold tracking-wide">Zevar Collections</h2>
+        <p class="mt-3 font-light tracking-wide" :class="isDark ? 'text-gray-400' : 'text-gray-500'">Explore our newly launched collections</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-5xl mx-auto">
+        <div class="relative overflow-hidden rounded-2xl cursor-pointer group shadow-sm aspect-[3/4]" @click="handleCategorySelect('rings')">
+          <img src="https://images.unsplash.com/photo-1599643477877-530eb83abc8e?w=600&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end p-6">
+            <p class="text-white font-serif text-xl tracking-wide">Valentine\'s Special</p>
+          </div>
+        </div>
+        <div class="relative overflow-hidden rounded-2xl cursor-pointer group shadow-sm aspect-[3/4]" @click="handleCategorySelect('earrings')">
+          <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex items-end p-6">
+            <p class="text-white font-serif text-xl tracking-wide">Stunning Every Ear</p>
+          </div>
+        </div>
+        <div class="relative overflow-hidden rounded-2xl cursor-pointer group shadow-sm aspect-[3/4]" @click="handleCategorySelect('rings')">
+          <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex items-end p-6">
+            <p class="text-white font-serif text-xl tracking-wide">Wedding Gifts</p>
+          </div>
+        </div>
+      </div>
     </div>
+  </section>
 
-    <main class="relative z-10">
-      <section class="relative overflow-hidden" style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-24">
-          <div class="grid md:grid-cols-2 gap-12 items-center">
-            <div class="text-left z-10">
-              <p class="text-xs font-medium tracking-[0.3em] uppercase mb-4 text-[#C9A962]">Timeless Elegance</p>
-              <h1 class="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold mb-6 leading-tight text-white">
-                Discover Beauty <span class="block text-[#C9A962] mt-2">Crafted for You</span>
-              </h1>
-              <p class="text-lg text-gray-300 mb-8 max-w-md leading-relaxed">
-                Explore our curated collection of exquisite diamonds, gold jewelry, and timeless pieces.
-              </p>
-              <div class="flex flex-wrap gap-4">
-                <button @click="scrollToSection('trending')" class="px-8 py-4 bg-[#C9A962] text-black font-bold rounded-lg hover:bg-[#b89d52] transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5">Shop Collection</button>
-                <button class="px-8 py-4 border-2 border-white/20 text-white font-bold rounded-lg hover:bg-white/10 transition-all">Book Appointment</button>
-              </div>
-            </div>
-            
-            <div class="relative">
-              <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80" alt="Jewelry Collection" class="rounded-2xl shadow-2xl w-full aspect-[4/5] object-cover" />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent rounded-2xl"></div>
-            </div>
-          </div> </div> </section>
-
-      <section id="trending" class="py-16" :style="{ backgroundColor: isDark ? '#0a0a0c' : '#faf9f7' }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-          <div class="text-center mb-12">
-            <p class="text-xs tracking-[0.3em] uppercase mb-2" :class="isDark ? 'text-[#C9A962]' : 'text-[#8B7355]'">Trending Now</p>
-            <h2 class="text-3xl sm:text-4xl font-serif font-bold" :class="isDark ? 'text-white' : 'text-gray-900'">Jewelry Inspired by Your Style</h2>
+  <!-- ======== 4. SHOP BY CATEGORIES ======== -->
+  <section id="shop-categories" class="py-16" :class="isDark ? 'bg-[#0a0a0a]' : 'bg-white'">
+    <div class="max-w-6xl mx-auto px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-serif font-bold tracking-wide">Find Your Perfect Match</h2>
+        <p class="text-[#C9A962] mt-3 font-bold text-sm tracking-[0.2em] uppercase">Shop by Categories</p>
+      </div>
+      <div class="grid grid-cols-4 gap-x-8 gap-y-10 max-w-3xl mx-auto">
+        <div v-for="cat in shopCategories" :key="cat.name" class="flex flex-col items-center group cursor-pointer" @click="handleCategorySelect(cat.link)">
+          <div class="w-28 h-28 md:w-32 md:h-32 rounded-2xl overflow-hidden border-2 border-transparent group-hover:border-[#C9A962] transition-all duration-300 shadow-sm group-hover:shadow-xl">
+            <img :src="cat.image" :alt="cat.name" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
           </div>
-          <TrendingSection :category="activeCategory" :categoryLabel="activeCategoryLabel" @resetCategory="activeCategory = 'all'" @viewItem="openProduct" />
+          <p class="mt-3 text-xs font-bold uppercase tracking-[0.15em] group-hover:text-[#C9A962] transition-colors" :class="isDark ? 'text-gray-300' : 'text-gray-700'">{{ cat.name }}</p>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      <section class="py-16" :style="{ backgroundColor: isDark ? '#08080a' : '#ffffff' }">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 space-y-20">
-          
-          <div v-if="activeCategory === 'all' || activeCategory === 'rings'" class="space-y-8">
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl sm:text-3xl font-serif font-bold" :class="isDark ? 'text-white' : 'text-gray-900'">Rings</h3>
-              <button @click="handleCategorySelect('rings')" class="text-[#C9A962] hover:underline">View All</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div class="hidden lg:block relative rounded-2xl overflow-hidden aspect-[3/4]">
-                <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80" class="w-full h-full object-cover" />
-              </div>
-              <JewelryProductCard v-for="item in ringsItems.slice(0, 3)" :key="item.item_code" :product="item" :is-dark="isDark" @view="openProduct" />
-            </div>
+  <!-- ======== 5. TRENDING NOW ======== -->
+  <section class="py-16" :class="isDark ? 'bg-[#0a0a0a]' : 'bg-white'">
+    <div class="max-w-6xl mx-auto px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-serif font-bold tracking-wide">Trending Now</h2>
+        <p class="mt-3 font-light tracking-wide" :class="isDark ? 'text-gray-400' : 'text-gray-500'">Jewelry pieces everyone's eyeing right now</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div v-for="item in trendingItems" :key="item.name" class="group cursor-pointer" @click="openProduct(item)">
+          <div class="relative overflow-hidden rounded-2xl aspect-[4/3] shadow-sm">
+            <img :src="item.image" :alt="item.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
           </div>
+          <p class="text-center mt-4 font-medium tracking-wide" :class="isDark ? 'text-gray-200' : 'text-gray-800'">{{ item.name }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-          <div v-if="activeCategory === 'all' || activeCategory === 'earrings'" class="space-y-8">
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl sm:text-3xl font-serif font-bold" :class="isDark ? 'text-white' : 'text-gray-900'">Earrings</h3>
-              <button @click="handleCategorySelect('earrings')" class="text-[#C9A962] hover:underline">View All</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <JewelryProductCard v-for="item in earringsItems.slice(0, 3)" :key="item.item_code" :product="item" :is-dark="isDark" @view="openProduct" />
-              <div class="hidden lg:block relative rounded-2xl overflow-hidden aspect-[3/4]">
-                <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&q=80" class="w-full h-full object-cover" />
-              </div>
-            </div>
-          </div>
-
-          <div v-if="activeCategory === 'all' || activeCategory === 'chains'" class="space-y-8">
-            <div class="flex items-center justify-between">
-              <h3 class="text-2xl sm:text-3xl font-serif font-bold" :class="isDark ? 'text-white' : 'text-gray-900'">Chains & Necklaces</h3>
-              <button @click="handleCategorySelect('chains')" class="text-[#C9A962] hover:underline">View All</button>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div class="hidden lg:block relative rounded-2xl overflow-hidden aspect-[3/4]">
-                <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80" class="w-full h-full object-cover" />
-              </div>
-              <JewelryProductCard v-for="item in chainsItems.slice(0, 3)" :key="item.item_code" :product="item" :is-dark="isDark" @view="openProduct" />
-            </div>
+  <!-- ======== 6. ZEVAR WORLD ======== -->
+  <section class="py-16" :class="isDark ? 'bg-[#111]' : 'bg-[#faf5f0]'">
+    <div class="max-w-6xl mx-auto px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-serif font-bold tracking-wide">Zevar World</h2>
+        <p class="mt-3 font-light tracking-wide" :class="isDark ? 'text-gray-400' : 'text-gray-500'">A companion for every occasion</p>
+      </div>
+      <div class="grid grid-cols-2 gap-6 max-w-4xl mx-auto">
+        <div v-for="world in zevarWorld" :key="world.name" class="relative overflow-hidden rounded-2xl aspect-[4/3] cursor-pointer group shadow-sm" @click="handleCategorySelect(world.link)">
+          <img :src="world.image" :alt="world.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+          <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex items-end justify-center pb-6">
+            <p class="text-white font-serif text-2xl tracking-wide">{{ world.name }}</p>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      <section v-if="showPartnerItems" class="py-16 border-t" :class="isDark ? 'bg-[#0a0a0c] border-white/5' : 'bg-gray-50 border-gray-200'">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6">
-          <div class="text-center mb-12">
-            <h2 class="text-3xl font-serif font-bold text-white">Explore Our Partners</h2>
-          </div>
-          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-            <JewelryProductCard v-for="item in partnerItems.slice(0, 10)" :key="item.item_code" :product="item" :is-dark="isDark" :show-partner-badge="true" @view="openProduct" />
+  <!-- ======== 7. NEW ARRIVALS ======== -->
+  <section class="py-16 relative overflow-hidden" :class="isDark ? 'bg-[#0a0a0a]' : 'bg-[#e8ddd0]'">
+    <img src="https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=1920&q=60" class="absolute inset-0 w-full h-full object-cover opacity-20" />
+    <div class="relative max-w-6xl mx-auto px-8">
+      <div class="mb-10">
+        <div class="flex items-center gap-4">
+          <h2 class="text-3xl font-serif font-bold tracking-wide">New Arrivals</h2>
+          <span class="px-3 py-1 bg-[#8B6914] text-white text-xs font-bold rounded-full tracking-wider">100+ NEW</span>
+        </div>
+        <p class="mt-3 font-light tracking-wide" :class="isDark ? 'text-gray-300' : 'text-gray-600'">Fresh designs dropping daily</p>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+        <div v-for="item in newArrivals" :key="item.name" class="group cursor-pointer" @click="openProduct(item)">
+          <div class="relative overflow-hidden rounded-2xl aspect-square bg-white shadow-md">
+            <img :src="item.image" :alt="item.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/50 to-transparent p-4">
+              <p class="text-white font-semibold text-sm">{{ item.name }}</p>
+            </div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </section>
 
-      <footer class="py-12 border-t" :class="isDark ? 'bg-[#0a0a0c] border-white/5' : 'bg-white border-gray-100'">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 text-center">
-          <p class="text-xs text-gray-500">© {{ new Date().getFullYear() }} ZEVAR Jewelers. All rights reserved.</p>
+  <!-- ======== 8. TRUST BADGES ======== -->
+  <section class="py-14 border-t" :class="isDark ? 'bg-[#0a0a0a] border-white/5' : 'bg-white border-gray-100'">
+    <div class="max-w-5xl mx-auto px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-10">
+        <div v-for="badge in trustBadges" :key="badge.title" class="flex flex-col items-center text-center gap-3">
+          <div class="w-16 h-16 rounded-full flex items-center justify-center" :class="isDark ? 'bg-[#1a1a1a]' : 'bg-[#faf5f0]'">
+            <svg class="w-7 h-7 text-[#C9A962]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" :d="badge.icon"/></svg>
+          </div>
+          <div>
+            <p class="font-bold text-sm">{{ badge.title }}</p>
+            <p class="text-xs mt-0.5 font-light" :class="isDark ? 'text-gray-500' : 'text-gray-400'">{{ badge.sub }}</p>
+          </div>
         </div>
-      </footer>
-    </main>
+      </div>
+    </div>
+  </section>
 
-    <ProductModal :show="showProductModal" :item-code="selectedItemCode" @close="showProductModal = false" />
-  </div>
+  <!-- ======== 9. CURATED FOR YOU ======== -->
+  <section class="py-16" :class="isDark ? 'bg-[#0a0a0a]' : 'bg-white'">
+    <div class="max-w-6xl mx-auto px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-serif font-bold tracking-wide">Curated For You</h2>
+        <p class="text-[#C9A962] mt-3 font-bold text-sm tracking-[0.2em] uppercase">Shop By Style</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div v-for="g in genderShop" :key="g.name" class="group cursor-pointer" @click="handleCategorySelect(g.link)">
+          <div class="relative overflow-hidden rounded-2xl aspect-[3/4] shadow-sm">
+            <img :src="g.image" :alt="g.name" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent flex items-end justify-center pb-8">
+              <p class="text-white font-serif text-2xl tracking-wide">{{ g.name }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 10. ZEVAR EXPERIENCE (Fixed images) ======== -->
+  <section class="py-16" :class="isDark ? 'bg-[#111]' : 'bg-[#faf5f0]'">
+    <div class="max-w-6xl mx-auto px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl font-serif font-bold tracking-wide">The Zevar Experience</h2>
+        <p class="mt-3 font-light tracking-wide" :class="isDark ? 'text-gray-400' : 'text-gray-500'">Find a Boutique or Book a Consultation</p>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div v-for="exp in experiences" :key="exp.title" class="group cursor-pointer">
+          <div class="relative overflow-hidden rounded-2xl aspect-[4/3] shadow-sm">
+            <img :src="exp.image" :alt="exp.title" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          </div>
+          <p class="text-center mt-4 font-bold uppercase tracking-[0.15em] text-sm" :class="isDark ? 'text-gray-200' : 'text-gray-800'">{{ exp.title }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======== 11. PARTNER ITEMS (with toggle) ======== -->
+  <section class="py-16 border-t" :class="isDark ? 'bg-[#0a0a0a] border-white/5' : 'bg-white border-gray-100'">
+    <div class="max-w-6xl mx-auto px-8">
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h2 class="text-3xl font-serif font-bold tracking-wide">Partner Collections</h2>
+          <p class="mt-2 font-light tracking-wide" :class="isDark ? 'text-gray-400' : 'text-gray-500'">Curated from our trusted partners</p>
+        </div>
+        <button 
+          @click="showPartners = !showPartners" 
+          class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all"
+          :class="showPartners 
+            ? 'bg-[#8B6914] text-white shadow-lg' 
+            : (isDark ? 'bg-white/10 text-gray-300 hover:bg-white/15' : 'bg-gray-100 text-gray-600 hover:bg-gray-200')"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+          {{ showPartners ? 'Hide Partners' : 'Show Partners' }}
+        </button>
+      </div>
+      
+      <Transition name="partner-fade">
+        <div v-if="showPartners">
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
+            <div v-for="partner in partnerBrands" :key="partner.name" 
+              class="flex flex-col items-center gap-3 p-6 rounded-2xl border transition-all cursor-pointer group"
+              :class="isDark ? 'border-white/5 hover:border-[#C9A962]/40 bg-[#111]' : 'border-gray-100 hover:border-[#C9A962] bg-gray-50 hover:bg-[#faf5f0]'"
+              @click="openPartner(partner)">
+              <div class="w-16 h-16 rounded-xl flex items-center justify-center text-2xl font-serif font-bold" 
+                :class="isDark ? 'bg-white/5 text-[#C9A962]' : 'bg-white text-[#8B6914] shadow-sm'">
+                {{ partner.initial }}
+              </div>
+              <p class="font-bold text-sm tracking-wide">{{ partner.name }}</p>
+              <p class="text-xs font-light" :class="isDark ? 'text-gray-500' : 'text-gray-400'">{{ partner.desc }}</p>
+            </div>
+          </div>
+          <div class="text-center">
+            <p class="text-xs font-light" :class="isDark ? 'text-gray-600' : 'text-gray-400'">
+              Partner items are sourced from verified suppliers. Pricing and availability may vary.
+            </p>
+          </div>
+        </div>
+      </Transition>
+    </div>
+  </section>
+
+  <!-- ======== 12. FOOTER ======== -->
+  <footer class="pt-16 pb-8" :class="isDark ? 'bg-black' : 'bg-[#1a0f08]'" style="color: white;">
+    <div class="max-w-6xl mx-auto px-8">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+        <div>
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-lg flex items-center justify-center" style="background: linear-gradient(135deg, #C9A962, #8B7355);">
+              <span class="text-white font-serif font-bold text-lg">Z</span>
+            </div>
+            <div>
+              <span class="font-serif font-bold text-2xl tracking-tight block">ZEVAR</span>
+              <span class="text-[9px] uppercase tracking-[0.2em] text-gray-400 block -mt-0.5">Fine Jewelers</span>
+            </div>
+          </div>
+          <p class="text-gray-400 text-sm leading-relaxed font-light">Crafting timeless elegance since 1980. Your trusted jeweler for life's precious moments.</p>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4 text-[#C9A962] text-sm tracking-wider uppercase">Quick Links</h4>
+          <ul class="space-y-2.5 text-sm text-gray-400 font-light">
+            <li><a href="#" class="hover:text-[#C9A962] transition">Delivery Information</a></li>
+            <li><a href="#" class="hover:text-[#C9A962] transition">Shipping Policy</a></li>
+            <li><a href="#" class="hover:text-[#C9A962] transition">Payment Options</a></li>
+            <li><a href="#" class="hover:text-[#C9A962] transition">Track your Order</a></li>
+            <li><a href="#" class="hover:text-[#C9A962] transition">Returns</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4 text-[#C9A962] text-sm tracking-wider uppercase">Information</h4>
+          <ul class="space-y-2.5 text-sm text-gray-400 font-light">
+            <li><a href="#" class="hover:text-[#C9A962] transition">Our Story</a></li>
+            <li><a href="#" class="hover:text-[#C9A962] transition">Store Locations</a></li>
+            <li><a href="#" class="hover:text-[#C9A962] transition">Help & FAQs</a></li>
+            <li><a href="#" class="hover:text-[#C9A962] transition">Jewelry Care Guide</a></li>
+            <li><a href="#" class="hover:text-[#C9A962] transition">Size Guide</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="font-bold mb-4 text-[#C9A962] text-sm tracking-wider uppercase">Contact Us</h4>
+          <p class="text-gray-400 text-sm mb-2 font-light">1-800-ZEVAR-00</p>
+          <p class="text-gray-400 text-sm mb-5 font-light">hello@zevarjewelers.com</p>
+          <h4 class="font-bold mb-3 text-[#C9A962] text-sm tracking-wider uppercase">Follow Us</h4>
+          <div class="flex gap-3">
+            <a v-for="s in ['Instagram', 'Facebook', 'Pinterest']" :key="s" href="#" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#C9A962] transition text-sm font-bold">{{ s[0] }}</a>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-white/10 pt-6 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500 font-light">
+        <p>&copy; {{ new Date().getFullYear() }} ZEVAR Fine Jewelers. All rights reserved.</p>
+        <div class="flex gap-6">
+          <a href="#" class="hover:text-[#C9A962] transition">Privacy Policy</a>
+          <a href="#" class="hover:text-[#C9A962] transition">Terms & Conditions</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Product Modal -->
+  <ProductModal 
+    :show="showProductModal" 
+    :item-code="selectedItemCode"
+    @close="showProductModal = false; selectedItemCode = null"
+  />
+</div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useUIStore } from '@/stores/ui'
 import Header from '@/components/Header.vue'
-import TrendingSection from '@/components/TrendingSection.vue'
-import PromoBanner from '@/components/PromoBanner.vue'
-import JewelryProductCard from '@/components/JewelryProductCard.vue'
 import ProductModal from '@/components/ProductModal.vue'
-import { createResource } from 'frappe-ui'
 
-// Theme
-const isDark = ref(true)
-const themeKey = ref(0)
-const showPromoBanner = ref(false)
-const showPartnerItems = ref(true) // Default ON so client can evaluate
+const router = useRouter()
+const ui = useUIStore()
+const activeCategory = ref('all')
 const showProductModal = ref(false)
 const selectedItemCode = ref(null)
+const currentSlide = ref(0)
+const showPartners = ref(false)
+const isDark = ref(ui.isDark)
+let slideTimer = null
 
-// Catalog Data
-const allItems = ref([])
-const loading = ref(false)
+function toggleTheme() {
+  ui.toggleTheme()
+  isDark.value = ui.isDark
+}
 
-// Filters
-const activeCategory = ref('all')
-const activeCategoryLabel = computed(() => {
-  const catMap = {
-    'all': 'All Jewelry',
-    'rings': 'Rings',
-    'chains': 'Chains',
-    'earrings': 'Earrings',
-    'bracelets': 'Bracelets',
-    'pendants': 'Pendants',
-    'watches': 'Watches'
+// ---- HERO SLIDES ----
+const heroSlides = [
+  {
+    id: 1,
+    image: 'https://images.unsplash.com/photo-1610375461246-83df859d849d?w=1920&q=80',
+    overlay: 'linear-gradient(135deg, rgba(250,245,240,0.92) 0%, rgba(250,245,240,0.6) 50%, transparent 100%)',
+    overlayDark: 'linear-gradient(135deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 50%, transparent 100%)',
+    subtitle: 'New Season',
+    title: 'Season of<br/><span class="font-light">Brilliance</span>',
+    description: 'Timeless designs that captured hearts — a tribute to elegance and joy.',
+    cta: 'Explore Now'
+  },
+  {
+    id: 2,
+    image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1920&q=80',
+    overlay: 'linear-gradient(to right, rgba(250,245,240,0.85), transparent)',
+    overlayDark: 'linear-gradient(to right, rgba(0,0,0,0.85), transparent)',
+    subtitle: 'Exclusive',
+    title: 'Diamonds That<br/><span class="font-light">Define You</span>',
+    description: 'Discover our premium diamond collection crafted for the modern you.',
+    cta: 'Shop Diamonds'
+  },
+  {
+    id: 3,
+    image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=1920&q=80',
+    overlay: 'linear-gradient(135deg, rgba(250,245,240,0.9) 0%, rgba(250,245,240,0.5) 50%, transparent 100%)',
+    overlayDark: 'linear-gradient(135deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.5) 50%, transparent 100%)',
+    subtitle: "Valentine's Edit",
+    title: 'Gifts of<br/><span class="font-light">Love</span>',
+    description: 'Celebrate love with handpicked pieces that speak from the heart.',
+    cta: 'Shop Gifts'
   }
-  return catMap[activeCategory.value] || 'All Jewelry'
-})
-const lastSearchQuery = ref('')
+]
 
-// Category-wise items (computed from allItems) - IN-STORE PRIORITY
-const ringsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Rings' || i.item_group === 'Rings') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
-const earringsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Earrings' || i.item_group === 'Earrings') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
-const chainsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Chains' || i.jewelry_type === 'Necklaces' || i.item_group === 'Chains') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
-const braceletsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Bracelets' || i.item_group === 'Bracelets') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
-const pendantsItems = computed(() => allItems.value.filter(i => 
-  (i.jewelry_type === 'Pendants' || i.item_group === 'Pendants') && (i.stock_qty > 0 || !i.custom_source || i.custom_source === 'JCSWIN')
-))
+const signatureCollections = [
+  { name: 'Everyday Diamonds', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80', link: 'diamond' },
+  { name: 'Statement Elegance', image: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=500&q=80', link: 'necklaces' },
+  { name: 'Modern Minimal', image: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=500&q=80', link: 'pendants' },
+  { name: 'The Gifting Edit', image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=500&q=80', link: 'rings' }
+]
 
-// Partner items (custom_source from external partners, not in stock)
-const partnerItems = computed(() => 
-  allItems.value.filter(i => 
-    i.custom_source && ['QGold', 'Stuller', 'Demo'].includes(i.custom_source) && i.stock_qty === 0
-  )
-)
+const shopCategories = [
+  { name: 'Earrings', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80', link: 'earrings' },
+  { name: 'Rings', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=80', link: 'rings' },
+  { name: 'Pendants', image: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=400&q=80', link: 'pendants' },
+  { name: 'Necklaces', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&q=80', link: 'necklaces' },
+  { name: 'Bracelets', image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=400&q=80', link: 'bracelets' },
+  { name: 'Bangles', image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&q=80', link: 'bracelets' },
+  { name: 'Chains', image: 'https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=400&q=80', link: 'chains' },
+  { name: 'View All', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&q=80', link: 'all' }
+]
 
-onMounted(() => {
-  const stored = localStorage.getItem('zevar-theme')
-  if (stored) {
-    isDark.value = stored === 'dark'
+const trendingItems = [
+  { name: 'Timeless Classics', image: 'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=700&q=80', item_code: 'DEMO-T1' },
+  { name: 'Gifting Jewelry', image: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=700&q=80', item_code: 'DEMO-T2' },
+  { name: 'Drops of Radiance', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=700&q=80', item_code: 'DEMO-T3' }
+]
+
+const zevarWorld = [
+  { name: 'Wedding', image: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=700&q=80', link: 'rings' },
+  { name: 'Diamond', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=700&q=80', link: 'diamond' },
+  { name: 'Gold', image: 'https://images.unsplash.com/photo-1610375461246-83df859d849d?w=700&q=80', link: 'gold' },
+  { name: 'Everyday', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=700&q=80', link: 'all' }
+]
+
+const newArrivals = [
+  { name: 'Diamond Studs', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80', item_code: 'DEMO-N1' },
+  { name: 'Gold Hoops', image: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=500&q=80', item_code: 'DEMO-N2' },
+  { name: 'Pearl Collection', image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&q=80', item_code: 'DEMO-N3' },
+  { name: 'Rose Gold Set', image: 'https://images.unsplash.com/photo-1603561596112-0a132b757442?w=500&q=80', item_code: 'DEMO-N4' }
+]
+
+const trustBadges = [
+  { title: 'Zevar Exchange', sub: 'Easy gold exchange policy', icon: 'M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15' },
+  { title: 'Purity Guarantee', sub: 'BIS hallmarked jewelry', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' },
+  { title: 'Transparency', sub: 'Complete pricing clarity', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' },
+  { title: 'Lifetime Care', sub: 'Free cleaning & maintenance', icon: 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z' }
+]
+
+const genderShop = [
+  { name: 'For Her', image: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600&q=80', link: 'all' },
+  { name: 'For Him', image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80', link: 'chains' },
+  { name: 'Gifts & Sets', image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=600&q=80', link: 'all' }
+]
+
+// Fixed: appropriate jewelry store images
+const experiences = [
+  { title: 'Visit Our Store', image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=600&q=80' },
+  { title: 'Book an Appointment', image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80' },
+  { title: 'Talk to an Expert', image: 'https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600&q=80' }
+]
+
+// Partner brands for toggle section
+const partnerBrands = [
+  { name: 'QGold', initial: 'Q', desc: 'Gold & Diamond Supplier', url: 'https://www.qgold.com' },
+  { name: 'Stuller', initial: 'S', desc: 'Premium Jewelry', url: 'https://www.stuller.com' },
+  { name: 'Blue Nile', initial: 'B', desc: 'Diamond Specialists', url: 'https://www.bluenile.com' },
+  { name: 'Zevar In-House', initial: 'Z', desc: 'Exclusive Designs', url: null }
+]
+
+// Carousel logic
+function nextSlide() { currentSlide.value = (currentSlide.value + 1) % heroSlides.length }
+function prevSlide() { currentSlide.value = (currentSlide.value - 1 + heroSlides.length) % heroSlides.length }
+function startAutoSlide() { slideTimer = setInterval(nextSlide, 5000) }
+function stopAutoSlide() { if (slideTimer) clearInterval(slideTimer) }
+
+function openPartner(partner) {
+  if (partner.url) {
+    window.open(partner.url, '_blank')
   } else {
-    isDark.value = true
-    localStorage.setItem('zevar-theme', 'dark')
+    handleCategorySelect('all')
   }
-  updateDocumentClass()
-  fetchAllItems()
-})
-
-// Fetch all items at once (better for category showcase)
-const itemsFetcher = createResource({
-  url: 'zevar_core.api.get_pos_items',
-  makeParams() {
-    const filters = {}
-    
-    if (lastSearchQuery.value) {
-      // Apply search filter
-    }
-
-    return {
-      start: 0,
-      page_length: 100, // Fetch more for showcase
-      search_term: lastSearchQuery.value,
-      filters: JSON.stringify(filters),
-      in_stock_only: false, // Show all items including partner catalog
-      source_filter: null // No source restriction for main view
-    }
-  },
-  onSuccess(data) {
-    allItems.value = data || []
-    loading.value = false
-  }
-})
-
-// Separate fetcher for in-stock only items (for "Available Now" section)
-const inStockFetcher = createResource({
-  url: 'zevar_core.api.get_pos_items',
-  makeParams() {
-    return {
-      start: 0,
-      page_length: 50,
-      in_stock_only: true, // Only in-stock items
-      source_filter: null
-    }
-  },
-  onSuccess(data) {
-    // Update allItems with proper in-stock flag
-    if (data) {
-      data.forEach(item => {
-        item.in_store = true
-      })
-      allItems.value = [...data, ...allItems.value.filter(i => !data.find(d => d.item_code === i.item_code))]
-    }
-  }
-})
-
-function fetchAllItems() {
-  loading.value = true
-  itemsFetcher.fetch()
 }
 
-function handleCategorySelect(categoryId) {
-  activeCategory.value = categoryId
-  scrollToSection('collection')
-}
-
-function performSearch(query) {
-  lastSearchQuery.value = query
-  fetchAllItems()
+function handleCategorySelect(id) {
+  if (id === 'all') router.push('/catalogues')
+  else router.push(`/catalogues/${id}`)
 }
 
 function openProduct(item) {
@@ -285,36 +478,31 @@ function openProduct(item) {
   showProductModal.value = true
 }
 
-function scrollToSection(id) {
-  const element = document.getElementById(id)
-  if (element) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start' })
-  }
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
 }
 
-function toggleTheme() {
-  isDark.value = !isDark.value
-  localStorage.setItem('zevar-theme', isDark.value ? 'dark' : 'light')
-  updateDocumentClass()
-  themeKey.value++
-}
+function performSearch(q) { console.log('Search:', q) }
 
-function updateDocumentClass() {
-  document.documentElement.classList.toggle('dark', isDark.value)
-  document.body.style.backgroundColor = isDark.value ? '#08080a' : '#ffffff'
-}
-
-function handleOccasionSelect(occasionId) {
-  // Future: Filter by occasion tags
-  console.log('Selected occasion:', occasionId)
-}
+onMounted(() => startAutoSlide())
+onUnmounted(() => stopAutoSlide())
 </script>
 
 <style scoped>
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.hero-slide-enter-active, .hero-slide-leave-active {
+  transition: opacity 0.8s ease;
+}
+.hero-slide-enter-from, .hero-slide-leave-to {
+  opacity: 0;
+}
+.partner-fade-enter-active {
+  transition: all 0.4s ease;
+}
+.partner-fade-leave-active {
+  transition: all 0.3s ease;
+}
+.partner-fade-enter-from, .partner-fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
 }
 </style>

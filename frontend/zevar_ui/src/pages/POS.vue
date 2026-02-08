@@ -69,7 +69,7 @@
 
 import AppLayout from '@/components/AppLayout.vue'
 import ItemCard from '@/components/ItemCard.vue'
-import ProductModal from '@/components/ProductModal.vue'
+import ProductModal from '@/components/POSProductModal.vue'
 import { useSessionStore } from '@/stores/session.js'
 import { useUIStore } from '@/stores/ui.js'
 import { createResource } from 'frappe-ui'
@@ -92,12 +92,17 @@ const hasMore = ref(true)
 const items = createResource({
   url: 'zevar_core.api.get_pos_items',
   makeParams() {
+    // Extract stock filters from activeFilters and pass as top-level params
+    const { in_stock_only, out_of_stock_only, ...otherFilters } = ui.activeFilters
+    
     return {
       warehouse: session.currentWarehouse,
       page_length: PAGE_LENGTH,
       start: start.value,
       search_term: ui.searchQuery,
-      filters: JSON.stringify(ui.activeFilters)
+      filters: JSON.stringify(otherFilters),
+      in_stock_only: in_stock_only || false,
+      out_of_stock_only: out_of_stock_only || false
     }
   },
   onSuccess(data) {

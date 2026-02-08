@@ -33,6 +33,11 @@ from zevar_core.api.trending import (
     track_trending_click
 )
 
+from zevar_core.api.item_entry import (
+    quick_add_item,
+    get_next_vendor_sku
+)
+
 __all__ = [
     # Catalog
     'get_pos_items',
@@ -51,4 +56,7 @@ __all__ = [
     # Trending
     'get_trending_items',
     'track_trending_click',
+    # Item Entry
+    'quick_add_item',
+    'get_next_vendor_sku',
 ]
