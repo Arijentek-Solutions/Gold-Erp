@@ -57,6 +57,8 @@ Priority 3: Fallback      -> final_price = standard_rate
 
 - **Unified Product ID** (ERPNext Item Code) + **Vendor SKU** (`custom_vendor_sku`) per vendor.
 - **Data Source** tracking: `custom_source` field (options: JCSWIN, Demo, Manual, QGold, Stuller).
+- **Auto Vendor SKU Generation**: When adding items, the vendor SKU is auto-generated as `{VENDOR_PREFIX}-{TYPE_CODE}-{SEQUENCE}` (e.g., `QGD-RNG-00142`). Once a vendor is added, subsequent items from that vendor auto-generate sequential SKUs.
+- **Quick Item Entry**: Single-call API (`quick_add_item`) replaces legacy multi-step item creation. Creates Item + sets jewelry details + creates stock entry in one step.
 - **Thermal Tag Printing** (planned): Purity, Weight, Diamond CTW, Barcode.
 
 ### 2.5 Layaway / Installment Schemes (PLANNED -- NOT YET BUILT)
@@ -182,7 +184,17 @@ Priority 3: Fallback      -> final_price = standard_rate
 - **Build:** Vite
 
 ## 7. Key File Map
-- `zevar_core/api.py`: All whitelisted API endpoints.
+- `zevar_core/api/__init__.py`: Central API imports (backward-compatible).
+- `zevar_core/api/catalog.py`: Item listing, filters, details (with stock sorting).
+- `zevar_core/api/pricing.py`: Price calculation (MSRP > Calculated > Fallback).
+- `zevar_core/api/item_entry.py`: Quick item creation + auto vendor SKU generation.
+- `zevar_core/api/pos.py`: POS invoice, settings, totals.
+- `zevar_core/api/customer.py`: Customer search & details.
+- `zevar_core/api/trending.py`: Trending items & click tracking.
 - `zevar_core/item_events.py`: Net weight auto-calc.
 - `frontend/zevar_ui/src/stores/cart.js`: Cart state + persistence.
-- `frontend/zevar_ui/src/pages/CatalogueDashboard.vue`: Public catalog + Source toggle.
+- `frontend/zevar_ui/src/pages/CatalogueDashboard.vue`: Tanishq-style catalog homepage.
+- `frontend/zevar_ui/src/pages/CategoryListing.vue`: Category product listing with filters.
+- `frontend/zevar_ui/src/components/ProductModal.vue`: Detailed product modal (catalog).
+- `frontend/zevar_ui/src/components/POSProductModal.vue`: Compact product modal (POS).
+- `frontend/zevar_ui/src/components/FilterSidebar.vue`: POS filters (metal, gemstone, purity, stock status).

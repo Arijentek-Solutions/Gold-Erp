@@ -26,11 +26,13 @@ PURITY_VALUES = {
 # Unit Conversions
 TROY_OZ_TO_GRAMS = 31.1035
 
-# Tax Rates
+# Tax Rates (keys match warehouse name substrings, case-insensitive)
 DEFAULT_TAX_RATES = {
-    'NY': 8.875,
-    'Miami': 7.00,
-    'LA': 9.50
+    'new york': 8.875,
+    'miami': 7.00,
+    'los angeles': 9.50,
+    'houston': 8.25,
+    'chicago': 10.25,
 }
 
 # Payment Modes

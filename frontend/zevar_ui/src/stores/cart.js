@@ -119,7 +119,6 @@ export const useCartStore = defineStore('cart', () => {
 
   const fetchSettings = createResource({
     url: 'zevar_core.api.get_pos_settings',
-    auto: true,
     onSuccess(data) {
       if (data) {
         taxRate.value = data.tax_rate || 0
@@ -127,6 +126,12 @@ export const useCartStore = defineStore('cart', () => {
       }
     }
   })
+
+  function loadTaxForWarehouse(warehouse) {
+    if (warehouse) {
+      fetchSettings.fetch({ warehouse })
+    }
+  }
 
   // ==========================================================================
   // ORDER SUBMISSION
@@ -166,6 +171,7 @@ export const useCartStore = defineStore('cart', () => {
     tax,
     grandTotal,
     fetchSettings,
+    loadTaxForWarehouse,
     addItem,
     removeItem,
     clearCart,

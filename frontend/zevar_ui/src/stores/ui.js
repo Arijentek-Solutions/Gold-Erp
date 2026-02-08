@@ -42,7 +42,7 @@ export const useUIStore = defineStore('ui', () => {
   }
 
   function setFilter(key, value) {
-    if (!value) {
+    if (value === null || value === undefined || value === '') {
       delete activeFilters.value[key]
     } else {
       activeFilters.value[key] = value

@@ -16,6 +16,11 @@ const routes = [
     name: 'Catalogues',
     component: () => import('./pages/CatalogueDashboard.vue'),
   },
+  {
+    path: '/catalogues/:category',
+    name: 'CategoryListing',
+    component: () => import('./pages/CategoryListing.vue'),
+  },
 ]
 
 const router = createRouter({
