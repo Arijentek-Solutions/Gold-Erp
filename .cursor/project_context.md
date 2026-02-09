@@ -91,6 +91,9 @@ Priority 3: Fallback      -> final_price = standard_rate
 | **Zevar Purity** | Regular (lookup) | Purity master list | `fine_metal_content` (Float). Names: 24K, 22K, 18K, 14K, 10K, 925 Sterling, etc. |
 | **Zevar Gemstone Detail** | Child Table | Gemstone rows on Item | `gem_type`, `carat` (3dp), `count`, `cut`, `color`, `clarity`, `rate`, `amount` (read-only) |
 | **Trending Item** | Regular | Curated trending products for catalogue | `item_name`, `category`, `partner`, `price`, `is_active`, `is_hot`, `product_url`, `image_url`, `view_count`, `last_clicked` |
+| **Repair Type** | Regular (master) | Repair service catalog | `repair_name`, `category`, `base_price`, `estimated_days`, `is_active` |
+| **Repair Order Item** | Child Table | Parts/materials consumed per repair | `item_code`, `qty`, `rate`, `amount`, `warehouse` |
+| **Repair Order** | Regular | Repair job (intake to delivery) | `status`, `customer`, `handled_by`, `repair_type`, `parts` (table), `total_cost`, `received_date`, `delivered_date` |
 
 ### 3.2 Custom Fields on ERPNext `Item`
 
@@ -163,6 +166,7 @@ Priority 3: Fallback      -> final_price = standard_rate
 | **Frontend Features** | **Cart Sync** (Cross-tab), **Catalog Source Toggle** (Store vs Partner), **Weight Breakdown** (Gross/Stone/Net). |
 | **Pinia Stores** | `cart.js` (with sync), `gold.js`, `session.js`, `ui.js`. |
 | **Trending Item DocType** | Done. Standalone trending curation. |
+| **Repair Terminal** | Done. Repair Order DocTypes, API (repair.py), RepairTerminal.vue, print receipt, customer repair history, handled_by, parts table. |
 
 ### PENDING / NOT YET BUILT
 
@@ -198,3 +202,5 @@ Priority 3: Fallback      -> final_price = standard_rate
 - `frontend/zevar_ui/src/components/ProductModal.vue`: Detailed product modal (catalog).
 - `frontend/zevar_ui/src/components/POSProductModal.vue`: Compact product modal (POS).
 - `frontend/zevar_ui/src/components/FilterSidebar.vue`: POS filters (metal, gemstone, purity, stock status).
+- `zevar_core/api/repair.py`: Repair orders, types, stats, create, status update, receipt HTML, customer repair history.
+- `frontend/zevar_ui/src/pages/RepairTerminal.vue`: Repair terminal UI (list, new intake, detail, print receipt).

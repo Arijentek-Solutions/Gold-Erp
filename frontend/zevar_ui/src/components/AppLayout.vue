@@ -17,6 +17,7 @@
         </div>
       </div>
 
+      <div class="flex-1 flex flex-col overflow-hidden">
       <nav class="p-4 space-y-2 flex-1 overflow-y-auto custom-scrollbar">
         <router-link to="/" 
           class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
@@ -27,7 +28,7 @@
              <svg class="w-5 h-5 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
              <span class="hidden lg:block font-medium tracking-wide text-sm">POS Terminal</span>
           </div>
-          <div v-if="$route.path === '/'" class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37]"></div>
+          <div class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300" :class="$route.path === '/' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"></div>
         </router-link>
 
         <router-link to="/transactions" 
@@ -39,10 +40,10 @@
               <svg class="w-5 h-5 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
               <span class="hidden lg:block font-medium tracking-wide text-sm">Sales History</span>
            </div>
-           <div v-if="$route.path === '/transactions'" class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37]"></div>
+           <div class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300" :class="$route.path === '/transactions' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"></div>
         </router-link>
 
-        <router-link to="/catalogues" 
+        <router-link to="/catalogues" target="_blank"
           class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
           active-class="bg-white/10 text-white shadow-inner"
           :class="$route.path === '/catalogues' ? '' : 'text-gray-400 hover:text-white hover:bg-white/5'"
@@ -51,33 +52,44 @@
               <svg class="w-5 h-5 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
               <span class="hidden lg:block font-medium tracking-wide text-sm">Catalogues</span>
            </div>
-           <div v-if="$route.path === '/catalogues'" class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37]"></div>
+           <div class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300" :class="$route.path === '/catalogues' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"></div>
+        </router-link>
+        <router-link to="/repairs" class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden" active-class="bg-white/10 text-white shadow-inner" :class="$route.path === '/repairs' ? '' : 'text-gray-400 hover:text-white hover:bg-white/5'">
+           <div class="relative z-10 flex items-center gap-4">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+              <span class="hidden lg:block font-medium tracking-wide text-sm">Repairs</span>
+           </div>
+           <div class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300" :class="$route.path === '/repairs' ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'"></div>
         </router-link>
 
         <div v-if="$route.path === '/'" class="mt-6 pt-6 border-t border-white/5 lg:block hidden">
             <FilterSidebar />
         </div>
       </nav>
+      </div>
 
-      <div class="p-4 border-t border-white/5 bg-[#15171e] dark:bg-black flex items-center justify-between gap-2">
-        <button @click="session.logoutResource.submit()" class="flex-1 flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-all group overflow-hidden">
-          <div class="w-8 h-8 rounded-full bg-gradient-to-br from-gray-700 to-gray-800 flex flex-shrink-0 items-center justify-center text-xs font-bold text-white border border-white/10 group-hover:border-[#D4AF37] transition-colors">
-            {{ session.user?.full_name?.[0] || 'U' }}
-          </div>
-          <div class="hidden lg:block text-left overflow-hidden min-w-0">
-             <p class="text-xs font-bold text-white truncate">{{ session.user?.full_name || 'User' }}</p>
-             <p class="text-[9px] text-gray-500 group-hover:text-[#D4AF37] transition-colors uppercase tracking-wider">Logout</p>
-          </div>
-        </button>
-
-        <button 
-            @click="ui.toggleTheme()" 
-            class="hidden lg:flex w-8 h-8 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-[#D4AF37] transition-colors border border-white/5"
-            title="Toggle Theme"
-        >
-            <svg v-if="ui.isDark" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-            <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-        </button>
+      <!-- User Profile & Theme Toggle Footer -->
+      <div class="p-4 border-t border-white/5 bg-[#1a1c23] dark:bg-black z-20">
+        <div class="flex items-center justify-between gap-2 group">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F2E6A0] flex items-center justify-center text-[#0F1115] font-bold text-xs shadow-inner">
+                    {{ session.user?.full_name?.[0]?.toUpperCase() || 'U' }}
+                </div>
+                <div class="hidden lg:flex flex-col min-w-0">
+                    <span class="text-xs font-bold text-white truncate">{{ session.user?.full_name || 'Guest' }}</span>
+                    <span class="text-[10px] text-gray-400 truncate">{{ session.user?.email || '' }}</span>
+                </div>
+            </div>
+            
+            <button 
+                @click="ui.toggleTheme()" 
+                class="hidden lg:flex w-8 h-8 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-[#D4AF37] transition-colors border border-white/5 focus:outline-none"
+                title="Toggle Theme"
+            >
+                <svg v-if="ui.isDark" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+            </button>
+        </div>
       </div>
     </aside>
 
