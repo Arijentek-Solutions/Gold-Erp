@@ -21,6 +21,11 @@ const routes = [
     name: 'CategoryListing',
     component: () => import('./pages/CategoryListing.vue'),
   },
+  {
+    path: '/repairs',
+    name: 'Repairs',
+    component: () => import('./pages/RepairTerminal.vue'),
+  },
 ]
 
 const router = createRouter({

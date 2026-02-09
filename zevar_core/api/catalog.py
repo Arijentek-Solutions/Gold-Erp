@@ -5,7 +5,7 @@ import frappe
 from zevar_core.constants import DEFAULT_PAGE_LENGTH, PARTNER_SOURCES
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None, 
                   search_term=None, filters=None, in_stock_only=False, out_of_stock_only=False, source_filter=None):
     """
@@ -90,7 +90,8 @@ def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None,
         fields=_get_item_fields(),
         order_by="custom_is_featured desc, custom_is_trending desc, item_group asc",
         start=int(start),
-        page_length=fetch_length
+        page_length=fetch_length,
+        ignore_permissions=True
     )
     
     if not items:
@@ -206,7 +207,7 @@ def get_catalog_filters():
     return filters
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
 def get_item_details(item_code):
     """Fetch full item details including gemstones and all product attributes."""
     from zevar_core.api.pricing import get_item_price

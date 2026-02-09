@@ -191,9 +191,57 @@ const categoryDescription = computed(() => {
   return desc[categoryId.value] || 'Explore our premium jewelry collection'
 })
 
+// Build query filters based on category and user selections
+function buildQueryFilters() {
+  const queryFilters = {}
+  const categoryMap = {
+    'rings': 'Rings',
+    'earrings': 'Earrings',
+    'necklaces': 'Necklaces',
+    'chains': 'Chains',
+    'bracelets': 'Bracelets',
+    'pendants': 'Pendants',
+    'gold': null,
+    'diamond': null
+  }
+  const catKey = categoryId.value.toLowerCase()
+  if (catKey === 'gold') {
+    queryFilters.custom_metal_type = ['like', '%Gold%']
+  } else if (catKey === 'diamond') {
+    queryFilters.custom_product_type = ['like', '%Diamond%']
+  } else if (categoryMap[catKey]) {
+    queryFilters.custom_jewelry_type = categoryMap[catKey]
+  }
+  if (filters.value.metals.length > 0) {
+    queryFilters.custom_metal_type = filters.value.metals
+  }
+  if (filters.value.purities.length > 0) {
+    queryFilters.custom_purity = filters.value.purities
+  }
+  return queryFilters
+}
+
 const itemsResource = createResource({
-  url: 'zevar_core.api.catalog.get_pos_items',
-  auto: false,
+  url: 'zevar_core.api.get_pos_items',
+  makeParams() {
+    const queryFilters = buildQueryFilters()
+    let minPrice = null
+    let maxPrice = null
+    const priceRange = filters.value.priceRange
+    if (priceRange === '0-500') { maxPrice = 500 }
+    else if (priceRange === '500-1000') { minPrice = 500; maxPrice = 1000 }
+    else if (priceRange === '1000-2500') { minPrice = 1000; maxPrice = 2500 }
+    else if (priceRange === '2500+') { minPrice = 2500 }
+
+    const params = {
+      start: 0,
+      page_length: 100,
+      filters: JSON.stringify(queryFilters)
+    }
+    if (minPrice) params.min_price = minPrice
+    if (maxPrice) params.max_price = maxPrice
+    return params
+  },
   onSuccess(data) {
     products.value = data || []
     totalItems.value = data?.length || 0
@@ -207,60 +255,7 @@ const itemsResource = createResource({
 
 function loadProducts() {
   loading.value = true
-  const queryFilters = {}
-  
-  const categoryMap = {
-    'rings': 'Rings',
-    'earrings': 'Earrings',
-    'necklaces': 'Necklaces',
-    'chains': 'Chains',
-    'bracelets': 'Bracelets',
-    'pendants': 'Pendants',
-    'gold': null,
-    'diamond': null
-  }
-  
-  const catKey = categoryId.value.toLowerCase()
-  
-  if (catKey === 'gold') {
-    queryFilters.custom_metal_type = ['like', '%Gold%']
-  } else if (catKey === 'diamond') {
-    queryFilters.custom_product_type = ['like', '%Diamond%']
-  } else if (categoryMap[catKey]) {
-    queryFilters.custom_jewelry_type = categoryMap[catKey]
-  }
-  
-  if (filters.value.metals.length > 0) {
-    queryFilters.custom_metal_type = filters.value.metals
-  }
-  
-  if (filters.value.purities.length > 0) {
-    queryFilters.custom_purity = filters.value.purities
-  }
-
-  // Apply price range filter
-  let minPrice = null
-  let maxPrice = null
-  const priceRange = filters.value.priceRange
-  if (priceRange === '0-500') {
-    maxPrice = 500
-  } else if (priceRange === '500-1000') {
-    minPrice = 500
-    maxPrice = 1000
-  } else if (priceRange === '1000-2500') {
-    minPrice = 1000
-    maxPrice = 2500
-  } else if (priceRange === '2500+') {
-    minPrice = 2500
-  }
-
-  if (minPrice) queryFilters.min_price = minPrice
-  if (maxPrice) queryFilters.max_price = maxPrice
-
-  itemsResource.fetch({
-    filters: JSON.stringify(queryFilters),
-    page_length: 100
-  })
+  itemsResource.fetch()
 }
 
 function applyFilters() {

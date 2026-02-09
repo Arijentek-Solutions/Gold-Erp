@@ -38,6 +38,17 @@ from zevar_core.api.item_entry import (
     get_next_vendor_sku
 )
 
+from zevar_core.api.repair import (
+    get_repair_types,
+    get_repair_orders,
+    get_repair_stats,
+    create_repair_order,
+    update_repair_status,
+    get_repair_order_details,
+    get_customer_repair_history,
+    get_repair_receipt_html,
+)
+
 __all__ = [
     # Catalog
     'get_pos_items',
@@ -59,4 +70,13 @@ __all__ = [
     # Item Entry
     'quick_add_item',
     'get_next_vendor_sku',
+    # Repair
+    'get_repair_types',
+    'get_repair_orders',
+    'get_repair_stats',
+    'create_repair_order',
+    'update_repair_status',
+    'get_repair_order_details',
+    'get_customer_repair_history',
+    'get_repair_receipt_html',
 ]
