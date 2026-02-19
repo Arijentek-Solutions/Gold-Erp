@@ -11,9 +11,18 @@ module.exports = {
         fontFamily: {
             sans: ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
             serif: ['Cinzel', 'ui-serif', 'Georgia', 'serif'],
+            display: ['Spline Sans', 'sans-serif'],
+            portal: ['Plus Jakarta Sans', 'sans-serif'],
         },
         extend: {
-            // Keep other extensions here if you have them
+            colors: {
+                'portal-primary': '#25c0f4',
+                'portal-accent-teal': '#1de9b6',
+                'portal-accent-indigo': '#536dfe',
+                'portal-accent-peach': '#ffccb3',
+                'portal-bg-dark': '#0a0f12',
+                'portal-bg-purple': '#191022',
+            }
         },
     },
     plugins: [],
