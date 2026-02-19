@@ -11,15 +11,15 @@ app_license = "mit"
 # required_apps = []
 
 # Each item in the list will be shown as an app in the apps page
-# add_to_apps_screen = [
-# 	{
-# 		"name": "zevar_core",
-# 		"logo": "/assets/zevar_core/logo.png",
-# 		"title": "Unified Retail Management System",
-# 		"route": "/zevar_core",
-# 		"has_permission": "zevar_core.api.permission.has_app_permission"
-# 	}
-# ]
+add_to_apps_screen = [
+	{
+		"name": "zevar_core",
+		"logo": "/assets/zevar_core/logo.png",
+		"title": "Unified Retail Management System",
+		"route": "/employee-portal",
+		# "has_permission": "zevar_core.api.permission.has_app_permission"
+	}
+]
 
 # Includes in <head>
 # ------------------
@@ -246,6 +246,10 @@ app_license = "mit"
 # ------------
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
+
+website_route_rules = [
+    {"from_route": "/employee-portal/<path:app_path>", "to_route": "employee-portal"},
+]
 
 fixtures = ["Item Attribute", "Custom Field", "Property Setter"]
 

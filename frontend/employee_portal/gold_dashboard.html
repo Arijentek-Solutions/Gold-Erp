@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Zevar Ultimate Gold Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f4c025",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#0a0c1a", // Deep sapphire/navy
+                        "sapphire-deep": "#0f1428",
+                        "emerald-glow": "#10b981",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(15, 20, 40, 0.6);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(244, 192, 37, 0.2);
+        }
+        .gold-border-gradient {
+            border: 1px solid;
+            border-image-source: linear-gradient(135deg, #f4c025 0%, #0f1428 100%);
+            border-image-slice: 1;
+        }
+        .diamond-pattern {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0l30 30-30 30L0 30z' fill='%23f4c025' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+        }
+        .metallic-bezel {
+            background: linear-gradient(145deg, #2a2a2a, #111111);
+            box-shadow: inset 2px 2px 5px rgba(255,255,255,0.1), inset -2px -2px 5px rgba(0,0,0,0.5), 0 0 20px rgba(244, 192, 37, 0.15);
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display text-white selection:bg-primary/30 overflow-hidden">
+<!-- Sophisticated Background -->
+<div class="fixed inset-0 -z-10 bg-[radial-gradient(circle_at_50%_50%,_#1a2040_0%,_#0a0c1a_100%)]"></div>
+<div class="fixed inset-0 -z-10 diamond-pattern"></div>
+<div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/5 blur-[120px] rounded-full"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-500/5 blur-[120px] rounded-full"></div>
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 border-r border-primary/10 flex flex-col glass-card">
+<div class="p-8 flex flex-col gap-1">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-yellow-600 flex items-center justify-center shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-background-dark font-bold">diamond</span>
+</div>
+<div>
+<h1 class="text-xl font-bold tracking-tight text-white">ZEVAR</h1>
+<p class="text-[10px] uppercase tracking-[0.2em] text-primary/70 font-semibold">Ultimate HR</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-2 mt-4">
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg bg-primary text-background-dark font-bold shadow-lg shadow-primary/20 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-white/60 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">schedule</span>
+<span class="text-sm">Timesheets</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-white/60 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="text-sm">Payroll</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-white/60 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="text-sm">Jewelry Team</span>
+</a>
+<a class="flex items-center gap-4 px-4 py-3 rounded-lg text-white/60 hover:text-white hover:bg-white/5 transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm">Portal Settings</span>
+</a>
+</nav>
+<div class="p-6">
+<div class="glass-card rounded-xl p-4 border border-white/5">
+<p class="text-[10px] text-primary uppercase font-bold mb-2">Support Tier</p>
+<p class="text-sm font-medium">Sapphire Elite</p>
+<div class="mt-3 h-1 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-3/4"></div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col relative overflow-y-auto">
+<!-- Header -->
+<header class="h-20 flex items-center justify-between px-10 border-b border-white/5 glass-card">
+<div class="flex items-center gap-4">
+<span class="text-white/40 font-medium">Monday, Oct 23rd</span>
+<div class="h-4 w-[1px] bg-white/10"></div>
+<span class="text-primary font-bold">Good Morning, Artisan!</span>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-white/60 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-emerald-glow rounded-full"></span>
+</button>
+<div class="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-full border border-white/10">
+<div class="w-8 h-8 rounded-full overflow-hidden border border-primary/50">
+<img alt="User Profile" class="w-full h-full object-cover" data-alt="Portrait of a professional man in a dark suit" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBYN83WWTT4s8T6aQueNXbHTQ_Dupmwr1U-HvKOKlNh4kKonx24oxWM3CjQpl6oTLlztQwiKtqr9bh06n9FpuXjgTcvySq6gBqLHzlbKZ_B3dwEI3wdYqYeTAJQdJlUXJwwSr3L8U8LHOLOtUGaqudkz2hIe5OQeOWEZP64oBsx9j0J9KcUHQP7q6YTkAr8xMc4KYS4m2Uk_TYAOMYLc6VSKB9SB2VQjKEYRZyE_VUZD9fLZxUEnr8p5FEJ8UCs8hadKR0cALuVsPcu"/>
+</div>
+<span class="text-sm font-medium">Alexander Wright</span>
+</div>
+</div>
+</header>
+<div class="p-10 grid grid-cols-12 gap-8">
+<!-- Center Hero Section -->
+<div class="col-span-12 lg:col-span-8 flex flex-col items-center justify-center py-10 relative">
+<!-- Hero Timer Container -->
+<div class="relative group">
+<!-- Outer Metallic Bezel -->
+<div class="w-80 h-80 rounded-full metallic-bezel border-[12px] border-[#222] flex items-center justify-center relative p-4 transition-transform duration-500 group-hover:scale-[1.02]">
+<!-- Gold Leaf Ring -->
+<div class="absolute inset-0 rounded-full border border-primary/40 shadow-[0_0_15px_rgba(244,192,37,0.3)]"></div>
+<!-- Digital Face -->
+<div class="bg-black/80 w-full h-full rounded-full flex flex-col items-center justify-center border-2 border-white/5 shadow-inner">
+<span class="text-[10px] text-primary/50 tracking-[0.3em] font-bold mb-2 uppercase">Current Shift</span>
+<div class="text-5xl font-mono text-emerald-glow drop-shadow-[0_0_8px_rgba(16,185,129,0.8)] font-bold tracking-tighter">
+                                    09:41:12
+                                </div>
+<div class="mt-4 flex gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-glow animate-pulse"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-glow/40"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-glow/40"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Buttons -->
+<div class="mt-12 flex gap-6 w-full max-w-md">
+<button class="flex-1 h-14 glass-card border-primary/50 border-2 rounded-xl flex items-center justify-center gap-3 group relative overflow-hidden transition-all hover:bg-primary/20">
+<div class="absolute inset-0 bg-gradient-to-r from-primary/0 via-primary/5 to-primary/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000"></div>
+<span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform">login</span>
+<span class="font-bold text-primary tracking-wide">CLOCK IN</span>
+</button>
+<button class="flex-1 h-14 bg-white/5 border border-white/10 rounded-xl flex items-center justify-center gap-3 group transition-all hover:bg-red-500/10 hover:border-red-500/40">
+<span class="material-symbols-outlined text-white/40 group-hover:text-red-400">logout</span>
+<span class="font-bold text-white/60 group-hover:text-red-400">CLOCK OUT</span>
+</button>
+</div>
+</div>
+<!-- Side Widget Column -->
+<div class="col-span-12 lg:col-span-4 space-y-8">
+<!-- Daily Vibe Widget -->
+<div class="glass-card rounded-2xl p-6 border-l-4 border-primary shadow-2xl">
+<div class="flex items-center justify-between mb-6">
+<h3 class="font-bold text-lg">Daily Vibe</h3>
+<span class="text-xs text-white/40 font-medium">Artisan Spirit</span>
+</div>
+<p class="text-sm text-white/60 mb-6">How are you shining today?</p>
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center gap-2 p-3 rounded-xl bg-primary/20 border border-primary/40 transition-all hover:scale-105">
+<span class="text-3xl filter drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">💎</span>
+<span class="text-[10px] font-bold text-primary uppercase">Shining</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/5 transition-all hover:bg-white/10 hover:scale-105">
+<span class="text-3xl">🔥</span>
+<span class="text-[10px] font-bold text-white/40 uppercase">Fired Up</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/5 transition-all hover:bg-white/10 hover:scale-105">
+<span class="text-3xl">🧊</span>
+<span class="text-[10px] font-bold text-white/40 uppercase">Calm</span>
+</button>
+</div>
+</div>
+<!-- Recent Activity Widget -->
+<div class="glass-card rounded-2xl p-6 border border-white/5">
+<h3 class="font-bold text-lg mb-6">Recent Activity</h3>
+<div class="space-y-6">
+<div class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 mt-1">
+<span class="material-symbols-outlined text-sm text-primary">done_all</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-white">Clock Out (Auto)</p>
+<p class="text-xs text-white/40">Yesterday, 6:00 PM</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 mt-1">
+<span class="material-symbols-outlined text-sm text-primary">coffee</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-white">Break Finished</p>
+<p class="text-xs text-white/40">Yesterday, 1:45 PM</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center border border-primary/30 mt-1">
+<span class="material-symbols-outlined text-sm text-primary">login</span>
+</div>
+<div>
+<p class="text-sm font-semibold text-white">Clocked In</p>
+<p class="text-xs text-white/40">Yesterday, 9:02 AM</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Row Widgets -->
+<div class="col-span-12 lg:col-span-8">
+<div class="glass-card rounded-2xl p-8 h-full border border-white/5 flex items-center justify-between gap-8">
+<div class="flex-1">
+<h3 class="text-xl font-bold mb-2">Task Overview</h3>
+<p class="text-sm text-white/60 mb-6">Your daily jewelry crafting goals.</p>
+<div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5 mb-4">
+<span class="material-symbols-outlined text-primary">verified</span>
+<div class="flex-1">
+<div class="flex justify-between mb-1">
+<span class="text-xs font-bold uppercase tracking-wider text-white/80">Gem Polishing</span>
+<span class="text-xs text-primary">3/5 Done</span>
+</div>
+<div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-3/5 shadow-[0_0_10px_rgba(244,192,37,0.5)]"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/5">
+<span class="material-symbols-outlined text-primary">auto_fix_high</span>
+<div class="flex-1">
+<div class="flex justify-between mb-1">
+<span class="text-xs font-bold uppercase tracking-wider text-white/80">Ring Fitting Admin</span>
+<span class="text-xs text-primary">8/10 Done</span>
+</div>
+<div class="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-4/5 shadow-[0_0_10px_rgba(244,192,37,0.5)]"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- 3D Style Circular Progress -->
+<div class="hidden sm:flex flex-col items-center justify-center px-8 py-4 border-l border-white/10">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full transform -rotate-90">
+<circle class="text-white/5" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-width="8"></circle>
+<circle class="text-primary drop-shadow-[0_0_10px_rgba(244,192,37,0.4)]" cx="64" cy="64" fill="transparent" r="58" stroke="currentColor" stroke-dasharray="364.4" stroke-dashoffset="109.3" stroke-width="8"></circle>
+</svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<span class="text-2xl font-bold">70%</span>
+<span class="text-[8px] uppercase font-bold text-white/40 tracking-widest">Mastery</span>
+</div>
+</div>
+<p class="text-[10px] mt-4 font-bold text-primary/70 uppercase">Daily Progress</p>
+</div>
+</div>
+</div>
+<!-- Mini Status Cards -->
+<div class="col-span-12 lg:col-span-4 grid grid-cols-2 gap-4">
+<div class="glass-card rounded-2xl p-6 border-b-2 border-primary/20 transition-all hover:-translate-y-1">
+<span class="material-symbols-outlined text-primary mb-2">stars</span>
+<h4 class="text-xs font-bold text-white/40 uppercase mb-1">Level</h4>
+<p class="text-lg font-bold">Gold III</p>
+</div>
+<div class="glass-card rounded-2xl p-6 border-b-2 border-emerald-glow/20 transition-all hover:-translate-y-1">
+<span class="material-symbols-outlined text-emerald-glow mb-2">bolt</span>
+<h4 class="text-xs font-bold text-white/40 uppercase mb-1">Streak</h4>
+<p class="text-lg font-bold">12 Days</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Floating Chat Button (Emerald Sapphire Theme) -->
+<button class="fixed bottom-8 right-8 w-14 h-14 bg-gradient-to-tr from-sapphire-deep to-primary rounded-full flex items-center justify-center shadow-2xl border border-white/20 transition-transform hover:scale-110 active:scale-95">
+<span class="material-symbols-outlined text-white">auto_awesome</span>
+</button>
+</body></html>
