@@ -12,6 +12,7 @@ splash_image = "/assets/zevar_core/images/pos_logo.svg"
 
 # required_apps = []
 
+
 # Each item in the list will be shown as an app in the apps page
 add_to_apps_screen = [
 	{
@@ -19,14 +20,15 @@ add_to_apps_screen = [
 		"logo": "/assets/zevar_core/images/pos_logo.svg",
 		"title": "Zevar POS",
 		"route": "/pos",
-	},
-	{
-		"name": "employee_portal",
-		"logo": "/assets/zevar_core/images/employee_portal_logo.svg",
-		"title": "Employee Portal",
-		"route": "/employee-portal",
-	},
+	}
 ]
+
+boot_session = "zevar_core.api.desk.boot_session"
+
+app_include_js = [
+    "/assets/zevar_core/js/desk_customization.js"
+]
+
 
 # Includes in <head>
 # ------------------
@@ -81,10 +83,11 @@ add_to_apps_screen = [
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "zevar_core.utils.jinja_methods",
-# 	"filters": "zevar_core.utils.jinja_filters"
-# }
+jinja = {
+	"methods": [
+		"zevar_core.utils.assets.get_frontend_asset"
+	]
+}
 
 # Installation
 # ------------

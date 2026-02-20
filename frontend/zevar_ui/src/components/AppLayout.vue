@@ -10,7 +10,7 @@
 			>
 				<div class="flex items-center gap-4 group cursor-default">
 					<img
-						src="/assets/zevar_core/images/pos_logo.svg"
+						src="/logo.svg"
 						alt="Zevar POS"
 						class="w-12 h-12 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] transform group-hover:scale-105 transition-transform duration-500"
 					/>

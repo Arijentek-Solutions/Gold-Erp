@@ -30,6 +30,7 @@ export default defineConfig({
 		outDir: `../../zevar_core/public/pos`,
 		emptyOutDir: true,
 		target: 'es2015',
+		manifest: true,
 	},
 	optimizeDeps: {
 		include: ['frappe-ui > feather-icons', 'showdown', 'engine.io-client'],

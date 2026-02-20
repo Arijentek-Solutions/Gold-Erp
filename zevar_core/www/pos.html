@@ -11,6 +11,10 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+    <link rel="icon" href="/assets/zevar_core/images/pos_logo.svg">
+
+    {% set pos_css = get_frontend_asset('pos', 'index.css') %}
+    {% set vendor_css = get_frontend_asset('pos', 'vendor.css') %}
 
     {%- block head %}{% endblock %}
 
@@ -26,6 +30,11 @@
     <div id="app"></div>
     <div id="modals"></div>
     <div id="popovers"></div>
+
+    {% set pos_js = get_frontend_asset('pos', 'index.js') %}
+    {% set pos_css = get_frontend_asset('pos', 'index.css') %}
+    {% set vendor_js = get_frontend_asset('pos', 'vendor.js') %}
+    {% set vendor_css = get_frontend_asset('pos', 'vendor.css') %}
 
     <script>
         window.csrf_token = "{{ frappe.session.csrf_token }}";
