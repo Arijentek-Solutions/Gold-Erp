@@ -79,9 +79,6 @@ def quick_add_item(
 	if not vendor_sku:
 		vendor_sku = _generate_vendor_sku(vendor, jewelry_type)
 
-	# Auto-generate item code
-	item_code = _generate_item_code(jewelry_type)
-
 	# Calculate net weight
 	net_weight = max(0, gross_weight - stone_weight)
 

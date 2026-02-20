@@ -128,6 +128,7 @@
 								: 'hover:bg-gray-100 hover:text-[#8B6914]'
 						"
 						title="Toggle Theme"
+						aria-label="Toggle theme"
 					>
 						<svg
 							v-if="isDark"
@@ -215,7 +216,7 @@
 						@mouseleave="openDropdown = null"
 					>
 						<a
-							:href="`/frontend/catalogues/${cat.id}`"
+							:href="router.resolve({ path: `/catalogues/${cat.id}` }).href"
 							@click.prevent="navigateTo(cat.id)"
 							class="px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-all relative flex items-center gap-1.5"
 							:class="[
@@ -262,7 +263,12 @@
 								<a
 									v-for="sub in cat.subcategories"
 									:key="sub.name"
-									:href="`/frontend/catalogues/${cat.id}?sub=${encodeURIComponent(sub.name)}`"
+									:href="
+										router.resolve({
+											path: `/catalogues/${cat.id}`,
+											query: { sub: sub.name },
+										}).href
+									"
 									@click.prevent="navigateTo(cat.id, sub.name)"
 									class="block px-4 py-2.5 text-sm rounded-lg transition-all"
 									:class="

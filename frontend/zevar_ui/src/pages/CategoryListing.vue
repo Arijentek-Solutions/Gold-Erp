@@ -21,7 +21,7 @@
 					class="flex items-center gap-2 text-sm"
 					:class="isDark ? 'text-gray-400' : 'text-gray-600'"
 				>
-					<a href="/frontend/catalogues" class="hover:text-[#C9A962]">Home</a>
+					<router-link to="/catalogues" class="hover:text-[#C9A962]">Home</router-link>
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path
 							stroke-linecap="round"
