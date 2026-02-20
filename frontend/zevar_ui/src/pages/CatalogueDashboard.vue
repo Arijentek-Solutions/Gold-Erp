@@ -655,10 +655,7 @@
 		<ProductModal
 			:show="showProductModal"
 			:item-code="selectedItemCode"
-			@close="
-				showProductModal = false
-				selectedItemCode = null
-			"
+			@close="showProductModal = false; selectedItemCode = null"
 		/>
 	</div>
 </template>

@@ -30,6 +30,7 @@ export default defineConfig({
 		outDir: path.resolve(__dirname, "../../zevar_core/public/employee-portal"),
 		emptyOutDir: true,
 		target: "es2015",
+		manifest: true,
 	},
 	optimizeDeps: {
 		include: ["frappe-ui > feather-icons", "showdown", "engine.io-client"],

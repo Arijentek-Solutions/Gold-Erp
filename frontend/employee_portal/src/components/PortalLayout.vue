@@ -18,7 +18,7 @@
 					class="flex items-center gap-3 bg-[#111420] p-2 rounded-lg border border-white/5"
 				>
 					<img
-						src="/assets/zevar_core/images/employee_portal_logo.svg"
+						:src="logoUrl"
 						alt="Zevar"
 						class="w-8 h-8 rounded"
 					/>
@@ -114,6 +114,9 @@ import { useRoute } from "vue-router";
 
 const auth = useAuthStore();
 const route = useRoute();
+
+// Logo URL - uses the golden logo from zevar_core public images folder
+const logoUrl = "/assets/zevar_core/images/employee_portal_logo.svg";
 
 const navItems = [
 	{ to: "/", icon: "dashboard", label: "Dashboard" },

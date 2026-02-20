@@ -63,7 +63,7 @@
 				<!-- Logo - Fixed alignment -->
 				<router-link to="/catalogues" class="flex items-center gap-3 flex-shrink-0">
 					<img
-						src="/assets/zevar_core/images/pos_logo.svg"
+						src="/logo.svg"
 						alt="Zevar POS"
 						class="w-9 h-9 rounded-lg"
 					/>

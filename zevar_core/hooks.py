@@ -23,7 +23,7 @@ add_to_apps_screen = [
 	}
 ]
 
-
+boot_session = "zevar_core.api.desk.boot_session"
 
 app_include_js = [
     "/assets/zevar_core/js/desk_customization.js"
@@ -83,10 +83,11 @@ app_include_js = [
 # ----------
 
 # add methods and filters to jinja environment
-# jinja = {
-# 	"methods": "zevar_core.utils.jinja_methods",
-# 	"filters": "zevar_core.utils.jinja_filters"
-# }
+jinja = {
+	"methods": [
+		"zevar_core.utils.assets.get_frontend_asset"
+	]
+}
 
 # Installation
 # ------------
