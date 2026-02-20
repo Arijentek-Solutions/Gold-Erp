@@ -267,6 +267,10 @@ const itemFetcher = createResource({
 		details.value = { ...data, item_code: props.itemCode }
 		loading.value = false
 	},
+	onError(error) {
+		console.error('Failed to load item:', error)
+		loading.value = false
+	},
 })
 
 watch(

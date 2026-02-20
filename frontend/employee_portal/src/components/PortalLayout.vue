@@ -17,11 +17,11 @@
 				<div
 					class="flex items-center gap-3 bg-[#111420] p-2 rounded-lg border border-white/5"
 				>
-					<div
-						class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center text-primary font-bold"
-					>
-						Z
-					</div>
+					<img
+						src="/assets/zevar_core/images/employee_portal_logo.svg"
+						alt="Zevar"
+						class="w-8 h-8 rounded"
+					/>
 					<span class="font-bold text-white tracking-wide">Zevar</span>
 				</div>
 			</div>

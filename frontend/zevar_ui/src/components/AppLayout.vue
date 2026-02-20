@@ -9,11 +9,11 @@
 				class="h-24 flex items-center justify-center lg:justify-start lg:px-8 border-b border-white/5"
 			>
 				<div class="flex items-center gap-4 group cursor-default">
-					<div
-						class="w-12 h-12 bg-gradient-to-tr from-[#D4AF37] to-[#F2E6A0] rounded-lg flex items-center justify-center text-[#0F1115] font-serif font-black text-2xl shadow-[0_0_15px_rgba(212,175,55,0.3)] transform group-hover:scale-105 transition-transform duration-500"
-					>
-						Z
-					</div>
+					<img
+						src="/assets/zevar_core/images/pos_logo.svg"
+						alt="Zevar POS"
+						class="w-12 h-12 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] transform group-hover:scale-105 transition-transform duration-500"
+					/>
 					<div class="hidden lg:flex flex-col justify-center">
 						<h1
 							class="text-white font-serif font-bold text-2xl leading-none tracking-wide"

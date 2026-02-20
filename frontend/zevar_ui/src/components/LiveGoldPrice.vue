@@ -75,10 +75,11 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 const isDark = ref(true)
 const isLoading = ref(true)
 let refreshInterval = null
+let observer = null
 
 onMounted(() => {
 	isDark.value = document.documentElement.classList.contains('dark')
-	const observer = new MutationObserver(() => {
+	observer = new MutationObserver(() => {
 		isDark.value = document.documentElement.classList.contains('dark')
 	})
 	observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] })
@@ -88,6 +89,7 @@ onMounted(() => {
 })
 
 onUnmounted(() => {
+	if (observer) observer.disconnect()
 	if (refreshInterval) clearInterval(refreshInterval)
 })
 

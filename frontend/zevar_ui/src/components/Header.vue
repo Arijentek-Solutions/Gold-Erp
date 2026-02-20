@@ -61,12 +61,11 @@
 			<div class="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between gap-8">
 				<!-- Logo - Fixed alignment -->
 				<a href="/frontend/catalogues" class="flex items-center gap-3 flex-shrink-0">
-					<div
-						class="w-9 h-9 rounded-lg flex items-center justify-center"
-						style="background: linear-gradient(135deg, #c9a962, #8b7355)"
-					>
-						<span class="text-white font-serif font-bold text-lg">Z</span>
-					</div>
+					<img
+						src="/assets/zevar_core/images/pos_logo.svg"
+						alt="Zevar POS"
+						class="w-9 h-9 rounded-lg"
+					/>
 					<div class="flex flex-col justify-center leading-none">
 						<span
 							class="font-serif font-bold text-xl tracking-tight"

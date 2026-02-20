@@ -27,12 +27,9 @@ def create_pos_invoice(items: str, payments: str, customer: str = None, discount
 	if not customer:
 		customer = "Walk-In Customer"
 
-	# TODO: Implement actual POS Invoice creation
-	# This is currently a stub
-
 	return {
-		"success": True,
-		"message": "Invoice queued for creation",
+		"success": False,
+		"message": "POS invoice creation is not implemented yet.",
 		"items": items_list,
 		"payments": payments_list,
 		"customer": customer,
@@ -88,11 +85,13 @@ def calculate_invoice_totals(
 	items_list = frappe.parse_json(items) if isinstance(items, str) else items
 
 	# Calculate subtotal
-	subtotal = sum(float(item.get("rate", 0)) * int(item.get("qty", 1)) for item in items_list)
+	subtotal = sum(
+		float(item.get("rate", 0)) * float(item.get("qty", 1)) for item in items_list
+	)
 
 	# Apply discount
-	discount = float(discount_amount)
-	subtotal_after_discount = subtotal - discount
+	discount = max(0.0, float(discount_amount))
+	subtotal_after_discount = max(0.0, subtotal - discount)
 
 	# Calculate tax
 	tax = 0.0

@@ -98,8 +98,9 @@ def get_pos_items(
 						query_filters.append([key, "=", value])
 
 	# When stock or price filters are active, overfetch to compensate for post-query filtering
+	page_length = int(page_length)
 	has_post_filters = in_stock_only or out_of_stock_only or min_price or max_price
-	fetch_length = int(page_length) * 5 if has_post_filters else int(page_length)
+	fetch_length = page_length * 5 if has_post_filters else page_length
 
 	# Fetch items
 	items = frappe.get_list(
@@ -109,7 +110,7 @@ def get_pos_items(
 		order_by="custom_is_featured desc, custom_is_trending desc, item_group asc",
 		start=int(start),
 		page_length=fetch_length,
-		ignore_permissions=True,
+		ignore_permissions=False,
 	)
 
 	if not items:
@@ -173,7 +174,7 @@ def get_pos_items(
 	# Sort: In-stock items first, then out-of-stock
 	pos_items.sort(key=lambda x: (x["stock_qty"] <= 0, -x["stock_qty"]))
 
-	return pos_items
+	return pos_items[:page_length]
 
 
 @frappe.whitelist()

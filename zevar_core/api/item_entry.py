@@ -170,6 +170,7 @@ def _generate_vendor_sku(vendor: str = None, jewelry_type: str = "Other") -> str
         SELECT custom_vendor_sku FROM `tabItem`
         WHERE custom_vendor_sku LIKE %s
         ORDER BY custom_vendor_sku DESC LIMIT 1
+        FOR UPDATE
     """,
 		(pattern,),
 		as_dict=True,

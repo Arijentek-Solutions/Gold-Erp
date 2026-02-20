@@ -16,15 +16,24 @@ export function useOfflineSync() {
 	const pendingCount = ref(0)
 	const syncInProgress = ref(false)
 
-	// Monitor online/offline status
-	window.addEventListener('online', () => {
+	const handleOnline = () => {
 		isOnline.value = true
 		syncPendingTransactions()
-	})
+	}
 
-	window.addEventListener('offline', () => {
+	const handleOffline = () => {
 		isOnline.value = false
-	})
+	}
+
+	// Monitor online/offline status
+	window.addEventListener('online', handleOnline)
+	window.addEventListener('offline', handleOffline)
+
+	// Cleanup function — caller should invoke on component unmount
+	const cleanup = () => {
+		window.removeEventListener('online', handleOnline)
+		window.removeEventListener('offline', handleOffline)
+	}
 
 	/**
 	 * Save cart to IndexedDB
@@ -109,5 +118,6 @@ export function useOfflineSync() {
 		restoreCart,
 		queueTransaction,
 		syncPendingTransactions,
+		cleanup,
 	}
 }
