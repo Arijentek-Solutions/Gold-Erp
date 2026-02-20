@@ -13,14 +13,15 @@ class RepairOrder(Document):
 		parts_total = sum((row.amount or 0.0) for row in (self.parts or []))
 		if parts_total:
 			self.material_cost = parts_total
-		
+
 		# Ensure we treat None as 0.0 for calculations
 		labor = self.labor_cost or 0.0
 		material = self.material_cost or 0.0
 		self.total_cost = labor + material
-		
+
 		if not self.received_date and self.is_new():
 			from frappe.utils import now
+
 			self.received_date = now()
 
 	def on_update(self):
@@ -32,7 +33,9 @@ class RepairOrder(Document):
 		"""Create Material Issue stock entry for parts consumed in this repair."""
 		if not self.parts:
 			return
-		company = frappe.defaults.get_user_default("Company") or frappe.db.get_single_value("Global Defaults", "default_company")
+		company = frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
+			"Global Defaults", "default_company"
+		)
 		if not company:
 			return
 		warehouse = self.warehouse
@@ -41,22 +44,27 @@ class RepairOrder(Document):
 			wh = row.warehouse or warehouse
 			if not wh or not row.item_code or (row.qty or 0) <= 0:
 				continue
-			items.append({
-				"item_code": row.item_code,
-				"qty": row.qty,
-				"warehouse": wh,
-			})
+			items.append(
+				{
+					"item_code": row.item_code,
+					"qty": row.qty,
+					"warehouse": wh,
+				}
+			)
 		if not items:
 			return
 		se = frappe.new_doc("Stock Entry")
 		se.stock_entry_type = "Material Issue"
 		se.company = company
 		for it in items:
-			se.append("items", {
-				"item_code": it["item_code"],
-				"qty": it["qty"],
-				"s_warehouse": it["warehouse"],
-			})
+			se.append(
+				"items",
+				{
+					"item_code": it["item_code"],
+					"qty": it["qty"],
+					"s_warehouse": it["warehouse"],
+				},
+			)
 		se.flags.ignore_permissions = True
 		se.submit()
 		frappe.db.set_value("Repair Order", self.name, "parts_stock_created", 1)

@@ -8,58 +8,57 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
 export const useUIStore = defineStore('ui', () => {
+	// ==========================================================================
+	// STATE
+	// ==========================================================================
 
-  // ==========================================================================
-  // STATE
-  // ==========================================================================
+	const searchQuery = ref('')
+	const activeFilters = ref({})
 
-  const searchQuery = ref('')
-  const activeFilters = ref({})
+	// Check localStorage or system preference on load
+	const isDark = ref(localStorage.getItem('theme') === 'dark')
 
-  // Check localStorage or system preference on load
-  const isDark = ref(localStorage.getItem('theme') === 'dark')
+	// Apply the class to the <html> tag immediately
+	if (isDark.value) {
+		document.documentElement.classList.add('dark')
+	} else {
+		document.documentElement.classList.remove('dark')
+	}
 
-  // Apply the class to the <html> tag immediately
-  if (isDark.value) {
-    document.documentElement.classList.add('dark')
-  } else {
-    document.documentElement.classList.remove('dark')
-  }
+	// ==========================================================================
+	// ACTIONS
+	// ==========================================================================
 
-  // ==========================================================================
-  // ACTIONS
-  // ==========================================================================
+	function toggleTheme() {
+		isDark.value = !isDark.value
+		if (isDark.value) {
+			document.documentElement.classList.add('dark')
+			localStorage.setItem('theme', 'dark')
+		} else {
+			document.documentElement.classList.remove('dark')
+			localStorage.setItem('theme', 'light')
+		}
+	}
 
-  function toggleTheme() {
-    isDark.value = !isDark.value
-    if (isDark.value) {
-      document.documentElement.classList.add('dark')
-      localStorage.setItem('theme', 'dark')
-    } else {
-      document.documentElement.classList.remove('dark')
-      localStorage.setItem('theme', 'light')
-    }
-  }
+	function setFilter(key, value) {
+		if (value === null || value === undefined || value === '') {
+			delete activeFilters.value[key]
+		} else {
+			activeFilters.value[key] = value
+		}
+	}
 
-  function setFilter(key, value) {
-    if (value === null || value === undefined || value === '') {
-      delete activeFilters.value[key]
-    } else {
-      activeFilters.value[key] = value
-    }
-  }
+	function resetFilters() {
+		activeFilters.value = {}
+		searchQuery.value = ''
+	}
 
-  function resetFilters() {
-    activeFilters.value = {}
-    searchQuery.value = ''
-  }
-
-  return {
-    searchQuery,
-    activeFilters,
-    isDark,
-    toggleTheme,
-    setFilter,
-    resetFilters
-  }
+	return {
+		searchQuery,
+		activeFilters,
+		isDark,
+		toggleTheme,
+		setFilter,
+		resetFilters,
+	}
 })

@@ -1,0 +1,162 @@
+var S = (c, a, t) =>
+	new Promise((u, l) => {
+		var d = (s) => {
+				try {
+					o(t.next(s));
+				} catch (v) {
+					l(v);
+				}
+			},
+			n = (s) => {
+				try {
+					o(t.throw(s));
+				} catch (v) {
+					l(v);
+				}
+			},
+			o = (s) => (s.done ? u(s.value) : Promise.resolve(s.value).then(d, n));
+		o((t = t.apply(c, a)).next());
+	});
+import { E as h, i, x as f, j as I } from "./vendor.b4720657.js";
+const C = h("cart", () => {
+		let c = [];
+		try {
+			const e = localStorage.getItem("zevar_cart_items");
+			c = e ? JSON.parse(e) : [];
+		} catch (e) {
+			localStorage.removeItem("zevar_cart_items"), (c = []);
+		}
+		const a = i(null),
+			t = i(c),
+			u = i(0),
+			l = i("USD");
+		window.addEventListener("storage", (e) => {
+			if (e.key === "zevar_cart_items")
+				try {
+					const r = e.newValue ? JSON.parse(e.newValue) : [];
+					t.value = r;
+				} catch (r) {
+					t.value = [];
+				}
+		});
+		const d = f(() => t.value.reduce((e, r) => e + (r.qty || 1), 0)),
+			n = f(() =>
+				t.value.reduce((e, r) => {
+					const m = r.qty || 1,
+						_ = r.amount || 0;
+					return e + _ * m;
+				}, 0)
+			),
+			o = f(() => n.value * (u.value / 100)),
+			s = f(() => n.value + o.value);
+		function v(e) {
+			if (!e.item_code) return;
+			const r = e.final_price || e.price || e.amount || 0,
+				m = t.value.find((_) => _.item_code === e.item_code);
+			m
+				? m.qty++
+				: t.value.push({
+						item_code: e.item_code,
+						item_name: e.item_name,
+						image: e.image,
+						metal: e.metal || e.custom_metal_type,
+						purity: e.purity || e.custom_purity,
+						amount: r,
+						weight: e.gross_weight || e.custom_gross_weight_g,
+						qty: 1,
+				  }),
+				g();
+		}
+		function w(e) {
+			t.value.splice(e, 1), g();
+		}
+		function k(e) {
+			a.value = e;
+		}
+		function q() {
+			a.value = null;
+		}
+		function x() {
+			(t.value = []), (a.value = null), g();
+		}
+		function g() {
+			localStorage.setItem("zevar_cart_items", JSON.stringify(t.value));
+		}
+		const p = I({
+			url: "zevar_core.api.get_pos_settings",
+			onSuccess(e) {
+				e && ((u.value = e.tax_rate || 0), (l.value = e.currency || "USD"));
+			},
+		});
+		function O(e) {
+			e && p.fetch({ warehouse: e });
+		}
+		function z(e) {
+			return S(this, null, function* () {
+				const r = t.value.map((y) => ({
+						item_code: y.item_code,
+						qty: y.qty || 1,
+						rate: y.amount || 0,
+					})),
+					m = [{ mode: e, amount: s.value }];
+				return yield I({
+					url: "zevar_core.api.create_pos_invoice",
+					method: "POST",
+					params: {
+						items: JSON.stringify(r),
+						payments: JSON.stringify(m),
+						customer: "Walk-In Customer",
+					},
+				}).fetch();
+			});
+		}
+		return {
+			items: t,
+			taxRate: u,
+			currency: l,
+			totalItems: d,
+			subtotal: n,
+			tax: o,
+			grandTotal: s,
+			fetchSettings: p,
+			loadTaxForWarehouse: O,
+			addItem: v,
+			removeItem: w,
+			clearCart: x,
+			submitOrder: z,
+			customer: a,
+			setCustomer: k,
+			clearCustomer: q,
+		};
+	}),
+	J = h("ui", () => {
+		const c = i(""),
+			a = i({}),
+			t = i(localStorage.getItem("theme") === "dark");
+		t.value
+			? document.documentElement.classList.add("dark")
+			: document.documentElement.classList.remove("dark");
+		function u() {
+			(t.value = !t.value),
+				t.value
+					? (document.documentElement.classList.add("dark"),
+					  localStorage.setItem("theme", "dark"))
+					: (document.documentElement.classList.remove("dark"),
+					  localStorage.setItem("theme", "light"));
+		}
+		function l(n, o) {
+			o == null || o === "" ? delete a.value[n] : (a.value[n] = o);
+		}
+		function d() {
+			(a.value = {}), (c.value = "");
+		}
+		return {
+			searchQuery: c,
+			activeFilters: a,
+			isDark: t,
+			toggleTheme: u,
+			setFilter: l,
+			resetFilters: d,
+		};
+	});
+export { J as a, C as u };

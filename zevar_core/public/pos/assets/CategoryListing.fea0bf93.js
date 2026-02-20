@@ -1,0 +1,1066 @@
+import {
+	_ as J,
+	x as _,
+	o as l,
+	k as i,
+	l as e,
+	n as d,
+	t as u,
+	u as b,
+	q as M,
+	B as O,
+	C as Q,
+	i as g,
+	j as Y,
+	y as X,
+	H as Z,
+	D as I,
+	G as n,
+	m as x,
+	Q as w,
+	F as $,
+	A as C,
+	I as ee,
+	R as te,
+	p as se,
+	S as N,
+	b as ae,
+} from "./vendor.b4720657.js";
+import { H as oe, P as re } from "./ProductModal.a542518c.js";
+import { a as le } from "./ui.3a424cc5.js";
+const B = (s) => (O("data-v-02cd15e8"), (s = s()), Q(), s),
+	ne = {
+		class: "relative rounded-2xl overflow-hidden bg-gray-50 aspect-square mb-3 border border-gray-100 group-hover:border-[#C9A962] transition-all group-hover:shadow-lg",
+	},
+	ie = ["src", "alt"],
+	ce = { key: 1, class: "flex items-center justify-center h-full text-6xl opacity-40" },
+	ue = { class: "absolute top-3 left-3 flex flex-col gap-2" },
+	de = {
+		key: 0,
+		class: "px-2.5 py-1 bg-[#8B6914] text-white text-[10px] font-bold uppercase tracking-wider rounded-md",
+	},
+	ge = {
+		key: 1,
+		class: "px-2.5 py-1 bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-md",
+	},
+	pe = {
+		key: 2,
+		class: "px-2.5 py-1 bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-md",
+	},
+	me = B(() =>
+		e(
+			"button",
+			{
+				class: "absolute bottom-3 right-3 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-[#8B6914] hover:text-white",
+			},
+			[
+				e(
+					"svg",
+					{
+						class: "w-5 h-5",
+						fill: "none",
+						stroke: "currentColor",
+						viewBox: "0 0 24 24",
+					},
+					[
+						e("path", {
+							"stroke-linecap": "round",
+							"stroke-linejoin": "round",
+							"stroke-width": "2",
+							d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z",
+						}),
+					]
+				),
+			],
+			-1
+		)
+	),
+	he = { class: "space-y-1.5" },
+	ve = {
+		class: "font-medium text-sm text-gray-900 line-clamp-2 min-h-[2.5rem] group-hover:text-[#8B6914] transition-colors",
+	},
+	xe = { class: "flex items-center gap-2 text-xs text-gray-500" },
+	ye = { key: 0 },
+	fe = { key: 1, class: "w-1 h-1 rounded-full bg-gray-300" },
+	be = { key: 2 },
+	_e = { key: 0, class: "flex items-center gap-3 text-xs" },
+	we = { key: 0, class: "text-gray-600" },
+	ke = B(() => e("span", { class: "font-medium" }, "Gross:", -1)),
+	$e = { key: 1, class: "text-red-600" },
+	Ce = B(() => e("span", { class: "font-medium" }, "Stone:", -1)),
+	Be = { key: 2, class: "text-[#8B6914] font-medium" },
+	Re = B(() => e("span", null, "Net:", -1)),
+	Pe = { class: "pt-2 border-t border-gray-100" },
+	Se = { class: "flex items-baseline gap-2" },
+	je = { class: "text-lg font-bold text-gray-900 font-serif" },
+	qe = { key: 0, class: "text-sm text-gray-400 line-through" },
+	Fe = { key: 0, class: "text-xs text-gray-400 mt-0.5" },
+	De = {
+		props: { product: { type: Object, required: !0 } },
+		emits: ["click"],
+		setup(s) {
+			const y = s,
+				R = _(
+					() => y.product.gross_weight || y.product.stone_weight || y.product.net_weight
+				);
+			function f(p) {
+				return p
+					? new Intl.NumberFormat("en-US", {
+							style: "currency",
+							currency: "USD",
+							minimumFractionDigits: 0,
+							maximumFractionDigits: 0,
+					  }).format(p)
+					: "$0";
+			}
+			function a(p) {
+				return p ? `${parseFloat(p).toFixed(2)}g` : "0g";
+			}
+			return (p, h) => (
+				l(),
+				i(
+					"div",
+					{
+						class: "group cursor-pointer",
+						onClick: h[0] || (h[0] = (P) => p.$emit("click", s.product)),
+					},
+					[
+						e("div", ne, [
+							s.product.image
+								? (l(),
+								  i(
+										"img",
+										{
+											key: 0,
+											src: s.product.image,
+											alt: s.product.item_name,
+											class: "w-full h-full object-cover group-hover:scale-105 transition-transform duration-500",
+										},
+										null,
+										8,
+										ie
+								  ))
+								: (l(), i("div", ce, "\u{1F48E}")),
+							e("div", ue, [
+								s.product.is_featured
+									? (l(), i("span", de, "Featured"))
+									: d("", !0),
+								s.product.is_trending
+									? (l(), i("span", ge, "Trending"))
+									: d("", !0),
+								s.product.stock_qty > 0
+									? (l(), i("span", pe, "In Stock"))
+									: d("", !0),
+							]),
+							me,
+						]),
+						e("div", he, [
+							e("h3", ve, u(s.product.item_name), 1),
+							e("div", xe, [
+								s.product.metal
+									? (l(), i("span", ye, u(s.product.metal), 1))
+									: d("", !0),
+								s.product.metal && s.product.purity
+									? (l(), i("span", fe))
+									: d("", !0),
+								s.product.purity
+									? (l(), i("span", be, u(s.product.purity), 1))
+									: d("", !0),
+							]),
+							b(R)
+								? (l(),
+								  i("div", _e, [
+										s.product.gross_weight
+											? (l(),
+											  i("span", we, [
+													ke,
+													M(" " + u(a(s.product.gross_weight)), 1),
+											  ]))
+											: d("", !0),
+										s.product.stone_weight
+											? (l(),
+											  i("span", $e, [
+													Ce,
+													M(" " + u(a(s.product.stone_weight)), 1),
+											  ]))
+											: d("", !0),
+										s.product.net_weight
+											? (l(),
+											  i("span", Be, [
+													Re,
+													M(" " + u(a(s.product.net_weight)), 1),
+											  ]))
+											: d("", !0),
+								  ]))
+								: d("", !0),
+							e("div", Pe, [
+								e("div", Se, [
+									e("span", je, u(f(s.product.price)), 1),
+									s.product.msrp && s.product.msrp > s.product.price
+										? (l(), i("span", qe, u(f(s.product.msrp)), 1))
+										: d("", !0),
+								]),
+								s.product.jewelry_type
+									? (l(), i("p", Fe, u(s.product.jewelry_type), 1))
+									: d("", !0),
+							]),
+						]),
+					]
+				)
+			);
+		},
+	};
+var Me = J(De, [["__scopeId", "data-v-02cd15e8"]]);
+const Ve = { class: "max-w-7xl mx-auto px-6 py-3" },
+	Ue = e("a", { href: "/frontend/catalogues", class: "hover:text-[#C9A962]" }, "Home", -1),
+	Ie = e(
+		"svg",
+		{ class: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+		[
+			e("path", {
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M9 5l7 7-7 7",
+			}),
+		],
+		-1
+	),
+	Ne = { class: "absolute inset-0 opacity-10" },
+	He = ["src"],
+	Ae = { class: "relative max-w-7xl mx-auto px-6 h-full flex flex-col justify-center" },
+	Te = { class: "max-w-7xl mx-auto px-6 py-10" },
+	ze = { class: "flex gap-8" },
+	Ge = { class: "w-64 flex-shrink-0 hidden lg:block" },
+	Ke = { class: "sticky top-6 space-y-6" },
+	Ee = { class: "space-y-2" },
+	Le = e("span", null, "All Prices", -1),
+	We = e("span", null, "Under $500", -1),
+	Je = e("span", null, "$500 - $1,000", -1),
+	Oe = e("span", null, "$1,000 - $2,500", -1),
+	Qe = e("span", null, "$2,500+", -1),
+	Ye = { class: "space-y-2" },
+	Xe = ["value"],
+	Ze = { class: "space-y-2" },
+	et = ["value"],
+	tt = { class: "flex-1" },
+	st = { class: "flex items-center justify-between mb-6" },
+	at = e("option", { value: "featured" }, "Featured", -1),
+	ot = e("option", { value: "price-asc" }, "Price: Low to High", -1),
+	rt = e("option", { value: "price-desc" }, "Price: High to Low", -1),
+	lt = e("option", { value: "newest" }, "Newest First", -1),
+	nt = [at, ot, rt, lt],
+	it = { key: 0, class: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" },
+	ct = { key: 1, class: "text-center py-16" },
+	ut = e(
+		"svg",
+		{
+			class: "w-16 h-16 mx-auto text-gray-300 mb-4",
+			fill: "none",
+			stroke: "currentColor",
+			viewBox: "0 0 24 24",
+		},
+		[
+			e("path", {
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "1.5",
+				d: "M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4",
+			}),
+		],
+		-1
+	),
+	dt = { key: 2, class: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" },
+	ht = {
+		setup(s) {
+			const y = te(),
+				R = se(),
+				f = le(),
+				a = g(f.isDark);
+			function p() {
+				f.toggleTheme(), (a.value = f.isDark);
+			}
+			const h = _(() => {
+					var o;
+					return ((o = y.params.category) == null ? void 0 : o.toLowerCase()) || "all";
+				}),
+				P = _(() => y.params.category || "All Jewelry"),
+				k = g(!0),
+				S = g([]),
+				V = g(0),
+				j = g(!1),
+				q = g(null),
+				U = g("featured"),
+				c = g({ priceRange: "all", metals: [], purities: [] }),
+				H = g(["Yellow Gold", "White Gold", "Rose Gold", "Platinum", "Silver"]),
+				A = g(["10K", "14K", "18K", "22K", "24K"]),
+				T = _(
+					() =>
+						({
+							rings: "https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1200&q=80",
+							earrings:
+								"https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=1200&q=80",
+							necklaces:
+								"https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=1200&q=80",
+							chains: "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=1200&q=80",
+							bracelets:
+								"https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=1200&q=80",
+							pendants:
+								"https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=1200&q=80",
+							gold: "https://images.unsplash.com/photo-1610375461246-83df859d849d?w=1200&q=80",
+							diamond:
+								"https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=1200&q=80",
+						}[h.value] ||
+						"https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1200&q=80")
+				),
+				z = _(
+					() =>
+						({
+							rings: "Discover our exquisite collection of engagement rings, wedding bands, and fashion rings",
+							earrings: "Elegant studs, hoops, and drop earrings for every occasion",
+							necklaces:
+								"From delicate chains to statement pieces that capture attention",
+							chains: "Classic gold and diamond chains crafted to perfection",
+							bracelets: "Timeless bracelets and bangles to adorn your wrists",
+							pendants: "Beautiful pendants that tell your unique story",
+							gold: "Premium gold jewelry in various purities and designs",
+							diamond: "Brilliant diamonds set in exquisite designs",
+						}[h.value] || "Explore our premium jewelry collection")
+				);
+			function G() {
+				const o = {},
+					r = {
+						rings: "Rings",
+						earrings: "Earrings",
+						necklaces: "Necklaces",
+						chains: "Chains",
+						bracelets: "Bracelets",
+						pendants: "Pendants",
+						gold: null,
+						diamond: null,
+					},
+					t = h.value.toLowerCase();
+				return (
+					t === "gold"
+						? (o.custom_metal_type = ["like", "%Gold%"])
+						: t === "diamond"
+						? (o.custom_product_type = ["like", "%Diamond%"])
+						: r[t] && (o.custom_jewelry_type = r[t]),
+					c.value.metals.length > 0 && (o.custom_metal_type = c.value.metals),
+					c.value.purities.length > 0 && (o.custom_purity = c.value.purities),
+					o
+				);
+			}
+			const K = Y({
+				url: "zevar_core.api.get_pos_items",
+				makeParams() {
+					const o = G();
+					let r = null,
+						t = null;
+					const m = c.value.priceRange;
+					m === "0-500"
+						? (t = 500)
+						: m === "500-1000"
+						? ((r = 500), (t = 1e3))
+						: m === "1000-2500"
+						? ((r = 1e3), (t = 2500))
+						: m === "2500+" && (r = 2500);
+					const D = { start: 0, page_length: 100, filters: JSON.stringify(o) };
+					return r && (D.min_price = r), t && (D.max_price = t), D;
+				},
+				onSuccess(o) {
+					(S.value = o || []),
+						(V.value = (o == null ? void 0 : o.length) || 0),
+						(k.value = !1);
+				},
+				onError(o) {
+					console.error("Failed to load items:", o), (k.value = !1);
+				},
+			});
+			function F() {
+				(k.value = !0), K.fetch();
+			}
+			function v() {
+				F();
+			}
+			function E(o) {
+				R.push(`/catalogues/${o}`);
+			}
+			function L(o) {
+				(q.value = o.item_code), (j.value = !0);
+			}
+			function W(o) {
+				console.log("Search:", o);
+			}
+			return (
+				X(h, () => {
+					F();
+				}),
+				Z(() => {
+					F();
+				}),
+				(o, r) => (
+					l(),
+					i(
+						"div",
+						{
+							class: n([
+								"min-h-screen",
+								a.value ? "bg-[#0a0a0a] text-white" : "bg-white text-gray-900",
+							]),
+						},
+						[
+							I(
+								oe,
+								{
+									isDark: a.value,
+									activeCategory: b(h),
+									onToggleTheme: p,
+									onSearch: W,
+									onSelectCategory: E,
+								},
+								null,
+								8,
+								["isDark", "activeCategory"]
+							),
+							e(
+								"div",
+								{
+									class: n([
+										"border-b",
+										a.value
+											? "bg-[#111] border-white/5"
+											: "bg-gray-50 border-gray-200",
+									]),
+								},
+								[
+									e("div", Ve, [
+										e(
+											"div",
+											{
+												class: n([
+													"flex items-center gap-2 text-sm",
+													a.value ? "text-gray-400" : "text-gray-600",
+												]),
+											},
+											[
+												Ue,
+												Ie,
+												e(
+													"span",
+													{
+														class: n([
+															"font-medium capitalize",
+															a.value
+																? "text-white"
+																: "text-gray-900",
+														]),
+													},
+													u(b(P)),
+													3
+												),
+											],
+											2
+										),
+									]),
+								],
+								2
+							),
+							e(
+								"div",
+								{
+									class: n([
+										"relative h-60 overflow-hidden",
+										a.value
+											? "bg-gradient-to-br from-[#111] to-[#1a1a1a]"
+											: "bg-gradient-to-br from-[#faf5f0] to-[#e8ddd0]",
+									]),
+								},
+								[
+									e("div", Ne, [
+										e(
+											"img",
+											{ src: b(T), class: "w-full h-full object-cover" },
+											null,
+											8,
+											He
+										),
+									]),
+									e("div", Ae, [
+										e(
+											"h1",
+											{
+												class: n([
+													"text-4xl md:text-5xl font-serif font-bold mb-2 capitalize",
+													a.value ? "text-white" : "text-gray-900",
+												]),
+											},
+											u(b(P)),
+											3
+										),
+										e(
+											"p",
+											{
+												class: n([
+													"text-lg font-light",
+													a.value ? "text-gray-400" : "text-gray-600",
+												]),
+											},
+											u(b(z)),
+											3
+										),
+									]),
+								],
+								2
+							),
+							e("div", Te, [
+								e("div", ze, [
+									e("aside", Ge, [
+										e("div", Ke, [
+											e(
+												"div",
+												{
+													class: n([
+														"border-b pb-5",
+														a.value
+															? "border-white/10"
+															: "border-gray-200",
+													]),
+												},
+												[
+													e(
+														"h3",
+														{
+															class: n([
+																"font-bold mb-3",
+																a.value
+																	? "text-white"
+																	: "text-gray-900",
+															]),
+														},
+														"Price Range",
+														2
+													),
+													e("div", Ee, [
+														e(
+															"label",
+															{
+																class: n([
+																	"flex items-center gap-2 text-sm cursor-pointer",
+																	a.value
+																		? "text-gray-300"
+																		: "text-gray-700",
+																]),
+															},
+															[
+																x(
+																	e(
+																		"input",
+																		{
+																			type: "radio",
+																			name: "price",
+																			value: "all",
+																			"onUpdate:modelValue":
+																				r[0] ||
+																				(r[0] = (t) =>
+																					(c.value.priceRange =
+																						t)),
+																			onChange: v,
+																			class: "text-[#8B6914]",
+																		},
+																		null,
+																		544
+																	),
+																	[[w, c.value.priceRange]]
+																),
+																Le,
+															],
+															2
+														),
+														e(
+															"label",
+															{
+																class: n([
+																	"flex items-center gap-2 text-sm cursor-pointer",
+																	a.value
+																		? "text-gray-300"
+																		: "text-gray-700",
+																]),
+															},
+															[
+																x(
+																	e(
+																		"input",
+																		{
+																			type: "radio",
+																			name: "price",
+																			value: "0-500",
+																			"onUpdate:modelValue":
+																				r[1] ||
+																				(r[1] = (t) =>
+																					(c.value.priceRange =
+																						t)),
+																			onChange: v,
+																			class: "text-[#8B6914]",
+																		},
+																		null,
+																		544
+																	),
+																	[[w, c.value.priceRange]]
+																),
+																We,
+															],
+															2
+														),
+														e(
+															"label",
+															{
+																class: n([
+																	"flex items-center gap-2 text-sm cursor-pointer",
+																	a.value
+																		? "text-gray-300"
+																		: "text-gray-700",
+																]),
+															},
+															[
+																x(
+																	e(
+																		"input",
+																		{
+																			type: "radio",
+																			name: "price",
+																			value: "500-1000",
+																			"onUpdate:modelValue":
+																				r[2] ||
+																				(r[2] = (t) =>
+																					(c.value.priceRange =
+																						t)),
+																			onChange: v,
+																			class: "text-[#8B6914]",
+																		},
+																		null,
+																		544
+																	),
+																	[[w, c.value.priceRange]]
+																),
+																Je,
+															],
+															2
+														),
+														e(
+															"label",
+															{
+																class: n([
+																	"flex items-center gap-2 text-sm cursor-pointer",
+																	a.value
+																		? "text-gray-300"
+																		: "text-gray-700",
+																]),
+															},
+															[
+																x(
+																	e(
+																		"input",
+																		{
+																			type: "radio",
+																			name: "price",
+																			value: "1000-2500",
+																			"onUpdate:modelValue":
+																				r[3] ||
+																				(r[3] = (t) =>
+																					(c.value.priceRange =
+																						t)),
+																			onChange: v,
+																			class: "text-[#8B6914]",
+																		},
+																		null,
+																		544
+																	),
+																	[[w, c.value.priceRange]]
+																),
+																Oe,
+															],
+															2
+														),
+														e(
+															"label",
+															{
+																class: n([
+																	"flex items-center gap-2 text-sm cursor-pointer",
+																	a.value
+																		? "text-gray-300"
+																		: "text-gray-700",
+																]),
+															},
+															[
+																x(
+																	e(
+																		"input",
+																		{
+																			type: "radio",
+																			name: "price",
+																			value: "2500+",
+																			"onUpdate:modelValue":
+																				r[4] ||
+																				(r[4] = (t) =>
+																					(c.value.priceRange =
+																						t)),
+																			onChange: v,
+																			class: "text-[#8B6914]",
+																		},
+																		null,
+																		544
+																	),
+																	[[w, c.value.priceRange]]
+																),
+																Qe,
+															],
+															2
+														),
+													]),
+												],
+												2
+											),
+											e(
+												"div",
+												{
+													class: n([
+														"border-b pb-5",
+														a.value
+															? "border-white/10"
+															: "border-gray-200",
+													]),
+												},
+												[
+													e(
+														"h3",
+														{
+															class: n([
+																"font-bold mb-3",
+																a.value
+																	? "text-white"
+																	: "text-gray-900",
+															]),
+														},
+														"Metal",
+														2
+													),
+													e("div", Ye, [
+														(l(!0),
+														i(
+															$,
+															null,
+															C(
+																H.value,
+																(t) => (
+																	l(),
+																	i(
+																		"label",
+																		{
+																			key: t,
+																			class: n([
+																				"flex items-center gap-2 text-sm cursor-pointer",
+																				a.value
+																					? "text-gray-300"
+																					: "text-gray-700",
+																			]),
+																		},
+																		[
+																			x(
+																				e(
+																					"input",
+																					{
+																						type: "checkbox",
+																						value: t,
+																						"onUpdate:modelValue":
+																							r[5] ||
+																							(r[5] =
+																								(
+																									m
+																								) =>
+																									(c.value.metals =
+																										m)),
+																						onChange:
+																							v,
+																						class: "text-[#8B6914]",
+																					},
+																					null,
+																					40,
+																					Xe
+																				),
+																				[
+																					[
+																						N,
+																						c.value
+																							.metals,
+																					],
+																				]
+																			),
+																			e(
+																				"span",
+																				null,
+																				u(t),
+																				1
+																			),
+																		],
+																		2
+																	)
+																)
+															),
+															128
+														)),
+													]),
+												],
+												2
+											),
+											e(
+												"div",
+												{
+													class: n([
+														"border-b pb-5",
+														a.value
+															? "border-white/10"
+															: "border-gray-200",
+													]),
+												},
+												[
+													e(
+														"h3",
+														{
+															class: n([
+																"font-bold mb-3",
+																a.value
+																	? "text-white"
+																	: "text-gray-900",
+															]),
+														},
+														"Purity",
+														2
+													),
+													e("div", Ze, [
+														(l(!0),
+														i(
+															$,
+															null,
+															C(
+																A.value,
+																(t) => (
+																	l(),
+																	i(
+																		"label",
+																		{
+																			key: t,
+																			class: n([
+																				"flex items-center gap-2 text-sm cursor-pointer",
+																				a.value
+																					? "text-gray-300"
+																					: "text-gray-700",
+																			]),
+																		},
+																		[
+																			x(
+																				e(
+																					"input",
+																					{
+																						type: "checkbox",
+																						value: t,
+																						"onUpdate:modelValue":
+																							r[6] ||
+																							(r[6] =
+																								(
+																									m
+																								) =>
+																									(c.value.purities =
+																										m)),
+																						onChange:
+																							v,
+																						class: "text-[#8B6914]",
+																					},
+																					null,
+																					40,
+																					et
+																				),
+																				[
+																					[
+																						N,
+																						c.value
+																							.purities,
+																					],
+																				]
+																			),
+																			e(
+																				"span",
+																				null,
+																				u(t),
+																				1
+																			),
+																		],
+																		2
+																	)
+																)
+															),
+															128
+														)),
+													]),
+												],
+												2
+											),
+										]),
+									]),
+									e("main", tt, [
+										e("div", st, [
+											e(
+												"p",
+												{
+													class: n(
+														a.value ? "text-gray-400" : "text-gray-600"
+													),
+												},
+												u(V.value) + " products",
+												3
+											),
+											x(
+												e(
+													"select",
+													{
+														"onUpdate:modelValue":
+															r[7] || (r[7] = (t) => (U.value = t)),
+														onChange: v,
+														class: n(
+															a.value
+																? "px-4 py-2 border border-white/10 rounded-lg text-sm bg-[#1a1a1a] text-white focus:border-[#C9A962] focus:ring-1 focus:ring-[#C9A962]"
+																: "px-4 py-2 border border-gray-200 rounded-lg text-sm focus:border-[#8B6914] focus:ring-1 focus:ring-[#8B6914]"
+														),
+													},
+													nt,
+													34
+												),
+												[[ee, U.value]]
+											),
+										]),
+										k.value
+											? (l(),
+											  i("div", it, [
+													(l(),
+													i(
+														$,
+														null,
+														C(8, (t) =>
+															e(
+																"div",
+																{ key: t, class: "animate-pulse" },
+																[
+																	e(
+																		"div",
+																		{
+																			class: n([
+																				"rounded-2xl aspect-square mb-3",
+																				a.value
+																					? "bg-gray-800"
+																					: "bg-gray-200",
+																			]),
+																		},
+																		null,
+																		2
+																	),
+																	e(
+																		"div",
+																		{
+																			class: n([
+																				"h-4 rounded mb-2",
+																				a.value
+																					? "bg-gray-800"
+																					: "bg-gray-200",
+																			]),
+																		},
+																		null,
+																		2
+																	),
+																	e(
+																		"div",
+																		{
+																			class: n([
+																				"h-4 w-2/3 rounded",
+																				a.value
+																					? "bg-gray-800"
+																					: "bg-gray-200",
+																			]),
+																		},
+																		null,
+																		2
+																	),
+																]
+															)
+														),
+														64
+													)),
+											  ]))
+											: S.value.length === 0
+											? (l(),
+											  i("div", ct, [
+													ut,
+													e(
+														"p",
+														{
+															class: n(
+																a.value
+																	? "text-gray-400"
+																	: "text-gray-500"
+															),
+														},
+														"No products found in this category",
+														2
+													),
+											  ]))
+											: (l(),
+											  i("div", dt, [
+													(l(!0),
+													i(
+														$,
+														null,
+														C(
+															S.value,
+															(t) => (
+																l(),
+																ae(
+																	Me,
+																	{
+																		key: t.item_code,
+																		product: t,
+																		onClick: (m) => L(t),
+																	},
+																	null,
+																	8,
+																	["product", "onClick"]
+																)
+															)
+														),
+														128
+													)),
+											  ])),
+									]),
+								]),
+							]),
+							I(
+								re,
+								{
+									show: j.value,
+									"item-code": q.value,
+									onClose:
+										r[8] ||
+										(r[8] = (t) => {
+											(j.value = !1), (q.value = null);
+										}),
+								},
+								null,
+								8,
+								["show", "item-code"]
+							),
+						],
+						2
+					)
+				)
+			);
+		},
+	};
+export { ht as default };

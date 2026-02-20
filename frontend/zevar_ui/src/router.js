@@ -1,36 +1,72 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import('./pages/Login.vue'),
-  },
-  {
-    path: '/',
-    name: 'POS',
-    component: () => import('./pages/POS.vue'),
-  },
-  {
-    path: '/catalogues',
-    name: 'Catalogues',
-    component: () => import('./pages/CatalogueDashboard.vue'),
-  },
-  {
-    path: '/catalogues/:category',
-    name: 'CategoryListing',
-    component: () => import('./pages/CategoryListing.vue'),
-  },
-  {
-    path: '/repairs',
-    name: 'Repairs',
-    component: () => import('./pages/RepairTerminal.vue'),
-  },
+	{
+		path: '/login',
+		name: 'Login',
+		component: () => import('./pages/Login.vue'),
+		meta: { guest: true },
+	},
+	{
+		path: '/',
+		name: 'POS',
+		component: () => import('./pages/POS.vue'),
+		meta: { requiresAuth: true },
+	},
+	{
+		path: '/catalogues',
+		name: 'Catalogues',
+		component: () => import('./pages/CatalogueDashboard.vue'),
+		meta: { requiresAuth: true },
+	},
+	{
+		path: '/catalogues/:category',
+		name: 'CategoryListing',
+		component: () => import('./pages/CategoryListing.vue'),
+		meta: { requiresAuth: true },
+	},
+	{
+		path: '/repairs',
+		name: 'Repairs',
+		component: () => import('./pages/RepairTerminal.vue'),
+		meta: { requiresAuth: true },
+	},
+	// Catch-all → POS
+	{
+		path: '/:pathMatch(.*)*',
+		redirect: '/',
+	},
 ]
 
 const router = createRouter({
-  history: createWebHistory('/frontend'),
-  routes,
+	history: createWebHistory('/pos'),
+	routes,
+})
+
+// Auth guard — redirect unauthenticated users to login
+router.beforeEach(async (to, _from, next) => {
+	// Skip guard for guest routes
+	if (to.meta.guest) {
+		return next()
+	}
+
+	// Check if user is logged in via Frappe session
+	if (to.meta.requiresAuth) {
+		try {
+			const res = await fetch('/api/method/frappe.auth.get_logged_user', {
+				headers: { 'X-Frappe-CSRF-Token': window.csrf_token || '' },
+			})
+			if (!res.ok) throw new Error('Not authenticated')
+			const data = await res.json()
+			if (!data.message || data.message === 'Guest') {
+				return next({ name: 'Login' })
+			}
+		} catch {
+			return next({ name: 'Login' })
+		}
+	}
+
+	next()
 })
 
 export default router

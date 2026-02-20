@@ -1,114 +1,165 @@
 <template>
-  <div class="flex flex-col gap-8">
-    <div class="flex items-center justify-between">
-      <div>
-         <h2 class="text-3xl font-bold font-display text-white mb-2">Team Directory</h2>
-         <p class="text-white/40">Managing 128 brilliant artisans & staff</p>
-      </div>
-      <div class="flex gap-4">
-         <div class="relative">
-            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/30">search</span>
-            <input class="bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/20 focus:ring-1 focus:ring-primary/50 focus:border-primary/50 w-64 transition-all" placeholder="Search by name..." type="text"/>
-         </div>
-         <button class="bg-primary text-background-dark px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-yellow-400 transition-colors shadow-lg shadow-primary/20">
-            <span class="material-symbols-outlined">person_add</span>
-            Add Member
-         </button>
-      </div>
-    </div>
+	<div class="flex flex-col gap-8">
+		<div class="flex items-center justify-between">
+			<div>
+				<h2 class="text-3xl font-bold font-display text-white mb-2">Team Directory</h2>
+				<p class="text-white/40">Managing 128 brilliant artisans & staff</p>
+			</div>
+			<div class="flex gap-4">
+				<div class="relative">
+					<span
+						class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-white/30"
+						>search</span
+					>
+					<input
+						class="bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm text-white placeholder:text-white/20 focus:ring-1 focus:ring-primary/50 focus:border-primary/50 w-64 transition-all"
+						placeholder="Search by name..."
+						type="text"
+					/>
+				</div>
+				<button
+					class="bg-primary text-background-dark px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-yellow-400 transition-colors shadow-lg shadow-primary/20"
+				>
+					<span class="material-symbols-outlined">person_add</span>
+					Add Member
+				</button>
+			</div>
+		</div>
 
-    <!-- Status Pills -->
-    <div class="grid grid-cols-4 gap-4">
-       <div class="glass-card p-4 rounded-xl flex flex-col justify-center items-center">
-          <p class="text-[10px] uppercase font-bold text-white/40 mb-1">Online Now</p>
-          <p class="text-3xl font-bold text-white">94</p>
-       </div>
-       <div class="glass-card p-4 rounded-xl flex flex-col justify-center items-center">
-          <p class="text-[10px] uppercase font-bold text-white/40 mb-1">In Meeting</p>
-          <p class="text-3xl font-bold text-white">12</p>
-       </div>
-       <div class="glass-card p-4 rounded-xl flex flex-col justify-center items-center">
-          <p class="text-[10px] uppercase font-bold text-white/40 mb-1">On Break</p>
-          <p class="text-3xl font-bold text-white">8</p>
-       </div>
-       <div class="glass-card p-4 rounded-xl flex flex-col justify-center items-center">
-          <p class="text-[10px] uppercase font-bold text-white/40 mb-1">Offline</p>
-          <p class="text-3xl font-bold text-white">14</p>
-       </div>
-    </div>
+		<!-- Status Pills -->
+		<div class="grid grid-cols-4 gap-4">
+			<div class="glass-card p-4 rounded-xl flex flex-col justify-center items-center">
+				<p class="text-[10px] uppercase font-bold text-white/40 mb-1">Online Now</p>
+				<p class="text-3xl font-bold text-white">94</p>
+			</div>
+			<div class="glass-card p-4 rounded-xl flex flex-col justify-center items-center">
+				<p class="text-[10px] uppercase font-bold text-white/40 mb-1">In Meeting</p>
+				<p class="text-3xl font-bold text-white">12</p>
+			</div>
+			<div class="glass-card p-4 rounded-xl flex flex-col justify-center items-center">
+				<p class="text-[10px] uppercase font-bold text-white/40 mb-1">On Break</p>
+				<p class="text-3xl font-bold text-white">8</p>
+			</div>
+			<div class="glass-card p-4 rounded-xl flex flex-col justify-center items-center">
+				<p class="text-[10px] uppercase font-bold text-white/40 mb-1">Offline</p>
+				<p class="text-3xl font-bold text-white">14</p>
+			</div>
+		</div>
 
-    <!-- Directory Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-       <!-- Card 1 -->
-       <div class="glass-card p-6 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:-translate-y-1 transition-transform cursor-pointer">
-          <div class="absolute top-4 right-4 text-[10px] font-bold uppercase bg-emerald-glow/20 text-emerald-glow px-2 py-0.5 rounded-full flex items-center gap-1">
-             <span class="w-1.5 h-1.5 rounded-full bg-emerald-glow"></span> Available
-          </div>
-          
-          <div class="w-24 h-24 rounded-full border-2 border-primary/30 p-1 mb-4 relative">
-             <div class="w-full h-full rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnQJq8q1gAPlq-d17pt8MWUZvSZ-e3HtdAvxGssLOU8lP369oHj2hjrlSKn5zUOiEAwvP9W0P1XiABRXa5ntNhm7dqXwiT16MPKqAPxUZ3VNRyhbr-yj9fVvuw72k5PVeMYKtjqw2Zf9SCMVzoPcLmnoC58TZkv0DC2UenKxK1hYlyrNpI2X0GOLluWjgWcCgajvIfT1ImVoxHB_73JFVPYDPzZdFPOmHoVmqHP46qkc1k9XQCPoyTCfR7RYLkhmct1yAAN7Rn2dTG')"></div>
-             <div class="absolute bottom-0 right-0 w-6 h-6 bg-background-dark rounded-full flex items-center justify-center border border-white/10">
-                <span class="material-symbols-outlined text-sm text-primary">diamond</span>
-             </div>
-          </div>
-          
-          <h3 class="text-lg font-bold text-white mb-0.5">Alex Rivera</h3>
-          <p class="text-primary text-xs font-bold uppercase tracking-wider mb-4">Senior Gemologist</p>
-          
-          <div class="grid grid-cols-2 w-full gap-2 border-t border-white/5 pt-4">
-             <div class="text-left">
-                <p class="text-[8px] text-white/30 uppercase font-bold">Department</p>
-                <p class="text-xs text-white">Appraisal</p>
-             </div>
-             <div class="text-left">
-                <p class="text-[8px] text-white/30 uppercase font-bold">Joined</p>
-                <p class="text-xs text-white">Jan 2022</p>
-             </div>
-          </div>
-          
-          <div class="mt-4 flex gap-2 w-full">
-             <button class="flex-1 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase py-2 rounded-lg text-white">Profile</button>
-             <button class="w-8 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-sm">mail</span></button>
-          </div>
-       </div>
+		<!-- Directory Grid -->
+		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+			<!-- Card 1 -->
+			<div
+				class="glass-card p-6 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:-translate-y-1 transition-transform cursor-pointer"
+			>
+				<div
+					class="absolute top-4 right-4 text-[10px] font-bold uppercase bg-emerald-glow/20 text-emerald-glow px-2 py-0.5 rounded-full flex items-center gap-1"
+				>
+					<span class="w-1.5 h-1.5 rounded-full bg-emerald-glow"></span> Available
+				</div>
 
-       <!-- Card 2 -->
-       <div class="glass-card p-6 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:-translate-y-1 transition-transform cursor-pointer">
-          <div class="absolute top-4 right-4 text-[10px] font-bold uppercase bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full flex items-center gap-1">
-             <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> In Meeting
-          </div>
-          <div class="w-24 h-24 rounded-full border-2 border-white/10 p-1 mb-4">
-             <div class="w-full h-full rounded-full bg-gray-600 flex items-center justify-center text-2xl font-bold text-white/20">ET</div>
-          </div>
-          <h3 class="text-lg font-bold text-white mb-0.5">Elena Thorne</h3>
-          <p class="text-primary text-xs font-bold uppercase tracking-wider mb-4">Master Craftsman</p>
-          <div class="grid grid-cols-2 w-full gap-2 border-t border-white/5 pt-4">
-             <div class="text-left">
-                <p class="text-[8px] text-white/30 uppercase font-bold">Department</p>
-                <p class="text-xs text-white">Production</p>
-             </div>
-             <div class="text-left">
-                <p class="text-[8px] text-white/30 uppercase font-bold">Joined</p>
-                <p class="text-xs text-white">Mar 2021</p>
-             </div>
-          </div>
-          <div class="mt-4 flex gap-2 w-full">
-             <button class="flex-1 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase py-2 rounded-lg text-white">Profile</button>
-             <button class="w-8 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg flex items-center justify-center"><span class="material-symbols-outlined text-sm">mail</span></button>
-          </div>
-       </div>
-       
-       <!-- Invite Card -->
-       <div class="rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center p-6 hover:border-primary/40 hover:bg-white/5 transition-all cursor-pointer group">
-          <div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-primary/20 group-hover:text-primary transition-colors">
-             <span class="material-symbols-outlined text-2xl">person_add</span>
-          </div>
-          <h3 class="font-bold text-white mb-1">Invite Member</h3>
-          <p class="text-xs text-white/40 text-center">Send a magic link to join Zevar</p>
-       </div>
-    </div>
-  </div>
+				<div class="w-24 h-24 rounded-full border-2 border-primary/30 p-1 mb-4 relative">
+					<div
+						class="w-full h-full rounded-full bg-cover bg-center"
+						style="
+							background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnQJq8q1gAPlq-d17pt8MWUZvSZ-e3HtdAvxGssLOU8lP369oHj2hjrlSKn5zUOiEAwvP9W0P1XiABRXa5ntNhm7dqXwiT16MPKqAPxUZ3VNRyhbr-yj9fVvuw72k5PVeMYKtjqw2Zf9SCMVzoPcLmnoC58TZkv0DC2UenKxK1hYlyrNpI2X0GOLluWjgWcCgajvIfT1ImVoxHB_73JFVPYDPzZdFPOmHoVmqHP46qkc1k9XQCPoyTCfR7RYLkhmct1yAAN7Rn2dTG');
+						"
+					></div>
+					<div
+						class="absolute bottom-0 right-0 w-6 h-6 bg-background-dark rounded-full flex items-center justify-center border border-white/10"
+					>
+						<span class="material-symbols-outlined text-sm text-primary">diamond</span>
+					</div>
+				</div>
+
+				<h3 class="text-lg font-bold text-white mb-0.5">Alex Rivera</h3>
+				<p class="text-primary text-xs font-bold uppercase tracking-wider mb-4">
+					Senior Gemologist
+				</p>
+
+				<div class="grid grid-cols-2 w-full gap-2 border-t border-white/5 pt-4">
+					<div class="text-left">
+						<p class="text-[8px] text-white/30 uppercase font-bold">Department</p>
+						<p class="text-xs text-white">Appraisal</p>
+					</div>
+					<div class="text-left">
+						<p class="text-[8px] text-white/30 uppercase font-bold">Joined</p>
+						<p class="text-xs text-white">Jan 2022</p>
+					</div>
+				</div>
+
+				<div class="mt-4 flex gap-2 w-full">
+					<button
+						class="flex-1 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase py-2 rounded-lg text-white"
+					>
+						Profile
+					</button>
+					<button
+						class="w-8 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg flex items-center justify-center"
+					>
+						<span class="material-symbols-outlined text-sm">mail</span>
+					</button>
+				</div>
+			</div>
+
+			<!-- Card 2 -->
+			<div
+				class="glass-card p-6 rounded-2xl flex flex-col items-center text-center relative overflow-hidden group hover:-translate-y-1 transition-transform cursor-pointer"
+			>
+				<div
+					class="absolute top-4 right-4 text-[10px] font-bold uppercase bg-blue-500/20 text-blue-400 px-2 py-0.5 rounded-full flex items-center gap-1"
+				>
+					<span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> In Meeting
+				</div>
+				<div class="w-24 h-24 rounded-full border-2 border-white/10 p-1 mb-4">
+					<div
+						class="w-full h-full rounded-full bg-gray-600 flex items-center justify-center text-2xl font-bold text-white/20"
+					>
+						ET
+					</div>
+				</div>
+				<h3 class="text-lg font-bold text-white mb-0.5">Elena Thorne</h3>
+				<p class="text-primary text-xs font-bold uppercase tracking-wider mb-4">
+					Master Craftsman
+				</p>
+				<div class="grid grid-cols-2 w-full gap-2 border-t border-white/5 pt-4">
+					<div class="text-left">
+						<p class="text-[8px] text-white/30 uppercase font-bold">Department</p>
+						<p class="text-xs text-white">Production</p>
+					</div>
+					<div class="text-left">
+						<p class="text-[8px] text-white/30 uppercase font-bold">Joined</p>
+						<p class="text-xs text-white">Mar 2021</p>
+					</div>
+				</div>
+				<div class="mt-4 flex gap-2 w-full">
+					<button
+						class="flex-1 bg-white/5 hover:bg-white/10 text-xs font-bold uppercase py-2 rounded-lg text-white"
+					>
+						Profile
+					</button>
+					<button
+						class="w-8 bg-primary/20 hover:bg-primary/30 text-primary rounded-lg flex items-center justify-center"
+					>
+						<span class="material-symbols-outlined text-sm">mail</span>
+					</button>
+				</div>
+			</div>
+
+			<!-- Invite Card -->
+			<div
+				class="rounded-2xl border-2 border-dashed border-white/10 flex flex-col items-center justify-center p-6 hover:border-primary/40 hover:bg-white/5 transition-all cursor-pointer group"
+			>
+				<div
+					class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-primary/20 group-hover:text-primary transition-colors"
+				>
+					<span class="material-symbols-outlined text-2xl">person_add</span>
+				</div>
+				<h3 class="font-bold text-white mb-1">Invite Member</h3>
+				<p class="text-xs text-white/40 text-center">Send a magic link to join Zevar</p>
+			</div>
+		</div>
+	</div>
 </template>
 
-<script setup>
-</script>
+<script setup></script>

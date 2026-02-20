@@ -6,4 +6,4 @@ from frappe.model.document import Document
 
 
 class ZevarGemstoneDetail(Document):
-    pass
+	pass
