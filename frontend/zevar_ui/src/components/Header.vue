@@ -88,6 +88,7 @@
 							v-model="searchQuery"
 							type="text"
 							placeholder="Search rings, necklaces, earrings..."
+							aria-label="Search products"
 							class="w-full h-10 pl-10 pr-4 rounded-lg border text-sm transition-all"
 							:class="
 								isDark
@@ -214,10 +215,14 @@
 						class="relative"
 						@mouseenter="openDropdown = cat.id"
 						@mouseleave="openDropdown = null"
+						@focusin="openDropdown = cat.id"
+						@focusout="openDropdown = null"
 					>
 						<a
 							:href="router.resolve({ path: `/catalogues/${cat.id}` }).href"
 							@click.prevent="navigateTo(cat.id)"
+							:aria-haspopup="!!cat.subcategories"
+							:aria-expanded="openDropdown === cat.id"
 							class="px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-all relative flex items-center gap-1.5"
 							:class="[
 								activeCategory === cat.id

@@ -4,6 +4,8 @@ app_publisher = "Arijentek Solutions"
 app_description = "A centralized solution for POS operations, real-time inventory management, dynamic pricing, and CRM for Zevar Jewelery."
 app_email = "akshay@arijentek.com"
 app_license = "mit"
+app_logo_url = "/assets/zevar_core/images/pos_logo.svg"
+splash_image = "/assets/zevar_core/images/pos_logo.svg"
 
 # Apps
 # ------------------
@@ -13,12 +15,17 @@ app_license = "mit"
 # Each item in the list will be shown as an app in the apps page
 add_to_apps_screen = [
 	{
-		"name": "zevar_core",
-		"logo": "/assets/zevar_core/logo.png",
-		"title": "Unified Retail Management System",
+		"name": "zevar_pos",
+		"logo": "/assets/zevar_core/images/pos_logo.svg",
+		"title": "Zevar POS",
+		"route": "/pos",
+	},
+	{
+		"name": "employee_portal",
+		"logo": "/assets/zevar_core/images/employee_portal_logo.svg",
+		"title": "Employee Portal",
 		"route": "/employee-portal",
-		# "has_permission": "zevar_core.api.permission.has_app_permission"
-	}
+	},
 ]
 
 # Includes in <head>

@@ -127,15 +127,18 @@ def quick_add_item(
 			# else retry with a freshly generated code
 
 	# Create stock entry if warehouse and qty provided
+	stock_entry_created = False
 	if warehouse and qty > 0:
-		_create_stock_entry(item_code, warehouse, qty)
+		stock_entry_created = _create_stock_entry(item_code, warehouse, qty)
 
 	return {
 		"success": True,
 		"item_code": item_code,
 		"item_name": item_name,
 		"vendor_sku": vendor_sku,
-		"message": f"Item {item_code} created successfully",
+		"message": f"Item {item_code} created successfully"
+		+ ("" if stock_entry_created else " (stock entry pending)"),
+		"stock_entry_created": stock_entry_created,
 	}
 
 
@@ -254,8 +257,15 @@ def _get_item_group(jewelry_type: str) -> str:
 	return group
 
 
-def _create_stock_entry(item_code: str, warehouse: str, qty: int):
-	"""Create a Material Receipt stock entry for the new item."""
+def _create_stock_entry(item_code: str, warehouse: str, qty: int) -> bool:
+	"""Create a Material Receipt stock entry for the new item. Returns True on success."""
+	if not frappe.db.exists("Warehouse", warehouse):
+		frappe.log_error(
+			f"Stock entry skipped for {item_code}: warehouse '{warehouse}' not found",
+			"Item Entry Warning",
+		)
+		return False
+
 	se = frappe.get_doc(
 		{
 			"doctype": "Stock Entry",
@@ -270,5 +280,10 @@ def _create_stock_entry(item_code: str, warehouse: str, qty: int):
 			],
 		}
 	)
-	se.insert()
-	se.submit()
+	try:
+		se.insert()
+		se.submit()
+		return True
+	except Exception as e:
+		frappe.log_error(f"Stock entry failed for {item_code}: {e}", "Item Entry Warning")
+		return False
