@@ -12,6 +12,7 @@ splash_image = "/assets/zevar_core/images/pos_logo.svg"
 
 # required_apps = []
 
+
 # Each item in the list will be shown as an app in the apps page
 add_to_apps_screen = [
 	{
@@ -19,14 +20,15 @@ add_to_apps_screen = [
 		"logo": "/assets/zevar_core/images/pos_logo.svg",
 		"title": "Zevar POS",
 		"route": "/pos",
-	},
-	{
-		"name": "employee_portal",
-		"logo": "/assets/zevar_core/images/employee_portal_logo.svg",
-		"title": "Employee Portal",
-		"route": "/employee-portal",
-	},
+	}
 ]
+
+
+
+app_include_js = [
+    "/assets/zevar_core/js/desk_customization.js"
+]
+
 
 # Includes in <head>
 # ------------------
