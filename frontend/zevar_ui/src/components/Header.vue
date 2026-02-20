@@ -33,12 +33,13 @@
 					class="flex items-center gap-4"
 					:class="isDark ? 'text-gray-400' : 'text-gray-600'"
 				>
-					<a href="#" class="hover:text-[#C9A962] transition flex items-center gap-1">
+					<button class="hover:text-[#C9A962] transition flex items-center gap-1">
 						<svg
 							class="w-3.5 h-3.5"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
+							aria-hidden="true"
 						>
 							<path
 								stroke-linecap="round"
@@ -48,7 +49,7 @@
 							/>
 						</svg>
 						Find Stores
-					</a>
+					</button>
 				</div>
 			</div>
 		</div>
@@ -164,6 +165,8 @@
 								? 'hover:bg-white/10 hover:text-[#C9A962]'
 								: 'hover:bg-gray-100 hover:text-[#8B6914]'
 						"
+						aria-label="Favorites"
+						title="Favorites"
 					>
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
@@ -181,6 +184,8 @@
 								? 'hover:bg-white/10 hover:text-[#C9A962]'
 								: 'hover:bg-gray-100 hover:text-[#8B6914]'
 						"
+						aria-label="Account"
+						title="Account"
 					>
 						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
@@ -285,7 +290,7 @@ defineProps({
 	activeCategory: { type: String, default: 'all' },
 })
 
-defineEmits(['toggleTheme', 'search', 'selectCategory'])
+defineEmits(['toggleTheme', 'search'])
 
 const router = useRouter()
 const searchQuery = ref('')
@@ -404,9 +409,10 @@ function navigateTo(category) {
 onMounted(async () => {
 	try {
 		const r = await fetch('https://api.metals.live/v1/spot')
+		if (!r.ok) return
 		const d = await r.json()
 		const g = d.find((m) => m.metal === 'gold')
-		if (g) {
+		if (g && typeof g.price === 'number' && typeof g.previous === 'number' && g.previous !== 0) {
 			goldPrice.value = g.price.toLocaleString('en-US', {
 				minimumFractionDigits: 2,
 				maximumFractionDigits: 2,

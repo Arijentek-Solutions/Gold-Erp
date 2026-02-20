@@ -8,7 +8,7 @@ from zevar_core.constants import DEFAULT_TAX_RATES, PAYMENT_MODES
 
 
 @frappe.whitelist()
-def create_pos_invoice(items: str, payments: str, customer: str = None, discount_amount: float = 0):
+def create_pos_invoice(items: str, payments: str, customer: str | None = None, discount_amount: float = 0):
 	"""
 	Create POS Invoice.
 
@@ -38,7 +38,7 @@ def create_pos_invoice(items: str, payments: str, customer: str = None, discount
 
 
 @frappe.whitelist()
-def get_pos_settings(warehouse: str = None):
+def get_pos_settings(warehouse: str | None = None):
 	"""
 	Fetch POS settings including tax rates and payment modes.
 
@@ -68,7 +68,7 @@ def get_pos_settings(warehouse: str = None):
 
 @frappe.whitelist()
 def calculate_invoice_totals(
-	items: str, tax_exempt: bool = False, discount_amount: float = 0, warehouse: str = None
+	items: str, tax_exempt: bool = False, discount_amount: float = 0, warehouse: str | None = None
 ):
 	"""
 	Calculate invoice totals.

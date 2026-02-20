@@ -12,10 +12,10 @@ from frappe.utils import nowdate
 @frappe.whitelist()
 def quick_add_item(
 	item_name: str,
-	vendor: str = None,
-	vendor_sku: str = None,
-	metal_type: str = None,
-	purity: str = None,
+	vendor: str | None = None,
+	vendor_sku: str | None = None,
+	metal_type: str | None = None,
+	purity: str | None = None,
 	jewelry_type: str = "Other",
 	gross_weight: float = 0,
 	stone_weight: float = 0,
@@ -23,10 +23,10 @@ def quick_add_item(
 	cost_price: float = 0,
 	gender: str = "Unisex",
 	country_of_origin: str = "USA",
-	warehouse: str = None,
+	warehouse: str | None = None,
 	qty: int = 1,
-	image: str = None,
-	description: str = None,
+	image: str | None = None,
+	description: str | None = None,
 	**kwargs,
 ) -> dict:
 	"""
@@ -132,12 +132,12 @@ def quick_add_item(
 
 
 @frappe.whitelist()
-def get_next_vendor_sku(vendor: str = None, jewelry_type: str = "Other") -> str:
+def get_next_vendor_sku(vendor: str | None = None, jewelry_type: str = "Other") -> str:
 	"""Preview the next auto-generated vendor SKU without creating an item."""
 	return _generate_vendor_sku(vendor, jewelry_type)
 
 
-def _generate_vendor_sku(vendor: str = None, jewelry_type: str = "Other") -> str:
+def _generate_vendor_sku(vendor: str | None = None, jewelry_type: str = "Other") -> str:
 	"""
 	Auto-generate a unique vendor SKU.
 
