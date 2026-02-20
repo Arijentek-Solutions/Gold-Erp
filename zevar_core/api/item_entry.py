@@ -27,7 +27,7 @@ def quick_add_item(
 	qty: int = 1,
 	image: str | None = None,
 	description: str | None = None,
-	**kwargs,
+	**_kwargs,
 ) -> dict:
 	"""
 	Create a new Item in one step with auto-generated vendor SKU.
@@ -63,11 +63,14 @@ def quick_add_item(
 		frappe.throw(_("You don't have permission to create Items"), frappe.PermissionError)
 
 	# Input validation
-	gross_weight = max(0, float(gross_weight or 0))
-	stone_weight = max(0, float(stone_weight or 0))
-	msrp = max(0, float(msrp or 0))
-	cost_price = max(0, float(cost_price or 0))
-	qty = max(0, int(qty or 0))
+	try:
+		gross_weight = max(0, float(gross_weight or 0))
+		stone_weight = max(0, float(stone_weight or 0))
+		msrp = max(0, float(msrp or 0))
+		cost_price = max(0, float(cost_price or 0))
+		qty = max(0, int(qty or 0))
+	except (TypeError, ValueError):
+		frappe.throw(_("Numeric fields must be valid numbers"))
 
 	if not item_name or not item_name.strip():
 		frappe.throw(_("Item name is required"))
@@ -85,38 +88,46 @@ def quick_add_item(
 	# Map jewelry type to item group
 	item_group = _get_item_group(jewelry_type)
 
-	# Create the Item (using proper permission checks)
-	item = frappe.get_doc(
-		{
-			"doctype": "Item",
-			"item_code": item_code,
-			"item_name": item_name.strip(),
-			"item_group": item_group,
-			"description": description or item_name.strip(),
-			"image": image,
-			"stock_uom": "Nos",
-			"is_stock_item": 1,
-			# Jewelry Details
-			"custom_metal_type": metal_type,
-			"custom_purity": purity,
-			"custom_gross_weight_g": gross_weight,
-			"custom_stone_weight_g": stone_weight,
-			"custom_net_weight_g": net_weight,
-			# Classification
-			"custom_product_type": "Jewelry",
-			"custom_jewelry_type": jewelry_type,
-			"custom_gender": gender,
-			# Vendor & Pricing
-			"custom_vendor": vendor,
-			"custom_vendor_sku": vendor_sku,
-			"custom_country_of_origin": country_of_origin,
-			"custom_msrp": msrp,
-			"custom_cost_price": cost_price,
-			"custom_source": "Manual",
-		}
-	)
-
-	item.insert()  # Uses session user's permissions
+	# Create item with retry on duplicate item code
+	max_retries = 3
+	for attempt in range(max_retries):
+		item_code = _generate_item_code(jewelry_type)
+		item = frappe.get_doc(
+			{
+				"doctype": "Item",
+				"item_code": item_code,
+				"item_name": item_name.strip(),
+				"item_group": item_group,
+				"description": description or item_name.strip(),
+				"image": image,
+				"stock_uom": "Nos",
+				"is_stock_item": 1,
+				# Jewelry Details
+				"custom_metal_type": metal_type,
+				"custom_purity": purity,
+				"custom_gross_weight_g": gross_weight,
+				"custom_stone_weight_g": stone_weight,
+				"custom_net_weight_g": net_weight,
+				# Classification
+				"custom_product_type": "Jewelry",
+				"custom_jewelry_type": jewelry_type,
+				"custom_gender": gender,
+				# Vendor & Pricing
+				"custom_vendor": vendor,
+				"custom_vendor_sku": vendor_sku,
+				"custom_country_of_origin": country_of_origin,
+				"custom_msrp": msrp,
+				"custom_cost_price": cost_price,
+				"custom_source": "Manual",
+			}
+		)
+		try:
+			item.insert()  # Uses session user's permissions
+			break  # success
+		except frappe.exceptions.DuplicateEntryError:
+			if attempt == max_retries - 1:
+				frappe.throw(_("Failed to generate a unique item code after {0} attempts").format(max_retries))
+			# else retry with a freshly generated code
 
 	# Create stock entry if warehouse and qty provided
 	if warehouse and qty > 0:
@@ -208,6 +219,7 @@ def _generate_item_code(jewelry_type: str) -> str:
         SELECT name FROM `tabItem`
         WHERE name LIKE %s
         ORDER BY name DESC LIMIT 1
+        FOR UPDATE
     """,
 		(f"{prefix}-%",),
 		as_dict=True,

@@ -61,7 +61,7 @@
 		>
 			<div class="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between gap-8">
 				<!-- Logo - Fixed alignment -->
-				<a href="/frontend/catalogues" class="flex items-center gap-3 flex-shrink-0">
+				<router-link to="/catalogues" class="flex items-center gap-3 flex-shrink-0">
 					<img
 						src="/assets/zevar_core/images/pos_logo.svg"
 						alt="Zevar POS"
@@ -79,7 +79,7 @@
 							>Fine Jewelers</span
 						>
 					</div>
-				</a>
+				</router-link>
 
 				<!-- Search -->
 				<div class="flex-1 max-w-xl hidden md:block">
@@ -222,8 +222,8 @@
 								activeCategory === cat.id
 									? 'text-[#C9A962]'
 									: isDark
-									? 'text-gray-300 hover:text-[#C9A962]'
-									: 'text-gray-700 hover:text-[#8B6914]',
+										? 'text-gray-300 hover:text-[#C9A962]'
+										: 'text-gray-700 hover:text-[#8B6914]',
 							]"
 						>
 							<span>{{ cat.name }}</span>
@@ -258,11 +258,12 @@
 										: 'bg-white border-gray-100'
 								"
 							>
+								<!-- Subcategory items navigate to parent category filtered by subcategory name -->
 								<a
 									v-for="sub in cat.subcategories"
 									:key="sub.name"
-									:href="`/frontend/catalogues/${cat.id}`"
-									@click.prevent="navigateTo(cat.id)"
+									:href="`/frontend/catalogues/${cat.id}?sub=${encodeURIComponent(sub.name)}`"
+									@click.prevent="navigateTo(cat.id, sub.name)"
 									class="block px-4 py-2.5 text-sm rounded-lg transition-all"
 									:class="
 										isDark
@@ -401,8 +402,10 @@ const navCategories = [
 	{ id: 'collections', name: 'Collections' },
 ]
 
-function navigateTo(category) {
+function navigateTo(category, subcategory = null) {
 	if (category === 'all') router.push('/catalogues')
+	else if (subcategory)
+		router.push({ path: `/catalogues/${category}`, query: { sub: subcategory } })
 	else router.push(`/catalogues/${category}`)
 }
 
@@ -412,7 +415,12 @@ onMounted(async () => {
 		if (!r.ok) return
 		const d = await r.json()
 		const g = d.find((m) => m.metal === 'gold')
-		if (g && typeof g.price === 'number' && typeof g.previous === 'number' && g.previous !== 0) {
+		if (
+			g &&
+			typeof g.price === 'number' &&
+			typeof g.previous === 'number' &&
+			g.previous !== 0
+		) {
 			goldPrice.value = g.price.toLocaleString('en-US', {
 				minimumFractionDigits: 2,
 				maximumFractionDigits: 2,
@@ -428,7 +436,9 @@ onMounted(async () => {
 <style scoped>
 .dropdown-enter-active,
 .dropdown-leave-active {
-	transition: opacity 0.15s ease, transform 0.15s ease;
+	transition:
+		opacity 0.15s ease,
+		transform 0.15s ease;
 }
 .dropdown-enter-from,
 .dropdown-leave-to {
