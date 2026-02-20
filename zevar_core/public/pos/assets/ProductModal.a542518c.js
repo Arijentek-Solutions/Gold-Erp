@@ -1,1 +1,1501 @@
-var I=Object.defineProperty,L=Object.defineProperties;var W=Object.getOwnPropertyDescriptors;var D=Object.getOwnPropertySymbols;var H=Object.prototype.hasOwnProperty,U=Object.prototype.propertyIsEnumerable;var j=(s,c,l)=>c in s?I(s,c,{enumerable:!0,configurable:!0,writable:!0,value:l}):s[c]=l,M=(s,c)=>{for(var l in c||(c={}))H.call(c,l)&&j(s,l,c[l]);if(D)for(var l of D(c))U.call(c,l)&&j(s,l,c[l]);return s},S=(s,c)=>L(s,W(c));var A=(s,c,l)=>new Promise((v,t)=>{var _=g=>{try{y(l.next(g))}catch(m){t(m)}},f=g=>{try{y(l.throw(g))}catch(m){t(m)}},y=g=>g.done?v(g.value):Promise.resolve(g.value).then(_,f);y((l=l.apply(s,c)).next())});import{_ as P,p as V,i as b,H as J,o as a,k as o,l as e,G as h,t as n,m as K,v as Z,P as q,F as C,A as $,w as z,n as i,D as O,z as E,T,B as G,C as F,q as k,x as Q,j as X,y as Y,b as ee,u as N}from"./vendor.b4720657.js";import{u as te}from"./ui.3a424cc5.js";const p=s=>(G("data-v-b219a00e"),s=s(),F(),s),se={class:"relative z-50"},ae={class:"max-w-7xl mx-auto px-8 h-9 flex items-center justify-between text-xs"},oe={class:"flex items-center gap-1.5"},ne=p(()=>e("span",{class:"w-4 h-4 rounded-full flex items-center justify-center",style:{background:"linear-gradient(135deg, #C9A962, #8B7355)"}},[e("span",{class:"text-[7px] text-white font-bold"},"Au")],-1)),re=p(()=>e("span",null,"Gold",-1)),ie=p(()=>e("a",{href:"#",class:"hover:text-[#C9A962] transition flex items-center gap-1"},[e("svg",{class:"w-3.5 h-3.5",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"1.5",d:"M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"})]),k(" Find Stores ")],-1)),le=[ie],de={class:"max-w-7xl mx-auto px-8 h-16 flex items-center justify-between gap-8"},ce={href:"/frontend/catalogues",class:"flex items-center gap-3 flex-shrink-0"},ue=p(()=>e("div",{class:"w-9 h-9 rounded-lg flex items-center justify-center",style:{background:"linear-gradient(135deg, #C9A962, #8B7355)"}},[e("span",{class:"text-white font-serif font-bold text-lg"},"Z")],-1)),he={class:"flex flex-col justify-center leading-none"},ge={class:"flex-1 max-w-xl hidden md:block"},me={class:"relative"},xe=p(()=>e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"},null,-1)),_e=[xe],pe={key:0,class:"w-5 h-5",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},ye=p(()=>e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"1.5",d:"M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"},null,-1)),ve=[ye],fe={key:1,class:"w-5 h-5",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},be=p(()=>e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"1.5",d:"M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"},null,-1)),we=[be],ke=p(()=>e("svg",{class:"w-5 h-5",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"1.5",d:"M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"})],-1)),Ce=[ke],$e=p(()=>e("svg",{class:"w-5 h-5",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"1.5",d:"M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"})],-1)),Be=[$e],De={class:"max-w-7xl mx-auto px-8"},je={class:"flex items-center justify-center"},Me=["onMouseenter"],Se=["href","onClick"],Ae={key:0,class:"w-3 h-3 opacity-50",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},Pe=p(()=>e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M19 9l-7 7-7-7"},null,-1)),ze=[Pe],Ee={key:1,class:"absolute bottom-0 left-4 right-4 h-0.5 bg-[#C9A962]"},Te=["href","onClick"],Ge={props:{isDark:{type:Boolean,default:!1},activeCategory:{type:String,default:"all"}},emits:["toggleTheme","search","selectCategory"],setup(s){const c=V(),l=b(""),v=b("2,031.47"),t=b(.52),_=b(null),f=[{id:"all",name:"All Jewellery"},{id:"gold",name:"Gold",subcategories:[{name:"Gold Rings"},{name:"Gold Chains"},{name:"Gold Earrings"},{name:"Gold Bangles"},{name:"Gold Necklace Sets"}]},{id:"diamond",name:"Diamond",subcategories:[{name:"Diamond Rings"},{name:"Diamond Earrings"},{name:"Diamond Pendants"},{name:"Diamond Bracelets"},{name:"Solitaires"}]},{id:"earrings",name:"Earrings",subcategories:[{name:"Stud Earrings"},{name:"Hoop Earrings"},{name:"Drop Earrings"},{name:"Chandelier Earrings"},{name:"Pearl Earrings"}]},{id:"rings",name:"Rings",subcategories:[{name:"Engagement Rings"},{name:"Wedding Bands"},{name:"Eternity Rings"},{name:"Statement Rings"},{name:"Stackable Rings"}]},{id:"necklaces",name:"Necklaces",subcategories:[{name:"Chain Necklaces"},{name:"Pendant Necklaces"},{name:"Layered Necklaces"},{name:"Chokers"},{name:"Pearl Necklaces"}]},{id:"bracelets",name:"Bracelets",subcategories:[{name:"Tennis Bracelets"},{name:"Bangles"},{name:"Cuff Bracelets"},{name:"Charm Bracelets"},{name:"Link Bracelets"}]},{id:"pendants",name:"Pendants",subcategories:[{name:"Diamond Pendants"},{name:"Gold Pendants"},{name:"Heart Pendants"},{name:"Cross Pendants"},{name:"Initial Pendants"}]},{id:"wedding",name:"Wedding",subcategories:[{name:"Bridal Sets"},{name:"Engagement Rings"},{name:"Wedding Bands"},{name:"Bridesmaid Gifts"}]},{id:"gifting",name:"Gifting",subcategories:[{name:"Under $500"},{name:"Under $1,000"},{name:"Under $2,500"},{name:"Luxury Gifts"},{name:"Gift Cards"}]},{id:"collections",name:"Collections"}];function y(g){g==="all"?c.push("/catalogues"):c.push(`/catalogues/${g}`)}return J(()=>A(this,null,function*(){try{const r=(yield(yield fetch("https://api.metals.live/v1/spot")).json()).find(x=>x.metal==="gold");r&&(v.value=r.price.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2}),t.value=(r.price-r.previous)/r.previous*100)}catch(g){}})),(g,m)=>(a(),o("header",se,[e("div",{class:h([s.isDark?"bg-[#111] border-white/5":"bg-[#faf5f0] border-gray-200","border-b"])},[e("div",ae,[e("div",{class:h(["flex items-center gap-4",s.isDark?"text-gray-400":"text-gray-600"])},[e("div",oe,[ne,re,e("span",{class:h(["font-semibold",s.isDark?"text-white":"text-gray-900"])},"$"+n(v.value)+"/oz",3),e("span",{class:h(t.value>=0?"text-emerald-500":"text-red-500")},n(t.value>=0?"\u25B2":"\u25BC")+" "+n(Math.abs(t.value).toFixed(2))+"% ",3)])],2),e("div",{class:h(["flex items-center gap-4",s.isDark?"text-gray-400":"text-gray-600"])},le,2)])],2),e("div",{class:h([s.isDark?"bg-[#0a0a0a] border-white/5":"bg-white border-gray-200","border-b"])},[e("div",de,[e("a",ce,[ue,e("div",he,[e("span",{class:h(["font-serif font-bold text-xl tracking-tight",s.isDark?"text-white":"text-gray-900"])},"ZEVAR",2),e("span",{class:h(["text-[9px] uppercase tracking-[0.2em] mt-0.5",s.isDark?"text-gray-500":"text-gray-400"])},"Fine Jewelers",2)])]),e("div",ge,[e("div",me,[K(e("input",{"onUpdate:modelValue":m[0]||(m[0]=r=>l.value=r),type:"text",placeholder:"Search rings, necklaces, earrings...",class:h(["w-full h-10 pl-10 pr-4 rounded-lg border text-sm transition-all",s.isDark?"bg-[#1a1a1a] border-white/10 text-white placeholder-gray-500 focus:border-[#C9A962] focus:ring-1 focus:ring-[#C9A962]/20":"bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-[#C9A962] focus:ring-1 focus:ring-[#C9A962]/20"]),onKeyup:m[1]||(m[1]=q(r=>g.$emit("search",l.value),["enter"]))},null,34),[[Z,l.value]]),(a(),o("svg",{class:h(["absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4",s.isDark?"text-gray-500":"text-gray-400"]),fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},_e,2))])]),e("div",{class:h(["flex items-center gap-1",s.isDark?"text-gray-400":"text-gray-600"])},[e("button",{onClick:m[2]||(m[2]=r=>g.$emit("toggleTheme")),class:h(["w-9 h-9 rounded-lg flex items-center justify-center transition",s.isDark?"hover:bg-white/10 hover:text-[#C9A962]":"hover:bg-gray-100 hover:text-[#8B6914]"]),title:"Toggle Theme"},[s.isDark?(a(),o("svg",pe,ve)):(a(),o("svg",fe,we))],2),e("button",{class:h(["w-9 h-9 rounded-lg flex items-center justify-center transition",s.isDark?"hover:bg-white/10 hover:text-[#C9A962]":"hover:bg-gray-100 hover:text-[#8B6914]"])},Ce,2),e("button",{class:h(["w-9 h-9 rounded-lg flex items-center justify-center transition",s.isDark?"hover:bg-white/10 hover:text-[#C9A962]":"hover:bg-gray-100 hover:text-[#8B6914]"])},Be,2)],2)])],2),e("nav",{class:h([s.isDark?"bg-[#0a0a0a] border-white/5":"bg-white border-gray-100","border-b relative"])},[e("div",De,[e("div",je,[(a(),o(C,null,$(f,r=>e("div",{key:r.id,class:"relative",onMouseenter:x=>_.value=r.id,onMouseleave:m[3]||(m[3]=x=>_.value=null)},[e("a",{href:`/frontend/catalogues/${r.id}`,onClick:z(x=>y(r.id),["prevent"]),class:h(["px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-all relative flex items-center gap-1.5",[s.activeCategory===r.id?"text-[#C9A962]":s.isDark?"text-gray-300 hover:text-[#C9A962]":"text-gray-700 hover:text-[#8B6914]"]])},[e("span",null,n(r.name),1),r.subcategories?(a(),o("svg",Ae,ze)):i("",!0),s.activeCategory===r.id?(a(),o("span",Ee)):i("",!0)],10,Se),O(T,{name:"dropdown"},{default:E(()=>[r.subcategories&&_.value===r.id?(a(),o("div",{key:0,class:h(["absolute top-full left-1/2 -translate-x-1/2 rounded-b-xl shadow-xl border border-t-0 py-4 px-2 min-w-[200px] z-50",s.isDark?"bg-[#1a1a1a] border-white/10":"bg-white border-gray-100"])},[(a(!0),o(C,null,$(r.subcategories,x=>(a(),o("a",{key:x.name,href:`/frontend/catalogues/${r.id}`,onClick:z(u=>y(r.id),["prevent"]),class:h(["block px-4 py-2.5 text-sm rounded-lg transition-all",s.isDark?"text-gray-400 hover:text-[#C9A962] hover:bg-white/5":"text-gray-600 hover:text-[#8B6914] hover:bg-[#faf5f0]"])},n(x.name),11,Te))),128))],2)):i("",!0)]),_:2},1024)],40,Me)),64))])])],2)]))}};var Bs=P(Ge,[["__scopeId","data-v-b219a00e"]]);const d=s=>(G("data-v-07f9f972"),s=s(),F(),s),Fe={key:0,class:"fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"},Ne={class:"relative bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col md:flex-row max-h-[92vh] border transition-all"},Re=d(()=>e("svg",{class:"h-6 w-6 text-gray-700 group-hover:scale-110 transition-transform",fill:"none",viewBox:"0 0 24 24",stroke:"currentColor"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M6 18L18 6M6 6l12 12"})],-1)),Ie=[Re],Le={class:"w-full md:w-5/12 bg-gray-50 flex items-center justify-center p-10 border-r relative"},We=["src"],He={key:1,class:"text-7xl opacity-30"},Ue={class:"w-full md:w-7/12 p-8 overflow-y-auto bg-white"},Ve={key:0,class:"h-full flex items-center justify-center"},Je=d(()=>e("div",{class:"animate-spin rounded-full h-10 w-10 border-3 border-[#8B6914] border-t-transparent"},null,-1)),Ke=[Je],Ze={key:1,class:"space-y-6"},qe={class:"text-2xl font-bold text-gray-900 leading-tight mb-1"},Oe={class:"text-sm text-gray-500 font-mono"},Qe={class:"flex flex-wrap gap-2"},Xe={key:0,class:"px-3 py-1.5 bg-[#FDF6E3] text-[#8B6914] rounded-md text-xs font-bold uppercase tracking-wider border border-[#E5D4A1]"},Ye={key:1,class:"px-3 py-1.5 bg-gray-100 text-gray-800 rounded-md text-xs font-bold uppercase tracking-wider border border-gray-200"},et={class:"bg-gray-50 rounded-lg p-5 border border-gray-200"},tt={key:0,class:"flex justify-between text-sm mb-2.5"},st=d(()=>e("span",{class:"text-gray-600"},"Gross Weight",-1)),at={class:"font-semibold text-gray-900"},ot={key:1,class:"flex justify-between text-sm mb-2.5 text-red-600"},nt=d(()=>e("span",null,"- Stone Weight",-1)),rt={class:"font-medium"},it={key:2,class:"flex justify-between pt-3 border-t border-gray-300"},lt=d(()=>e("span",{class:"font-bold text-gray-800"},"Net Weight",-1)),dt={class:"font-bold text-[#8B6914] text-lg"},ct={class:"border border-gray-200 rounded-lg overflow-hidden"},ut=d(()=>e("div",{class:"bg-gray-100 px-4 py-2 border-b border-gray-200"},[e("h3",{class:"font-bold text-gray-900 text-sm uppercase tracking-wide"},"Product Details")],-1)),ht={class:"divide-y divide-gray-200"},gt={key:0,class:"flex py-2.5 px-4"},mt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Product Type",-1)),xt={class:"w-1/2 text-sm text-gray-900 font-medium"},_t={key:1,class:"flex py-2.5 px-4"},pt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Jewelry Type",-1)),yt={class:"w-1/2 text-sm text-gray-900 font-medium"},vt={key:2,class:"flex py-2.5 px-4"},ft=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Sub Type",-1)),bt={class:"w-1/2 text-sm text-gray-900 font-medium"},wt={key:3,class:"flex py-2.5 px-4"},kt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Material Color",-1)),Ct={class:"w-1/2 text-sm text-gray-900 font-medium"},$t={key:4,class:"flex py-2.5 px-4"},Bt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Finish",-1)),Dt={class:"w-1/2 text-sm text-gray-900 font-medium"},jt={key:5,class:"flex py-2.5 px-4"},Mt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Plating",-1)),St={class:"w-1/2 text-sm text-gray-900 font-medium"},At={key:6,class:"flex py-2.5 px-4"},Pt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Length of Item",-1)),zt={class:"w-1/2 text-sm text-gray-900 font-medium"},Et={key:7,class:"flex py-2.5 px-4"},Tt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Width of Item",-1)),Gt={class:"w-1/2 text-sm text-gray-900 font-medium"},Ft={key:8,class:"flex py-2.5 px-4"},Nt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Size",-1)),Rt={class:"w-1/2 text-sm text-gray-900 font-medium"},It={key:9,class:"flex py-2.5 px-4"},Lt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Chain Type",-1)),Wt={class:"w-1/2 text-sm text-gray-900 font-medium"},Ht={key:10,class:"flex py-2.5 px-4"},Ut=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Clasp Type",-1)),Vt={class:"w-1/2 text-sm text-gray-900 font-medium"},Jt={key:11,class:"flex py-2.5 px-4"},Kt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Gender",-1)),Zt={class:"w-1/2 text-sm text-gray-900 font-medium"},qt={key:12,class:"flex py-2.5 px-4"},Ot=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Completeness",-1)),Qt={class:"w-1/2 text-sm text-gray-900 font-medium"},Xt={key:13,class:"flex py-2.5 px-4"},Yt=d(()=>e("span",{class:"w-1/2 text-sm text-gray-600"},"Country of Origin",-1)),es={class:"w-1/2 text-sm text-gray-900 font-medium"},ts={key:0,class:"border border-gray-200 rounded-lg overflow-hidden"},ss=d(()=>e("div",{class:"bg-purple-50 px-4 py-2 border-b border-purple-100"},[e("h3",{class:"font-bold text-purple-900 text-sm uppercase tracking-wide flex items-center gap-2"},[e("svg",{class:"w-4 h-4",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M12 3l8 5-8 13-8-13 8-5z"})]),k(" Gemstone Details ")])],-1)),as={class:"overflow-x-auto"},os={class:"w-full text-sm"},ns=d(()=>e("thead",{class:"bg-gray-50 border-b border-gray-200"},[e("tr",{class:"text-xs text-gray-600 uppercase"},[e("th",{class:"px-4 py-2 text-left font-semibold"},"Stone"),e("th",{class:"px-4 py-2 text-left font-semibold"},"Cut"),e("th",{class:"px-4 py-2 text-left font-semibold"},"Color"),e("th",{class:"px-4 py-2 text-left font-semibold"},"Clarity"),e("th",{class:"px-4 py-2 text-right font-semibold"},"Carat")])],-1)),rs={class:"divide-y divide-gray-100"},is={class:"px-4 py-3 font-medium text-gray-900"},ls={class:"px-4 py-3 text-gray-600"},ds={class:"px-4 py-3 text-gray-600"},cs={class:"px-4 py-3 text-gray-600"},us={class:"px-4 py-3 text-right font-mono text-gray-900"},hs={class:"bg-[#faf5f0] rounded-lg p-5 border border-[#E5D4A1]"},gs={class:"flex items-baseline justify-between mb-4"},ms={class:"text-sm text-gray-600 mb-1"},xs=k("Total Price "),_s={key:0,class:"text-xs text-gray-400"},ps={class:"text-3xl font-bold text-gray-900"},ys={key:0,class:"text-sm text-gray-500 line-through"},vs=d(()=>e("svg",{class:"w-5 h-5",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"})],-1)),fs=k(" Add to Cart "),bs=[vs,fs],ws={props:["show","itemCode"],emits:["close"],setup(s,{emit:c}){const l=s,v=te(),t=b({}),_=b(!1),f=Q(()=>{if(t.value.net_weight)return t.value.net_weight;const u=t.value.gross_weight||0,B=t.value.stone_weight||0;return Math.max(0,u-B)}),y=X({url:"zevar_core.api.catalog.get_item_details",makeParams(){return{item_code:l.itemCode}},onSuccess(u){t.value=S(M({},u),{final_price:u.price||u.msrp||0,price_source:u.price?"Calculated":"MSRP"}),_.value=!1},onError(u){console.error("Failed to load item:",u),_.value=!1}});Y(()=>l.show,u=>{u&&l.itemCode&&(_.value=!0,t.value={},y.fetch())});function g(){!t.value.item_code||(v.addItem({item_code:t.value.item_code,item_name:t.value.item_name,price:t.value.final_price,image:t.value.image}),c("close"))}function m(){c("close")}function r(u){return u?new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(u):"$0.00"}function x(u){return!u&&u!==0?"0.000":parseFloat(u).toFixed(3)}return(u,B)=>(a(),ee(T,{name:"fade"},{default:E(()=>[s.show?(a(),o("div",Fe,[e("div",{onClick:m,class:"absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"}),e("div",Ne,[e("button",{onClick:m,class:"absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-full hover:bg-gray-100 transition-colors group shadow-lg"},Ie),e("div",Le,[t.value.image?(a(),o("img",{key:0,src:t.value.image,class:"max-h-[55vh] object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500"},null,8,We)):(a(),o("div",He,"\u{1F48E}"))]),e("div",Ue,[_.value?(a(),o("div",Ve,Ke)):(a(),o("div",Ze,[e("div",null,[e("h2",qe,n(t.value.item_name),1),e("p",Oe,n(t.value.item_code),1)]),e("div",Qe,[t.value.metal?(a(),o("span",Xe,n(t.value.metal),1)):i("",!0),t.value.purity?(a(),o("span",Ye,n(t.value.purity),1)):i("",!0)]),e("div",et,[t.value.gross_weight?(a(),o("div",tt,[st,e("span",at,n(x(t.value.gross_weight))+" g",1)])):i("",!0),t.value.stone_weight?(a(),o("div",ot,[nt,e("span",rt,n(x(t.value.stone_weight))+" g",1)])):i("",!0),t.value.net_weight||N(f)>0?(a(),o("div",it,[lt,e("span",dt,n(x(N(f)))+" g",1)])):i("",!0)]),e("div",ct,[ut,e("div",ht,[t.value.product_type?(a(),o("div",gt,[mt,e("span",xt,n(t.value.product_type),1)])):i("",!0),t.value.jewelry_type?(a(),o("div",_t,[pt,e("span",yt,n(t.value.jewelry_type),1)])):i("",!0),t.value.jewelry_subtype?(a(),o("div",vt,[ft,e("span",bt,n(t.value.jewelry_subtype),1)])):i("",!0),t.value.material_color?(a(),o("div",wt,[kt,e("span",Ct,n(t.value.material_color),1)])):i("",!0),t.value.finish?(a(),o("div",$t,[Bt,e("span",Dt,n(t.value.finish),1)])):i("",!0),t.value.plating?(a(),o("div",jt,[Mt,e("span",St,n(t.value.plating),1)])):i("",!0),t.value.length?(a(),o("div",At,[Pt,e("span",zt,n(t.value.length),1)])):i("",!0),t.value.width?(a(),o("div",Et,[Tt,e("span",Gt,n(t.value.width),1)])):i("",!0),t.value.size?(a(),o("div",Ft,[Nt,e("span",Rt,n(t.value.size),1)])):i("",!0),t.value.chain_type?(a(),o("div",It,[Lt,e("span",Wt,n(t.value.chain_type),1)])):i("",!0),t.value.clasp_type?(a(),o("div",Ht,[Ut,e("span",Vt,n(t.value.clasp_type),1)])):i("",!0),t.value.gender?(a(),o("div",Jt,[Kt,e("span",Zt,n(t.value.gender),1)])):i("",!0),t.value.completeness?(a(),o("div",qt,[Ot,e("span",Qt,n(t.value.completeness),1)])):i("",!0),t.value.country_of_origin?(a(),o("div",Xt,[Yt,e("span",es,n(t.value.country_of_origin||"USA"),1)])):i("",!0)])]),t.value.gemstones&&t.value.gemstones.length>0?(a(),o("div",ts,[ss,e("div",as,[e("table",os,[ns,e("tbody",rs,[(a(!0),o(C,null,$(t.value.gemstones,(w,R)=>(a(),o("tr",{key:R,class:"hover:bg-gray-50"},[e("td",is,n(w.gem_type),1),e("td",ls,n(w.cut||"-"),1),e("td",ds,n(w.color||"-"),1),e("td",cs,n(w.clarity||"-"),1),e("td",us,n(w.carat||"0"),1)]))),128))])])])])):i("",!0),e("div",hs,[e("div",gs,[e("div",null,[e("p",ms,[xs,t.value.price_source?(a(),o("span",_s,"("+n(t.value.price_source)+")",1)):i("",!0)]),e("p",ps,n(r(t.value.final_price)),1)]),t.value.msrp&&t.value.msrp>t.value.final_price?(a(),o("span",ys,n(r(t.value.msrp)),1)):i("",!0)]),e("button",{onClick:g,class:"w-full bg-[#8B6914] text-white py-3.5 rounded-lg font-bold text-base hover:bg-[#7a5c11] transition-all shadow-md hover:shadow-lg transform active:scale-95 flex items-center justify-center gap-2"},bs)])]))])])])):i("",!0)]),_:1}))}};var Ds=P(ws,[["__scopeId","data-v-07f9f972"]]);export{Bs as H,Ds as P};
+var I = Object.defineProperty,
+	L = Object.defineProperties;
+var W = Object.getOwnPropertyDescriptors;
+var D = Object.getOwnPropertySymbols;
+var H = Object.prototype.hasOwnProperty,
+	U = Object.prototype.propertyIsEnumerable;
+var j = (s, c, l) =>
+		c in s
+			? I(s, c, { enumerable: !0, configurable: !0, writable: !0, value: l })
+			: (s[c] = l),
+	M = (s, c) => {
+		for (var l in c || (c = {})) H.call(c, l) && j(s, l, c[l]);
+		if (D) for (var l of D(c)) U.call(c, l) && j(s, l, c[l]);
+		return s;
+	},
+	S = (s, c) => L(s, W(c));
+var A = (s, c, l) =>
+	new Promise((v, t) => {
+		var _ = (g) => {
+				try {
+					y(l.next(g));
+				} catch (m) {
+					t(m);
+				}
+			},
+			f = (g) => {
+				try {
+					y(l.throw(g));
+				} catch (m) {
+					t(m);
+				}
+			},
+			y = (g) => (g.done ? v(g.value) : Promise.resolve(g.value).then(_, f));
+		y((l = l.apply(s, c)).next());
+	});
+import {
+	_ as P,
+	p as V,
+	i as b,
+	H as J,
+	o as a,
+	k as o,
+	l as e,
+	G as h,
+	t as n,
+	m as K,
+	v as Z,
+	P as q,
+	F as C,
+	A as $,
+	w as z,
+	n as i,
+	D as O,
+	z as E,
+	T,
+	B as G,
+	C as F,
+	q as k,
+	x as Q,
+	j as X,
+	y as Y,
+	b as ee,
+	u as N,
+} from "./vendor.b4720657.js";
+import { u as te } from "./ui.3a424cc5.js";
+const p = (s) => (G("data-v-b219a00e"), (s = s()), F(), s),
+	se = { class: "relative z-50" },
+	ae = { class: "max-w-7xl mx-auto px-8 h-9 flex items-center justify-between text-xs" },
+	oe = { class: "flex items-center gap-1.5" },
+	ne = p(() =>
+		e(
+			"span",
+			{
+				class: "w-4 h-4 rounded-full flex items-center justify-center",
+				style: { background: "linear-gradient(135deg, #C9A962, #8B7355)" },
+			},
+			[e("span", { class: "text-[7px] text-white font-bold" }, "Au")],
+			-1
+		)
+	),
+	re = p(() => e("span", null, "Gold", -1)),
+	ie = p(() =>
+		e(
+			"a",
+			{ href: "#", class: "hover:text-[#C9A962] transition flex items-center gap-1" },
+			[
+				e(
+					"svg",
+					{
+						class: "w-3.5 h-3.5",
+						fill: "none",
+						stroke: "currentColor",
+						viewBox: "0 0 24 24",
+					},
+					[
+						e("path", {
+							"stroke-linecap": "round",
+							"stroke-linejoin": "round",
+							"stroke-width": "1.5",
+							d: "M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z",
+						}),
+					]
+				),
+				k(" Find Stores "),
+			],
+			-1
+		)
+	),
+	le = [ie],
+	de = { class: "max-w-7xl mx-auto px-8 h-16 flex items-center justify-between gap-8" },
+	ce = { href: "/frontend/catalogues", class: "flex items-center gap-3 flex-shrink-0" },
+	ue = p(() =>
+		e(
+			"div",
+			{
+				class: "w-9 h-9 rounded-lg flex items-center justify-center",
+				style: { background: "linear-gradient(135deg, #C9A962, #8B7355)" },
+			},
+			[e("span", { class: "text-white font-serif font-bold text-lg" }, "Z")],
+			-1
+		)
+	),
+	he = { class: "flex flex-col justify-center leading-none" },
+	ge = { class: "flex-1 max-w-xl hidden md:block" },
+	me = { class: "relative" },
+	xe = p(() =>
+		e(
+			"path",
+			{
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
+			},
+			null,
+			-1
+		)
+	),
+	_e = [xe],
+	pe = { key: 0, class: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+	ye = p(() =>
+		e(
+			"path",
+			{
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "1.5",
+				d: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z",
+			},
+			null,
+			-1
+		)
+	),
+	ve = [ye],
+	fe = { key: 1, class: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+	be = p(() =>
+		e(
+			"path",
+			{
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "1.5",
+				d: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z",
+			},
+			null,
+			-1
+		)
+	),
+	we = [be],
+	ke = p(() =>
+		e(
+			"svg",
+			{ class: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+			[
+				e("path", {
+					"stroke-linecap": "round",
+					"stroke-linejoin": "round",
+					"stroke-width": "1.5",
+					d: "M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z",
+				}),
+			],
+			-1
+		)
+	),
+	Ce = [ke],
+	$e = p(() =>
+		e(
+			"svg",
+			{ class: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+			[
+				e("path", {
+					"stroke-linecap": "round",
+					"stroke-linejoin": "round",
+					"stroke-width": "1.5",
+					d: "M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z",
+				}),
+			],
+			-1
+		)
+	),
+	Be = [$e],
+	De = { class: "max-w-7xl mx-auto px-8" },
+	je = { class: "flex items-center justify-center" },
+	Me = ["onMouseenter"],
+	Se = ["href", "onClick"],
+	Ae = {
+		key: 0,
+		class: "w-3 h-3 opacity-50",
+		fill: "none",
+		stroke: "currentColor",
+		viewBox: "0 0 24 24",
+	},
+	Pe = p(() =>
+		e(
+			"path",
+			{
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M19 9l-7 7-7-7",
+			},
+			null,
+			-1
+		)
+	),
+	ze = [Pe],
+	Ee = { key: 1, class: "absolute bottom-0 left-4 right-4 h-0.5 bg-[#C9A962]" },
+	Te = ["href", "onClick"],
+	Ge = {
+		props: {
+			isDark: { type: Boolean, default: !1 },
+			activeCategory: { type: String, default: "all" },
+		},
+		emits: ["toggleTheme", "search", "selectCategory"],
+		setup(s) {
+			const c = V(),
+				l = b(""),
+				v = b("2,031.47"),
+				t = b(0.52),
+				_ = b(null),
+				f = [
+					{ id: "all", name: "All Jewellery" },
+					{
+						id: "gold",
+						name: "Gold",
+						subcategories: [
+							{ name: "Gold Rings" },
+							{ name: "Gold Chains" },
+							{ name: "Gold Earrings" },
+							{ name: "Gold Bangles" },
+							{ name: "Gold Necklace Sets" },
+						],
+					},
+					{
+						id: "diamond",
+						name: "Diamond",
+						subcategories: [
+							{ name: "Diamond Rings" },
+							{ name: "Diamond Earrings" },
+							{ name: "Diamond Pendants" },
+							{ name: "Diamond Bracelets" },
+							{ name: "Solitaires" },
+						],
+					},
+					{
+						id: "earrings",
+						name: "Earrings",
+						subcategories: [
+							{ name: "Stud Earrings" },
+							{ name: "Hoop Earrings" },
+							{ name: "Drop Earrings" },
+							{ name: "Chandelier Earrings" },
+							{ name: "Pearl Earrings" },
+						],
+					},
+					{
+						id: "rings",
+						name: "Rings",
+						subcategories: [
+							{ name: "Engagement Rings" },
+							{ name: "Wedding Bands" },
+							{ name: "Eternity Rings" },
+							{ name: "Statement Rings" },
+							{ name: "Stackable Rings" },
+						],
+					},
+					{
+						id: "necklaces",
+						name: "Necklaces",
+						subcategories: [
+							{ name: "Chain Necklaces" },
+							{ name: "Pendant Necklaces" },
+							{ name: "Layered Necklaces" },
+							{ name: "Chokers" },
+							{ name: "Pearl Necklaces" },
+						],
+					},
+					{
+						id: "bracelets",
+						name: "Bracelets",
+						subcategories: [
+							{ name: "Tennis Bracelets" },
+							{ name: "Bangles" },
+							{ name: "Cuff Bracelets" },
+							{ name: "Charm Bracelets" },
+							{ name: "Link Bracelets" },
+						],
+					},
+					{
+						id: "pendants",
+						name: "Pendants",
+						subcategories: [
+							{ name: "Diamond Pendants" },
+							{ name: "Gold Pendants" },
+							{ name: "Heart Pendants" },
+							{ name: "Cross Pendants" },
+							{ name: "Initial Pendants" },
+						],
+					},
+					{
+						id: "wedding",
+						name: "Wedding",
+						subcategories: [
+							{ name: "Bridal Sets" },
+							{ name: "Engagement Rings" },
+							{ name: "Wedding Bands" },
+							{ name: "Bridesmaid Gifts" },
+						],
+					},
+					{
+						id: "gifting",
+						name: "Gifting",
+						subcategories: [
+							{ name: "Under $500" },
+							{ name: "Under $1,000" },
+							{ name: "Under $2,500" },
+							{ name: "Luxury Gifts" },
+							{ name: "Gift Cards" },
+						],
+					},
+					{ id: "collections", name: "Collections" },
+				];
+			function y(g) {
+				g === "all" ? c.push("/catalogues") : c.push(`/catalogues/${g}`);
+			}
+			return (
+				J(() =>
+					A(this, null, function* () {
+						try {
+							const r = (yield (yield fetch(
+								"https://api.metals.live/v1/spot"
+							)).json()).find((x) => x.metal === "gold");
+							r &&
+								((v.value = r.price.toLocaleString("en-US", {
+									minimumFractionDigits: 2,
+									maximumFractionDigits: 2,
+								})),
+								(t.value = ((r.price - r.previous) / r.previous) * 100));
+						} catch (g) {}
+					})
+				),
+				(g, m) => (
+					a(),
+					o("header", se, [
+						e(
+							"div",
+							{
+								class: h([
+									s.isDark
+										? "bg-[#111] border-white/5"
+										: "bg-[#faf5f0] border-gray-200",
+									"border-b",
+								]),
+							},
+							[
+								e("div", ae, [
+									e(
+										"div",
+										{
+											class: h([
+												"flex items-center gap-4",
+												s.isDark ? "text-gray-400" : "text-gray-600",
+											]),
+										},
+										[
+											e("div", oe, [
+												ne,
+												re,
+												e(
+													"span",
+													{
+														class: h([
+															"font-semibold",
+															s.isDark
+																? "text-white"
+																: "text-gray-900",
+														]),
+													},
+													"$" + n(v.value) + "/oz",
+													3
+												),
+												e(
+													"span",
+													{
+														class: h(
+															t.value >= 0
+																? "text-emerald-500"
+																: "text-red-500"
+														),
+													},
+													n(t.value >= 0 ? "\u25B2" : "\u25BC") +
+														" " +
+														n(Math.abs(t.value).toFixed(2)) +
+														"% ",
+													3
+												),
+											]),
+										],
+										2
+									),
+									e(
+										"div",
+										{
+											class: h([
+												"flex items-center gap-4",
+												s.isDark ? "text-gray-400" : "text-gray-600",
+											]),
+										},
+										le,
+										2
+									),
+								]),
+							],
+							2
+						),
+						e(
+							"div",
+							{
+								class: h([
+									s.isDark
+										? "bg-[#0a0a0a] border-white/5"
+										: "bg-white border-gray-200",
+									"border-b",
+								]),
+							},
+							[
+								e("div", de, [
+									e("a", ce, [
+										ue,
+										e("div", he, [
+											e(
+												"span",
+												{
+													class: h([
+														"font-serif font-bold text-xl tracking-tight",
+														s.isDark ? "text-white" : "text-gray-900",
+													]),
+												},
+												"ZEVAR",
+												2
+											),
+											e(
+												"span",
+												{
+													class: h([
+														"text-[9px] uppercase tracking-[0.2em] mt-0.5",
+														s.isDark
+															? "text-gray-500"
+															: "text-gray-400",
+													]),
+												},
+												"Fine Jewelers",
+												2
+											),
+										]),
+									]),
+									e("div", ge, [
+										e("div", me, [
+											K(
+												e(
+													"input",
+													{
+														"onUpdate:modelValue":
+															m[0] || (m[0] = (r) => (l.value = r)),
+														type: "text",
+														placeholder:
+															"Search rings, necklaces, earrings...",
+														class: h([
+															"w-full h-10 pl-10 pr-4 rounded-lg border text-sm transition-all",
+															s.isDark
+																? "bg-[#1a1a1a] border-white/10 text-white placeholder-gray-500 focus:border-[#C9A962] focus:ring-1 focus:ring-[#C9A962]/20"
+																: "bg-gray-50 border-gray-200 text-gray-900 placeholder-gray-400 focus:border-[#C9A962] focus:ring-1 focus:ring-[#C9A962]/20",
+														]),
+														onKeyup:
+															m[1] ||
+															(m[1] = q(
+																(r) => g.$emit("search", l.value),
+																["enter"]
+															)),
+													},
+													null,
+													34
+												),
+												[[Z, l.value]]
+											),
+											(a(),
+											o(
+												"svg",
+												{
+													class: h([
+														"absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4",
+														s.isDark
+															? "text-gray-500"
+															: "text-gray-400",
+													]),
+													fill: "none",
+													stroke: "currentColor",
+													viewBox: "0 0 24 24",
+												},
+												_e,
+												2
+											)),
+										]),
+									]),
+									e(
+										"div",
+										{
+											class: h([
+												"flex items-center gap-1",
+												s.isDark ? "text-gray-400" : "text-gray-600",
+											]),
+										},
+										[
+											e(
+												"button",
+												{
+													onClick:
+														m[2] ||
+														(m[2] = (r) => g.$emit("toggleTheme")),
+													class: h([
+														"w-9 h-9 rounded-lg flex items-center justify-center transition",
+														s.isDark
+															? "hover:bg-white/10 hover:text-[#C9A962]"
+															: "hover:bg-gray-100 hover:text-[#8B6914]",
+													]),
+													title: "Toggle Theme",
+												},
+												[
+													s.isDark
+														? (a(), o("svg", pe, ve))
+														: (a(), o("svg", fe, we)),
+												],
+												2
+											),
+											e(
+												"button",
+												{
+													class: h([
+														"w-9 h-9 rounded-lg flex items-center justify-center transition",
+														s.isDark
+															? "hover:bg-white/10 hover:text-[#C9A962]"
+															: "hover:bg-gray-100 hover:text-[#8B6914]",
+													]),
+												},
+												Ce,
+												2
+											),
+											e(
+												"button",
+												{
+													class: h([
+														"w-9 h-9 rounded-lg flex items-center justify-center transition",
+														s.isDark
+															? "hover:bg-white/10 hover:text-[#C9A962]"
+															: "hover:bg-gray-100 hover:text-[#8B6914]",
+													]),
+												},
+												Be,
+												2
+											),
+										],
+										2
+									),
+								]),
+							],
+							2
+						),
+						e(
+							"nav",
+							{
+								class: h([
+									s.isDark
+										? "bg-[#0a0a0a] border-white/5"
+										: "bg-white border-gray-100",
+									"border-b relative",
+								]),
+							},
+							[
+								e("div", De, [
+									e("div", je, [
+										(a(),
+										o(
+											C,
+											null,
+											$(f, (r) =>
+												e(
+													"div",
+													{
+														key: r.id,
+														class: "relative",
+														onMouseenter: (x) => (_.value = r.id),
+														onMouseleave:
+															m[3] ||
+															(m[3] = (x) => (_.value = null)),
+													},
+													[
+														e(
+															"a",
+															{
+																href: `/frontend/catalogues/${r.id}`,
+																onClick: z(
+																	(x) => y(r.id),
+																	["prevent"]
+																),
+																class: h([
+																	"px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-all relative flex items-center gap-1.5",
+																	[
+																		s.activeCategory === r.id
+																			? "text-[#C9A962]"
+																			: s.isDark
+																			? "text-gray-300 hover:text-[#C9A962]"
+																			: "text-gray-700 hover:text-[#8B6914]",
+																	],
+																]),
+															},
+															[
+																e("span", null, n(r.name), 1),
+																r.subcategories
+																	? (a(), o("svg", Ae, ze))
+																	: i("", !0),
+																s.activeCategory === r.id
+																	? (a(), o("span", Ee))
+																	: i("", !0),
+															],
+															10,
+															Se
+														),
+														O(
+															T,
+															{ name: "dropdown" },
+															{
+																default: E(() => [
+																	r.subcategories &&
+																	_.value === r.id
+																		? (a(),
+																		  o(
+																				"div",
+																				{
+																					key: 0,
+																					class: h([
+																						"absolute top-full left-1/2 -translate-x-1/2 rounded-b-xl shadow-xl border border-t-0 py-4 px-2 min-w-[200px] z-50",
+																						s.isDark
+																							? "bg-[#1a1a1a] border-white/10"
+																							: "bg-white border-gray-100",
+																					]),
+																				},
+																				[
+																					(a(!0),
+																					o(
+																						C,
+																						null,
+																						$(
+																							r.subcategories,
+																							(
+																								x
+																							) => (
+																								a(),
+																								o(
+																									"a",
+																									{
+																										key: x.name,
+																										href: `/frontend/catalogues/${r.id}`,
+																										onClick:
+																											z(
+																												(
+																													u
+																												) =>
+																													y(
+																														r.id
+																													),
+																												[
+																													"prevent",
+																												]
+																											),
+																										class: h(
+																											[
+																												"block px-4 py-2.5 text-sm rounded-lg transition-all",
+																												s.isDark
+																													? "text-gray-400 hover:text-[#C9A962] hover:bg-white/5"
+																													: "text-gray-600 hover:text-[#8B6914] hover:bg-[#faf5f0]",
+																											]
+																										),
+																									},
+																									n(
+																										x.name
+																									),
+																									11,
+																									Te
+																								)
+																							)
+																						),
+																						128
+																					)),
+																				],
+																				2
+																		  ))
+																		: i("", !0),
+																]),
+																_: 2,
+															},
+															1024
+														),
+													],
+													40,
+													Me
+												)
+											),
+											64
+										)),
+									]),
+								]),
+							],
+							2
+						),
+					])
+				)
+			);
+		},
+	};
+var Bs = P(Ge, [["__scopeId", "data-v-b219a00e"]]);
+const d = (s) => (G("data-v-07f9f972"), (s = s()), F(), s),
+	Fe = { key: 0, class: "fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" },
+	Ne = {
+		class: "relative bg-white rounded-xl shadow-2xl w-full max-w-5xl overflow-hidden flex flex-col md:flex-row max-h-[92vh] border transition-all",
+	},
+	Re = d(() =>
+		e(
+			"svg",
+			{
+				class: "h-6 w-6 text-gray-700 group-hover:scale-110 transition-transform",
+				fill: "none",
+				viewBox: "0 0 24 24",
+				stroke: "currentColor",
+			},
+			[
+				e("path", {
+					"stroke-linecap": "round",
+					"stroke-linejoin": "round",
+					"stroke-width": "2",
+					d: "M6 18L18 6M6 6l12 12",
+				}),
+			],
+			-1
+		)
+	),
+	Ie = [Re],
+	Le = {
+		class: "w-full md:w-5/12 bg-gray-50 flex items-center justify-center p-10 border-r relative",
+	},
+	We = ["src"],
+	He = { key: 1, class: "text-7xl opacity-30" },
+	Ue = { class: "w-full md:w-7/12 p-8 overflow-y-auto bg-white" },
+	Ve = { key: 0, class: "h-full flex items-center justify-center" },
+	Je = d(() =>
+		e(
+			"div",
+			{
+				class: "animate-spin rounded-full h-10 w-10 border-3 border-[#8B6914] border-t-transparent",
+			},
+			null,
+			-1
+		)
+	),
+	Ke = [Je],
+	Ze = { key: 1, class: "space-y-6" },
+	qe = { class: "text-2xl font-bold text-gray-900 leading-tight mb-1" },
+	Oe = { class: "text-sm text-gray-500 font-mono" },
+	Qe = { class: "flex flex-wrap gap-2" },
+	Xe = {
+		key: 0,
+		class: "px-3 py-1.5 bg-[#FDF6E3] text-[#8B6914] rounded-md text-xs font-bold uppercase tracking-wider border border-[#E5D4A1]",
+	},
+	Ye = {
+		key: 1,
+		class: "px-3 py-1.5 bg-gray-100 text-gray-800 rounded-md text-xs font-bold uppercase tracking-wider border border-gray-200",
+	},
+	et = { class: "bg-gray-50 rounded-lg p-5 border border-gray-200" },
+	tt = { key: 0, class: "flex justify-between text-sm mb-2.5" },
+	st = d(() => e("span", { class: "text-gray-600" }, "Gross Weight", -1)),
+	at = { class: "font-semibold text-gray-900" },
+	ot = { key: 1, class: "flex justify-between text-sm mb-2.5 text-red-600" },
+	nt = d(() => e("span", null, "- Stone Weight", -1)),
+	rt = { class: "font-medium" },
+	it = { key: 2, class: "flex justify-between pt-3 border-t border-gray-300" },
+	lt = d(() => e("span", { class: "font-bold text-gray-800" }, "Net Weight", -1)),
+	dt = { class: "font-bold text-[#8B6914] text-lg" },
+	ct = { class: "border border-gray-200 rounded-lg overflow-hidden" },
+	ut = d(() =>
+		e(
+			"div",
+			{ class: "bg-gray-100 px-4 py-2 border-b border-gray-200" },
+			[
+				e(
+					"h3",
+					{ class: "font-bold text-gray-900 text-sm uppercase tracking-wide" },
+					"Product Details"
+				),
+			],
+			-1
+		)
+	),
+	ht = { class: "divide-y divide-gray-200" },
+	gt = { key: 0, class: "flex py-2.5 px-4" },
+	mt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Product Type", -1)),
+	xt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	_t = { key: 1, class: "flex py-2.5 px-4" },
+	pt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Jewelry Type", -1)),
+	yt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	vt = { key: 2, class: "flex py-2.5 px-4" },
+	ft = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Sub Type", -1)),
+	bt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	wt = { key: 3, class: "flex py-2.5 px-4" },
+	kt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Material Color", -1)),
+	Ct = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	$t = { key: 4, class: "flex py-2.5 px-4" },
+	Bt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Finish", -1)),
+	Dt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	jt = { key: 5, class: "flex py-2.5 px-4" },
+	Mt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Plating", -1)),
+	St = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	At = { key: 6, class: "flex py-2.5 px-4" },
+	Pt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Length of Item", -1)),
+	zt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	Et = { key: 7, class: "flex py-2.5 px-4" },
+	Tt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Width of Item", -1)),
+	Gt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	Ft = { key: 8, class: "flex py-2.5 px-4" },
+	Nt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Size", -1)),
+	Rt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	It = { key: 9, class: "flex py-2.5 px-4" },
+	Lt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Chain Type", -1)),
+	Wt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	Ht = { key: 10, class: "flex py-2.5 px-4" },
+	Ut = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Clasp Type", -1)),
+	Vt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	Jt = { key: 11, class: "flex py-2.5 px-4" },
+	Kt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Gender", -1)),
+	Zt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	qt = { key: 12, class: "flex py-2.5 px-4" },
+	Ot = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Completeness", -1)),
+	Qt = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	Xt = { key: 13, class: "flex py-2.5 px-4" },
+	Yt = d(() => e("span", { class: "w-1/2 text-sm text-gray-600" }, "Country of Origin", -1)),
+	es = { class: "w-1/2 text-sm text-gray-900 font-medium" },
+	ts = { key: 0, class: "border border-gray-200 rounded-lg overflow-hidden" },
+	ss = d(() =>
+		e(
+			"div",
+			{ class: "bg-purple-50 px-4 py-2 border-b border-purple-100" },
+			[
+				e(
+					"h3",
+					{
+						class: "font-bold text-purple-900 text-sm uppercase tracking-wide flex items-center gap-2",
+					},
+					[
+						e(
+							"svg",
+							{
+								class: "w-4 h-4",
+								fill: "none",
+								stroke: "currentColor",
+								viewBox: "0 0 24 24",
+							},
+							[
+								e("path", {
+									"stroke-linecap": "round",
+									"stroke-linejoin": "round",
+									"stroke-width": "2",
+									d: "M12 3l8 5-8 13-8-13 8-5z",
+								}),
+							]
+						),
+						k(" Gemstone Details "),
+					]
+				),
+			],
+			-1
+		)
+	),
+	as = { class: "overflow-x-auto" },
+	os = { class: "w-full text-sm" },
+	ns = d(() =>
+		e(
+			"thead",
+			{ class: "bg-gray-50 border-b border-gray-200" },
+			[
+				e("tr", { class: "text-xs text-gray-600 uppercase" }, [
+					e("th", { class: "px-4 py-2 text-left font-semibold" }, "Stone"),
+					e("th", { class: "px-4 py-2 text-left font-semibold" }, "Cut"),
+					e("th", { class: "px-4 py-2 text-left font-semibold" }, "Color"),
+					e("th", { class: "px-4 py-2 text-left font-semibold" }, "Clarity"),
+					e("th", { class: "px-4 py-2 text-right font-semibold" }, "Carat"),
+				]),
+			],
+			-1
+		)
+	),
+	rs = { class: "divide-y divide-gray-100" },
+	is = { class: "px-4 py-3 font-medium text-gray-900" },
+	ls = { class: "px-4 py-3 text-gray-600" },
+	ds = { class: "px-4 py-3 text-gray-600" },
+	cs = { class: "px-4 py-3 text-gray-600" },
+	us = { class: "px-4 py-3 text-right font-mono text-gray-900" },
+	hs = { class: "bg-[#faf5f0] rounded-lg p-5 border border-[#E5D4A1]" },
+	gs = { class: "flex items-baseline justify-between mb-4" },
+	ms = { class: "text-sm text-gray-600 mb-1" },
+	xs = k("Total Price "),
+	_s = { key: 0, class: "text-xs text-gray-400" },
+	ps = { class: "text-3xl font-bold text-gray-900" },
+	ys = { key: 0, class: "text-sm text-gray-500 line-through" },
+	vs = d(() =>
+		e(
+			"svg",
+			{ class: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+			[
+				e("path", {
+					"stroke-linecap": "round",
+					"stroke-linejoin": "round",
+					"stroke-width": "2",
+					d: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z",
+				}),
+			],
+			-1
+		)
+	),
+	fs = k(" Add to Cart "),
+	bs = [vs, fs],
+	ws = {
+		props: ["show", "itemCode"],
+		emits: ["close"],
+		setup(s, { emit: c }) {
+			const l = s,
+				v = te(),
+				t = b({}),
+				_ = b(!1),
+				f = Q(() => {
+					if (t.value.net_weight) return t.value.net_weight;
+					const u = t.value.gross_weight || 0,
+						B = t.value.stone_weight || 0;
+					return Math.max(0, u - B);
+				}),
+				y = X({
+					url: "zevar_core.api.catalog.get_item_details",
+					makeParams() {
+						return { item_code: l.itemCode };
+					},
+					onSuccess(u) {
+						(t.value = S(M({}, u), {
+							final_price: u.price || u.msrp || 0,
+							price_source: u.price ? "Calculated" : "MSRP",
+						})),
+							(_.value = !1);
+					},
+					onError(u) {
+						console.error("Failed to load item:", u), (_.value = !1);
+					},
+				});
+			Y(
+				() => l.show,
+				(u) => {
+					u && l.itemCode && ((_.value = !0), (t.value = {}), y.fetch());
+				}
+			);
+			function g() {
+				!t.value.item_code ||
+					(v.addItem({
+						item_code: t.value.item_code,
+						item_name: t.value.item_name,
+						price: t.value.final_price,
+						image: t.value.image,
+					}),
+					c("close"));
+			}
+			function m() {
+				c("close");
+			}
+			function r(u) {
+				return u
+					? new Intl.NumberFormat("en-US", {
+							style: "currency",
+							currency: "USD",
+					  }).format(u)
+					: "$0.00";
+			}
+			function x(u) {
+				return !u && u !== 0 ? "0.000" : parseFloat(u).toFixed(3);
+			}
+			return (u, B) => (
+				a(),
+				ee(
+					T,
+					{ name: "fade" },
+					{
+						default: E(() => [
+							s.show
+								? (a(),
+								  o("div", Fe, [
+										e("div", {
+											onClick: m,
+											class: "absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity",
+										}),
+										e("div", Ne, [
+											e(
+												"button",
+												{
+													onClick: m,
+													class: "absolute top-4 right-4 z-10 p-2 bg-white/90 backdrop-blur rounded-full hover:bg-gray-100 transition-colors group shadow-lg",
+												},
+												Ie
+											),
+											e("div", Le, [
+												t.value.image
+													? (a(),
+													  o(
+															"img",
+															{
+																key: 0,
+																src: t.value.image,
+																class: "max-h-[55vh] object-contain drop-shadow-2xl transform hover:scale-105 transition-transform duration-500",
+															},
+															null,
+															8,
+															We
+													  ))
+													: (a(), o("div", He, "\u{1F48E}")),
+											]),
+											e("div", Ue, [
+												_.value
+													? (a(), o("div", Ve, Ke))
+													: (a(),
+													  o("div", Ze, [
+															e("div", null, [
+																e(
+																	"h2",
+																	qe,
+																	n(t.value.item_name),
+																	1
+																),
+																e(
+																	"p",
+																	Oe,
+																	n(t.value.item_code),
+																	1
+																),
+															]),
+															e("div", Qe, [
+																t.value.metal
+																	? (a(),
+																	  o(
+																			"span",
+																			Xe,
+																			n(t.value.metal),
+																			1
+																	  ))
+																	: i("", !0),
+																t.value.purity
+																	? (a(),
+																	  o(
+																			"span",
+																			Ye,
+																			n(t.value.purity),
+																			1
+																	  ))
+																	: i("", !0),
+															]),
+															e("div", et, [
+																t.value.gross_weight
+																	? (a(),
+																	  o("div", tt, [
+																			st,
+																			e(
+																				"span",
+																				at,
+																				n(
+																					x(
+																						t.value
+																							.gross_weight
+																					)
+																				) + " g",
+																				1
+																			),
+																	  ]))
+																	: i("", !0),
+																t.value.stone_weight
+																	? (a(),
+																	  o("div", ot, [
+																			nt,
+																			e(
+																				"span",
+																				rt,
+																				n(
+																					x(
+																						t.value
+																							.stone_weight
+																					)
+																				) + " g",
+																				1
+																			),
+																	  ]))
+																	: i("", !0),
+																t.value.net_weight || N(f) > 0
+																	? (a(),
+																	  o("div", it, [
+																			lt,
+																			e(
+																				"span",
+																				dt,
+																				n(x(N(f))) + " g",
+																				1
+																			),
+																	  ]))
+																	: i("", !0),
+															]),
+															e("div", ct, [
+																ut,
+																e("div", ht, [
+																	t.value.product_type
+																		? (a(),
+																		  o("div", gt, [
+																				mt,
+																				e(
+																					"span",
+																					xt,
+																					n(
+																						t.value
+																							.product_type
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.jewelry_type
+																		? (a(),
+																		  o("div", _t, [
+																				pt,
+																				e(
+																					"span",
+																					yt,
+																					n(
+																						t.value
+																							.jewelry_type
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.jewelry_subtype
+																		? (a(),
+																		  o("div", vt, [
+																				ft,
+																				e(
+																					"span",
+																					bt,
+																					n(
+																						t.value
+																							.jewelry_subtype
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.material_color
+																		? (a(),
+																		  o("div", wt, [
+																				kt,
+																				e(
+																					"span",
+																					Ct,
+																					n(
+																						t.value
+																							.material_color
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.finish
+																		? (a(),
+																		  o("div", $t, [
+																				Bt,
+																				e(
+																					"span",
+																					Dt,
+																					n(
+																						t.value
+																							.finish
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.plating
+																		? (a(),
+																		  o("div", jt, [
+																				Mt,
+																				e(
+																					"span",
+																					St,
+																					n(
+																						t.value
+																							.plating
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.length
+																		? (a(),
+																		  o("div", At, [
+																				Pt,
+																				e(
+																					"span",
+																					zt,
+																					n(
+																						t.value
+																							.length
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.width
+																		? (a(),
+																		  o("div", Et, [
+																				Tt,
+																				e(
+																					"span",
+																					Gt,
+																					n(
+																						t.value
+																							.width
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.size
+																		? (a(),
+																		  o("div", Ft, [
+																				Nt,
+																				e(
+																					"span",
+																					Rt,
+																					n(
+																						t.value
+																							.size
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.chain_type
+																		? (a(),
+																		  o("div", It, [
+																				Lt,
+																				e(
+																					"span",
+																					Wt,
+																					n(
+																						t.value
+																							.chain_type
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.clasp_type
+																		? (a(),
+																		  o("div", Ht, [
+																				Ut,
+																				e(
+																					"span",
+																					Vt,
+																					n(
+																						t.value
+																							.clasp_type
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.gender
+																		? (a(),
+																		  o("div", Jt, [
+																				Kt,
+																				e(
+																					"span",
+																					Zt,
+																					n(
+																						t.value
+																							.gender
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.completeness
+																		? (a(),
+																		  o("div", qt, [
+																				Ot,
+																				e(
+																					"span",
+																					Qt,
+																					n(
+																						t.value
+																							.completeness
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																	t.value.country_of_origin
+																		? (a(),
+																		  o("div", Xt, [
+																				Yt,
+																				e(
+																					"span",
+																					es,
+																					n(
+																						t.value
+																							.country_of_origin ||
+																							"USA"
+																					),
+																					1
+																				),
+																		  ]))
+																		: i("", !0),
+																]),
+															]),
+															t.value.gemstones &&
+															t.value.gemstones.length > 0
+																? (a(),
+																  o("div", ts, [
+																		ss,
+																		e("div", as, [
+																			e("table", os, [
+																				ns,
+																				e("tbody", rs, [
+																					(a(!0),
+																					o(
+																						C,
+																						null,
+																						$(
+																							t.value
+																								.gemstones,
+																							(
+																								w,
+																								R
+																							) => (
+																								a(),
+																								o(
+																									"tr",
+																									{
+																										key: R,
+																										class: "hover:bg-gray-50",
+																									},
+																									[
+																										e(
+																											"td",
+																											is,
+																											n(
+																												w.gem_type
+																											),
+																											1
+																										),
+																										e(
+																											"td",
+																											ls,
+																											n(
+																												w.cut ||
+																													"-"
+																											),
+																											1
+																										),
+																										e(
+																											"td",
+																											ds,
+																											n(
+																												w.color ||
+																													"-"
+																											),
+																											1
+																										),
+																										e(
+																											"td",
+																											cs,
+																											n(
+																												w.clarity ||
+																													"-"
+																											),
+																											1
+																										),
+																										e(
+																											"td",
+																											us,
+																											n(
+																												w.carat ||
+																													"0"
+																											),
+																											1
+																										),
+																									]
+																								)
+																							)
+																						),
+																						128
+																					)),
+																				]),
+																			]),
+																		]),
+																  ]))
+																: i("", !0),
+															e("div", hs, [
+																e("div", gs, [
+																	e("div", null, [
+																		e("p", ms, [
+																			xs,
+																			t.value.price_source
+																				? (a(),
+																				  o(
+																						"span",
+																						_s,
+																						"(" +
+																							n(
+																								t
+																									.value
+																									.price_source
+																							) +
+																							")",
+																						1
+																				  ))
+																				: i("", !0),
+																		]),
+																		e(
+																			"p",
+																			ps,
+																			n(
+																				r(
+																					t.value
+																						.final_price
+																				)
+																			),
+																			1
+																		),
+																	]),
+																	t.value.msrp &&
+																	t.value.msrp >
+																		t.value.final_price
+																		? (a(),
+																		  o(
+																				"span",
+																				ys,
+																				n(r(t.value.msrp)),
+																				1
+																		  ))
+																		: i("", !0),
+																]),
+																e(
+																	"button",
+																	{
+																		onClick: g,
+																		class: "w-full bg-[#8B6914] text-white py-3.5 rounded-lg font-bold text-base hover:bg-[#7a5c11] transition-all shadow-md hover:shadow-lg transform active:scale-95 flex items-center justify-center gap-2",
+																	},
+																	bs
+																),
+															]),
+													  ])),
+											]),
+										]),
+								  ]))
+								: i("", !0),
+						]),
+						_: 1,
+					}
+				)
+			);
+		},
+	};
+var Ds = P(ws, [["__scopeId", "data-v-07f9f972"]]);
+export { Bs as H, Ds as P };

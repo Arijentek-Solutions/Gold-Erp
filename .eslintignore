@@ -1,0 +1,7 @@
+cat <<EOT >> .eslintignore
+# Ignore compiled frontend assets
+public/pos/assets/*
+public/dist/*
+*.min.js
+node_modules/
+EOT

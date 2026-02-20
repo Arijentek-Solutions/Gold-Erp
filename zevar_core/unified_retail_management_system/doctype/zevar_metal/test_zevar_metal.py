@@ -6,4 +6,4 @@ from frappe.tests.utils import FrappeTestCase
 
 
 class TestZevarMetal(FrappeTestCase):
-    pass
+	pass

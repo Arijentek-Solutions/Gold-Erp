@@ -9,175 +9,175 @@ import { ref, computed } from 'vue'
 import { createResource } from 'frappe-ui'
 
 export const useCartStore = defineStore('cart', () => {
+	// ==========================================================================
+	// STATE
+	// ==========================================================================
 
-  // ==========================================================================
-  // STATE
-  // ==========================================================================
+	let storedItems = []
+	try {
+		const raw = localStorage.getItem('zevar_cart_items')
+		storedItems = raw ? JSON.parse(raw) : []
+	} catch (e) {
+		localStorage.removeItem('zevar_cart_items')
+		storedItems = []
+	}
 
-  let storedItems = []
-  try {
-    const raw = localStorage.getItem('zevar_cart_items')
-    storedItems = raw ? JSON.parse(raw) : []
-  } catch (e) {
-    localStorage.removeItem('zevar_cart_items')
-    storedItems = []
-  }
+	// Customer linked to this sale
+	const customer = ref(null)
+	const items = ref(storedItems)
+	const taxRate = ref(0)
+	const currency = ref('USD')
 
-  // Customer linked to this sale
-  const customer = ref(null)
-  const items = ref(storedItems)
-  const taxRate = ref(0)
-  const currency = ref('USD')
+	// Sync state across tabs/windows
+	window.addEventListener('storage', (event) => {
+		if (event.key === 'zevar_cart_items') {
+			try {
+				const newVal = event.newValue ? JSON.parse(event.newValue) : []
+				items.value = newVal
+			} catch (e) {
+				items.value = []
+			}
+		}
+	})
 
-  // Sync state across tabs/windows
-  window.addEventListener('storage', (event) => {
-    if (event.key === 'zevar_cart_items') {
-      try {
-        const newVal = event.newValue ? JSON.parse(event.newValue) : []
-        items.value = newVal
-      } catch (e) {
-        items.value = []
-      }
-    }
-  })
+	// ==========================================================================
+	// GETTERS
+	// ==========================================================================
 
-  // ==========================================================================
-  // GETTERS
-  // ==========================================================================
+	const totalItems = computed(() => {
+		return items.value.reduce((total, item) => total + (item.qty || 1), 0)
+	})
 
+	const subtotal = computed(() => {
+		return items.value.reduce((sum, item) => {
+			const qty = item.qty || 1
+			const price = item.amount || 0
+			return sum + price * qty
+		}, 0)
+	})
 
-  const totalItems = computed(() => {
-    return items.value.reduce((total, item) => total + (item.qty || 1), 0)
-  })
+	const tax = computed(() => subtotal.value * (taxRate.value / 100))
+	const grandTotal = computed(() => subtotal.value + tax.value)
 
-  const subtotal = computed(() => {
-    return items.value.reduce((sum, item) => {
-      const qty = item.qty || 1
-      const price = item.amount || 0
-      return sum + (price * qty)
-    }, 0)
-  })
+	// ==========================================================================
+	// ACTIONS
+	// ==========================================================================
 
-  const tax = computed(() => subtotal.value * (taxRate.value / 100))
-  const grandTotal = computed(() => subtotal.value + tax.value)
+	function addItem(item) {
+		if (!item.item_code) {
+			return
+		}
 
-  // ==========================================================================
-  // ACTIONS
-  // ==========================================================================
+		const priceToUse = item.final_price || item.price || item.amount || 0
+		const existingItem = items.value.find((i) => i.item_code === item.item_code)
 
-  function addItem(item) {
-    if (!item.item_code) {
-      return
-    }
+		if (existingItem) {
+			existingItem.qty++
+		} else {
+			items.value.push({
+				item_code: item.item_code,
+				item_name: item.item_name,
+				image: item.image,
+				metal: item.metal || item.custom_metal_type,
+				purity: item.purity || item.custom_purity,
+				amount: priceToUse,
+				weight: item.gross_weight || item.custom_gross_weight_g,
+				qty: 1,
+			})
+		}
+		saveToStorage()
+	}
 
-    const priceToUse = item.final_price || item.price || item.amount || 0
-    const existingItem = items.value.find(i => i.item_code === item.item_code)
+	function removeItem(index) {
+		items.value.splice(index, 1)
+		saveToStorage()
+	}
 
-    if (existingItem) {
-      existingItem.qty++
-    } else {
-      items.value.push({
-        item_code: item.item_code,
-        item_name: item.item_name,
-        image: item.image,
-        metal: item.metal || item.custom_metal_type,
-        purity: item.purity || item.custom_purity,
-        amount: priceToUse,
-        weight: item.gross_weight || item.custom_gross_weight_g,
-        qty: 1
-      })
-    }
-    saveToStorage()
-  }
+	function setCustomer(customerData) {
+		customer.value = customerData
+	}
 
-  function removeItem(index) {
-    items.value.splice(index, 1)
-    saveToStorage()
-  }
+	function clearCustomer() {
+		customer.value = null
+	}
 
-  function setCustomer(customerData) {
-    customer.value = customerData
-  }
+	function clearCart() {
+		items.value = []
+		customer.value = null
+		saveToStorage()
+	}
 
-  function clearCustomer() {
-    customer.value = null
-  }
+	function saveToStorage() {
+		localStorage.setItem('zevar_cart_items', JSON.stringify(items.value))
+	}
 
-  function clearCart() {
-    items.value = []
-    customer.value = null
-    saveToStorage()
-  }
+	// ==========================================================================
+	// RESOURCES
+	// ==========================================================================
 
-  function saveToStorage() {
-    localStorage.setItem('zevar_cart_items', JSON.stringify(items.value))
-  }
+	const fetchSettings = createResource({
+		url: 'zevar_core.api.get_pos_settings',
+		onSuccess(data) {
+			if (data) {
+				taxRate.value = data.tax_rate || 0
+				currency.value = data.currency || 'USD'
+			}
+		},
+	})
 
-  // ==========================================================================
-  // RESOURCES
-  // ==========================================================================
+	function loadTaxForWarehouse(warehouse) {
+		if (warehouse) {
+			fetchSettings.fetch({ warehouse })
+		}
+	}
 
-  const fetchSettings = createResource({
-    url: 'zevar_core.api.get_pos_settings',
-    onSuccess(data) {
-      if (data) {
-        taxRate.value = data.tax_rate || 0
-        currency.value = data.currency || 'USD'
-      }
-    }
-  })
+	// ==========================================================================
+	// ORDER SUBMISSION
+	// ==========================================================================
 
-  function loadTaxForWarehouse(warehouse) {
-    if (warehouse) {
-      fetchSettings.fetch({ warehouse })
-    }
-  }
+	async function submitOrder(paymentMode) {
+		const itemsPayload = items.value.map((i) => ({
+			item_code: i.item_code,
+			qty: i.qty || 1,
+			rate: i.amount || 0,
+		}))
 
-  // ==========================================================================
-  // ORDER SUBMISSION
-  // ==========================================================================
+		const paymentsPayload = [
+			{
+				mode: paymentMode,
+				amount: grandTotal.value,
+			},
+		]
 
-  async function submitOrder(paymentMode) {
-    const itemsPayload = items.value.map(i => ({
-      item_code: i.item_code,
-      qty: i.qty || 1,
-      rate: i.amount || 0
-    }))
+		const r = await createResource({
+			url: 'zevar_core.api.create_pos_invoice',
+			method: 'POST',
+			params: {
+				items: JSON.stringify(itemsPayload),
+				payments: JSON.stringify(paymentsPayload),
+				customer: 'Walk-In Customer',
+			},
+		}).fetch()
 
-    const paymentsPayload = [{
-      mode: paymentMode,
-      amount: grandTotal.value
-    }]
+		return r
+	}
 
-    const r = await createResource({
-      url: 'zevar_core.api.create_pos_invoice',
-      method: 'POST',
-      params: {
-        items: JSON.stringify(itemsPayload),
-        payments: JSON.stringify(paymentsPayload),
-        customer: "Walk-In Customer"
-      }
-    }).fetch()
-
-    return r
-  }
-
-  return {
-    items,
-    taxRate,
-    currency,
-    totalItems,
-    subtotal,
-    tax,
-    grandTotal,
-    fetchSettings,
-    loadTaxForWarehouse,
-    addItem,
-    removeItem,
-    clearCart,
-    submitOrder,
-    customer,
-    setCustomer,
-    clearCustomer,
-  }
+	return {
+		items,
+		taxRate,
+		currency,
+		totalItems,
+		subtotal,
+		tax,
+		grandTotal,
+		fetchSettings,
+		loadTaxForWarehouse,
+		addItem,
+		removeItem,
+		clearCart,
+		submitOrder,
+		customer,
+		setCustomer,
+		clearCustomer,
+	}
 })
