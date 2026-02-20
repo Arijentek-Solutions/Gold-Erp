@@ -4,6 +4,7 @@ Quick Item Entry API - Simplified item creation with auto vendor SKU.
 Replaces the multi-step legacy item addition workflow with a single-call API.
 """
 import frappe
+from frappe import _
 from frappe.utils import nowdate
 
 
@@ -29,12 +30,12 @@ def quick_add_item(
 ) -> dict:
     """
     Create a new Item in one step with auto-generated vendor SKU.
-    
+
     This replaces the legacy multi-step workflow where users had to:
     1. Create Item → 2. Set vendor → 3. Add jewelry details → 4. Stock entry
-    
+
     Now it's one call that handles everything.
-    
+
     Args:
         item_name: Display name for the item
         vendor: Supplier name (Link to Supplier)
@@ -52,30 +53,44 @@ def quick_add_item(
         qty: Initial stock quantity
         image: Image URL or file path
         description: Item description
-    
+
     Returns:
         dict with item_code, vendor_sku, and status
     """
+    # Permission check — only Stock Manager or System Manager can add items
+    if not frappe.has_permission("Item", "create"):
+        frappe.throw(_("You don't have permission to create Items"), frappe.PermissionError)
+
+    # Input validation
+    gross_weight = max(0, float(gross_weight or 0))
+    stone_weight = max(0, float(stone_weight or 0))
+    msrp = max(0, float(msrp or 0))
+    cost_price = max(0, float(cost_price or 0))
+    qty = max(0, int(qty or 0))
+
+    if not item_name or not item_name.strip():
+        frappe.throw(_("Item name is required"))
+
     # Auto-generate vendor SKU if not provided
     if not vendor_sku:
         vendor_sku = _generate_vendor_sku(vendor, jewelry_type)
-    
+
     # Auto-generate item code
     item_code = _generate_item_code(jewelry_type)
-    
+
     # Calculate net weight
-    net_weight = max(0, (gross_weight or 0) - (stone_weight or 0))
-    
+    net_weight = max(0, gross_weight - stone_weight)
+
     # Map jewelry type to item group
     item_group = _get_item_group(jewelry_type)
-    
-    # Create the Item
+
+    # Create the Item (using proper permission checks)
     item = frappe.get_doc({
         "doctype": "Item",
         "item_code": item_code,
-        "item_name": item_name,
+        "item_name": item_name.strip(),
         "item_group": item_group,
-        "description": description or item_name,
+        "description": description or item_name.strip(),
         "image": image,
         "stock_uom": "Nos",
         "is_stock_item": 1,
@@ -97,13 +112,13 @@ def quick_add_item(
         "custom_cost_price": cost_price,
         "custom_source": "Manual",
     })
-    
-    item.insert(ignore_permissions=True)
-    
+
+    item.insert()  # Uses session user's permissions
+
     # Create stock entry if warehouse and qty provided
     if warehouse and qty > 0:
         _create_stock_entry(item_code, warehouse, qty)
-    
+
     return {
         "success": True,
         "item_code": item_code,
@@ -122,7 +137,7 @@ def get_next_vendor_sku(vendor: str = None, jewelry_type: str = "Other") -> str:
 def _generate_vendor_sku(vendor: str = None, jewelry_type: str = "Other") -> str:
     """
     Auto-generate a unique vendor SKU.
-    
+
     Format: {VENDOR_PREFIX}-{TYPE_CODE}-{SEQUENCE}
     Example: QGD-RNG-00142, STL-EAR-00023, ZEV-BRA-00001
     """
@@ -131,7 +146,7 @@ def _generate_vendor_sku(vendor: str = None, jewelry_type: str = "Other") -> str
         prefix = vendor[:3].upper().replace(" ", "")
     else:
         prefix = "ZEV"
-    
+
     # Type code
     type_codes = {
         "Rings": "RNG", "Chains": "CHN", "Necklaces": "NKL",
@@ -139,7 +154,7 @@ def _generate_vendor_sku(vendor: str = None, jewelry_type: str = "Other") -> str
         "Watches": "WTC", "Other": "OTH"
     }
     type_code = type_codes.get(jewelry_type, "OTH")
-    
+
     # Get next sequence number for this prefix+type combo
     pattern = f"{prefix}-{type_code}-%"
     last_sku = frappe.db.sql("""
@@ -147,7 +162,7 @@ def _generate_vendor_sku(vendor: str = None, jewelry_type: str = "Other") -> str
         WHERE custom_vendor_sku LIKE %s 
         ORDER BY custom_vendor_sku DESC LIMIT 1
     """, (pattern,), as_dict=True)
-    
+
     if last_sku and last_sku[0].custom_vendor_sku:
         try:
             last_num = int(last_sku[0].custom_vendor_sku.split("-")[-1])
@@ -156,7 +171,7 @@ def _generate_vendor_sku(vendor: str = None, jewelry_type: str = "Other") -> str
             next_num = 1
     else:
         next_num = 1
-    
+
     return f"{prefix}-{type_code}-{next_num:05d}"
 
 
@@ -169,13 +184,13 @@ def _generate_item_code(jewelry_type: str) -> str:
     }
     type_code = type_codes.get(jewelry_type, "OTH")
     prefix = f"ZEV-{type_code}"
-    
+
     last = frappe.db.sql("""
         SELECT name FROM `tabItem` 
         WHERE name LIKE %s 
         ORDER BY name DESC LIMIT 1
     """, (f"{prefix}-%",), as_dict=True)
-    
+
     if last:
         try:
             last_num = int(last[0].name.split("-")[-1])
@@ -184,7 +199,7 @@ def _generate_item_code(jewelry_type: str) -> str:
             next_num = 1
     else:
         next_num = 1
-    
+
     return f"{prefix}-{next_num:04d}"
 
 
@@ -201,7 +216,7 @@ def _get_item_group(jewelry_type: str) -> str:
         "Other": "Products"
     }
     group = group_map.get(jewelry_type, "Products")
-    
+
     # Ensure group exists, fallback to Products
     if not frappe.db.exists("Item Group", group):
         return "Products"
@@ -210,33 +225,15 @@ def _get_item_group(jewelry_type: str) -> str:
 
 def _create_stock_entry(item_code: str, warehouse: str, qty: int):
     """Create a Material Receipt stock entry for the new item."""
-    try:
-        se = frappe.get_doc({
-            "doctype": "Stock Entry",
-            "stock_entry_type": "Material Receipt",
-            "posting_date": nowdate(),
-            "items": [{
-                "item_code": item_code,
-                "t_warehouse": warehouse,
-                "qty": qty,
-            }]
-        })
-        se.insert(ignore_permissions=True)
-        se.submit()
-    except Exception as e:
-        # If stock entry fails, just update Bin directly as fallback
-        frappe.log_error(f"Stock entry failed for {item_code}: {str(e)}")
-        existing = frappe.db.exists('Bin', {'item_code': item_code, 'warehouse': warehouse})
-        if existing:
-            frappe.db.sql(
-                "UPDATE `tabBin` SET actual_qty = actual_qty + %s WHERE item_code = %s AND warehouse = %s",
-                (qty, item_code, warehouse)
-            )
-        else:
-            frappe.get_doc({
-                'doctype': 'Bin',
-                'item_code': item_code,
-                'warehouse': warehouse,
-                'actual_qty': qty,
-                'projected_qty': qty,
-            }).db_insert()
+    se = frappe.get_doc({
+        "doctype": "Stock Entry",
+        "stock_entry_type": "Material Receipt",
+        "posting_date": nowdate(),
+        "items": [{
+            "item_code": item_code,
+            "t_warehouse": warehouse,
+            "qty": qty,
+        }]
+    })
+    se.insert()
+    se.submit()

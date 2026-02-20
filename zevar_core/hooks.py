@@ -249,6 +249,7 @@ add_to_apps_screen = [
 
 website_route_rules = [
     {"from_route": "/employee-portal/<path:app_path>", "to_route": "employee-portal"},
+    {"from_route": "/pos/<path:app_path>", "to_route": "pos"},
 ]
 
 fixtures = ["Item Attribute", "Custom Field", "Property Setter"]

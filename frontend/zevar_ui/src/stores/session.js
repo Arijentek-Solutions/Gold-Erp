@@ -38,7 +38,7 @@ export const useSessionStore = defineStore('session', () => {
       isLoggedIn.value = false
 
       // Only redirect if not already on login page
-      if (window.location.pathname !== '/frontend/login') {
+      if (window.location.pathname !== '/pos/login') {
         router.push('/login')
       }
     }
@@ -51,7 +51,7 @@ export const useSessionStore = defineStore('session', () => {
       isLoggedIn.value = false
       currentWarehouse.value = null
       localStorage.removeItem('active_warehouse')
-      window.location.href = '/frontend/login'
+      window.location.href = '/pos/login'
     }
   })
 

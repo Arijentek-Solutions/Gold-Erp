@@ -5,7 +5,7 @@ import frappe
 from zevar_core.constants import PURITY_VALUES
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_item_price(item_code: str) -> dict:
     """
     Calculate item price using hierarchy: MSRP > Calculated > Standard Rate.

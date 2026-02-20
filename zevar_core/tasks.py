@@ -22,7 +22,7 @@ def fetch_live_metal_rates():
         # Fetch live rates
         response = requests.get(
             api_url,
-            headers={"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"},
+            headers={"User-Agent": "Zevar-POS/1.0 (Zevar Jewelers; gold-rate-sync)"},
             timeout=10
         )
         response.raise_for_status()

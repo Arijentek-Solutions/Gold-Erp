@@ -1,11 +1,19 @@
 """
 Catalog API - Item retrieval and filtering
 """
+import re
 import frappe
 from zevar_core.constants import DEFAULT_PAGE_LENGTH, PARTNER_SOURCES
 
 
-@frappe.whitelist(allow_guest=True)
+def _sanitize_search(term):
+    """Strip potentially dangerous characters from search input."""
+    if not term:
+        return term
+    return re.sub(r'[%_\\;\'"]', '', str(term).strip())[:100]
+
+
+@frappe.whitelist()
 def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None, 
                   search_term=None, filters=None, in_stock_only=False, out_of_stock_only=False, source_filter=None):
     """
@@ -34,6 +42,7 @@ def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None,
     query_filters = [["disabled", "=", 0], ["has_variants", "=", 0]]
     
     if search_term:
+        search_term = _sanitize_search(search_term)
         query_filters.append(["item_name", "like", f"%{search_term}%"])
     
     if source_filter:
@@ -151,7 +160,7 @@ def get_pos_items(start=0, page_length=DEFAULT_PAGE_LENGTH, warehouse=None,
     return pos_items
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_catalog_filters():
     """Return available filter options for catalog UI."""
     filters = {}
@@ -207,7 +216,7 @@ def get_catalog_filters():
     return filters
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist()
 def get_item_details(item_code):
     """Fetch full item details including gemstones and all product attributes."""
     from zevar_core.api.pricing import get_item_price
@@ -279,7 +288,7 @@ def _get_item_fields():
         "custom_width_value", "custom_width_unit", "custom_size",
         "custom_chain_type", "custom_clasp_type",
         "custom_vendor_sku", "custom_vendor", "custom_country_of_origin",
-        "custom_msrp", "custom_cost_price", "custom_source",
+        "custom_msrp", "custom_source",
         "custom_gender", "custom_is_featured", "custom_is_trending"
     ]
 

@@ -4,6 +4,7 @@ import path from 'path';
 import frappeui from 'frappe-ui/vite';
 
 export default defineConfig({
+  base: '/assets/zevar_core/pos/',
   server: {
     port: 8080,
     strictPort: true,
@@ -29,7 +30,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: `../${path.basename(path.resolve('..'))}/public/frontend`,
+    outDir: `../../zevar_core/public/pos`,
     emptyOutDir: true,
     target: 'es2015',
   },

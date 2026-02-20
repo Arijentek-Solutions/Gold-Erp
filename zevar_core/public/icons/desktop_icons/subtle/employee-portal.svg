@@ -1,0 +1,12 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Light subtle background -->
+<rect width="48" height="48" rx="8" fill="#1a1a2e"/>
+<rect x="1" y="1" width="46" height="46" rx="7" stroke="#f4c025" stroke-width="0.5" stroke-opacity="0.25"/>
+<!-- Person silhouette -->
+<circle cx="24" cy="17" r="5.5" fill="#d97706" fill-opacity="0.7"/>
+<path d="M14 35C14 29.477 18.477 25 24 25C29.523 25 34 29.477 34 35V36H14V35Z" fill="#d97706" fill-opacity="0.7"/>
+<!-- Clock -->
+<circle cx="33" cy="14" r="4.5" fill="#1a1a2e" stroke="#10b981" stroke-width="0.8" stroke-opacity="0.6"/>
+<line x1="33" y1="12" x2="33" y2="14.5" stroke="#10b981" stroke-width="0.7" stroke-linecap="round" stroke-opacity="0.6"/>
+<line x1="33" y1="14.5" x2="35" y2="14.5" stroke="#10b981" stroke-width="0.7" stroke-linecap="round" stroke-opacity="0.6"/>
+</svg>

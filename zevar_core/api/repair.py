@@ -4,6 +4,7 @@ Repair API - Repair orders, types, and customer repair history
 from typing import Optional, List, Dict, Any, Union
 import frappe
 from frappe import _
+from frappe.utils import escape_html
 
 
 @frappe.whitelist()
@@ -194,9 +195,13 @@ def get_repair_receipt_html(name: str) -> str:
     d["customer_name"] = frappe.db.get_value("Customer", doc.customer, "customer_name") if doc.customer else ""
     d["repair_type_name"] = frappe.db.get_value("Repair Type", doc.repair_type, "repair_name") if doc.repair_type else ""
     d["handled_by_name"] = frappe.db.get_value("User", doc.handled_by, "full_name") if doc.handled_by else ""
+
+    # Escape all user-provided fields to prevent XSS
+    safe = {k: escape_html(str(v)) if v else '' for k, v in d.items()}
+
     html = f"""
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Repair Receipt - {d.get('name')}</title>
+<html><head><meta charset="utf-8"><title>Repair Receipt - {safe.get('name')}</title>
 <style>
 body {{ font-family: sans-serif; max-width: 400px; margin: 20px auto; padding: 16px; }}
 h1 {{ font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 8px; }}
@@ -205,14 +210,14 @@ td {{ padding: 4px 0; }}
 .label {{ font-weight: bold; color: #555; }}
 </style></head><body>
 <h1>ZEVAR JEWELERS - REPAIR CLAIM TICKET</h1>
-<p><span class="label">Repair #:</span> {d.get('name')}</p>
-<p><span class="label">Date:</span> {d.get('received_date') or ''}</p>
-<p><span class="label">Customer:</span> {d.get('customer_name')}</p>
-<p><span class="label">Phone:</span> {d.get('customer_phone') or '-'}</p>
-<p><span class="label">Repair Type:</span> {d.get('repair_type_name')}</p>
-<p><span class="label">Item:</span> {d.get('item_description') or '-'}</p>
+<p><span class="label">Repair #:</span> {safe.get('name')}</p>
+<p><span class="label">Date:</span> {safe.get('received_date')}</p>
+<p><span class="label">Customer:</span> {safe.get('customer_name')}</p>
+<p><span class="label">Phone:</span> {safe.get('customer_phone') or '-'}</p>
+<p><span class="label">Repair Type:</span> {safe.get('repair_type_name')}</p>
+<p><span class="label">Item:</span> {safe.get('item_description') or '-'}</p>
 <p><span class="label">Estimated Cost:</span> ${float(d.get('estimated_cost') or 0):.2f}</p>
-<p><span class="label">Handled By:</span> {d.get('handled_by_name') or '-'}</p>
+<p><span class="label">Handled By:</span> {safe.get('handled_by_name') or '-'}</p>
 <p style="margin-top: 24px; font-size: 12px; color: #666;">Keep this ticket to pick up your item.</p>
 </body></html>
 """
