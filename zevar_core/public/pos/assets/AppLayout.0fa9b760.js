@@ -1,1 +1,2373 @@
-var G=(f,a,d)=>new Promise((i,h)=>{var g=s=>{try{n(d.next(s))}catch(u){h(u)}},v=s=>{try{n(d.throw(s))}catch(u){h(u)}},n=s=>s.done?i(s.value):Promise.resolve(s.value).then(g,v);n((d=d.apply(f,a)).next())});import{E,p as Q,i as C,j as T,_ as K,x as B,y as U,o,b as J,z as V,k as r,l as e,F as j,A as z,n as S,t as l,u as t,G as b,m as H,v as W,T as X,B as N,C as q,q as P,D as I,H as ee,r as te,I as oe,J as se,K as Y}from"./vendor.b4720657.js";import{u as L,a as Z,_ as re}from"./ui.7e64e684.js";const ae=E("session",()=>{const f=Q(),a=C(null),d=C(!1),i=C(localStorage.getItem("active_warehouse")||null),h=T({url:"frappe.auth.get_logged_user",auto:!0,onSuccess(n){typeof n=="string"?a.value={full_name:n,email:n}:a.value=n,d.value=!0},onError(){a.value=null,d.value=!1,window.location.pathname!=="/pos/login"&&f.push("/login")}}),g=T({url:"logout",onSuccess(){a.value=null,d.value=!1,i.value=null,localStorage.removeItem("active_warehouse"),window.location.href="/pos/login"}});function v(n){i.value=n,n?localStorage.setItem("active_warehouse",n):localStorage.removeItem("active_warehouse")}return{user:a,isLoggedIn:d,currentWarehouse:i,userResource:h,logoutResource:g,setWarehouse:v}}),le=E("gold",()=>{const f=C({}),a=C(null),d=T({url:"frappe.client.get_list",makeParams(){return{doctype:"Gold Rate Log",fields:["metal","purity","rate_per_gram"],order_by:"timestamp desc",limit_page_length:20}},onSuccess(v){const n={};v.forEach(s=>{const u=`${s.metal}-${s.purity}`;n[u]||(n[u]=s.rate_per_gram)}),f.value=n,a.value=new Date}});let i=null;function h(){i||(d.fetch(),i=setInterval(()=>{d.fetch()},6e4))}function g(){i&&(clearInterval(i),i=null)}return{rates:f,lastUpdated:a,startPolling:h,stopPolling:g}});const y=f=>(N("data-v-b3d082b4"),f=f(),q(),f),ne={key:0,class:"fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6"},ie={class:"w-full md:w-1/2 bg-gray-50 dark:bg-[#15171e] p-6 border-r border-gray-100 dark:border-white/5 flex flex-col"},de=y(()=>e("h3",{class:"text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4"}," Items in Bag ",-1)),ce={class:"flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar"},ue={class:"flex items-center gap-3"},he={class:"w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-md overflow-hidden flex-shrink-0"},ge=["src"],xe={class:"min-w-0"},pe={class:"font-bold text-gray-900 dark:text-white text-sm line-clamp-1"},be={class:"text-xs text-gray-500 dark:text-gray-400 truncate"},fe={class:"text-right flex-shrink-0"},ve={class:"font-mono font-bold text-sm text-gray-900 dark:text-gray-200"},_e={class:"text-[10px] text-gray-400"},ye={class:"mt-4 pt-4 border-t border-gray-200 dark:border-white/10"},me={class:"flex items-center justify-between cursor-pointer group"},ke=y(()=>e("div",null,[e("span",{class:"font-medium text-gray-700 dark:text-gray-300"},"Tax Exempt"),e("span",{class:"text-xs text-gray-400 block"},"For resellers or tax-free sales")],-1)),we={class:"mt-4 space-y-2 pt-4 border-t border-gray-200 dark:border-white/10"},$e={class:"flex justify-between text-sm text-gray-500 dark:text-gray-400"},Fe=y(()=>e("span",null,"Subtotal",-1)),Ce={class:"flex justify-between text-2xl font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-white/10 mt-2"},Se=y(()=>e("span",null,"Total",-1)),je={class:"w-full md:w-1/2 p-6 flex flex-col bg-white dark:bg-[#1a1c23] relative overflow-y-auto"},Ae=y(()=>e("svg",{class:"w-5 h-5 text-gray-400",fill:"none",viewBox:"0 0 24 24",stroke:"currentColor"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M6 18L18 6M6 6l12 12"})],-1)),Me=[Ae],De=y(()=>e("h2",{class:"text-xl font-bold text-gray-900 dark:text-white mb-1"}," Payment ",-1)),ze=y(()=>e("p",{class:"text-sm text-gray-500 dark:text-gray-400 mb-4"}," Select payment method(s). Split payments allowed. ",-1)),Be={class:"space-y-2 mb-4"},Ie=["onClick"],Oe={class:"flex items-center gap-3"},Pe={key:0,class:"w-4 h-4",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},Ve=y(()=>e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"},null,-1)),Te=[Ve],Re={key:1,class:"w-4 h-4",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},He=y(()=>e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"},null,-1)),Le=[He],Ge={class:"font-medium text-gray-900 dark:text-white text-sm"},Ee={key:0,class:"w-2 h-2 rounded-full bg-green-500"},Ke={key:0,class:"bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 mb-4 border border-gray-100 dark:border-white/5"},Ue=y(()=>e("h4",{class:"text-xs font-bold text-gray-400 uppercase tracking-wider mb-3"}," Split Amounts ",-1)),We={class:"text-sm text-gray-600 dark:text-gray-300"},Ne={class:"flex items-center gap-2"},qe=y(()=>e("span",{class:"text-gray-400"},"$",-1)),Ye=["onUpdate:modelValue","onInput","max"],Ze={class:"flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-white/10 mt-2"},Qe=y(()=>e("span",{class:"text-gray-500"},"Remaining",-1)),Je={class:"mt-auto"},Xe=["disabled"],et={key:0,class:"animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-white"},tt={key:1},ot={key:2},st={key:1,class:"p-10 flex flex-col items-center justify-center text-center w-full bg-white dark:bg-[#1a1c23]"},rt=y(()=>e("div",{class:"w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6 animate-bounce-short"},[e("svg",{class:"w-10 h-10 text-green-600 dark:text-green-400",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2.5",d:"M5 13l4 4L19 7"})])],-1)),at=y(()=>e("h2",{class:"text-2xl font-bold text-gray-900 dark:text-white mb-2"}," Payment Successful! ",-1)),lt=y(()=>e("p",{class:"text-gray-500 dark:text-gray-400 mb-8"}," Invoice has been generated in ERPNext. ",-1)),nt={class:"bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 w-full mb-6 border border-gray-100 dark:border-white/5"},it={class:"flex justify-between text-sm mb-2"},dt=y(()=>e("span",{class:"text-gray-500 dark:text-gray-400"},"Transaction ID",-1)),ct={class:"font-mono font-bold text-gray-900 dark:text-white"},ut={class:"flex justify-between text-sm"},ht=y(()=>e("span",{class:"text-gray-500 dark:text-gray-400"},"Amount Paid",-1)),gt={class:"font-mono font-bold text-green-600 dark:text-green-400"},xt={key:0,class:"flex justify-between text-sm mt-2 pt-2 border-t border-gray-200 dark:border-white/10"},pt=y(()=>e("span",{class:"text-gray-500 dark:text-gray-400"},"Tax Status",-1)),bt=y(()=>e("span",{class:"text-green-500 font-medium"},"Exempt",-1)),ft=[pt,bt],vt=y(()=>e("button",{class:"flex-1 py-3 rounded-lg font-bold text-white bg-gray-900 hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f] transition flex items-center justify-center gap-2"},[e("svg",{class:"w-4 h-4",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2-4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"})]),P(" Print Receipt ")],-1)),_t={props:["show"],emits:["close"],setup(f,{emit:a}){const d=f,i=L(),h=C(!1),g=C("review"),v=C(null),n=C(!1),s=C([]),u=[{mode:"Cash",type:"Cash"},{mode:"Credit Card",type:"Bank"},{mode:"Debit Card",type:"Bank"},{mode:"Check",type:"Bank"},{mode:"Wire Transfer",type:"Bank"},{mode:"Zelle",type:"Bank"}],c=B(()=>n.value?i.subtotal:i.grandTotal),$=B(()=>{const _=s.value.reduce((D,x)=>D+(x.amount||0),0);return c.value-_}),F=B(()=>s.value.length===0?!1:s.value.length===1?!0:Math.abs($.value)<.01);function w(_){return s.value.some(D=>D.mode===_)}function m(_){const D=s.value.findIndex(x=>x.mode===_);D>=0?s.value.splice(D,1):s.value.length===0?s.value.push({mode:_,amount:c.value}):s.value.push({mode:_,amount:0})}function p(_){}U(()=>d.show,_=>{_&&(g.value="review",s.value=[],h.value=!1,n.value=!1)});function O(){return G(this,null,function*(){if(!!F.value){h.value=!0;try{const _=yield i.submitOrder(s.value,n.value);_&&_.data&&_.data.name&&(v.value=_.data.name),g.value="success"}catch(_){alert("Order failed: "+_.message)}finally{h.value=!1}}})}function k(){a("close"),g.value==="success"&&i.clearCart()}function M(_){return _?new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(_):"$0.00"}return(_,D)=>(o(),J(X,{name:"fade"},{default:V(()=>[f.show?(o(),r("div",ne,[e("div",{onClick:k,class:"absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity"}),e("div",{class:b(["relative bg-white dark:bg-[#1a1c23] rounded-2xl shadow-2xl w-full overflow-hidden flex flex-col md:flex-row transition-all duration-500 ease-in-out border border-transparent dark:border-white/10",g.value==="success"?"max-w-md":"max-w-4xl h-[650px]"])},[g.value==="review"?(o(),r(j,{key:0},[e("div",ie,[de,e("div",ce,[(o(!0),r(j,null,z(t(i).items,x=>(o(),r("div",{key:x.item_code,class:"flex justify-between items-center bg-white dark:bg-[#0F1115] p-3 rounded-lg border border-gray-100 dark:border-white/5 shadow-sm"},[e("div",ue,[e("div",he,[x.image?(o(),r("img",{key:0,src:x.image,class:"w-full h-full object-cover"},null,8,ge)):S("",!0)]),e("div",xe,[e("div",pe,l(x.item_name),1),e("div",be,l(x.item_code),1)])]),e("div",fe,[e("div",ve,l(M(x.amount*x.qty)),1),e("div",_e," Qty: "+l(x.qty),1)])]))),128))]),e("div",ye,[e("label",me,[ke,e("button",{onClick:D[0]||(D[0]=x=>n.value=!n.value),class:b(["relative inline-flex h-6 w-11 items-center rounded-full transition-colors",n.value?"bg-green-500":"bg-gray-300 dark:bg-gray-600"])},[e("span",{class:b(["inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform",n.value?"translate-x-6":"translate-x-1"])},null,2)],2)])]),e("div",we,[e("div",$e,[Fe,e("span",null,l(M(t(i).subtotal)),1)]),e("div",{class:b(["flex justify-between text-sm",n.value?"text-green-500 line-through":"text-gray-500 dark:text-gray-400"])},[e("span",null,"Tax ("+l(n.value?"0":t(i).taxRate)+"%)",1),e("span",null,l(M(n.value?0:t(i).tax)),1)],2),e("div",Ce,[Se,e("span",null,l(M(t(c))),1)])])]),e("div",je,[e("button",{onClick:k,class:"absolute top-4 right-4 p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition"},Me),De,ze,e("div",Be,[(o(),r(j,null,z(u,x=>e("button",{key:x.mode,onClick:R=>m(x.mode),class:b(["w-full flex items-center justify-between p-3 border rounded-xl transition-all",w(x.mode)?"border-[#D4AF37] bg-[#D4AF37]/10 ring-1 ring-[#D4AF37]":"border-gray-200 hover:border-gray-400 dark:border-white/10 dark:hover:border-white/30"])},[e("div",Oe,[e("div",{class:b(["w-8 h-8 rounded-full flex items-center justify-center",x.type==="Cash"?"bg-green-100 text-green-600":"bg-blue-100 text-blue-600"])},[x.type==="Cash"?(o(),r("svg",Pe,Te)):(o(),r("svg",Re,Le))],2),e("span",Ge,l(x.mode),1)]),w(x.mode)?(o(),r("div",Ee)):S("",!0)],10,Ie)),64))]),s.value.length>1?(o(),r("div",Ke,[Ue,(o(!0),r(j,null,z(s.value,x=>(o(),r("div",{key:x.mode,class:"flex items-center justify-between mb-2"},[e("span",We,l(x.mode),1),e("div",Ne,[qe,H(e("input",{type:"number","onUpdate:modelValue":R=>x.amount=R,onInput:R=>p(x.mode),class:"w-24 px-2 py-1 bg-white dark:bg-[#0F1115] border border-gray-200 dark:border-white/10 rounded text-right font-mono text-sm",min:"0",max:t(c)},null,40,Ye),[[W,x.amount,void 0,{number:!0}]])])]))),128)),e("div",Ze,[Qe,e("span",{class:b(t($)===0?"text-green-500 font-bold":"text-red-500 font-bold")},l(M(t($))),3)])])):S("",!0),e("div",Je,[e("button",{onClick:O,disabled:!t(F)||h.value,class:b(["w-full py-4 rounded-xl font-bold text-lg shadow-xl transition-all flex items-center justify-center gap-2 transform active:scale-95",!t(F)||h.value?"bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-white/5 dark:text-gray-600":"bg-gray-900 text-white hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f]"])},[h.value?(o(),r("span",et)):t(F)?(o(),r("span",ot,"Confirm "+l(M(t(c))),1)):(o(),r("span",tt,l(s.value.length===0?"Select Payment":"Enter Amounts"),1))],10,Xe)])])],64)):g.value==="success"?(o(),r("div",st,[rt,at,lt,e("div",nt,[e("div",it,[dt,e("span",ct,l(v.value||"POS-2025-001"),1)]),e("div",ut,[ht,e("span",gt,l(M(t(c))),1)]),n.value?(o(),r("div",xt,ft)):S("",!0)]),e("div",{class:"flex gap-3 w-full"},[e("button",{onClick:k,class:"flex-1 py-3 rounded-lg font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 transition"}," New Order "),vt])])):S("",!0)],2)])):S("",!0)]),_:1}))}};var yt=K(_t,[["__scopeId","data-v-b3d082b4"]]);const mt={class:"p-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between bg-gray-50 dark:bg-[#15171e]"},kt={class:"text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2"},wt=e("span",null,"\u{1F6D2}",-1),$t=P(" Shopping Bag "),Ft={class:"text-xs font-normal text-gray-500 dark:text-gray-400"},Ct={class:"flex items-center gap-2"},St=e("svg",{class:"w-5 h-5",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M6 18L18 6M6 6l12 12"})],-1),jt=[St],At={key:0,class:"flex-1 flex flex-col items-center justify-center text-gray-400 dark:text-gray-600"},Mt=e("svg",{class:"w-16 h-16 mb-4 text-gray-200 dark:text-gray-700",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"})],-1),Dt=e("p",null,"Your bag is empty.",-1),zt={key:1,class:"flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar"},Bt={class:"w-16 h-16 bg-gray-100 dark:bg-[#0F1115] rounded-lg flex-shrink-0 overflow-hidden border border-gray-200 dark:border-white/5 relative"},It=["src"],Ot={key:1,class:"w-full h-full flex items-center justify-center text-xs text-gray-400 dark:text-gray-600"},Pt={key:2,class:"absolute bottom-0 right-0 bg-black dark:bg-[#D4AF37] text-white dark:text-black text-[10px] font-bold px-1.5 py-0.5 rounded-tl-md"},Vt={class:"flex-1 min-w-0"},Tt={class:"text-sm font-bold text-gray-900 dark:text-white truncate"},Rt={class:"text-xs text-gray-500 dark:text-gray-400 truncate"},Ht={class:"flex items-center gap-2 mt-1"},Lt={class:"text-[10px] uppercase font-bold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-500 px-1.5 py-0.5 rounded"},Gt={class:"text-[10px] uppercase font-bold bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 px-1.5 py-0.5 rounded"},Et={class:"mt-2 flex items-center justify-between"},Kt={class:"flex flex-col"},Ut={class:"text-xs text-gray-400 dark:text-gray-500"},Wt={class:"font-mono text-sm font-bold text-gray-900 dark:text-white"},Nt=["onClick"],qt=e("svg",{class:"w-4 h-4",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"})],-1),Yt=[qt],Zt={key:2,class:"p-6 bg-gray-50 dark:bg-[#15171e] border-t border-gray-200 dark:border-white/5"},Qt={class:"space-y-2 mb-4 text-sm"},Jt={class:"flex justify-between text-gray-600 dark:text-gray-400"},Xt=e("span",null,"Subtotal",-1),eo={class:"flex justify-between text-gray-600 dark:text-gray-400"},to={class:"flex justify-between text-lg font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-white/10"},oo=e("span",null,"Total",-1),so={props:["isOpen"],emits:["close"],setup(f,{emit:a}){const d=L(),i=C(!1);function h(){a("close")}function g(v){return v?new Intl.NumberFormat("en-US",{style:"currency",currency:"USD"}).format(v):"$0.00"}return(v,n)=>(o(),r("div",null,[f.isOpen?(o(),r("div",{key:0,onClick:h,class:"fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40 transition-opacity"})):S("",!0),e("div",{class:b(["fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white dark:bg-[#1a1c23] shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col border-l border-transparent dark:border-white/5",f.isOpen?"translate-x-0":"translate-x-full"])},[e("div",mt,[e("h2",kt,[wt,$t,e("span",Ft,"("+l(t(d).totalItems)+" items)",1)]),e("div",Ct,[t(d).items.length>0?(o(),r("button",{key:0,onClick:n[0]||(n[0]=s=>t(d).clearCart()),class:"text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded transition-colors"}," Clear ")):S("",!0),e("button",{onClick:h,class:"p-2 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full transition-colors text-gray-500 dark:text-gray-400"},jt)])]),t(d).items.length===0?(o(),r("div",At,[Mt,Dt,e("button",{onClick:h,class:"mt-4 text-sm text-[#D4AF37] font-medium hover:underline"}," Start Browsing ")])):(o(),r("div",zt,[(o(!0),r(j,null,z(t(d).items,(s,u)=>(o(),r("div",{key:u,class:"flex gap-4 border-b border-gray-100 dark:border-white/5 pb-4 last:border-0"},[e("div",Bt,[s.image?(o(),r("img",{key:0,src:s.image,loading:"lazy",class:"w-full h-full object-cover"},null,8,It)):(o(),r("div",Ot," No Img ")),s.qty>1?(o(),r("div",Pt," x"+l(s.qty),1)):S("",!0)]),e("div",Vt,[e("h3",Tt,l(s.item_name),1),e("p",Rt,l(s.item_code),1),e("div",Ht,[e("span",Lt,l(s.metal),1),e("span",Gt,l(s.purity),1)]),e("div",Et,[e("div",Kt,[e("span",Ut,l(g(s.amount))+" ea",1),e("span",Wt,l(g(s.amount*s.qty)),1)]),e("button",{onClick:c=>t(d).removeItem(u),class:"text-red-400 hover:text-red-600 p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors",title:"Remove Item"},Yt,8,Nt)])])]))),128))])),t(d).items.length>0?(o(),r("div",Zt,[e("div",Qt,[e("div",Jt,[Xt,e("span",null,l(g(t(d).subtotal)),1)]),e("div",eo,[e("span",null,"Tax ("+l(t(d).taxRate)+"%)",1),e("span",null,l(g(t(d).tax)),1)]),e("div",to,[oo,e("span",null,l(g(t(d).grandTotal)),1)])]),e("button",{onClick:n[1]||(n[1]=s=>i.value=!0),class:"w-full bg-gray-900 dark:bg-[#D4AF37] text-white dark:text-black py-3 rounded-lg font-bold shadow-lg hover:bg-gray-800 dark:hover:bg-[#b5952f] active:scale-95 transition-all"}," Checkout ")])):S("",!0)],2),I(yt,{show:i.value,onClose:n[2]||(n[2]=s=>i.value=!1)},null,8,["show"])]))}},ro={class:"select-none px-2 py-4"},ao={class:"flex items-center justify-between mb-6 px-1"},lo=e("h3",{class:"text-[10px] font-bold text-[#555961] uppercase tracking-widest"},"Filters",-1),no={class:"mb-6 pb-5 border-b border-white/5"},io=e("label",{class:"block text-[10px] font-bold text-gray-500 mb-3 px-1"},"Stock Status",-1),co={class:"flex flex-col gap-2"},uo=e("svg",{class:"w-4 h-4 flex-shrink-0",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"})],-1),ho=P(" All Items "),go=[uo,ho],xo=e("svg",{class:"w-4 h-4 flex-shrink-0",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"})],-1),po=P(" In Stock Only "),bo=[xo,po],fo=e("svg",{class:"w-4 h-4 flex-shrink-0",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"})],-1),vo=P(" Out of Stock "),_o=[fo,vo],yo={class:"mb-6"},mo=e("label",{class:"block text-[10px] font-bold text-gray-500 mb-3 px-1"},"Metal",-1),ko={class:"flex flex-wrap gap-2"},wo=["onClick"],$o={class:"mb-6"},Fo=e("label",{class:"block text-[10px] font-bold text-gray-500 mb-3 px-1"},"Gemstone",-1),Co={class:"flex flex-wrap gap-2"},So=["onClick"],jo={class:"mb-6"},Ao=e("label",{class:"block text-[10px] font-bold text-gray-500 mb-2 px-1"},"Purity",-1),Mo={class:"relative"},Do=["value"],zo={value:""},Bo=["value"],Io={key:0,class:"mt-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg"},Oo={class:"flex items-start gap-3"},Po=e("svg",{class:"w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"})],-1),Vo=e("p",{class:"text-amber-500 font-bold text-xs mb-1"},"Low Stock Alert",-1),To={class:"text-gray-400 text-[10px] leading-relaxed"},Ro={setup(f){const a=Z(),d=["Diamond","Ruby","Sapphire","Emerald","Polki","Kundan","No Stone"],i={"Yellow Gold":["24K","22K","18K","14K"],"White Gold":["18K","14K"],"Rose Gold":["18K","14K"],Platinum:["950"],Silver:["925 Sterling","999 Fine"]},h=C("all"),g=C(0),v=B(()=>a.activeFilters.custom_metal_type||""),n=B(()=>a.activeFilters.custom_gemstone||""),s=B(()=>Object.keys(a.activeFilters).length>0||a.searchQuery||h.value!=="all"),u=B(()=>v.value&&i[v.value]?i[v.value]:[...new Set(Object.values(i).flat())]);function c(w){h.value=w,w==="in-stock"?(a.setFilter("in_stock_only",!0),a.setFilter("out_of_stock_only",!1)):w==="out-of-stock"?(a.setFilter("out_of_stock_only",!0),a.setFilter("in_stock_only",!1)):(a.setFilter("in_stock_only",!1),a.setFilter("out_of_stock_only",!1))}function $(w){a.activeFilters.custom_purity&&a.setFilter("custom_purity",""),a.setFilter("custom_metal_type",w)}function F(w){a.setFilter("custom_gemstone",w)}return(w,m)=>(o(),r("div",ro,[e("div",ao,[lo,t(s)?(o(),r("button",{key:0,onClick:m[0]||(m[0]=p=>t(a).resetFilters()),class:"text-[10px] text-[#D4AF37] hover:text-yellow-300 transition-colors"}," Reset All ")):S("",!0)]),e("div",no,[io,e("div",co,[e("button",{onClick:m[1]||(m[1]=p=>c("all")),class:b([h.value==="all"?"bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]":"bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white","w-full px-3 py-2.5 text-[11px] rounded-lg border transition-all text-left shadow-sm flex items-center gap-2"])},go,2),e("button",{onClick:m[2]||(m[2]=p=>c("in-stock")),class:b([h.value==="in-stock"?"bg-emerald-600 text-white font-bold border-emerald-600":"bg-[#1C1F26] text-gray-400 border-white/5 hover:border-emerald-600 hover:text-emerald-400","w-full px-3 py-2.5 text-[11px] rounded-lg border transition-all text-left shadow-sm flex items-center gap-2"])},bo,2),e("button",{onClick:m[3]||(m[3]=p=>c("out-of-stock")),class:b([h.value==="out-of-stock"?"bg-red-600 text-white font-bold border-red-600":"bg-[#1C1F26] text-gray-400 border-white/5 hover:border-red-600 hover:text-red-400","w-full px-3 py-2.5 text-[11px] rounded-lg border transition-all text-left shadow-sm flex items-center gap-2"])},_o,2)])]),e("div",yo,[mo,e("div",ko,[e("button",{onClick:m[4]||(m[4]=p=>$("")),class:b([t(v)?"bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white":"bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]","flex-1 min-w-[45%] px-3 py-2.5 text-[11px] rounded-lg border transition-all text-center shadow-sm"])}," All ",2),(o(!0),r(j,null,z(Object.keys(i),p=>(o(),r("button",{key:p,onClick:O=>$(p),class:b([t(v)===p?"bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]":"bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white","flex-1 min-w-[45%] px-3 py-2.5 text-[11px] rounded-lg border transition-all text-center shadow-sm"])},l(p),11,wo))),128))])]),e("div",$o,[Fo,e("div",Co,[e("button",{onClick:m[5]||(m[5]=p=>F("")),class:b([t(n)?"bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white":"bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]","flex-1 min-w-[45%] px-3 py-2.5 text-[11px] rounded-lg border transition-all text-center shadow-sm"])}," Any ",2),(o(),r(j,null,z(d,p=>e("button",{key:p,onClick:O=>F(p),class:b([t(n)===p?"bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]":"bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white","flex-1 min-w-[45%] px-3 py-2.5 text-[11px] rounded-lg border transition-all text-center shadow-sm"])},l(p),11,So)),64))])]),e("div",jo,[Ao,e("div",Mo,[e("select",{value:t(a).activeFilters.custom_purity||"",onChange:m[6]||(m[6]=p=>t(a).setFilter("custom_purity",p.target.value)),class:"w-full bg-[#1C1F26] text-gray-300 text-xs border border-white/10 rounded-lg p-3 focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] outline-none cursor-pointer"},[e("option",zo,l(t(v)?`Any ${t(v)} Purity`:"Any Purity"),1),(o(!0),r(j,null,z(t(u),p=>(o(),r("option",{key:p,value:p},l(p),9,Bo))),128))],40,Do)])]),g.value>0?(o(),r("div",Io,[e("div",Oo,[Po,e("div",null,[Vo,e("p",To,l(g.value)+" item"+l(g.value>1?"s":"")+" need"+l(g.value===1?"s":"")+" restocking ",1)])])])):S("",!0)]))}};const A=f=>(N("data-v-3fbe52c4"),f=f(),q(),f),Ho={class:"flex h-screen w-screen bg-[#F8F9FA] dark:bg-[#050505] font-sans overflow-hidden transition-colors duration-300"},Lo={class:"w-16 sm:w-20 lg:w-72 bg-[#1a1c23] dark:bg-black border-r border-white/5 flex flex-col shadow-2xl z-30 relative transition-all duration-300"},Go=Y('<div class="h-24 flex items-center justify-center lg:justify-start lg:px-8 border-b border-white/5" data-v-3fbe52c4><div class="flex items-center gap-4 group cursor-default" data-v-3fbe52c4><img src="'+re+'" alt="Zevar POS" class="w-12 h-12 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] transform group-hover:scale-105 transition-transform duration-500" data-v-3fbe52c4><div class="hidden lg:flex flex-col justify-center" data-v-3fbe52c4><h1 class="text-white font-serif font-bold text-2xl leading-none tracking-wide" data-v-3fbe52c4> ZEVAR </h1><div class="flex justify-between w-full mt-1 px-0.5" data-v-3fbe52c4><span class="text-[9px] text-gray-400 uppercase font-medium tracking-[0.38em]" data-v-3fbe52c4>Jewelers</span></div></div></div></div>',1),Eo={class:"flex-1 flex flex-col overflow-hidden"},Ko={class:"p-4 space-y-2 flex-1 overflow-y-auto custom-scrollbar"},Uo=A(()=>e("div",{class:"relative z-10 flex items-center gap-4"},[e("svg",{class:"w-5 h-5 transition-colors",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"})]),e("span",{class:"hidden lg:block font-medium tracking-wide text-sm"},"POS Terminal")],-1)),Wo=A(()=>e("div",{class:"relative z-10 flex items-center gap-4"},[e("svg",{class:"w-5 h-5 transition-colors",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"})]),e("span",{class:"hidden lg:block font-medium tracking-wide text-sm"},"Sales History")],-1)),No=A(()=>e("div",{class:"relative z-10 flex items-center gap-4"},[e("svg",{class:"w-5 h-5 transition-colors",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"})]),e("span",{class:"hidden lg:block font-medium tracking-wide text-sm"},"Catalogues")],-1)),qo=A(()=>e("div",{class:"relative z-10 flex items-center gap-4"},[e("svg",{class:"w-5 h-5",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"}),e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M15 12a3 3 0 11-6 0 3 3 0 016 0z"})]),e("span",{class:"hidden lg:block font-medium tracking-wide text-sm"},"Repairs")],-1)),Yo={key:0,class:"mt-6 pt-6 border-t border-white/5 lg:block hidden"},Zo={class:"p-4 border-t border-white/5 bg-[#1a1c23] dark:bg-black z-20"},Qo={class:"flex items-center justify-between gap-2 group"},Jo={class:"flex items-center gap-3 overflow-hidden"},Xo={class:"w-8 h-8 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F2E6A0] flex items-center justify-center text-[#0F1115] font-bold text-xs shadow-inner"},es={class:"hidden lg:flex flex-col min-w-0"},ts={class:"text-xs font-bold text-white truncate"},os={class:"text-[10px] text-gray-400 truncate"},ss={key:0,class:"w-4 h-4",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},rs=A(()=>e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"},null,-1)),as=[rs],ls={key:1,class:"w-4 h-4",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},ns=A(()=>e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"},null,-1)),is=[ns],ds={class:"flex-1 flex flex-col relative min-w-0"},cs={class:"h-16 sm:h-20 bg-white dark:bg-[#0F1115] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-3 sm:px-6 z-20 sticky top-0 shadow-sm transition-colors duration-300"},us={class:"flex items-center gap-4 flex-1 max-w-3xl"},hs={class:"relative group"},gs=A(()=>e("option",{value:"null",disabled:""},"Select Store Location",-1)),xs=["value"],ps={class:"relative flex-1"},bs=A(()=>e("svg",{class:"absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"2",d:"M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"})],-1)),fs={class:"flex items-center gap-6"},vs={class:"hidden lg:flex items-center gap-0 bg-gray-100 dark:bg-black text-gray-900 dark:text-white pl-4 pr-2 py-2 rounded-xl border border-gray-200 dark:border-gray-800 flex-1 max-w-2xl overflow-hidden transition-colors duration-300"},_s=Y('<div class="flex items-center gap-2 border-r border-gray-300 dark:border-gray-800 pr-3 mr-3 flex-shrink-0" data-v-3fbe52c4><span class="relative flex h-2 w-2" data-v-3fbe52c4><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" data-v-3fbe52c4></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-600" data-v-3fbe52c4></span></span><span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400" data-v-3fbe52c4>Live Spot</span></div>',1),ys={class:"flex items-center gap-8 overflow-x-auto pr-2 custom-scrollbar-horizontal pb-2 pt-1"},ms={class:"text-[11px] text-gray-500 dark:text-gray-400 uppercase font-bold whitespace-nowrap mb-0.5"},ks={class:"text-lg font-mono font-bold text-[#D4AF37] tracking-wide"},ws=A(()=>e("span",{class:"text-[9px] text-gray-500 dark:text-gray-500 ml-0.5 font-normal"},"/oz",-1)),$s=A(()=>e("svg",{class:"w-6 h-6 text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors",fill:"none",stroke:"currentColor",viewBox:"0 0 24 24"},[e("path",{"stroke-linecap":"round","stroke-linejoin":"round","stroke-width":"1.5",d:"M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"})],-1)),Fs={key:0,class:"absolute top-1 right-0.5 h-5 w-5 flex items-center justify-center bg-[#D4AF37] text-white text-[10px] font-bold rounded-full shadow-md transform group-hover:scale-110 transition-transform"},Cs={class:"flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 lg:p-6 bg-[#F8F9FA] dark:bg-[#050505] transition-colors duration-300"},Ss={setup(f){const a=ae(),d=le(),i=L(),h=Z(),g=C(!1),v=31.1035,n=B(()=>{if(!d.rates)return[];const u=["Yellow Gold-24K","Yellow Gold-22K","Yellow Gold-18K","Silver-925 Sterling"];return Object.entries(d.rates).filter(([c])=>!c.includes("Platinum")).map(([c,$])=>[c,($*v).toFixed(2)]).sort((c,$)=>{const F=u.indexOf(c[0]),w=u.indexOf($[0]);return F!==-1&&w!==-1?F-w:F!==-1?-1:w!==-1?1:c[0].localeCompare($[0])})}),s=T({url:"frappe.client.get_list",params:{doctype:"Warehouse",filters:{is_group:0,parent_warehouse:["like","%Zevar US Stores%"]},fields:["name"]},auto:!0});return ee(()=>{d.startPolling(),a.currentWarehouse&&i.loadTaxForWarehouse(a.currentWarehouse)}),U(()=>a.currentWarehouse,u=>{u&&i.loadTaxForWarehouse(u)}),(u,c)=>{var F,w,m,p,O;const $=te("router-link");return o(),r("div",Ho,[e("aside",Lo,[Go,e("div",Eo,[e("nav",Ko,[I($,{to:"/",class:b(["flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",u.$route.path==="/"?"":"text-gray-400 hover:text-white hover:bg-white/5"]),"active-class":"bg-white/10 text-white shadow-inner"},{default:V(()=>[Uo,e("div",{class:b(["absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300",u.$route.path==="/"?"opacity-100":"opacity-0 group-hover:opacity-100"])},null,2)]),_:1},8,["class"]),I($,{to:"/transactions",class:b(["flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",u.$route.path==="/transactions"?"":"text-gray-400 hover:text-white hover:bg-white/5"]),"active-class":"bg-white/10 text-white shadow-inner"},{default:V(()=>[Wo,e("div",{class:b(["absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300",u.$route.path==="/transactions"?"opacity-100":"opacity-0 group-hover:opacity-100"])},null,2)]),_:1},8,["class"]),I($,{to:"/catalogues",target:"_blank",class:b(["flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",u.$route.path==="/catalogues"?"":"text-gray-400 hover:text-white hover:bg-white/5"]),"active-class":"bg-white/10 text-white shadow-inner"},{default:V(()=>[No,e("div",{class:b(["absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300",u.$route.path==="/catalogues"?"opacity-100":"opacity-0 group-hover:opacity-100"])},null,2)]),_:1},8,["class"]),I($,{to:"/repairs",class:b(["flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",u.$route.path==="/repairs"?"":"text-gray-400 hover:text-white hover:bg-white/5"]),"active-class":"bg-white/10 text-white shadow-inner"},{default:V(()=>[qo,e("div",{class:b(["absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300",u.$route.path==="/repairs"?"opacity-100":"opacity-0 group-hover:opacity-100"])},null,2)]),_:1},8,["class"]),u.$route.path==="/"?(o(),r("div",Yo,[I(Ro)])):S("",!0)])]),e("div",Zo,[e("div",Qo,[e("div",Jo,[e("div",Xo,l(((m=(w=(F=t(a).user)==null?void 0:F.full_name)==null?void 0:w[0])==null?void 0:m.toUpperCase())||"U"),1),e("div",es,[e("span",ts,l(((p=t(a).user)==null?void 0:p.full_name)||"Guest"),1),e("span",os,l(((O=t(a).user)==null?void 0:O.email)||""),1)])]),e("button",{onClick:c[0]||(c[0]=k=>t(h).toggleTheme()),class:"hidden lg:flex w-8 h-8 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-[#D4AF37] transition-colors border border-white/5 focus:outline-none",title:"Toggle Theme"},[t(h).isDark?(o(),r("svg",ss,as)):(o(),r("svg",ls,is))])])])]),e("div",ds,[e("header",cs,[e("div",us,[e("div",hs,[H(e("select",{"onUpdate:modelValue":c[1]||(c[1]=k=>t(a).currentWarehouse=k),onChange:c[2]||(c[2]=k=>t(a).setWarehouse(k.target.value)),class:"h-11 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 pl-4 pr-10 rounded-lg text-sm font-bold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] cursor-pointer min-w-[200px] transition-all hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm outline-none"},[gs,(o(!0),r(j,null,z(t(s).data,k=>(o(),r("option",{key:k.name,value:k.name},l(k.name),9,xs))),128))],544),[[oe,t(a).currentWarehouse]])]),e("div",ps,[bs,H(e("input",{type:"text","onUpdate:modelValue":c[3]||(c[3]=k=>t(h).searchQuery=k),placeholder:"Search collection...",class:"h-11 w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent text-sm font-medium pl-11 transition-all"},null,512),[[W,t(h).searchQuery]])])]),e("div",fs,[e("div",vs,[_s,e("div",ys,[(o(!0),r(j,null,z(t(n),([k,M])=>(o(),r("div",{key:k,class:"flex flex-col leading-tight flex-shrink-0 px-3"},[e("span",ms,l(k.replace(/-/g," ")),1),e("span",ks,[P("$"+l(M),1),ws])]))),128))])]),e("button",{onClick:c[4]||(c[4]=k=>g.value=!0),class:"relative p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"},[$s,t(i).totalItems>0?(o(),r("span",Fs,l(t(i).totalItems),1)):S("",!0)])])]),e("main",Cs,[se(u.$slots,"default",{},void 0,!0)])]),I(so,{isOpen:g.value,onClose:c[5]||(c[5]=k=>g.value=!1)},null,8,["isOpen"])])}}};var Ds=K(Ss,[["__scopeId","data-v-3fbe52c4"]]);export{Ds as A,ae as u};
+var G = (f, a, d) =>
+	new Promise((i, h) => {
+		var g = (s) => {
+				try {
+					n(d.next(s));
+				} catch (u) {
+					h(u);
+				}
+			},
+			v = (s) => {
+				try {
+					n(d.throw(s));
+				} catch (u) {
+					h(u);
+				}
+			},
+			n = (s) => (s.done ? i(s.value) : Promise.resolve(s.value).then(g, v));
+		n((d = d.apply(f, a)).next());
+	});
+import {
+	E,
+	p as Q,
+	i as C,
+	j as T,
+	_ as K,
+	x as B,
+	y as U,
+	o,
+	b as J,
+	z as V,
+	k as r,
+	l as e,
+	F as j,
+	A as z,
+	n as S,
+	t as l,
+	u as t,
+	G as b,
+	m as H,
+	v as W,
+	T as X,
+	B as N,
+	C as q,
+	q as P,
+	D as I,
+	H as ee,
+	r as te,
+	I as oe,
+	J as se,
+	K as Y,
+} from "./vendor.b4720657.js";
+import { u as L, a as Z, _ as re } from "./ui.7e64e684.js";
+const ae = E("session", () => {
+		const f = Q(),
+			a = C(null),
+			d = C(!1),
+			i = C(localStorage.getItem("active_warehouse") || null),
+			h = T({
+				url: "frappe.auth.get_logged_user",
+				auto: !0,
+				onSuccess(n) {
+					typeof n == "string" ? (a.value = { full_name: n, email: n }) : (a.value = n),
+						(d.value = !0);
+				},
+				onError() {
+					(a.value = null),
+						(d.value = !1),
+						window.location.pathname !== "/pos/login" && f.push("/login");
+				},
+			}),
+			g = T({
+				url: "logout",
+				onSuccess() {
+					(a.value = null),
+						(d.value = !1),
+						(i.value = null),
+						localStorage.removeItem("active_warehouse"),
+						(window.location.href = "/pos/login");
+				},
+			});
+		function v(n) {
+			(i.value = n),
+				n
+					? localStorage.setItem("active_warehouse", n)
+					: localStorage.removeItem("active_warehouse");
+		}
+		return {
+			user: a,
+			isLoggedIn: d,
+			currentWarehouse: i,
+			userResource: h,
+			logoutResource: g,
+			setWarehouse: v,
+		};
+	}),
+	le = E("gold", () => {
+		const f = C({}),
+			a = C(null),
+			d = T({
+				url: "frappe.client.get_list",
+				makeParams() {
+					return {
+						doctype: "Gold Rate Log",
+						fields: ["metal", "purity", "rate_per_gram"],
+						order_by: "timestamp desc",
+						limit_page_length: 20,
+					};
+				},
+				onSuccess(v) {
+					const n = {};
+					v.forEach((s) => {
+						const u = `${s.metal}-${s.purity}`;
+						n[u] || (n[u] = s.rate_per_gram);
+					}),
+						(f.value = n),
+						(a.value = new Date());
+				},
+			});
+		let i = null;
+		function h() {
+			i ||
+				(d.fetch(),
+				(i = setInterval(() => {
+					d.fetch();
+				}, 6e4)));
+		}
+		function g() {
+			i && (clearInterval(i), (i = null));
+		}
+		return { rates: f, lastUpdated: a, startPolling: h, stopPolling: g };
+	});
+const y = (f) => (N("data-v-b3d082b4"), (f = f()), q(), f),
+	ne = { key: 0, class: "fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" },
+	ie = {
+		class: "w-full md:w-1/2 bg-gray-50 dark:bg-[#15171e] p-6 border-r border-gray-100 dark:border-white/5 flex flex-col",
+	},
+	de = y(() =>
+		e(
+			"h3",
+			{
+				class: "text-xs font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4",
+			},
+			" Items in Bag ",
+			-1
+		)
+	),
+	ce = { class: "flex-1 overflow-y-auto space-y-3 pr-2 custom-scrollbar" },
+	ue = { class: "flex items-center gap-3" },
+	he = {
+		class: "w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-md overflow-hidden flex-shrink-0",
+	},
+	ge = ["src"],
+	xe = { class: "min-w-0" },
+	pe = { class: "font-bold text-gray-900 dark:text-white text-sm line-clamp-1" },
+	be = { class: "text-xs text-gray-500 dark:text-gray-400 truncate" },
+	fe = { class: "text-right flex-shrink-0" },
+	ve = { class: "font-mono font-bold text-sm text-gray-900 dark:text-gray-200" },
+	_e = { class: "text-[10px] text-gray-400" },
+	ye = { class: "mt-4 pt-4 border-t border-gray-200 dark:border-white/10" },
+	me = { class: "flex items-center justify-between cursor-pointer group" },
+	ke = y(() =>
+		e(
+			"div",
+			null,
+			[
+				e("span", { class: "font-medium text-gray-700 dark:text-gray-300" }, "Tax Exempt"),
+				e(
+					"span",
+					{ class: "text-xs text-gray-400 block" },
+					"For resellers or tax-free sales"
+				),
+			],
+			-1
+		)
+	),
+	we = { class: "mt-4 space-y-2 pt-4 border-t border-gray-200 dark:border-white/10" },
+	$e = { class: "flex justify-between text-sm text-gray-500 dark:text-gray-400" },
+	Fe = y(() => e("span", null, "Subtotal", -1)),
+	Ce = {
+		class: "flex justify-between text-2xl font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-white/10 mt-2",
+	},
+	Se = y(() => e("span", null, "Total", -1)),
+	je = {
+		class: "w-full md:w-1/2 p-6 flex flex-col bg-white dark:bg-[#1a1c23] relative overflow-y-auto",
+	},
+	Ae = y(() =>
+		e(
+			"svg",
+			{
+				class: "w-5 h-5 text-gray-400",
+				fill: "none",
+				viewBox: "0 0 24 24",
+				stroke: "currentColor",
+			},
+			[
+				e("path", {
+					"stroke-linecap": "round",
+					"stroke-linejoin": "round",
+					"stroke-width": "2",
+					d: "M6 18L18 6M6 6l12 12",
+				}),
+			],
+			-1
+		)
+	),
+	Me = [Ae],
+	De = y(() =>
+		e("h2", { class: "text-xl font-bold text-gray-900 dark:text-white mb-1" }, " Payment ", -1)
+	),
+	ze = y(() =>
+		e(
+			"p",
+			{ class: "text-sm text-gray-500 dark:text-gray-400 mb-4" },
+			" Select payment method(s). Split payments allowed. ",
+			-1
+		)
+	),
+	Be = { class: "space-y-2 mb-4" },
+	Ie = ["onClick"],
+	Oe = { class: "flex items-center gap-3" },
+	Pe = { key: 0, class: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+	Ve = y(() =>
+		e(
+			"path",
+			{
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z",
+			},
+			null,
+			-1
+		)
+	),
+	Te = [Ve],
+	Re = { key: 1, class: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+	He = y(() =>
+		e(
+			"path",
+			{
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z",
+			},
+			null,
+			-1
+		)
+	),
+	Le = [He],
+	Ge = { class: "font-medium text-gray-900 dark:text-white text-sm" },
+	Ee = { key: 0, class: "w-2 h-2 rounded-full bg-green-500" },
+	Ke = {
+		key: 0,
+		class: "bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 mb-4 border border-gray-100 dark:border-white/5",
+	},
+	Ue = y(() =>
+		e(
+			"h4",
+			{ class: "text-xs font-bold text-gray-400 uppercase tracking-wider mb-3" },
+			" Split Amounts ",
+			-1
+		)
+	),
+	We = { class: "text-sm text-gray-600 dark:text-gray-300" },
+	Ne = { class: "flex items-center gap-2" },
+	qe = y(() => e("span", { class: "text-gray-400" }, "$", -1)),
+	Ye = ["onUpdate:modelValue", "onInput", "max"],
+	Ze = {
+		class: "flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-white/10 mt-2",
+	},
+	Qe = y(() => e("span", { class: "text-gray-500" }, "Remaining", -1)),
+	Je = { class: "mt-auto" },
+	Xe = ["disabled"],
+	et = {
+		key: 0,
+		class: "animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-white",
+	},
+	tt = { key: 1 },
+	ot = { key: 2 },
+	st = {
+		key: 1,
+		class: "p-10 flex flex-col items-center justify-center text-center w-full bg-white dark:bg-[#1a1c23]",
+	},
+	rt = y(() =>
+		e(
+			"div",
+			{
+				class: "w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6 animate-bounce-short",
+			},
+			[
+				e(
+					"svg",
+					{
+						class: "w-10 h-10 text-green-600 dark:text-green-400",
+						fill: "none",
+						stroke: "currentColor",
+						viewBox: "0 0 24 24",
+					},
+					[
+						e("path", {
+							"stroke-linecap": "round",
+							"stroke-linejoin": "round",
+							"stroke-width": "2.5",
+							d: "M5 13l4 4L19 7",
+						}),
+					]
+				),
+			],
+			-1
+		)
+	),
+	at = y(() =>
+		e(
+			"h2",
+			{ class: "text-2xl font-bold text-gray-900 dark:text-white mb-2" },
+			" Payment Successful! ",
+			-1
+		)
+	),
+	lt = y(() =>
+		e(
+			"p",
+			{ class: "text-gray-500 dark:text-gray-400 mb-8" },
+			" Invoice has been generated in ERPNext. ",
+			-1
+		)
+	),
+	nt = {
+		class: "bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 w-full mb-6 border border-gray-100 dark:border-white/5",
+	},
+	it = { class: "flex justify-between text-sm mb-2" },
+	dt = y(() => e("span", { class: "text-gray-500 dark:text-gray-400" }, "Transaction ID", -1)),
+	ct = { class: "font-mono font-bold text-gray-900 dark:text-white" },
+	ut = { class: "flex justify-between text-sm" },
+	ht = y(() => e("span", { class: "text-gray-500 dark:text-gray-400" }, "Amount Paid", -1)),
+	gt = { class: "font-mono font-bold text-green-600 dark:text-green-400" },
+	xt = {
+		key: 0,
+		class: "flex justify-between text-sm mt-2 pt-2 border-t border-gray-200 dark:border-white/10",
+	},
+	pt = y(() => e("span", { class: "text-gray-500 dark:text-gray-400" }, "Tax Status", -1)),
+	bt = y(() => e("span", { class: "text-green-500 font-medium" }, "Exempt", -1)),
+	ft = [pt, bt],
+	vt = y(() =>
+		e(
+			"button",
+			{
+				class: "flex-1 py-3 rounded-lg font-bold text-white bg-gray-900 hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f] transition flex items-center justify-center gap-2",
+			},
+			[
+				e(
+					"svg",
+					{
+						class: "w-4 h-4",
+						fill: "none",
+						stroke: "currentColor",
+						viewBox: "0 0 24 24",
+					},
+					[
+						e("path", {
+							"stroke-linecap": "round",
+							"stroke-linejoin": "round",
+							"stroke-width": "2",
+							d: "M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2-4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z",
+						}),
+					]
+				),
+				P(" Print Receipt "),
+			],
+			-1
+		)
+	),
+	_t = {
+		props: ["show"],
+		emits: ["close"],
+		setup(f, { emit: a }) {
+			const d = f,
+				i = L(),
+				h = C(!1),
+				g = C("review"),
+				v = C(null),
+				n = C(!1),
+				s = C([]),
+				u = [
+					{ mode: "Cash", type: "Cash" },
+					{ mode: "Credit Card", type: "Bank" },
+					{ mode: "Debit Card", type: "Bank" },
+					{ mode: "Check", type: "Bank" },
+					{ mode: "Wire Transfer", type: "Bank" },
+					{ mode: "Zelle", type: "Bank" },
+				],
+				c = B(() => (n.value ? i.subtotal : i.grandTotal)),
+				$ = B(() => {
+					const _ = s.value.reduce((D, x) => D + (x.amount || 0), 0);
+					return c.value - _;
+				}),
+				F = B(() =>
+					s.value.length === 0
+						? !1
+						: s.value.length === 1
+						? !0
+						: Math.abs($.value) < 0.01
+				);
+			function w(_) {
+				return s.value.some((D) => D.mode === _);
+			}
+			function m(_) {
+				const D = s.value.findIndex((x) => x.mode === _);
+				D >= 0
+					? s.value.splice(D, 1)
+					: s.value.length === 0
+					? s.value.push({ mode: _, amount: c.value })
+					: s.value.push({ mode: _, amount: 0 });
+			}
+			function p(_) {}
+			U(
+				() => d.show,
+				(_) => {
+					_ && ((g.value = "review"), (s.value = []), (h.value = !1), (n.value = !1));
+				}
+			);
+			function O() {
+				return G(this, null, function* () {
+					if (!!F.value) {
+						h.value = !0;
+						try {
+							const _ = yield i.submitOrder(s.value, n.value);
+							_ && _.data && _.data.name && (v.value = _.data.name),
+								(g.value = "success");
+						} catch (_) {
+							alert("Order failed: " + _.message);
+						} finally {
+							h.value = !1;
+						}
+					}
+				});
+			}
+			function k() {
+				a("close"), g.value === "success" && i.clearCart();
+			}
+			function M(_) {
+				return _
+					? new Intl.NumberFormat("en-US", {
+							style: "currency",
+							currency: "USD",
+					  }).format(_)
+					: "$0.00";
+			}
+			return (_, D) => (
+				o(),
+				J(
+					X,
+					{ name: "fade" },
+					{
+						default: V(() => [
+							f.show
+								? (o(),
+								  r("div", ne, [
+										e("div", {
+											onClick: k,
+											class: "absolute inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity",
+										}),
+										e(
+											"div",
+											{
+												class: b([
+													"relative bg-white dark:bg-[#1a1c23] rounded-2xl shadow-2xl w-full overflow-hidden flex flex-col md:flex-row transition-all duration-500 ease-in-out border border-transparent dark:border-white/10",
+													g.value === "success"
+														? "max-w-md"
+														: "max-w-4xl h-[650px]",
+												]),
+											},
+											[
+												g.value === "review"
+													? (o(),
+													  r(
+															j,
+															{ key: 0 },
+															[
+																e("div", ie, [
+																	de,
+																	e("div", ce, [
+																		(o(!0),
+																		r(
+																			j,
+																			null,
+																			z(
+																				t(i).items,
+																				(x) => (
+																					o(),
+																					r(
+																						"div",
+																						{
+																							key: x.item_code,
+																							class: "flex justify-between items-center bg-white dark:bg-[#0F1115] p-3 rounded-lg border border-gray-100 dark:border-white/5 shadow-sm",
+																						},
+																						[
+																							e(
+																								"div",
+																								ue,
+																								[
+																									e(
+																										"div",
+																										he,
+																										[
+																											x.image
+																												? (o(),
+																												  r(
+																														"img",
+																														{
+																															key: 0,
+																															src: x.image,
+																															class: "w-full h-full object-cover",
+																														},
+																														null,
+																														8,
+																														ge
+																												  ))
+																												: S(
+																														"",
+																														!0
+																												  ),
+																										]
+																									),
+																									e(
+																										"div",
+																										xe,
+																										[
+																											e(
+																												"div",
+																												pe,
+																												l(
+																													x.item_name
+																												),
+																												1
+																											),
+																											e(
+																												"div",
+																												be,
+																												l(
+																													x.item_code
+																												),
+																												1
+																											),
+																										]
+																									),
+																								]
+																							),
+																							e(
+																								"div",
+																								fe,
+																								[
+																									e(
+																										"div",
+																										ve,
+																										l(
+																											M(
+																												x.amount *
+																													x.qty
+																											)
+																										),
+																										1
+																									),
+																									e(
+																										"div",
+																										_e,
+																										" Qty: " +
+																											l(
+																												x.qty
+																											),
+																										1
+																									),
+																								]
+																							),
+																						]
+																					)
+																				)
+																			),
+																			128
+																		)),
+																	]),
+																	e("div", ye, [
+																		e("label", me, [
+																			ke,
+																			e(
+																				"button",
+																				{
+																					onClick:
+																						D[0] ||
+																						(D[0] = (
+																							x
+																						) =>
+																							(n.value =
+																								!n.value)),
+																					class: b([
+																						"relative inline-flex h-6 w-11 items-center rounded-full transition-colors",
+																						n.value
+																							? "bg-green-500"
+																							: "bg-gray-300 dark:bg-gray-600",
+																					]),
+																				},
+																				[
+																					e(
+																						"span",
+																						{
+																							class: b(
+																								[
+																									"inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform",
+																									n.value
+																										? "translate-x-6"
+																										: "translate-x-1",
+																								]
+																							),
+																						},
+																						null,
+																						2
+																					),
+																				],
+																				2
+																			),
+																		]),
+																	]),
+																	e("div", we, [
+																		e("div", $e, [
+																			Fe,
+																			e(
+																				"span",
+																				null,
+																				l(
+																					M(
+																						t(i)
+																							.subtotal
+																					)
+																				),
+																				1
+																			),
+																		]),
+																		e(
+																			"div",
+																			{
+																				class: b([
+																					"flex justify-between text-sm",
+																					n.value
+																						? "text-green-500 line-through"
+																						: "text-gray-500 dark:text-gray-400",
+																				]),
+																			},
+																			[
+																				e(
+																					"span",
+																					null,
+																					"Tax (" +
+																						l(
+																							n.value
+																								? "0"
+																								: t(
+																										i
+																								  )
+																										.taxRate
+																						) +
+																						"%)",
+																					1
+																				),
+																				e(
+																					"span",
+																					null,
+																					l(
+																						M(
+																							n.value
+																								? 0
+																								: t(
+																										i
+																								  )
+																										.tax
+																						)
+																					),
+																					1
+																				),
+																			],
+																			2
+																		),
+																		e("div", Ce, [
+																			Se,
+																			e(
+																				"span",
+																				null,
+																				l(M(t(c))),
+																				1
+																			),
+																		]),
+																	]),
+																]),
+																e("div", je, [
+																	e(
+																		"button",
+																		{
+																			onClick: k,
+																			class: "absolute top-4 right-4 p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition",
+																		},
+																		Me
+																	),
+																	De,
+																	ze,
+																	e("div", Be, [
+																		(o(),
+																		r(
+																			j,
+																			null,
+																			z(u, (x) =>
+																				e(
+																					"button",
+																					{
+																						key: x.mode,
+																						onClick: (
+																							R
+																						) =>
+																							m(
+																								x.mode
+																							),
+																						class: b([
+																							"w-full flex items-center justify-between p-3 border rounded-xl transition-all",
+																							w(
+																								x.mode
+																							)
+																								? "border-[#D4AF37] bg-[#D4AF37]/10 ring-1 ring-[#D4AF37]"
+																								: "border-gray-200 hover:border-gray-400 dark:border-white/10 dark:hover:border-white/30",
+																						]),
+																					},
+																					[
+																						e(
+																							"div",
+																							Oe,
+																							[
+																								e(
+																									"div",
+																									{
+																										class: b(
+																											[
+																												"w-8 h-8 rounded-full flex items-center justify-center",
+																												x.type ===
+																												"Cash"
+																													? "bg-green-100 text-green-600"
+																													: "bg-blue-100 text-blue-600",
+																											]
+																										),
+																									},
+																									[
+																										x.type ===
+																										"Cash"
+																											? (o(),
+																											  r(
+																													"svg",
+																													Pe,
+																													Te
+																											  ))
+																											: (o(),
+																											  r(
+																													"svg",
+																													Re,
+																													Le
+																											  )),
+																									],
+																									2
+																								),
+																								e(
+																									"span",
+																									Ge,
+																									l(
+																										x.mode
+																									),
+																									1
+																								),
+																							]
+																						),
+																						w(x.mode)
+																							? (o(),
+																							  r(
+																									"div",
+																									Ee
+																							  ))
+																							: S(
+																									"",
+																									!0
+																							  ),
+																					],
+																					10,
+																					Ie
+																				)
+																			),
+																			64
+																		)),
+																	]),
+																	s.value.length > 1
+																		? (o(),
+																		  r("div", Ke, [
+																				Ue,
+																				(o(!0),
+																				r(
+																					j,
+																					null,
+																					z(
+																						s.value,
+																						(x) => (
+																							o(),
+																							r(
+																								"div",
+																								{
+																									key: x.mode,
+																									class: "flex items-center justify-between mb-2",
+																								},
+																								[
+																									e(
+																										"span",
+																										We,
+																										l(
+																											x.mode
+																										),
+																										1
+																									),
+																									e(
+																										"div",
+																										Ne,
+																										[
+																											qe,
+																											H(
+																												e(
+																													"input",
+																													{
+																														type: "number",
+																														"onUpdate:modelValue":
+																															(
+																																R
+																															) =>
+																																(x.amount =
+																																	R),
+																														onInput:
+																															(
+																																R
+																															) =>
+																																p(
+																																	x.mode
+																																),
+																														class: "w-24 px-2 py-1 bg-white dark:bg-[#0F1115] border border-gray-200 dark:border-white/10 rounded text-right font-mono text-sm",
+																														min: "0",
+																														max: t(
+																															c
+																														),
+																													},
+																													null,
+																													40,
+																													Ye
+																												),
+																												[
+																													[
+																														W,
+																														x.amount,
+																														void 0,
+																														{
+																															number: !0,
+																														},
+																													],
+																												]
+																											),
+																										]
+																									),
+																								]
+																							)
+																						)
+																					),
+																					128
+																				)),
+																				e("div", Ze, [
+																					Qe,
+																					e(
+																						"span",
+																						{
+																							class: b(
+																								t(
+																									$
+																								) ===
+																									0
+																									? "text-green-500 font-bold"
+																									: "text-red-500 font-bold"
+																							),
+																						},
+																						l(M(t($))),
+																						3
+																					),
+																				]),
+																		  ]))
+																		: S("", !0),
+																	e("div", Je, [
+																		e(
+																			"button",
+																			{
+																				onClick: O,
+																				disabled:
+																					!t(F) ||
+																					h.value,
+																				class: b([
+																					"w-full py-4 rounded-xl font-bold text-lg shadow-xl transition-all flex items-center justify-center gap-2 transform active:scale-95",
+																					!t(F) ||
+																					h.value
+																						? "bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-white/5 dark:text-gray-600"
+																						: "bg-gray-900 text-white hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f]",
+																				]),
+																			},
+																			[
+																				h.value
+																					? (o(),
+																					  r(
+																							"span",
+																							et
+																					  ))
+																					: t(F)
+																					? (o(),
+																					  r(
+																							"span",
+																							ot,
+																							"Confirm " +
+																								l(
+																									M(
+																										t(
+																											c
+																										)
+																									)
+																								),
+																							1
+																					  ))
+																					: (o(),
+																					  r(
+																							"span",
+																							tt,
+																							l(
+																								s
+																									.value
+																									.length ===
+																									0
+																									? "Select Payment"
+																									: "Enter Amounts"
+																							),
+																							1
+																					  )),
+																			],
+																			10,
+																			Xe
+																		),
+																	]),
+																]),
+															],
+															64
+													  ))
+													: g.value === "success"
+													? (o(),
+													  r("div", st, [
+															rt,
+															at,
+															lt,
+															e("div", nt, [
+																e("div", it, [
+																	dt,
+																	e(
+																		"span",
+																		ct,
+																		l(
+																			v.value ||
+																				"POS-2025-001"
+																		),
+																		1
+																	),
+																]),
+																e("div", ut, [
+																	ht,
+																	e("span", gt, l(M(t(c))), 1),
+																]),
+																n.value
+																	? (o(), r("div", xt, ft))
+																	: S("", !0),
+															]),
+															e(
+																"div",
+																{ class: "flex gap-3 w-full" },
+																[
+																	e(
+																		"button",
+																		{
+																			onClick: k,
+																			class: "flex-1 py-3 rounded-lg font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 transition",
+																		},
+																		" New Order "
+																	),
+																	vt,
+																]
+															),
+													  ]))
+													: S("", !0),
+											],
+											2
+										),
+								  ]))
+								: S("", !0),
+						]),
+						_: 1,
+					}
+				)
+			);
+		},
+	};
+var yt = K(_t, [["__scopeId", "data-v-b3d082b4"]]);
+const mt = {
+		class: "p-4 border-b border-gray-100 dark:border-white/5 flex items-center justify-between bg-gray-50 dark:bg-[#15171e]",
+	},
+	kt = { class: "text-lg font-bold text-gray-800 dark:text-white flex items-center gap-2" },
+	wt = e("span", null, "\u{1F6D2}", -1),
+	$t = P(" Shopping Bag "),
+	Ft = { class: "text-xs font-normal text-gray-500 dark:text-gray-400" },
+	Ct = { class: "flex items-center gap-2" },
+	St = e(
+		"svg",
+		{ class: "w-5 h-5", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+		[
+			e("path", {
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M6 18L18 6M6 6l12 12",
+			}),
+		],
+		-1
+	),
+	jt = [St],
+	At = {
+		key: 0,
+		class: "flex-1 flex flex-col items-center justify-center text-gray-400 dark:text-gray-600",
+	},
+	Mt = e(
+		"svg",
+		{
+			class: "w-16 h-16 mb-4 text-gray-200 dark:text-gray-700",
+			fill: "none",
+			stroke: "currentColor",
+			viewBox: "0 0 24 24",
+		},
+		[
+			e("path", {
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z",
+			}),
+		],
+		-1
+	),
+	Dt = e("p", null, "Your bag is empty.", -1),
+	zt = { key: 1, class: "flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar" },
+	Bt = {
+		class: "w-16 h-16 bg-gray-100 dark:bg-[#0F1115] rounded-lg flex-shrink-0 overflow-hidden border border-gray-200 dark:border-white/5 relative",
+	},
+	It = ["src"],
+	Ot = {
+		key: 1,
+		class: "w-full h-full flex items-center justify-center text-xs text-gray-400 dark:text-gray-600",
+	},
+	Pt = {
+		key: 2,
+		class: "absolute bottom-0 right-0 bg-black dark:bg-[#D4AF37] text-white dark:text-black text-[10px] font-bold px-1.5 py-0.5 rounded-tl-md",
+	},
+	Vt = { class: "flex-1 min-w-0" },
+	Tt = { class: "text-sm font-bold text-gray-900 dark:text-white truncate" },
+	Rt = { class: "text-xs text-gray-500 dark:text-gray-400 truncate" },
+	Ht = { class: "flex items-center gap-2 mt-1" },
+	Lt = {
+		class: "text-[10px] uppercase font-bold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-500 px-1.5 py-0.5 rounded",
+	},
+	Gt = {
+		class: "text-[10px] uppercase font-bold bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 px-1.5 py-0.5 rounded",
+	},
+	Et = { class: "mt-2 flex items-center justify-between" },
+	Kt = { class: "flex flex-col" },
+	Ut = { class: "text-xs text-gray-400 dark:text-gray-500" },
+	Wt = { class: "font-mono text-sm font-bold text-gray-900 dark:text-white" },
+	Nt = ["onClick"],
+	qt = e(
+		"svg",
+		{ class: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+		[
+			e("path", {
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16",
+			}),
+		],
+		-1
+	),
+	Yt = [qt],
+	Zt = {
+		key: 2,
+		class: "p-6 bg-gray-50 dark:bg-[#15171e] border-t border-gray-200 dark:border-white/5",
+	},
+	Qt = { class: "space-y-2 mb-4 text-sm" },
+	Jt = { class: "flex justify-between text-gray-600 dark:text-gray-400" },
+	Xt = e("span", null, "Subtotal", -1),
+	eo = { class: "flex justify-between text-gray-600 dark:text-gray-400" },
+	to = {
+		class: "flex justify-between text-lg font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-white/10",
+	},
+	oo = e("span", null, "Total", -1),
+	so = {
+		props: ["isOpen"],
+		emits: ["close"],
+		setup(f, { emit: a }) {
+			const d = L(),
+				i = C(!1);
+			function h() {
+				a("close");
+			}
+			function g(v) {
+				return v
+					? new Intl.NumberFormat("en-US", {
+							style: "currency",
+							currency: "USD",
+					  }).format(v)
+					: "$0.00";
+			}
+			return (v, n) => (
+				o(),
+				r("div", null, [
+					f.isOpen
+						? (o(),
+						  r("div", {
+								key: 0,
+								onClick: h,
+								class: "fixed inset-0 bg-gray-900/50 backdrop-blur-sm z-40 transition-opacity",
+						  }))
+						: S("", !0),
+					e(
+						"div",
+						{
+							class: b([
+								"fixed top-0 right-0 h-full w-full sm:w-[400px] bg-white dark:bg-[#1a1c23] shadow-2xl z-50 transform transition-transform duration-300 ease-in-out flex flex-col border-l border-transparent dark:border-white/5",
+								f.isOpen ? "translate-x-0" : "translate-x-full",
+							]),
+						},
+						[
+							e("div", mt, [
+								e("h2", kt, [
+									wt,
+									$t,
+									e("span", Ft, "(" + l(t(d).totalItems) + " items)", 1),
+								]),
+								e("div", Ct, [
+									t(d).items.length > 0
+										? (o(),
+										  r(
+												"button",
+												{
+													key: 0,
+													onClick:
+														n[0] || (n[0] = (s) => t(d).clearCart()),
+													class: "text-xs font-bold text-red-500 hover:text-red-700 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded transition-colors",
+												},
+												" Clear "
+										  ))
+										: S("", !0),
+									e(
+										"button",
+										{
+											onClick: h,
+											class: "p-2 hover:bg-gray-200 dark:hover:bg-white/10 rounded-full transition-colors text-gray-500 dark:text-gray-400",
+										},
+										jt
+									),
+								]),
+							]),
+							t(d).items.length === 0
+								? (o(),
+								  r("div", At, [
+										Mt,
+										Dt,
+										e(
+											"button",
+											{
+												onClick: h,
+												class: "mt-4 text-sm text-[#D4AF37] font-medium hover:underline",
+											},
+											" Start Browsing "
+										),
+								  ]))
+								: (o(),
+								  r("div", zt, [
+										(o(!0),
+										r(
+											j,
+											null,
+											z(
+												t(d).items,
+												(s, u) => (
+													o(),
+													r(
+														"div",
+														{
+															key: u,
+															class: "flex gap-4 border-b border-gray-100 dark:border-white/5 pb-4 last:border-0",
+														},
+														[
+															e("div", Bt, [
+																s.image
+																	? (o(),
+																	  r(
+																			"img",
+																			{
+																				key: 0,
+																				src: s.image,
+																				loading: "lazy",
+																				class: "w-full h-full object-cover",
+																			},
+																			null,
+																			8,
+																			It
+																	  ))
+																	: (o(),
+																	  r("div", Ot, " No Img ")),
+																s.qty > 1
+																	? (o(),
+																	  r(
+																			"div",
+																			Pt,
+																			" x" + l(s.qty),
+																			1
+																	  ))
+																	: S("", !0),
+															]),
+															e("div", Vt, [
+																e("h3", Tt, l(s.item_name), 1),
+																e("p", Rt, l(s.item_code), 1),
+																e("div", Ht, [
+																	e("span", Lt, l(s.metal), 1),
+																	e("span", Gt, l(s.purity), 1),
+																]),
+																e("div", Et, [
+																	e("div", Kt, [
+																		e(
+																			"span",
+																			Ut,
+																			l(g(s.amount)) + " ea",
+																			1
+																		),
+																		e(
+																			"span",
+																			Wt,
+																			l(g(s.amount * s.qty)),
+																			1
+																		),
+																	]),
+																	e(
+																		"button",
+																		{
+																			onClick: (c) =>
+																				t(d).removeItem(u),
+																			class: "text-red-400 hover:text-red-600 p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors",
+																			title: "Remove Item",
+																		},
+																		Yt,
+																		8,
+																		Nt
+																	),
+																]),
+															]),
+														]
+													)
+												)
+											),
+											128
+										)),
+								  ])),
+							t(d).items.length > 0
+								? (o(),
+								  r("div", Zt, [
+										e("div", Qt, [
+											e("div", Jt, [
+												Xt,
+												e("span", null, l(g(t(d).subtotal)), 1),
+											]),
+											e("div", eo, [
+												e(
+													"span",
+													null,
+													"Tax (" + l(t(d).taxRate) + "%)",
+													1
+												),
+												e("span", null, l(g(t(d).tax)), 1),
+											]),
+											e("div", to, [
+												oo,
+												e("span", null, l(g(t(d).grandTotal)), 1),
+											]),
+										]),
+										e(
+											"button",
+											{
+												onClick: n[1] || (n[1] = (s) => (i.value = !0)),
+												class: "w-full bg-gray-900 dark:bg-[#D4AF37] text-white dark:text-black py-3 rounded-lg font-bold shadow-lg hover:bg-gray-800 dark:hover:bg-[#b5952f] active:scale-95 transition-all",
+											},
+											" Checkout "
+										),
+								  ]))
+								: S("", !0),
+						],
+						2
+					),
+					I(
+						yt,
+						{ show: i.value, onClose: n[2] || (n[2] = (s) => (i.value = !1)) },
+						null,
+						8,
+						["show"]
+					),
+				])
+			);
+		},
+	},
+	ro = { class: "select-none px-2 py-4" },
+	ao = { class: "flex items-center justify-between mb-6 px-1" },
+	lo = e(
+		"h3",
+		{ class: "text-[10px] font-bold text-[#555961] uppercase tracking-widest" },
+		"Filters",
+		-1
+	),
+	no = { class: "mb-6 pb-5 border-b border-white/5" },
+	io = e(
+		"label",
+		{ class: "block text-[10px] font-bold text-gray-500 mb-3 px-1" },
+		"Stock Status",
+		-1
+	),
+	co = { class: "flex flex-col gap-2" },
+	uo = e(
+		"svg",
+		{
+			class: "w-4 h-4 flex-shrink-0",
+			fill: "none",
+			stroke: "currentColor",
+			viewBox: "0 0 24 24",
+		},
+		[
+			e("path", {
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z",
+			}),
+		],
+		-1
+	),
+	ho = P(" All Items "),
+	go = [uo, ho],
+	xo = e(
+		"svg",
+		{
+			class: "w-4 h-4 flex-shrink-0",
+			fill: "none",
+			stroke: "currentColor",
+			viewBox: "0 0 24 24",
+		},
+		[
+			e("path", {
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z",
+			}),
+		],
+		-1
+	),
+	po = P(" In Stock Only "),
+	bo = [xo, po],
+	fo = e(
+		"svg",
+		{
+			class: "w-4 h-4 flex-shrink-0",
+			fill: "none",
+			stroke: "currentColor",
+			viewBox: "0 0 24 24",
+		},
+		[
+			e("path", {
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+			}),
+		],
+		-1
+	),
+	vo = P(" Out of Stock "),
+	_o = [fo, vo],
+	yo = { class: "mb-6" },
+	mo = e("label", { class: "block text-[10px] font-bold text-gray-500 mb-3 px-1" }, "Metal", -1),
+	ko = { class: "flex flex-wrap gap-2" },
+	wo = ["onClick"],
+	$o = { class: "mb-6" },
+	Fo = e(
+		"label",
+		{ class: "block text-[10px] font-bold text-gray-500 mb-3 px-1" },
+		"Gemstone",
+		-1
+	),
+	Co = { class: "flex flex-wrap gap-2" },
+	So = ["onClick"],
+	jo = { class: "mb-6" },
+	Ao = e(
+		"label",
+		{ class: "block text-[10px] font-bold text-gray-500 mb-2 px-1" },
+		"Purity",
+		-1
+	),
+	Mo = { class: "relative" },
+	Do = ["value"],
+	zo = { value: "" },
+	Bo = ["value"],
+	Io = { key: 0, class: "mt-6 p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg" },
+	Oo = { class: "flex items-start gap-3" },
+	Po = e(
+		"svg",
+		{
+			class: "w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5",
+			fill: "none",
+			stroke: "currentColor",
+			viewBox: "0 0 24 24",
+		},
+		[
+			e("path", {
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
+			}),
+		],
+		-1
+	),
+	Vo = e("p", { class: "text-amber-500 font-bold text-xs mb-1" }, "Low Stock Alert", -1),
+	To = { class: "text-gray-400 text-[10px] leading-relaxed" },
+	Ro = {
+		setup(f) {
+			const a = Z(),
+				d = ["Diamond", "Ruby", "Sapphire", "Emerald", "Polki", "Kundan", "No Stone"],
+				i = {
+					"Yellow Gold": ["24K", "22K", "18K", "14K"],
+					"White Gold": ["18K", "14K"],
+					"Rose Gold": ["18K", "14K"],
+					Platinum: ["950"],
+					Silver: ["925 Sterling", "999 Fine"],
+				},
+				h = C("all"),
+				g = C(0),
+				v = B(() => a.activeFilters.custom_metal_type || ""),
+				n = B(() => a.activeFilters.custom_gemstone || ""),
+				s = B(
+					() =>
+						Object.keys(a.activeFilters).length > 0 ||
+						a.searchQuery ||
+						h.value !== "all"
+				),
+				u = B(() =>
+					v.value && i[v.value] ? i[v.value] : [...new Set(Object.values(i).flat())]
+				);
+			function c(w) {
+				(h.value = w),
+					w === "in-stock"
+						? (a.setFilter("in_stock_only", !0), a.setFilter("out_of_stock_only", !1))
+						: w === "out-of-stock"
+						? (a.setFilter("out_of_stock_only", !0), a.setFilter("in_stock_only", !1))
+						: (a.setFilter("in_stock_only", !1), a.setFilter("out_of_stock_only", !1));
+			}
+			function $(w) {
+				a.activeFilters.custom_purity && a.setFilter("custom_purity", ""),
+					a.setFilter("custom_metal_type", w);
+			}
+			function F(w) {
+				a.setFilter("custom_gemstone", w);
+			}
+			return (w, m) => (
+				o(),
+				r("div", ro, [
+					e("div", ao, [
+						lo,
+						t(s)
+							? (o(),
+							  r(
+									"button",
+									{
+										key: 0,
+										onClick: m[0] || (m[0] = (p) => t(a).resetFilters()),
+										class: "text-[10px] text-[#D4AF37] hover:text-yellow-300 transition-colors",
+									},
+									" Reset All "
+							  ))
+							: S("", !0),
+					]),
+					e("div", no, [
+						io,
+						e("div", co, [
+							e(
+								"button",
+								{
+									onClick: m[1] || (m[1] = (p) => c("all")),
+									class: b([
+										h.value === "all"
+											? "bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]"
+											: "bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white",
+										"w-full px-3 py-2.5 text-[11px] rounded-lg border transition-all text-left shadow-sm flex items-center gap-2",
+									]),
+								},
+								go,
+								2
+							),
+							e(
+								"button",
+								{
+									onClick: m[2] || (m[2] = (p) => c("in-stock")),
+									class: b([
+										h.value === "in-stock"
+											? "bg-emerald-600 text-white font-bold border-emerald-600"
+											: "bg-[#1C1F26] text-gray-400 border-white/5 hover:border-emerald-600 hover:text-emerald-400",
+										"w-full px-3 py-2.5 text-[11px] rounded-lg border transition-all text-left shadow-sm flex items-center gap-2",
+									]),
+								},
+								bo,
+								2
+							),
+							e(
+								"button",
+								{
+									onClick: m[3] || (m[3] = (p) => c("out-of-stock")),
+									class: b([
+										h.value === "out-of-stock"
+											? "bg-red-600 text-white font-bold border-red-600"
+											: "bg-[#1C1F26] text-gray-400 border-white/5 hover:border-red-600 hover:text-red-400",
+										"w-full px-3 py-2.5 text-[11px] rounded-lg border transition-all text-left shadow-sm flex items-center gap-2",
+									]),
+								},
+								_o,
+								2
+							),
+						]),
+					]),
+					e("div", yo, [
+						mo,
+						e("div", ko, [
+							e(
+								"button",
+								{
+									onClick: m[4] || (m[4] = (p) => $("")),
+									class: b([
+										t(v)
+											? "bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white"
+											: "bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]",
+										"flex-1 min-w-[45%] px-3 py-2.5 text-[11px] rounded-lg border transition-all text-center shadow-sm",
+									]),
+								},
+								" All ",
+								2
+							),
+							(o(!0),
+							r(
+								j,
+								null,
+								z(
+									Object.keys(i),
+									(p) => (
+										o(),
+										r(
+											"button",
+											{
+												key: p,
+												onClick: (O) => $(p),
+												class: b([
+													t(v) === p
+														? "bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]"
+														: "bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white",
+													"flex-1 min-w-[45%] px-3 py-2.5 text-[11px] rounded-lg border transition-all text-center shadow-sm",
+												]),
+											},
+											l(p),
+											11,
+											wo
+										)
+									)
+								),
+								128
+							)),
+						]),
+					]),
+					e("div", $o, [
+						Fo,
+						e("div", Co, [
+							e(
+								"button",
+								{
+									onClick: m[5] || (m[5] = (p) => F("")),
+									class: b([
+										t(n)
+											? "bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white"
+											: "bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]",
+										"flex-1 min-w-[45%] px-3 py-2.5 text-[11px] rounded-lg border transition-all text-center shadow-sm",
+									]),
+								},
+								" Any ",
+								2
+							),
+							(o(),
+							r(
+								j,
+								null,
+								z(d, (p) =>
+									e(
+										"button",
+										{
+											key: p,
+											onClick: (O) => F(p),
+											class: b([
+												t(n) === p
+													? "bg-[#D4AF37] text-[#0F1115] font-bold border-[#D4AF37]"
+													: "bg-[#1C1F26] text-gray-400 border-white/5 hover:border-gray-600 hover:text-white",
+												"flex-1 min-w-[45%] px-3 py-2.5 text-[11px] rounded-lg border transition-all text-center shadow-sm",
+											]),
+										},
+										l(p),
+										11,
+										So
+									)
+								),
+								64
+							)),
+						]),
+					]),
+					e("div", jo, [
+						Ao,
+						e("div", Mo, [
+							e(
+								"select",
+								{
+									value: t(a).activeFilters.custom_purity || "",
+									onChange:
+										m[6] ||
+										(m[6] = (p) =>
+											t(a).setFilter("custom_purity", p.target.value)),
+									class: "w-full bg-[#1C1F26] text-gray-300 text-xs border border-white/10 rounded-lg p-3 focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] outline-none cursor-pointer",
+								},
+								[
+									e(
+										"option",
+										zo,
+										l(t(v) ? `Any ${t(v)} Purity` : "Any Purity"),
+										1
+									),
+									(o(!0),
+									r(
+										j,
+										null,
+										z(
+											t(u),
+											(p) => (
+												o(), r("option", { key: p, value: p }, l(p), 9, Bo)
+											)
+										),
+										128
+									)),
+								],
+								40,
+								Do
+							),
+						]),
+					]),
+					g.value > 0
+						? (o(),
+						  r("div", Io, [
+								e("div", Oo, [
+									Po,
+									e("div", null, [
+										Vo,
+										e(
+											"p",
+											To,
+											l(g.value) +
+												" item" +
+												l(g.value > 1 ? "s" : "") +
+												" need" +
+												l(g.value === 1 ? "s" : "") +
+												" restocking ",
+											1
+										),
+									]),
+								]),
+						  ]))
+						: S("", !0),
+				])
+			);
+		},
+	};
+const A = (f) => (N("data-v-3fbe52c4"), (f = f()), q(), f),
+	Ho = {
+		class: "flex h-screen w-screen bg-[#F8F9FA] dark:bg-[#050505] font-sans overflow-hidden transition-colors duration-300",
+	},
+	Lo = {
+		class: "w-16 sm:w-20 lg:w-72 bg-[#1a1c23] dark:bg-black border-r border-white/5 flex flex-col shadow-2xl z-30 relative transition-all duration-300",
+	},
+	Go = Y(
+		'<div class="h-24 flex items-center justify-center lg:justify-start lg:px-8 border-b border-white/5" data-v-3fbe52c4><div class="flex items-center gap-4 group cursor-default" data-v-3fbe52c4><img src="' +
+			re +
+			'" alt="Zevar POS" class="w-12 h-12 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] transform group-hover:scale-105 transition-transform duration-500" data-v-3fbe52c4><div class="hidden lg:flex flex-col justify-center" data-v-3fbe52c4><h1 class="text-white font-serif font-bold text-2xl leading-none tracking-wide" data-v-3fbe52c4> ZEVAR </h1><div class="flex justify-between w-full mt-1 px-0.5" data-v-3fbe52c4><span class="text-[9px] text-gray-400 uppercase font-medium tracking-[0.38em]" data-v-3fbe52c4>Jewelers</span></div></div></div></div>',
+		1
+	),
+	Eo = { class: "flex-1 flex flex-col overflow-hidden" },
+	Ko = { class: "p-4 space-y-2 flex-1 overflow-y-auto custom-scrollbar" },
+	Uo = A(() =>
+		e(
+			"div",
+			{ class: "relative z-10 flex items-center gap-4" },
+			[
+				e(
+					"svg",
+					{
+						class: "w-5 h-5 transition-colors",
+						fill: "none",
+						stroke: "currentColor",
+						viewBox: "0 0 24 24",
+					},
+					[
+						e("path", {
+							"stroke-linecap": "round",
+							"stroke-linejoin": "round",
+							"stroke-width": "2",
+							d: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z",
+						}),
+					]
+				),
+				e(
+					"span",
+					{ class: "hidden lg:block font-medium tracking-wide text-sm" },
+					"POS Terminal"
+				),
+			],
+			-1
+		)
+	),
+	Wo = A(() =>
+		e(
+			"div",
+			{ class: "relative z-10 flex items-center gap-4" },
+			[
+				e(
+					"svg",
+					{
+						class: "w-5 h-5 transition-colors",
+						fill: "none",
+						stroke: "currentColor",
+						viewBox: "0 0 24 24",
+					},
+					[
+						e("path", {
+							"stroke-linecap": "round",
+							"stroke-linejoin": "round",
+							"stroke-width": "2",
+							d: "M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+						}),
+					]
+				),
+				e(
+					"span",
+					{ class: "hidden lg:block font-medium tracking-wide text-sm" },
+					"Sales History"
+				),
+			],
+			-1
+		)
+	),
+	No = A(() =>
+		e(
+			"div",
+			{ class: "relative z-10 flex items-center gap-4" },
+			[
+				e(
+					"svg",
+					{
+						class: "w-5 h-5 transition-colors",
+						fill: "none",
+						stroke: "currentColor",
+						viewBox: "0 0 24 24",
+					},
+					[
+						e("path", {
+							"stroke-linecap": "round",
+							"stroke-linejoin": "round",
+							"stroke-width": "2",
+							d: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10",
+						}),
+					]
+				),
+				e(
+					"span",
+					{ class: "hidden lg:block font-medium tracking-wide text-sm" },
+					"Catalogues"
+				),
+			],
+			-1
+		)
+	),
+	qo = A(() =>
+		e(
+			"div",
+			{ class: "relative z-10 flex items-center gap-4" },
+			[
+				e(
+					"svg",
+					{
+						class: "w-5 h-5",
+						fill: "none",
+						stroke: "currentColor",
+						viewBox: "0 0 24 24",
+					},
+					[
+						e("path", {
+							"stroke-linecap": "round",
+							"stroke-linejoin": "round",
+							"stroke-width": "2",
+							d: "M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z",
+						}),
+						e("path", {
+							"stroke-linecap": "round",
+							"stroke-linejoin": "round",
+							"stroke-width": "2",
+							d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z",
+						}),
+					]
+				),
+				e(
+					"span",
+					{ class: "hidden lg:block font-medium tracking-wide text-sm" },
+					"Repairs"
+				),
+			],
+			-1
+		)
+	),
+	Yo = { key: 0, class: "mt-6 pt-6 border-t border-white/5 lg:block hidden" },
+	Zo = { class: "p-4 border-t border-white/5 bg-[#1a1c23] dark:bg-black z-20" },
+	Qo = { class: "flex items-center justify-between gap-2 group" },
+	Jo = { class: "flex items-center gap-3 overflow-hidden" },
+	Xo = {
+		class: "w-8 h-8 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F2E6A0] flex items-center justify-center text-[#0F1115] font-bold text-xs shadow-inner",
+	},
+	es = { class: "hidden lg:flex flex-col min-w-0" },
+	ts = { class: "text-xs font-bold text-white truncate" },
+	os = { class: "text-[10px] text-gray-400 truncate" },
+	ss = { key: 0, class: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+	rs = A(() =>
+		e(
+			"path",
+			{
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z",
+			},
+			null,
+			-1
+		)
+	),
+	as = [rs],
+	ls = { key: 1, class: "w-4 h-4", fill: "none", stroke: "currentColor", viewBox: "0 0 24 24" },
+	ns = A(() =>
+		e(
+			"path",
+			{
+				"stroke-linecap": "round",
+				"stroke-linejoin": "round",
+				"stroke-width": "2",
+				d: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z",
+			},
+			null,
+			-1
+		)
+	),
+	is = [ns],
+	ds = { class: "flex-1 flex flex-col relative min-w-0" },
+	cs = {
+		class: "h-16 sm:h-20 bg-white dark:bg-[#0F1115] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-3 sm:px-6 z-20 sticky top-0 shadow-sm transition-colors duration-300",
+	},
+	us = { class: "flex items-center gap-4 flex-1 max-w-3xl" },
+	hs = { class: "relative group" },
+	gs = A(() => e("option", { value: "null", disabled: "" }, "Select Store Location", -1)),
+	xs = ["value"],
+	ps = { class: "relative flex-1" },
+	bs = A(() =>
+		e(
+			"svg",
+			{
+				class: "absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400",
+				fill: "none",
+				stroke: "currentColor",
+				viewBox: "0 0 24 24",
+			},
+			[
+				e("path", {
+					"stroke-linecap": "round",
+					"stroke-linejoin": "round",
+					"stroke-width": "2",
+					d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z",
+				}),
+			],
+			-1
+		)
+	),
+	fs = { class: "flex items-center gap-6" },
+	vs = {
+		class: "hidden lg:flex items-center gap-0 bg-gray-100 dark:bg-black text-gray-900 dark:text-white pl-4 pr-2 py-2 rounded-xl border border-gray-200 dark:border-gray-800 flex-1 max-w-2xl overflow-hidden transition-colors duration-300",
+	},
+	_s = Y(
+		'<div class="flex items-center gap-2 border-r border-gray-300 dark:border-gray-800 pr-3 mr-3 flex-shrink-0" data-v-3fbe52c4><span class="relative flex h-2 w-2" data-v-3fbe52c4><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" data-v-3fbe52c4></span><span class="relative inline-flex rounded-full h-2 w-2 bg-green-600" data-v-3fbe52c4></span></span><span class="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400" data-v-3fbe52c4>Live Spot</span></div>',
+		1
+	),
+	ys = {
+		class: "flex items-center gap-8 overflow-x-auto pr-2 custom-scrollbar-horizontal pb-2 pt-1",
+	},
+	ms = {
+		class: "text-[11px] text-gray-500 dark:text-gray-400 uppercase font-bold whitespace-nowrap mb-0.5",
+	},
+	ks = { class: "text-lg font-mono font-bold text-[#D4AF37] tracking-wide" },
+	ws = A(() =>
+		e(
+			"span",
+			{ class: "text-[9px] text-gray-500 dark:text-gray-500 ml-0.5 font-normal" },
+			"/oz",
+			-1
+		)
+	),
+	$s = A(() =>
+		e(
+			"svg",
+			{
+				class: "w-6 h-6 text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors",
+				fill: "none",
+				stroke: "currentColor",
+				viewBox: "0 0 24 24",
+			},
+			[
+				e("path", {
+					"stroke-linecap": "round",
+					"stroke-linejoin": "round",
+					"stroke-width": "1.5",
+					d: "M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z",
+				}),
+			],
+			-1
+		)
+	),
+	Fs = {
+		key: 0,
+		class: "absolute top-1 right-0.5 h-5 w-5 flex items-center justify-center bg-[#D4AF37] text-white text-[10px] font-bold rounded-full shadow-md transform group-hover:scale-110 transition-transform",
+	},
+	Cs = {
+		class: "flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 lg:p-6 bg-[#F8F9FA] dark:bg-[#050505] transition-colors duration-300",
+	},
+	Ss = {
+		setup(f) {
+			const a = ae(),
+				d = le(),
+				i = L(),
+				h = Z(),
+				g = C(!1),
+				v = 31.1035,
+				n = B(() => {
+					if (!d.rates) return [];
+					const u = [
+						"Yellow Gold-24K",
+						"Yellow Gold-22K",
+						"Yellow Gold-18K",
+						"Silver-925 Sterling",
+					];
+					return Object.entries(d.rates)
+						.filter(([c]) => !c.includes("Platinum"))
+						.map(([c, $]) => [c, ($ * v).toFixed(2)])
+						.sort((c, $) => {
+							const F = u.indexOf(c[0]),
+								w = u.indexOf($[0]);
+							return F !== -1 && w !== -1
+								? F - w
+								: F !== -1
+								? -1
+								: w !== -1
+								? 1
+								: c[0].localeCompare($[0]);
+						});
+				}),
+				s = T({
+					url: "frappe.client.get_list",
+					params: {
+						doctype: "Warehouse",
+						filters: { is_group: 0, parent_warehouse: ["like", "%Zevar US Stores%"] },
+						fields: ["name"],
+					},
+					auto: !0,
+				});
+			return (
+				ee(() => {
+					d.startPolling(),
+						a.currentWarehouse && i.loadTaxForWarehouse(a.currentWarehouse);
+				}),
+				U(
+					() => a.currentWarehouse,
+					(u) => {
+						u && i.loadTaxForWarehouse(u);
+					}
+				),
+				(u, c) => {
+					var F, w, m, p, O;
+					const $ = te("router-link");
+					return (
+						o(),
+						r("div", Ho, [
+							e("aside", Lo, [
+								Go,
+								e("div", Eo, [
+									e("nav", Ko, [
+										I(
+											$,
+											{
+												to: "/",
+												class: b([
+													"flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
+													u.$route.path === "/"
+														? ""
+														: "text-gray-400 hover:text-white hover:bg-white/5",
+												]),
+												"active-class":
+													"bg-white/10 text-white shadow-inner",
+											},
+											{
+												default: V(() => [
+													Uo,
+													e(
+														"div",
+														{
+															class: b([
+																"absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300",
+																u.$route.path === "/"
+																	? "opacity-100"
+																	: "opacity-0 group-hover:opacity-100",
+															]),
+														},
+														null,
+														2
+													),
+												]),
+												_: 1,
+											},
+											8,
+											["class"]
+										),
+										I(
+											$,
+											{
+												to: "/transactions",
+												class: b([
+													"flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
+													u.$route.path === "/transactions"
+														? ""
+														: "text-gray-400 hover:text-white hover:bg-white/5",
+												]),
+												"active-class":
+													"bg-white/10 text-white shadow-inner",
+											},
+											{
+												default: V(() => [
+													Wo,
+													e(
+														"div",
+														{
+															class: b([
+																"absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300",
+																u.$route.path === "/transactions"
+																	? "opacity-100"
+																	: "opacity-0 group-hover:opacity-100",
+															]),
+														},
+														null,
+														2
+													),
+												]),
+												_: 1,
+											},
+											8,
+											["class"]
+										),
+										I(
+											$,
+											{
+												to: "/catalogues",
+												target: "_blank",
+												class: b([
+													"flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
+													u.$route.path === "/catalogues"
+														? ""
+														: "text-gray-400 hover:text-white hover:bg-white/5",
+												]),
+												"active-class":
+													"bg-white/10 text-white shadow-inner",
+											},
+											{
+												default: V(() => [
+													No,
+													e(
+														"div",
+														{
+															class: b([
+																"absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300",
+																u.$route.path === "/catalogues"
+																	? "opacity-100"
+																	: "opacity-0 group-hover:opacity-100",
+															]),
+														},
+														null,
+														2
+													),
+												]),
+												_: 1,
+											},
+											8,
+											["class"]
+										),
+										I(
+											$,
+											{
+												to: "/repairs",
+												class: b([
+													"flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden",
+													u.$route.path === "/repairs"
+														? ""
+														: "text-gray-400 hover:text-white hover:bg-white/5",
+												]),
+												"active-class":
+													"bg-white/10 text-white shadow-inner",
+											},
+											{
+												default: V(() => [
+													qo,
+													e(
+														"div",
+														{
+															class: b([
+																"absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300",
+																u.$route.path === "/repairs"
+																	? "opacity-100"
+																	: "opacity-0 group-hover:opacity-100",
+															]),
+														},
+														null,
+														2
+													),
+												]),
+												_: 1,
+											},
+											8,
+											["class"]
+										),
+										u.$route.path === "/"
+											? (o(), r("div", Yo, [I(Ro)]))
+											: S("", !0),
+									]),
+								]),
+								e("div", Zo, [
+									e("div", Qo, [
+										e("div", Jo, [
+											e(
+												"div",
+												Xo,
+												l(
+													((m =
+														(w =
+															(F = t(a).user) == null
+																? void 0
+																: F.full_name) == null
+															? void 0
+															: w[0]) == null
+														? void 0
+														: m.toUpperCase()) || "U"
+												),
+												1
+											),
+											e("div", es, [
+												e(
+													"span",
+													ts,
+													l(
+														((p = t(a).user) == null
+															? void 0
+															: p.full_name) || "Guest"
+													),
+													1
+												),
+												e(
+													"span",
+													os,
+													l(
+														((O = t(a).user) == null
+															? void 0
+															: O.email) || ""
+													),
+													1
+												),
+											]),
+										]),
+										e(
+											"button",
+											{
+												onClick:
+													c[0] || (c[0] = (k) => t(h).toggleTheme()),
+												class: "hidden lg:flex w-8 h-8 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-[#D4AF37] transition-colors border border-white/5 focus:outline-none",
+												title: "Toggle Theme",
+											},
+											[
+												t(h).isDark
+													? (o(), r("svg", ss, as))
+													: (o(), r("svg", ls, is)),
+											]
+										),
+									]),
+								]),
+							]),
+							e("div", ds, [
+								e("header", cs, [
+									e("div", us, [
+										e("div", hs, [
+											H(
+												e(
+													"select",
+													{
+														"onUpdate:modelValue":
+															c[1] ||
+															(c[1] = (k) =>
+																(t(a).currentWarehouse = k)),
+														onChange:
+															c[2] ||
+															(c[2] = (k) =>
+																t(a).setWarehouse(k.target.value)),
+														class: "h-11 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 pl-4 pr-10 rounded-lg text-sm font-bold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] cursor-pointer min-w-[200px] transition-all hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm outline-none",
+													},
+													[
+														gs,
+														(o(!0),
+														r(
+															j,
+															null,
+															z(
+																t(s).data,
+																(k) => (
+																	o(),
+																	r(
+																		"option",
+																		{
+																			key: k.name,
+																			value: k.name,
+																		},
+																		l(k.name),
+																		9,
+																		xs
+																	)
+																)
+															),
+															128
+														)),
+													],
+													544
+												),
+												[[oe, t(a).currentWarehouse]]
+											),
+										]),
+										e("div", ps, [
+											bs,
+											H(
+												e(
+													"input",
+													{
+														type: "text",
+														"onUpdate:modelValue":
+															c[3] ||
+															(c[3] = (k) => (t(h).searchQuery = k)),
+														placeholder: "Search collection...",
+														class: "h-11 w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent text-sm font-medium pl-11 transition-all",
+													},
+													null,
+													512
+												),
+												[[W, t(h).searchQuery]]
+											),
+										]),
+									]),
+									e("div", fs, [
+										e("div", vs, [
+											_s,
+											e("div", ys, [
+												(o(!0),
+												r(
+													j,
+													null,
+													z(
+														t(n),
+														([k, M]) => (
+															o(),
+															r(
+																"div",
+																{
+																	key: k,
+																	class: "flex flex-col leading-tight flex-shrink-0 px-3",
+																},
+																[
+																	e(
+																		"span",
+																		ms,
+																		l(k.replace(/-/g, " ")),
+																		1
+																	),
+																	e("span", ks, [
+																		P("$" + l(M), 1),
+																		ws,
+																	]),
+																]
+															)
+														)
+													),
+													128
+												)),
+											]),
+										]),
+										e(
+											"button",
+											{
+												onClick: c[4] || (c[4] = (k) => (g.value = !0)),
+												class: "relative p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group",
+											},
+											[
+												$s,
+												t(i).totalItems > 0
+													? (o(), r("span", Fs, l(t(i).totalItems), 1))
+													: S("", !0),
+											]
+										),
+									]),
+								]),
+								e("main", Cs, [se(u.$slots, "default", {}, void 0, !0)]),
+							]),
+							I(
+								so,
+								{
+									isOpen: g.value,
+									onClose: c[5] || (c[5] = (k) => (g.value = !1)),
+								},
+								null,
+								8,
+								["isOpen"]
+							),
+						])
+					);
+				}
+			);
+		},
+	};
+var Ds = K(Ss, [["__scopeId", "data-v-3fbe52c4"]]);
+export { Ds as A, ae as u };
