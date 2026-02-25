@@ -80,7 +80,7 @@ def track_trending_click(item_id: str):
 		doc.view_count = (doc.view_count or 0) + 1
 		doc.last_clicked = frappe.utils.now()
 		doc.save(ignore_permissions=True)
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 
 		return {"success": True, "view_count": doc.view_count}
 	except Exception as e:

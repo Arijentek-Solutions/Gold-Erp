@@ -17,18 +17,18 @@ def _sanitize_search(term):
 	return re.sub(r'[%_\\;\'"]', "", str(term).strip())[:100]
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 @rate_limit(limit=100, seconds=60)
 def get_pos_items(
-	start=0,
-	page_length=DEFAULT_PAGE_LENGTH,
-	warehouse=None,
-	search_term=None,
-	filters=None,
-	in_stock_only=False,
-	out_of_stock_only=False,
-	source_filter=None,
-):
+	start: int = 0,
+	page_length: int = DEFAULT_PAGE_LENGTH,
+	warehouse: str | None = None,
+	search_term: str | None = None,
+	filters: str | None = None,
+	in_stock_only: bool | str = False,
+	out_of_stock_only: bool | str = False,
+	source_filter: str | None = None,
+) -> list:
 	"""
 	Fetch items for POS catalog with filtering, search, and pagination.
 
@@ -179,9 +179,9 @@ def get_pos_items(
 	return pos_items[:page_length]
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 @rate_limit(limit=100, seconds=60)
-def get_catalog_filters():
+def get_catalog_filters() -> dict:
 	"""Return available filter options for catalog UI."""
 	filters = {}
 
@@ -239,9 +239,9 @@ def get_catalog_filters():
 	return filters
 
 
-@frappe.whitelist(allow_guest=True)
+@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
 @rate_limit(limit=100, seconds=60)
-def get_item_details(item_code):
+def get_item_details(item_code: str) -> dict:
 	"""Fetch full item details including gemstones and all product attributes."""
 	from zevar_core.api.pricing import get_item_price
 

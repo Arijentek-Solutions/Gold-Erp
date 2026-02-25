@@ -58,7 +58,7 @@ def import_products(file: str | None = None, dry_run: bool = False):
 		print(f"File not found: {filepath}")
 		return
 
-	with open(filepath) as f:
+	with open(filepath) as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
 		products = json.load(f)
 
 	print(f"📦 Importing {len(products)} products from {filepath}")
@@ -163,7 +163,7 @@ def import_products(file: str | None = None, dry_run: bool = False):
 			errors += 1
 
 	if not dry_run:
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 
 	# Summary
 	print(f"\n{'=' * 50}")

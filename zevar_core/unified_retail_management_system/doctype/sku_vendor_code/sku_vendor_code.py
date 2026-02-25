@@ -14,11 +14,11 @@ class SkuVendorCode(Document):
 
 	def _validate_vendor_sku(self):
 		if not self.vendor_sku or not self.vendor_sku.strip():
-			frappe.throw("Vendor SKU Code is required.")
+			frappe.throw(frappe._("Vendor SKU Code is required."))
 
 	def _validate_vendor_cost(self):
 		if self.vendor_cost and flt(self.vendor_cost) < 0:
-			frappe.throw("Vendor cost cannot be negative.")
+			frappe.throw(frappe._("Vendor cost cannot be negative."))
 
 	def _validate_unique_mapping(self):
 		"""Ensure no duplicate item + supplier + vendor_sku combination."""
@@ -34,6 +34,7 @@ class SkuVendorCode(Document):
 		)
 		if existing:
 			frappe.throw(
-				f"A mapping for Item '{self.item_code}' + Supplier '{self.supplier}' "
-				f"+ Vendor SKU '{self.vendor_sku}' already exists."
+				frappe._("A mapping for Item '{0}' + Supplier '{1}' + Vendor SKU '{2}' already exists.").format(
+					self.item_code, self.supplier, self.vendor_sku
+				)
 			)

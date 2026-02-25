@@ -13,8 +13,8 @@ class WarrantySku(Document):
 
 	def _validate_price(self):
 		if flt(self.price) <= 0:
-			frappe.throw("Warranty price must be greater than zero.")
+			frappe.throw(frappe._("Warranty price must be greater than zero."))
 
 	def _validate_duration(self):
 		if self.duration_months not in ("6", "12", "24", "36"):
-			frappe.throw("Duration must be 6, 12, 24, or 36 months.")
+			frappe.throw(frappe._("Duration must be 6, 12, 24, or 36 months."))

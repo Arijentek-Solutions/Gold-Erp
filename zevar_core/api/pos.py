@@ -3,6 +3,7 @@ POS API - Invoice creation and settings
 """
 
 import frappe
+from frappe import _
 
 from zevar_core.constants import DEFAULT_TAX_RATES, PAYMENT_MODES
 
@@ -34,28 +35,28 @@ def create_pos_invoice(
 	payments_list = frappe.parse_json(payments) if isinstance(payments, str) else payments
 
 	if not items_list:
-		frappe.throw("At least one item is required.")
+		frappe.throw(_("At least one item is required."))
 
 	if not payments_list:
-		frappe.throw("At least one payment mode is required.")
+		frappe.throw(_("At least one payment mode is required."))
 
 	for item in items_list:
 		if not item.get("item_code"):
-			frappe.throw("Each item must have an item_code.")
+			frappe.throw(_("Each item must have an item_code."))
 		if flt(item.get("qty", 0)) <= 0:
-			frappe.throw(f"Item {item.get('item_code')}: quantity must be greater than zero.")
+			frappe.throw(_("Item {0}: quantity must be greater than zero.").format(item.get('item_code')))
 		if flt(item.get("rate", 0)) <= 0:
-			frappe.throw(f"Item {item.get('item_code')}: rate must be greater than zero.")
+			frappe.throw(_("Item {0}: rate must be greater than zero.").format(item.get('item_code')))
 
 	if not warehouse or not frappe.db.exists("Warehouse", warehouse):
-		frappe.throw(f"Warehouse '{warehouse}' not found.")
+		frappe.throw(_("Warehouse '{0}' not found.").format(warehouse))
 
 	salesperson_data = []
 	if salespersons:
 		salesperson_data = frappe.parse_json(salespersons) if isinstance(salespersons, str) else salespersons
 		total_split = sum(flt(sp.get("split")) for sp in salesperson_data[:4])
 		if salesperson_data and abs(total_split - 100) > 0.01:
-			frappe.throw(f"Salesperson splits must total 100%. Current total: {total_split}%")
+			frappe.throw(_("Salesperson splits must total 100%. Current total: {0}%").format(total_split))
 
 	is_tax_exempt = str(tax_exempt).lower() in ["true", "1", "t", "y", "yes"]
 
@@ -63,7 +64,7 @@ def create_pos_invoice(
 		customer = frappe.db.get_single_value("Global Defaults", "default_customer") or "Walk-In Customer"
 
 	if not frappe.db.exists("Customer", customer):
-		frappe.throw(f"Customer '{customer}' not found.")
+		frappe.throw(_("Customer '{0}' not found.").format(customer))
 
 	try:
 		si = frappe.new_doc("Sales Invoice")

@@ -17,17 +17,17 @@ class GiftCard(Document):
 
 	def _validate_initial_value(self):
 		if flt(self.initial_value) <= 0:
-			frappe.throw("Initial value must be greater than zero.")
+			frappe.throw(frappe._("Initial value must be greater than zero."))
 
 	def _validate_balance(self):
 		if flt(self.balance) < 0:
-			frappe.throw("Balance cannot be negative.")
+			frappe.throw(frappe._("Balance cannot be negative."))
 		if flt(self.balance) > flt(self.initial_value):
-			frappe.throw("Balance cannot exceed initial value.")
+			frappe.throw(frappe._("Balance cannot exceed initial value."))
 
 	def _validate_source(self):
 		if self.source and self.source not in VALID_SOURCES:
-			frappe.throw(f"Invalid source. Must be one of: {', '.join(VALID_SOURCES)}")
+			frappe.throw(frappe._("Invalid source. Must be one of: {0}").format(', '.join(VALID_SOURCES)))
 
 	def _auto_expire(self):
 		"""Auto-set status to Expired if past expiry date."""

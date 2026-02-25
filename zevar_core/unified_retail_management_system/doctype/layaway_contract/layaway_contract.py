@@ -14,23 +14,24 @@ class LayawayContract(Document):
 
 	def _validate_amounts(self):
 		if flt(self.total_amount) <= 0:
-			frappe.throw("Total amount must be greater than zero.")
+			frappe.throw(frappe._("Total amount must be greater than zero."))
 
 		if flt(self.deposit_amount) <= 0:
-			frappe.throw("Deposit amount must be greater than zero.")
+			frappe.throw(frappe._("Deposit amount must be greater than zero."))
 
 		if flt(self.balance_amount) < 0:
-			frappe.throw("Balance amount cannot be negative.")
+			frappe.throw(frappe._("Balance amount cannot be negative."))
 
 	def _validate_deposit_minimum(self):
 		"""Deposit must be at least 10% of total amount."""
 		minimum = flt(self.total_amount) * 0.10
 		if flt(self.deposit_amount) < minimum:
 			frappe.throw(
-				f"Deposit must be at least 10% of total amount "
-				f"(minimum ${minimum:,.2f}, got ${flt(self.deposit_amount):,.2f})."
+				frappe._("Deposit must be at least 10% of total amount (minimum ${0:,.2f}, got ${1:,.2f}).").format(
+					minimum, flt(self.deposit_amount)
+				)
 			)
 
 	def _validate_duration(self):
 		if self.maximum_duration_months not in ("6", "9", "12"):
-			frappe.throw("Duration must be 6, 9, or 12 months.")
+			frappe.throw(frappe._("Duration must be 6, 9, or 12 months."))

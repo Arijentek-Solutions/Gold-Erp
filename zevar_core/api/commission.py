@@ -3,6 +3,7 @@ Commission API - Commission calculation engine and query endpoints
 """
 
 import frappe
+from frappe import _
 from frappe.utils import flt, today
 
 # ---------------------------------------------------------------------------
@@ -16,7 +17,7 @@ def get_employee_commissions(employee: str, status: str = "") -> list:
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager", "HR User"])
 
 	if not employee or not frappe.db.exists("Employee", employee):
-		frappe.throw(f"Employee '{employee}' not found.")
+		frappe.throw(_("Employee '{0}' not found.").format(employee))
 
 	filters = {"employee": employee}
 	if status:
@@ -45,7 +46,7 @@ def get_invoice_commissions(sales_invoice: str) -> list:
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
 	if not sales_invoice or not frappe.db.exists("Sales Invoice", sales_invoice):
-		frappe.throw(f"Sales Invoice '{sales_invoice}' not found.")
+		frappe.throw(_("Sales Invoice '{0}' not found.").format(sales_invoice))
 
 	return frappe.get_all(
 		"Sales Commission Split",

@@ -3,6 +3,7 @@ Gift Card API - Balance lookup, payment processing
 """
 
 import frappe
+from frappe import _
 from frappe.utils import flt, getdate, today
 
 
@@ -40,23 +41,23 @@ def process_gift_card_payment(gift_card_number: str, amount: float) -> dict:
 
 	amount_flt = flt(amount)
 	if amount_flt <= 0:
-		frappe.throw("Payment amount must be greater than zero.")
+		frappe.throw(_("Payment amount must be greater than zero."))
 
 	if not gift_card_number or not frappe.db.exists("Gift Card", gift_card_number):
-		frappe.throw(f"Gift Card '{gift_card_number}' not found.")
+		frappe.throw(_("Gift Card '{0}' not found.").format(gift_card_number))
 
 	doc = frappe.get_doc("Gift Card", gift_card_number)
 
 	if doc.status != "Active":
-		frappe.throw(f"Gift Card is {doc.status}. Cannot process payment.")
+		frappe.throw(_("Gift Card is {0}. Cannot process payment.").format(doc.status))
 
 	if doc.expiry_date and getdate(doc.expiry_date) < getdate(today()):
 		doc.status = "Expired"
 		doc.save(ignore_permissions=True)
-		frappe.throw("Gift Card has expired.")
+		frappe.throw(_("Gift Card has expired."))
 
 	if amount_flt > flt(doc.balance):
-		frappe.throw(f"Insufficient funds. Current balance: ${flt(doc.balance):,.2f}")
+		frappe.throw(_("Insufficient funds. Current balance: ${0:,.2f}").format(flt(doc.balance)))
 
 	try:
 		doc.balance -= amount_flt

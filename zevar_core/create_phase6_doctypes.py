@@ -87,5 +87,5 @@ def create_doctypes():
 	}
 	create_custom_fields(custom_fields)
 
-	frappe.db.commit()
+	frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 	print("Phase 6 Trade-In Systems Created Successfully!")

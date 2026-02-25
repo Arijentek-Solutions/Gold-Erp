@@ -14,16 +14,16 @@ class JewelryAppraisal(Document):
 
 	def _validate_appraised_value(self):
 		if flt(self.appraised_value) <= 0:
-			frappe.throw("Appraised value must be greater than zero.")
+			frappe.throw(frappe._("Appraised value must be greater than zero."))
 
 	def _validate_weight(self):
 		if self.total_weight_grams and flt(self.total_weight_grams) <= 0:
-			frappe.throw("Total weight must be greater than zero.")
+			frappe.throw(frappe._("Total weight must be greater than zero."))
 
 	def _validate_replacement_values(self):
 		"""Replacement and insurance values should not be less than appraised value."""
 		appraised = flt(self.appraised_value)
 		if self.replacement_value and flt(self.replacement_value) < appraised:
-			frappe.throw("Replacement value should not be less than appraised value.")
+			frappe.throw(frappe._("Replacement value should not be less than appraised value."))
 		if self.insurance_value and flt(self.insurance_value) < appraised:
-			frappe.throw("Insurance value should not be less than appraised value.")
+			frappe.throw(frappe._("Insurance value should not be less than appraised value."))

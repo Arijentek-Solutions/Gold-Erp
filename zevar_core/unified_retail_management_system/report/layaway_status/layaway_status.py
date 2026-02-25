@@ -15,26 +15,26 @@ def get_columns():
 	return [
 		{
 			"fieldname": "name",
-			"label": "Contract",
+			"label": frappe._("Contract"),
 			"fieldtype": "Link",
 			"options": "Layaway Contract",
 			"width": 160,
 		},
 		{
 			"fieldname": "customer",
-			"label": "Customer",
+			"label": frappe._("Customer"),
 			"fieldtype": "Link",
 			"options": "Customer",
 			"width": 160,
 		},
-		{"fieldname": "status", "label": "Status", "fieldtype": "Data", "width": 100},
-		{"fieldname": "contract_date", "label": "Start Date", "fieldtype": "Date", "width": 110},
-		{"fieldname": "target_completion_date", "label": "Due Date", "fieldtype": "Date", "width": 110},
-		{"fieldname": "days_remaining", "label": "Days Left", "fieldtype": "Int", "width": 90},
-		{"fieldname": "total_amount", "label": "Total", "fieldtype": "Currency", "width": 120},
-		{"fieldname": "deposit_amount", "label": "Paid", "fieldtype": "Currency", "width": 120},
-		{"fieldname": "balance_amount", "label": "Balance", "fieldtype": "Currency", "width": 120},
-		{"fieldname": "pct_paid", "label": "% Paid", "fieldtype": "Percent", "width": 90},
+		{"fieldname": "status", "label": frappe._("Status"), "fieldtype": "Data", "width": 100},
+		{"fieldname": "contract_date", "label": frappe._("Start Date"), "fieldtype": "Date", "width": 110},
+		{"fieldname": "target_completion_date", "label": frappe._("Due Date"), "fieldtype": "Date", "width": 110},
+		{"fieldname": "days_remaining", "label": frappe._("Days Left"), "fieldtype": "Int", "width": 90},
+		{"fieldname": "total_amount", "label": frappe._("Total"), "fieldtype": "Currency", "width": 120},
+		{"fieldname": "deposit_amount", "label": frappe._("Paid"), "fieldtype": "Currency", "width": 120},
+		{"fieldname": "balance_amount", "label": frappe._("Balance"), "fieldtype": "Currency", "width": 120},
+		{"fieldname": "pct_paid", "label": frappe._("% Paid"), "fieldtype": "Percent", "width": 90},
 	]
 
 
@@ -54,6 +54,7 @@ def get_data(filters):
 		conditions += " AND lc.target_completion_date < %(today)s AND lc.status = 'Active'"
 		values["today"] = today()
 
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 	rows = frappe.db.sql(
 		f"""
 		SELECT

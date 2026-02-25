@@ -3,6 +3,7 @@ Finance API - In-House Finance account payments and scheduled charges
 """
 
 import frappe
+from frappe import _
 from frappe.utils import flt, today
 
 
@@ -12,7 +13,7 @@ def get_customer_finance_account(customer: str) -> dict:
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
 	if not customer or not frappe.db.exists("Customer", customer):
-		frappe.throw(f"Customer '{customer}' not found.")
+		frappe.throw(_("Customer '{0}' not found.").format(customer))
 
 	accounts = frappe.get_all(
 		"In-House Finance Account",
@@ -55,21 +56,21 @@ def process_finance_payment(account_id: str, amount: float, mode_of_payment: str
 
 	amount_flt = flt(amount)
 	if amount_flt <= 0:
-		frappe.throw("Payment amount must be greater than zero.")
+		frappe.throw(_("Payment amount must be greater than zero."))
 
 	if not mode_of_payment:
-		frappe.throw("Mode of payment is required.")
+		frappe.throw(_("Mode of payment is required."))
 
 	if not account_id or not frappe.db.exists("In-House Finance Account", account_id):
-		frappe.throw(f"Finance Account '{account_id}' not found.")
+		frappe.throw(_("Finance Account '{0}' not found.").format(account_id))
 
 	doc = frappe.get_doc("In-House Finance Account", account_id)
 
 	if doc.status in ("Closed", "Suspended"):
-		frappe.throw(f"Account is {doc.status}. Cannot process payment.")
+		frappe.throw(_("Account is {0}. Cannot process payment.").format(doc.status))
 
 	if amount_flt > flt(doc.current_balance):
-		frappe.throw("Payment amount cannot exceed current balance.")
+		frappe.throw(_("Payment amount cannot exceed current balance."))
 
 	try:
 		doc.append(
@@ -104,12 +105,12 @@ def generate_monthly_statement(account_id: str, month: int, year: int) -> dict:
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
 	if not account_id or not frappe.db.exists("In-House Finance Account", account_id):
-		frappe.throw(f"Finance Account '{account_id}' not found.")
+		frappe.throw(_("Finance Account '{0}' not found.").format(account_id))
 
 	month = int(month)
 	year = int(year)
 	if month < 1 or month > 12:
-		frappe.throw("Month must be between 1 and 12.")
+		frappe.throw(_("Month must be between 1 and 12."))
 
 	doc = frappe.get_doc("In-House Finance Account", account_id)
 

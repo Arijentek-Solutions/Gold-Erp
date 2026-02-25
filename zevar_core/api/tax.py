@@ -3,13 +3,14 @@ Tax API - Store-based tax rate lookups
 """
 
 import frappe
+from frappe import _
 
 
 @frappe.whitelist()
 def get_tax_details_by_store(store_code: str) -> dict:
 	"""Return the tax template and county tax rate for a Store Location."""
 	if not frappe.db.exists("Store Location", store_code):
-		frappe.throw(f"Store Location {store_code} not found")
+		frappe.throw(_("Store Location {0} not found").format(store_code))
 
 	doc = frappe.get_doc("Store Location", store_code)
 	return {

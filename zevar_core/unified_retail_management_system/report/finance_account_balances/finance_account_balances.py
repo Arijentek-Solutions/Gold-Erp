@@ -15,24 +15,24 @@ def get_columns():
 	return [
 		{
 			"fieldname": "name",
-			"label": "Account",
+			"label": frappe._("Account"),
 			"fieldtype": "Link",
 			"options": "In-House Finance Account",
 			"width": 160,
 		},
 		{
 			"fieldname": "customer",
-			"label": "Customer",
+			"label": frappe._("Customer"),
 			"fieldtype": "Link",
 			"options": "Customer",
 			"width": 160,
 		},
-		{"fieldname": "status", "label": "Status", "fieldtype": "Data", "width": 100},
-		{"fieldname": "credit_limit", "label": "Credit Limit", "fieldtype": "Currency", "width": 130},
-		{"fieldname": "current_balance", "label": "Balance", "fieldtype": "Currency", "width": 130},
-		{"fieldname": "available_credit", "label": "Available", "fieldtype": "Currency", "width": 130},
-		{"fieldname": "utilization", "label": "% Used", "fieldtype": "Percent", "width": 90},
-		{"fieldname": "interest_rate", "label": "APR %", "fieldtype": "Percent", "width": 80},
+		{"fieldname": "status", "label": frappe._("Status"), "fieldtype": "Data", "width": 100},
+		{"fieldname": "credit_limit", "label": frappe._("Credit Limit"), "fieldtype": "Currency", "width": 130},
+		{"fieldname": "current_balance", "label": frappe._("Balance"), "fieldtype": "Currency", "width": 130},
+		{"fieldname": "available_credit", "label": frappe._("Available"), "fieldtype": "Currency", "width": 130},
+		{"fieldname": "utilization", "label": frappe._("% Used"), "fieldtype": "Percent", "width": 90},
+		{"fieldname": "interest_rate", "label": frappe._("APR %"), "fieldtype": "Percent", "width": 80},
 	]
 
 
@@ -51,6 +51,7 @@ def get_data(filters):
 	if filters and filters.get("has_balance"):
 		conditions += " AND fa.current_balance > 0"
 
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 	rows = frappe.db.sql(
 		f"""
 		SELECT

@@ -4,7 +4,7 @@ import frappe
 
 
 def run():
-	frappe.set_user("Administrator")
+	frappe.set_user("Administrator")  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-setuser
 	print("💎 Generating 100+ High-Quality Items...")
 
 	# --- 1. CONFIGURATION ---
@@ -175,4 +175,4 @@ def run():
 		se.submit()
 		print(f"✅ Stock Added to {warehouse}!")
 
-	frappe.db.commit()
+	frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit

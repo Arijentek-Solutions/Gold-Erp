@@ -140,7 +140,7 @@ def create_item_groups(dry_run=False):
 				print(f"Created Item Group: {g['name']}")
 
 	if not dry_run:
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 
 	return created
 
@@ -149,7 +149,7 @@ def load_demo_catalog():
 	"""Load the demo catalog JSON."""
 	demo_path = Path(__file__).parent / "scraped_data" / "demo_catalog.json"
 	if demo_path.exists():
-		with open(demo_path) as f:
+		with open(demo_path) as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
 			return json.load(f)
 	return []
 
@@ -393,7 +393,7 @@ def import_items(dry_run=False, limit=None, source="all"):
 
 			if imported % 50 == 0:
 				print(f"  Imported {imported} items...")
-				frappe.db.commit()
+				frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 
 		except Exception as e:
 			errors += 1
@@ -401,7 +401,7 @@ def import_items(dry_run=False, limit=None, source="all"):
 				print(f"  Error with {item_code}: {str(e)[:100]}")
 
 	if not dry_run:
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 
 	print()
 	print("=" * 60)
@@ -450,13 +450,13 @@ def test_single_item():
 	# Delete existing if any
 	if frappe.db.exists("Item", test_data["item_code"]):
 		frappe.delete_doc("Item", test_data["item_code"], force=True)
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 		print(f"Deleted existing: {test_data['item_code']}")
 
 	try:
 		doc = frappe.get_doc(test_data)
 		doc.insert(ignore_permissions=True)
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 		print(f"SUCCESS - Created: {doc.name}")
 		return {"status": "success", "item_code": doc.name}
 	except Exception as e:

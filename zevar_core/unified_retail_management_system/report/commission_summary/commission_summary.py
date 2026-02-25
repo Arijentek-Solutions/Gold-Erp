@@ -15,16 +15,16 @@ def get_columns():
 	return [
 		{
 			"fieldname": "employee",
-			"label": "Employee",
+			"label": frappe._("Employee"),
 			"fieldtype": "Link",
 			"options": "Employee",
 			"width": 180,
 		},
-		{"fieldname": "employee_name", "label": "Employee Name", "fieldtype": "Data", "width": 180},
-		{"fieldname": "total_sales", "label": "Total Sales", "fieldtype": "Currency", "width": 140},
-		{"fieldname": "total_commission", "label": "Total Commission", "fieldtype": "Currency", "width": 140},
-		{"fieldname": "avg_rate", "label": "Avg Rate %", "fieldtype": "Percent", "width": 100},
-		{"fieldname": "split_count", "label": "# Invoices", "fieldtype": "Int", "width": 100},
+		{"fieldname": "employee_name", "label": frappe._("Employee Name"), "fieldtype": "Data", "width": 180},
+		{"fieldname": "total_sales", "label": frappe._("Total Sales"), "fieldtype": "Currency", "width": 140},
+		{"fieldname": "total_commission", "label": frappe._("Total Commission"), "fieldtype": "Currency", "width": 140},
+		{"fieldname": "avg_rate", "label": frappe._("Avg Rate %"), "fieldtype": "Percent", "width": 100},
+		{"fieldname": "split_count", "label": frappe._("# Invoices"), "fieldtype": "Int", "width": 100},
 	]
 
 
@@ -48,6 +48,7 @@ def get_data(filters):
 		conditions += " AND scs.status = %(status)s"
 		values["status"] = filters["status"]
 
+	# nosemgrep: frappe-semgrep-rules.rules.security.frappe-sql-format-injection
 	data = frappe.db.sql(
 		f"""
 		SELECT

@@ -3,6 +3,7 @@ Layaway API - Contract creation, payments, and cancellation
 """
 
 import frappe
+from frappe import _
 from frappe.utils import add_months, flt, today
 
 
@@ -12,7 +13,7 @@ def get_layaway_details(layaway_id: str) -> dict:
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
 	if not layaway_id or not frappe.db.exists("Layaway Contract", layaway_id):
-		frappe.throw(f"Layaway Contract '{layaway_id}' not found.")
+		frappe.throw(_("Layaway Contract '{0}' not found.").format(layaway_id))
 
 	doc = frappe.get_doc("Layaway Contract", layaway_id)
 
@@ -55,7 +56,7 @@ def get_customer_layaways(customer: str) -> list:
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
 	if not customer or not frappe.db.exists("Customer", customer):
-		frappe.throw(f"Customer '{customer}' not found.")
+		frappe.throw(_("Customer '{0}' not found.").format(customer))
 
 	contracts = frappe.get_all(
 		"Layaway Contract",
@@ -83,28 +84,28 @@ def create_layaway(customer: str, items: str, deposit_amount: float, duration_mo
 
 	# --- Input validation ---
 	if not items_list:
-		frappe.throw("At least one item is required.")
+		frappe.throw(_("At least one item is required."))
 
 	if not customer or not frappe.db.exists("Customer", customer):
-		frappe.throw(f"Customer '{customer}' not found.")
+		frappe.throw(_("Customer '{0}' not found.").format(customer))
 
 	if int(duration_months) not in (6, 9, 12):
-		frappe.throw("Duration must be 6, 9, or 12 months.")
+		frappe.throw(_("Duration must be 6, 9, or 12 months."))
 
 	for item in items_list:
 		if not item.get("item_code"):
-			frappe.throw("Each item must have an item_code.")
+			frappe.throw(_("Each item must have an item_code."))
 		if flt(item.get("rate", 0)) <= 0:
-			frappe.throw(f"Item {item.get('item_code')}: rate must be greater than zero.")
+			frappe.throw(_("Item {0}: rate must be greater than zero.").format(item.get('item_code')))
 
 	deposit = flt(deposit_amount)
 	total_amount = sum(flt(i.get("qty", 1)) * flt(i.get("rate")) for i in items_list)
 
 	if deposit <= 0:
-		frappe.throw("Deposit amount must be greater than zero.")
+		frappe.throw(_("Deposit amount must be greater than zero."))
 
 	if deposit >= total_amount:
-		frappe.throw("Deposit cannot equal or exceed total amount. Use a regular sale instead.")
+		frappe.throw(_("Deposit cannot equal or exceed total amount. Use a regular sale instead."))
 
 	# --- Build contract ---
 	try:
@@ -178,22 +179,22 @@ def process_layaway_payment(layaway_id: str, payment_amount: float, mode_of_paym
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
 	if not layaway_id or not frappe.db.exists("Layaway Contract", layaway_id):
-		frappe.throw(f"Layaway Contract '{layaway_id}' not found.")
+		frappe.throw(_("Layaway Contract '{0}' not found.").format(layaway_id))
 
 	doc = frappe.get_doc("Layaway Contract", layaway_id)
 
 	if doc.status != "Active":
-		frappe.throw(f"Layaway is {doc.status}, cannot process payment.")
+		frappe.throw(_("Layaway is {0}, cannot process payment.").format(doc.status))
 
 	amount = flt(payment_amount)
 	if amount <= 0:
-		frappe.throw("Payment amount must be greater than zero.")
+		frappe.throw(_("Payment amount must be greater than zero."))
 
 	if amount > flt(doc.balance_amount):
-		frappe.throw("Payment amount cannot exceed balance amount.")
+		frappe.throw(_("Payment amount cannot exceed balance amount."))
 
 	if not mode_of_payment:
-		frappe.throw("Mode of payment is required.")
+		frappe.throw(_("Mode of payment is required."))
 
 	try:
 		# Distribute payment across pending schedule rows
@@ -233,15 +234,15 @@ def cancel_layaway(layaway_id: str) -> dict:
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
 	if not layaway_id or not frappe.db.exists("Layaway Contract", layaway_id):
-		frappe.throw(f"Layaway Contract '{layaway_id}' not found.")
+		frappe.throw(_("Layaway Contract '{0}' not found.").format(layaway_id))
 
 	doc = frappe.get_doc("Layaway Contract", layaway_id)
 
 	if doc.status != "Active":
-		frappe.throw(f"Layaway is {doc.status}, cannot cancel.")
+		frappe.throw(_("Layaway is {0}, cannot cancel.").format(doc.status))
 
 	if flt(doc.deposit_amount) <= 0:
-		frappe.throw("No payments to refund.")
+		frappe.throw(_("No payments to refund."))
 
 	try:
 		gc = frappe.new_doc("Gift Card")
