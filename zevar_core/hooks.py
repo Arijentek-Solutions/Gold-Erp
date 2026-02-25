@@ -256,7 +256,8 @@ website_route_rules = [
 	{"from_route": "/pos/<path:app_path>", "to_route": "pos"},
 ]
 
-fixtures = ["Item Attribute", "Custom Field", "Property Setter"]
+# Note: "Item Attribute" requires ERPNext - not available in standalone CI
+fixtures = ["Custom Field", "Property Setter"]
 
 doc_events = {
 	"Item": {"validate": "zevar_core.item_events.calculate_net_weight_g"},
