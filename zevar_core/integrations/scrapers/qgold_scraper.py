@@ -50,7 +50,7 @@ async def remove_qgold_overlay(page):
         """)
 		if removed > 0:
 			print(f"  ✅ Removed {removed} overlays.")
-	except Exception as e:
+	except Exception:
 		pass
 
 
@@ -74,9 +74,9 @@ async def get_sub_categories(page, main_url):
 						full_url = urljoin(BASE_URL, href)
 						if not any(l["url"] == full_url for l in sub_links):
 							sub_links.append({"name": text, "url": full_url})
-			except:
+			except Exception:
 				continue
-	except Exception as e:
+	except Exception:
 		pass
 	print(f"    ✅ Found {len(sub_links)} sub-categories.")
 	return sub_links
@@ -120,10 +120,10 @@ async def scrape_products_from_page(page, category_name):
 				if r.status_code == 200:
 					with open(img_filename, "wb") as f:
 						f.write(r.content)
-			except:
+			except Exception:
 				pass
 			items.append({"name": name, "price": price, "image_url": src, "local_image": img_filename})
-		except:
+		except Exception:
 			continue
 	return items
 
@@ -173,7 +173,7 @@ async def scrape_main_category(category_key, limit):
 						await remove_qgold_overlay(page)
 						await page.wait_for_timeout(2000)
 
-						page_items = await scrape_products_from_page(page, category_name)
+						page_items = await scrape_products_from_page(page, category_key)
 						all_data.extend(page_items[: limit - len(all_data)])
 						print(f"    📦 Scraped {len(page_items)} items. (Total: {len(all_data)})")
 

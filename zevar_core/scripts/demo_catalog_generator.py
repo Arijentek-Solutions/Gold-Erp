@@ -270,7 +270,7 @@ def main():
 	# Price stats
 	prices = [p["price"] for p in products]
 	print(f"\n💰 Price range: ${min(prices):,.2f} - ${max(prices):,.2f}")
-	print(f"   Average: ${sum(prices)/len(prices):,.2f}")
+	print(f"   Average: ${sum(prices) / len(prices):,.2f}")
 
 
 if __name__ == "__main__":

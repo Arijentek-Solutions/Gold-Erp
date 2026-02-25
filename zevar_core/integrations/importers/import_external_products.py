@@ -43,14 +43,14 @@ OUTPUT_DIR = Path(__file__).parent / "scraped_data"
 
 def load_products_json(filepath):
 	"""Load products from JSON file."""
-	with open(filepath, "r") as f:
+	with open(filepath) as f:
 		return json.load(f)
 
 
 def load_products_csv(filepath):
 	"""Load products from CSV file."""
 	products = []
-	with open(filepath, "r") as f:
+	with open(filepath) as f:
 		reader = csv.DictReader(f)
 		for row in reader:
 			product = {
@@ -89,7 +89,7 @@ def validate_products(products):
 
 def print_summary(products):
 	"""Print product summary."""
-	print(f"\n📊 Product Summary:")
+	print("\n📊 Product Summary:")
 	print(f"   Total products: {len(products)}")
 
 	by_category = {}
@@ -105,7 +105,7 @@ def print_summary(products):
 	prices = [p["price"] for p in products if p.get("price")]
 	if prices:
 		print(f"\n   Price range: ${min(prices):,.2f} - ${max(prices):,.2f}")
-		print(f"   Average price: ${sum(prices)/len(prices):,.2f}")
+		print(f"   Average price: ${sum(prices) / len(prices):,.2f}")
 
 
 def main():

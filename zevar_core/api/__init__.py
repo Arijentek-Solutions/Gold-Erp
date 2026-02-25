@@ -24,33 +24,26 @@ from zevar_core.api.repair import (
 from zevar_core.api.trending import get_trending_items, track_trending_click
 
 __all__ = [
-	# Catalog
-	"get_pos_items",
-	"get_catalog_filters",
-	"get_item_details",
-	# Pricing
-	"get_item_price",
-	"refresh_gold_rates",
-	# POS
-	"create_pos_invoice",
-	"get_pos_settings",
 	"calculate_invoice_totals",
-	# Customer
-	"search_customers",
-	"get_customer_details",
-	# Trending
-	"get_trending_items",
-	"track_trending_click",
-	# Item Entry
-	"quick_add_item",
-	"get_next_vendor_sku",
-	# Repair
-	"get_repair_types",
-	"get_repair_orders",
-	"get_repair_stats",
+	"create_pos_invoice",
 	"create_repair_order",
-	"update_repair_status",
-	"get_repair_order_details",
+	"get_catalog_filters",
+	"get_customer_details",
 	"get_customer_repair_history",
+	"get_item_details",
+	"get_item_price",
+	"get_next_vendor_sku",
+	"get_pos_items",
+	"get_pos_settings",
+	"get_repair_order_details",
+	"get_repair_orders",
 	"get_repair_receipt_html",
+	"get_repair_stats",
+	"get_repair_types",
+	"get_trending_items",
+	"quick_add_item",
+	"refresh_gold_rates",
+	"search_customers",
+	"track_trending_click",
+	"update_repair_status",
 ]

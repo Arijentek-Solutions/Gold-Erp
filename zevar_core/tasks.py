@@ -65,7 +65,7 @@ def fetch_live_metal_rates():
 		)
 
 	except Exception as e:
-		frappe.logger().error(f"Metal rate fetch failed: {str(e)}")
+		frappe.logger().error(f"Metal rate fetch failed: {e!s}")
 
 
 def _update_rate(metal, purity, rate):

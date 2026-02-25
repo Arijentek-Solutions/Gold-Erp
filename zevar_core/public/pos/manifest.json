@@ -1,6 +1,6 @@
 {
   "index.html": {
-    "file": "assets/index.cc366cb9.js",
+    "file": "assets/index.4cce9dec.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
@@ -77,11 +77,11 @@
     ]
   },
   "src/pages/POS.vue": {
-    "file": "assets/POS.d94f570a.js",
+    "file": "assets/POS.3b12f99a.js",
     "src": "src/pages/POS.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_AppLayout.e6a09922.js",
+      "_AppLayout.0fa9b760.js",
       "_vendor.b4720657.js",
       "_ui.7e64e684.js"
     ],
@@ -89,8 +89,8 @@
       "assets/POS.6acd6dca.css"
     ]
   },
-  "_AppLayout.e6a09922.js": {
-    "file": "assets/AppLayout.e6a09922.js",
+  "_AppLayout.0fa9b760.js": {
+    "file": "assets/AppLayout.0fa9b760.js",
     "imports": [
       "_vendor.b4720657.js",
       "_ui.7e64e684.js"
@@ -106,7 +106,7 @@
     ]
   },
   "src/pages/CatalogueDashboard.vue": {
-    "file": "assets/CatalogueDashboard.6b35da22.js",
+    "file": "assets/CatalogueDashboard.c43729a4.js",
     "src": "src/pages/CatalogueDashboard.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -115,7 +115,7 @@
       "_ProductModal.47c14e3f.js"
     ],
     "css": [
-      "assets/CatalogueDashboard.8cf3a9aa.css"
+      "assets/CatalogueDashboard.e6a89a91.css"
     ]
   },
   "_ProductModal.47c14e3f.js": {
@@ -142,12 +142,12 @@
     ]
   },
   "src/pages/RepairTerminal.vue": {
-    "file": "assets/RepairTerminal.23747d19.js",
+    "file": "assets/RepairTerminal.c24848e8.js",
     "src": "src/pages/RepairTerminal.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vendor.b4720657.js",
-      "_AppLayout.e6a09922.js",
+      "_AppLayout.0fa9b760.js",
       "_ui.7e64e684.js"
     ]
   },

@@ -69,7 +69,7 @@ def run():
 			}
 		).insert()
 
-	for i in range(100):
+	for _i in range(100):
 		# Pick Metal
 		metal, purity = random.choice(valid_pairs)
 		j_type = random.choice(jewelry_types)

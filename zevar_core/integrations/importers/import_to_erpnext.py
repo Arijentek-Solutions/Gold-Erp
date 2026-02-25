@@ -20,7 +20,7 @@ from urllib.parse import urlparse
 import requests
 
 
-def download_image(url: str, save_dir: Path, filename: str = None) -> str:
+def download_image(url: str, save_dir: Path, filename: str | None = None) -> str | None:
 	"""Download image and return local path."""
 	try:
 		if not filename:
@@ -39,7 +39,7 @@ def download_image(url: str, save_dir: Path, filename: str = None) -> str:
 	return None
 
 
-def import_products(file: str = None, dry_run: bool = False):
+def import_products(file: str | None = None, dry_run: bool = False):
 	"""
 	Import products from JSON file to ERPNext Items.
 
@@ -58,7 +58,7 @@ def import_products(file: str = None, dry_run: bool = False):
 		print(f"File not found: {filepath}")
 		return
 
-	with open(filepath, "r") as f:
+	with open(filepath) as f:
 		products = json.load(f)
 
 	print(f"📦 Importing {len(products)} products from {filepath}")
@@ -166,9 +166,9 @@ def import_products(file: str = None, dry_run: bool = False):
 		frappe.db.commit()
 
 	# Summary
-	print(f"\n{'='*50}")
-	print(f"📊 Import Summary")
-	print(f"{'='*50}")
+	print(f"\n{'=' * 50}")
+	print("📊 Import Summary")
+	print(f"{'=' * 50}")
 	print(f"  Created: {created}")
 	print(f"  Skipped: {skipped}")
 	print(f"  Errors:  {errors}")

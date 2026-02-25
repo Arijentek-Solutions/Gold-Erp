@@ -8,6 +8,17 @@ import frappe
 from frappe import _
 from frappe.utils import nowdate
 
+_JEWELRY_TYPE_CODES = {
+	"Rings": "RNG",
+	"Chains": "CHN",
+	"Necklaces": "NKL",
+	"Earrings": "EAR",
+	"Bracelets": "BRA",
+	"Pendants": "PND",
+	"Watches": "WTC",
+	"Other": "OTH",
+}
+
 
 @frappe.whitelist()
 def quick_add_item(
@@ -123,7 +134,9 @@ def quick_add_item(
 			break  # success
 		except frappe.exceptions.DuplicateEntryError:
 			if attempt == max_retries - 1:
-				frappe.throw(_("Failed to generate a unique item code after {0} attempts").format(max_retries))
+				frappe.throw(
+					_("Failed to generate a unique item code after {0} attempts").format(max_retries)
+				)
 			# else retry with a freshly generated code
 
 	# Create stock entry if warehouse and qty provided
@@ -162,17 +175,7 @@ def _generate_vendor_sku(vendor: str | None = None, jewelry_type: str = "Other")
 		prefix = "ZEV"
 
 	# Type code
-	type_codes = {
-		"Rings": "RNG",
-		"Chains": "CHN",
-		"Necklaces": "NKL",
-		"Earrings": "EAR",
-		"Bracelets": "BRA",
-		"Pendants": "PND",
-		"Watches": "WTC",
-		"Other": "OTH",
-	}
-	type_code = type_codes.get(jewelry_type, "OTH")
+	type_code = _JEWELRY_TYPE_CODES.get(jewelry_type, "OTH")
 
 	# Get next sequence number for this prefix+type combo
 	pattern = f"{prefix}-{type_code}-%"
@@ -201,17 +204,7 @@ def _generate_vendor_sku(vendor: str | None = None, jewelry_type: str = "Other")
 
 def _generate_item_code(jewelry_type: str) -> str:
 	"""Generate a unique item code in format ZEV-{TYPE}-{SEQUENCE}."""
-	type_codes = {
-		"Rings": "RNG",
-		"Chains": "CHN",
-		"Necklaces": "NKL",
-		"Earrings": "EAR",
-		"Bracelets": "BRA",
-		"Pendants": "PND",
-		"Watches": "WTC",
-		"Other": "OTH",
-	}
-	type_code = type_codes.get(jewelry_type, "OTH")
+	type_code = _JEWELRY_TYPE_CODES.get(jewelry_type, "OTH")
 	prefix = f"ZEV-{type_code}"
 
 	last = frappe.db.sql(

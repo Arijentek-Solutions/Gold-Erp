@@ -1,4 +1,4 @@
-# Copyright (c) 2026, Arijentek Solutions and contributors
+# Copyright (c) 2026, Zevar and contributors
 # For license information, please see license.txt
 
 # import frappe

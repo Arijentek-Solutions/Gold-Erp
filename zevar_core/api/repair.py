@@ -2,7 +2,7 @@
 Repair API - Repair orders, types, and customer repair history
 """
 
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 import frappe
 from frappe import _
@@ -10,7 +10,7 @@ from frappe.utils import escape_html
 
 
 @frappe.whitelist()
-def get_repair_types(active_only: bool = True) -> List[Dict[str, Any]]:
+def get_repair_types(active_only: bool = True) -> list[dict[str, Any]]:
 	if not frappe.has_permission("Repair Type", "read"):
 		frappe.throw(_("Insufficient permissions to access Repair Types"), frappe.PermissionError)
 
@@ -25,14 +25,14 @@ def get_repair_types(active_only: bool = True) -> List[Dict[str, Any]]:
 
 @frappe.whitelist()
 def get_repair_orders(
-	status: Optional[str] = None,
-	warehouse: Optional[str] = None,
-	search_term: Optional[str] = None,
+	status: str | None = None,
+	warehouse: str | None = None,
+	search_term: str | None = None,
 	start: int = 0,
 	page_length: int = 20,
-	customer: Optional[str] = None,
-	handled_by: Optional[str] = None,
-) -> List[Dict[str, Any]]:
+	customer: str | None = None,
+	handled_by: str | None = None,
+) -> list[dict[str, Any]]:
 	if not frappe.has_permission("Repair Order", "read"):
 		frappe.throw(_("Insufficient permissions to access Repair Orders"), frappe.PermissionError)
 
@@ -88,7 +88,7 @@ def get_repair_orders(
 
 
 @frappe.whitelist()
-def get_repair_stats(warehouse: Optional[str] = None) -> Dict[str, int]:
+def get_repair_stats(warehouse: str | None = None) -> dict[str, int]:
 	if not frappe.has_permission("Repair Order", "read"):
 		frappe.throw(_("Insufficient permissions to access Repair Stats"), frappe.PermissionError)
 
@@ -117,15 +117,15 @@ def get_repair_stats(warehouse: Optional[str] = None) -> Dict[str, int]:
 def create_repair_order(
 	customer: str,
 	repair_type: str,
-	item_description: Optional[str] = None,
-	customer_phone: Optional[str] = None,
-	handled_by: Optional[str] = None,
-	warehouse: Optional[str] = None,
-	customer_notes: Optional[str] = None,
-	estimated_cost: Optional[float] = None,
+	item_description: str | None = None,
+	customer_phone: str | None = None,
+	handled_by: str | None = None,
+	warehouse: str | None = None,
+	customer_notes: str | None = None,
+	estimated_cost: float | None = None,
 	priority: str = "Medium",
 	**kwargs: Any,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
 	if not frappe.has_permission("Repair Order", "create"):
 		frappe.throw(_("Insufficient permissions to create Repair Order"), frappe.PermissionError)
 
@@ -150,7 +150,7 @@ def create_repair_order(
 
 
 @frappe.whitelist()
-def update_repair_status(name: str, status: str, work_notes: Optional[str] = None) -> Dict[str, str]:
+def update_repair_status(name: str, status: str, work_notes: str | None = None) -> dict[str, str]:
 	if not frappe.has_permission("Repair Order", "write", doc=name):
 		frappe.throw(_("Insufficient permissions to update Repair Order"), frappe.PermissionError)
 
@@ -179,7 +179,7 @@ def update_repair_status(name: str, status: str, work_notes: Optional[str] = Non
 
 
 @frappe.whitelist()
-def get_repair_order_details(name: str) -> Dict[str, Any]:
+def get_repair_order_details(name: str) -> dict[str, Any]:
 	if not frappe.has_permission("Repair Order", "read", doc=name):
 		frappe.throw(_("Insufficient permissions to view Repair Order"), frappe.PermissionError)
 
@@ -199,7 +199,7 @@ def get_repair_order_details(name: str) -> Dict[str, Any]:
 
 
 @frappe.whitelist()
-def get_customer_repair_history(customer: str, limit: int = 20) -> List[Dict[str, Any]]:
+def get_customer_repair_history(customer: str, limit: int = 20) -> list[dict[str, Any]]:
 	if not frappe.has_permission("Repair Order", "read"):
 		frappe.throw(_("Insufficient permissions to access Repair History"), frappe.PermissionError)
 
@@ -245,7 +245,7 @@ def get_repair_receipt_html(name: str) -> str:
 
 	html = f"""
 <!DOCTYPE html>
-<html><head><meta charset="utf-8"><title>Repair Receipt - {safe.get('name')}</title>
+<html><head><meta charset="utf-8"><title>Repair Receipt - {safe.get("name")}</title>
 <style>
 body {{ font-family: sans-serif; max-width: 400px; margin: 20px auto; padding: 16px; }}
 h1 {{ font-size: 18px; border-bottom: 2px solid #333; padding-bottom: 8px; }}
@@ -254,14 +254,14 @@ td {{ padding: 4px 0; }}
 .label {{ font-weight: bold; color: #555; }}
 </style></head><body>
 <h1>ZEVAR JEWELERS - REPAIR CLAIM TICKET</h1>
-<p><span class="label">Repair #:</span> {safe.get('name')}</p>
-<p><span class="label">Date:</span> {safe.get('received_date')}</p>
-<p><span class="label">Customer:</span> {safe.get('customer_name')}</p>
-<p><span class="label">Phone:</span> {safe.get('customer_phone') or '-'}</p>
-<p><span class="label">Repair Type:</span> {safe.get('repair_type_name')}</p>
-<p><span class="label">Item:</span> {safe.get('item_description') or '-'}</p>
-<p><span class="label">Estimated Cost:</span> ${float(d.get('estimated_cost') or 0):.2f}</p>
-<p><span class="label">Handled By:</span> {safe.get('handled_by_name') or '-'}</p>
+<p><span class="label">Repair #:</span> {safe.get("name")}</p>
+<p><span class="label">Date:</span> {safe.get("received_date")}</p>
+<p><span class="label">Customer:</span> {safe.get("customer_name")}</p>
+<p><span class="label">Phone:</span> {safe.get("customer_phone") or "-"}</p>
+<p><span class="label">Repair Type:</span> {safe.get("repair_type_name")}</p>
+<p><span class="label">Item:</span> {safe.get("item_description") or "-"}</p>
+<p><span class="label">Estimated Cost:</span> ${float(d.get("estimated_cost") or 0):.2f}</p>
+<p><span class="label">Handled By:</span> {safe.get("handled_by_name") or "-"}</p>
 <p style="margin-top: 24px; font-size: 12px; color: #666;">Keep this ticket to pick up your item.</p>
 </body></html>
 """

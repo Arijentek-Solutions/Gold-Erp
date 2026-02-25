@@ -1,0 +1,97 @@
+{
+    "actions": [],
+    "allow_rename": 1,
+    "creation": "2026-02-24 06:59:59.432041",
+    "doctype": "DocType",
+    "editable_grid": 1,
+    "engine": "InnoDB",
+    "field_order": [
+        "original_item_code",
+        "original_purchase_date",
+        "trade_in_value",
+        "new_item_code",
+        "new_item_value",
+        "upgrade_validation",
+        "minimum_new_value",
+        "manager_override",
+        "override_reason"
+    ],
+    "fields": [
+        {
+            "fieldname": "original_item_code",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Original Item Code",
+            "options": "Item",
+            "reqd": 1
+        },
+        {
+            "fieldname": "original_purchase_date",
+            "fieldtype": "Date",
+            "label": "Original Date of Purchase"
+        },
+        {
+            "fieldname": "trade_in_value",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "Agreed Trade-In Value",
+            "reqd": 1
+        },
+        {
+            "fieldname": "new_item_code",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "New Item (Being Purchased)",
+            "options": "Item",
+            "reqd": 1
+        },
+        {
+            "fieldname": "new_item_value",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "New Item Value",
+            "reqd": 1
+        },
+        {
+            "default": "Pending",
+            "fieldname": "upgrade_validation",
+            "fieldtype": "Select",
+            "label": "Validation Status",
+            "options": "Pending\nValid\nOverride Required",
+            "read_only": 1
+        },
+        {
+            "fieldname": "minimum_new_value",
+            "fieldtype": "Currency",
+            "label": "Minimum New Value (2x)",
+            "read_only": 1
+        },
+        {
+            "fieldname": "manager_override",
+            "fieldtype": "Link",
+            "label": "Manager Override",
+            "options": "User"
+        },
+        {
+            "depends_on": "manager_override",
+            "fieldname": "override_reason",
+            "fieldtype": "Text",
+            "label": "Override Reason"
+        }
+    ],
+    "grid_page_length": 50,
+    "index_web_pages_for_search": 1,
+    "istable": 1,
+    "links": [],
+    "modified": "2026-02-24 06:59:59.432041",
+    "modified_by": "Administrator",
+    "module": "Unified Retail Management System",
+    "name": "Trade In Record",
+    "owner": "Administrator",
+    "permissions": [],
+    "row_format": "Dynamic",
+    "rows_threshold_for_grid_search": 20,
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": []
+}

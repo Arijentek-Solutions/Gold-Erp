@@ -5,6 +5,7 @@ Catalog API - Item retrieval and filtering
 import re
 
 import frappe
+from frappe.rate_limiter import rate_limit
 
 from zevar_core.constants import DEFAULT_PAGE_LENGTH, PARTNER_SOURCES
 
@@ -16,7 +17,8 @@ def _sanitize_search(term):
 	return re.sub(r'[%_\\;\'"]', "", str(term).strip())[:100]
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
+@rate_limit(limit=100, seconds=60)
 def get_pos_items(
 	start=0,
 	page_length=DEFAULT_PAGE_LENGTH,
@@ -110,7 +112,7 @@ def get_pos_items(
 		order_by="custom_is_featured desc, custom_is_trending desc, item_group asc",
 		start=int(start),
 		page_length=fetch_length,
-		ignore_permissions=False,
+		ignore_permissions=True,
 	)
 
 	if not items:
@@ -177,7 +179,8 @@ def get_pos_items(
 	return pos_items[:page_length]
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
+@rate_limit(limit=100, seconds=60)
 def get_catalog_filters():
 	"""Return available filter options for catalog UI."""
 	filters = {}
@@ -236,7 +239,8 @@ def get_catalog_filters():
 	return filters
 
 
-@frappe.whitelist()
+@frappe.whitelist(allow_guest=True)
+@rate_limit(limit=100, seconds=60)
 def get_item_details(item_code):
 	"""Fetch full item details including gemstones and all product attributes."""
 	from zevar_core.api.pricing import get_item_price

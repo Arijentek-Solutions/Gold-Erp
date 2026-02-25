@@ -1,0 +1,151 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:FIN-{MM}{YY}-{customer}-{#####}",
+ "creation": "2026-02-24 06:56:45.299195",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "customer",
+  "status",
+  "column_break_1",
+  "interest_rate",
+  "minimum_payment_percent",
+  "section_balances",
+  "credit_limit",
+  "current_balance",
+  "column_break_bal",
+  "available_credit",
+  "section_ledger",
+  "ledger_entries"
+ ],
+ "fields": [
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1,
+   "unique": 1
+  },
+  {
+   "default": "Active",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Status",
+   "options": "Active\nSuspended\nClosed\nCollections"
+  },
+  {
+   "fieldname": "column_break_1",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "interest_rate",
+   "fieldtype": "Percent",
+   "label": "Annual Interest Rate (%)",
+   "reqd": 1
+  },
+  {
+   "default": "5",
+   "fieldname": "minimum_payment_percent",
+   "fieldtype": "Percent",
+   "label": "Minimum Payment (%)",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_balances",
+   "fieldtype": "Section Break",
+   "label": "Balances"
+  },
+  {
+   "fieldname": "credit_limit",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Credit Limit",
+   "reqd": 1
+  },
+  {
+   "default": "0",
+   "fieldname": "current_balance",
+   "fieldtype": "Currency",
+   "in_list_view": 1,
+   "label": "Current Balance",
+   "read_only": 1
+  },
+  {
+   "fieldname": "column_break_bal",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "available_credit",
+   "fieldtype": "Currency",
+   "label": "Available Credit",
+   "read_only": 1
+  },
+  {
+   "fieldname": "section_ledger",
+   "fieldtype": "Section Break",
+   "label": "Account Ledger"
+  },
+  {
+   "fieldname": "ledger_entries",
+   "fieldtype": "Table",
+   "label": "Ledger Entries",
+   "options": "Customer Ledger Entry",
+   "read_only": 1
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-24 06:56:45.299195",
+ "modified_by": "Administrator",
+ "module": "Unified Retail Management System",
+ "name": "In-House Finance Account",
+ "naming_rule": "Expression (old style)",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Accounts Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Sales User",
+   "share": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "creation",
+ "sort_order": "DESC",
+ "states": []
+}

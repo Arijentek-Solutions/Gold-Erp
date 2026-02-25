@@ -93,7 +93,7 @@ async def scrape_category(category: str, limit: int = 50, download_images: bool 
 				if await cookie_btn.count() > 0:
 					await cookie_btn.first.click()
 					await page.wait_for_timeout(1000)
-			except:
+			except Exception:
 				pass
 
 			# Scroll to load more products
@@ -120,7 +120,7 @@ async def scrape_category(category: str, limit: int = 50, download_images: bool 
 						product_elements = elements
 						print(f"  Found {len(elements)} products with selector: {selector}")
 						break
-				except:
+				except Exception:
 					continue
 
 			# If no product cards found, try extracting from page content
@@ -137,7 +137,7 @@ async def scrape_category(category: str, limit: int = 50, download_images: bool 
 			content = await page.content()
 			with open(OUTPUT_DIR / f"debug_{category}.html", "w") as f:
 				f.write(content)
-			print(f"  Debug files saved to scraped_data/")
+			print("  Debug files saved to scraped_data/")
 
 			# Extract product data
 			for i, element in enumerate(product_elements[:limit]):
@@ -174,15 +174,15 @@ async def scrape_category(category: str, limit: int = 50, download_images: bool 
 							src = await img.get_attribute("src") or await img.get_attribute("data-src")
 							if src:
 								product["image_url"] = urljoin(BASE_URL, src)
-					except:
+					except Exception:
 						pass
 
 					# Generate SKU
-					product["sku"] = f"BN-{category.upper()[:3]}-{i+1:04d}"
+					product["sku"] = f"BN-{category.upper()[:3]}-{i + 1:04d}"
 
 					if product.get("name") and product.get("price"):
 						products.append(product)
-						print(f"  ✓ {i+1}. {product['name'][:40]}... ${product['price']}")
+						print(f"  ✓ {i + 1}. {product['name'][:40]}... ${product['price']}")
 
 						# Download image
 						if download_images and product.get("image_url"):
@@ -211,7 +211,7 @@ async def scrape_all_categories(limit_per_category: int = 20):
 	all_products = []
 
 	for category in CATEGORIES:
-		print(f"\n{'='*50}")
+		print(f"\n{'=' * 50}")
 		print(f"Category: {category.upper()}")
 		print("=" * 50)
 
@@ -263,7 +263,7 @@ async def main():
 		save_products(products)
 
 		# Print summary
-		print(f"\n📊 Summary:")
+		print("\n📊 Summary:")
 		print(f"   Total products: {len(products)}")
 
 		by_category = {}

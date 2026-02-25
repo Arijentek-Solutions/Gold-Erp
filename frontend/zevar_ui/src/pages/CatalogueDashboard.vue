@@ -936,7 +936,10 @@ function startAutoSlide() {
 	slideTimer = setInterval(nextSlide, 5000)
 }
 function stopAutoSlide() {
-	if (slideTimer) clearInterval(slideTimer)
+	if (slideTimer) {
+		clearInterval(slideTimer)
+		slideTimer = null
+	}
 }
 
 // ---- ACTIONS ----

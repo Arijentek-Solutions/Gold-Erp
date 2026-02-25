@@ -1,0 +1,35 @@
+# Copyright (c) 2026, Zevar and contributors
+# For license information, please see license.txt
+
+import frappe
+from frappe.model.document import Document
+from frappe.utils import flt, getdate, today
+
+VALID_SOURCES = ("Purchase", "Layaway Cancellation", "Promotion")
+
+
+class GiftCard(Document):
+	def validate(self):
+		self._validate_initial_value()
+		self._validate_balance()
+		self._validate_source()
+		self._auto_expire()
+
+	def _validate_initial_value(self):
+		if flt(self.initial_value) <= 0:
+			frappe.throw("Initial value must be greater than zero.")
+
+	def _validate_balance(self):
+		if flt(self.balance) < 0:
+			frappe.throw("Balance cannot be negative.")
+		if flt(self.balance) > flt(self.initial_value):
+			frappe.throw("Balance cannot exceed initial value.")
+
+	def _validate_source(self):
+		if self.source and self.source not in VALID_SOURCES:
+			frappe.throw(f"Invalid source. Must be one of: {', '.join(VALID_SOURCES)}")
+
+	def _auto_expire(self):
+		"""Auto-set status to Expired if past expiry date."""
+		if self.expiry_date and self.status == "Active" and getdate(self.expiry_date) < getdate(today()):
+			self.status = "Expired"
