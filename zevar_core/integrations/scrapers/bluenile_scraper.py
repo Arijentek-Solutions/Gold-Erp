@@ -54,7 +54,7 @@ def download_image(url, filepath):
 		headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
 		r = requests.get(url, headers=headers, timeout=10)
 		if r.status_code == 200:
-			with open(filepath, "wb") as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+			with open(filepath, "wb") as f:  # nosemgrep: frappe-security-file-traversal
 				f.write(r.content)
 			return True
 	except Exception as e:
@@ -136,7 +136,7 @@ async def scrape_category(category: str, limit: int = 50, download_images: bool 
 			# Save debug info
 			await page.screenshot(path=str(OUTPUT_DIR / f"debug_{category}.png"), full_page=True)
 			content = await page.content()
-			with open(OUTPUT_DIR / f"debug_{category}.html", "w") as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+			with open(OUTPUT_DIR / f"debug_{category}.html", "w") as f:  # nosemgrep: frappe-security-file-traversal
 				f.write(content)
 			print("  Debug files saved to scraped_data/")
 
@@ -232,7 +232,7 @@ def save_products(products, filename=None):
 		filename = f"bluenile_products_{datetime.now().strftime('%Y%m%d_%H%M%S')}.json"
 
 	filepath = OUTPUT_DIR / filename
-	with open(filepath, "w", encoding="utf-8") as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+	with open(filepath, "w", encoding="utf-8") as f:  # nosemgrep: frappe-security-file-traversal
 		json.dump(products, f, indent=2, ensure_ascii=False)
 
 	print(f"\n✅ Saved {len(products)} products to {filepath}")

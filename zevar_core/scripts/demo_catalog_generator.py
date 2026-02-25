@@ -253,7 +253,7 @@ def main():
 	products = generate_catalog(args.count)
 
 	output_file = OUTPUT_DIR / args.output
-	with open(output_file, "w", encoding="utf-8") as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+	with open(output_file, "w", encoding="utf-8") as f:  # nosemgrep: frappe-security-file-traversal
 		json.dump(products, f, indent=2, ensure_ascii=False)
 
 	print(f"\n✅ Generated {len(products)} products")

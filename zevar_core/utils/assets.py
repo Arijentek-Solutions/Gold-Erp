@@ -22,7 +22,7 @@ def get_frontend_asset(app_name, entry_point):
 	manifest = {}
 	for path in manifest_paths:
 		if os.path.exists(path):
-			with open(path) as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+			with open(path) as f:  # nosemgrep: frappe-security-file-traversal
 				manifest = json.load(f)
 			break
 

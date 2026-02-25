@@ -118,7 +118,7 @@ async def scrape_products_from_page(page, category_name):
 				img_filename = f"{OUTPUT_DIR}/{category_name}_{len(items)}{ext}"
 				r = requests.get(src, timeout=5)
 				if r.status_code == 200:
-					with open(img_filename, "wb") as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+					with open(img_filename, "wb") as f:  # nosemgrep: frappe-security-file-traversal
 						f.write(r.content)
 			except Exception:
 				pass
@@ -189,7 +189,7 @@ async def scrape_main_category(category_key, limit):
 		finally:
 			await browser.close()
 
-	with open(output_file, "w", encoding="utf-8") as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+	with open(output_file, "w", encoding="utf-8") as f:  # nosemgrep: frappe-security-file-traversal
 		json.dump(all_data, f, indent=4, ensure_ascii=False)
 	print(f"✅ Finished '{category_key}'. Total: {len(all_data)} items.")
 

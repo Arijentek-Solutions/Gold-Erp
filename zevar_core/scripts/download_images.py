@@ -102,7 +102,7 @@ def download_all_images(dry_run=False, limit=None):
 
 			if response.status_code == 200:
 				# Save file
-				with open(local_path, "wb") as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+				with open(local_path, "wb") as f:  # nosemgrep: frappe-security-file-traversal
 					f.write(response.content)
 
 				# Update item record with local path

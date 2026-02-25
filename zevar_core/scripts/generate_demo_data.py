@@ -290,7 +290,7 @@ if __name__ == "__main__":
 
 	# Save to JSON
 	output_file = OUTPUT_DIR / "demo_products.json"
-	with open(output_file, "w") as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+	with open(output_file, "w") as f:  # nosemgrep: frappe-security-file-traversal
 		json.dump(products, f, indent=2)
 
 	print(f"✅ Generated {len(products)} demo products")

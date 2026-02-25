@@ -149,7 +149,7 @@ def load_demo_catalog():
 	"""Load the demo catalog JSON."""
 	demo_path = Path(__file__).parent / "scraped_data" / "demo_catalog.json"
 	if demo_path.exists():
-		with open(demo_path) as f:  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-security-file-traversal
+		with open(demo_path) as f:  # nosemgrep: frappe-security-file-traversal
 			return json.load(f)
 	return []
 
