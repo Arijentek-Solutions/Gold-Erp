@@ -19,30 +19,32 @@ import {
 	n as g,
 } from "./vendor.b4720657.js";
 const I = {
-		name: "InsertImage",
-		props: ["editor"],
-		expose: ["openDialog"],
-		data() {
-			return { addVideoDialog: { url: "", file: null, show: !1 } };
+	name: "InsertVideo",
+	props: ["editor"],
+	expose: ["openDialog"],
+	data() {
+		return { addVideoDialog: { url: "", file: null, show: !1 } };
+	},
+	components: { Button: v, Dialog: h, FileUploader: k },
+	methods: {
+		openDialog() {
+			this.addVideoDialog.show = !0;
 		},
-		components: { Button: v, Dialog: h, FileUploader: k },
-		methods: {
-			openDialog() {
-				this.addVideoDialog.show = !0;
-			},
-			onVideoSelect(i) {
-				let o = i.target.files[0];
-				!o || (this.addVideoDialog.file = o);
-			},
-			addVideo(i) {
-				this.editor.chain().focus().insertContent(`<video src="${i}"></video>`).run(),
-					this.reset();
-			},
-			reset() {
-				this.addVideoDialog = this.$options.data().addVideoDialog;
-			},
+		onVideoSelect(i) {
+			let o = i.target.files[0];
+			!o || (this.addVideoDialog.file = o);
+		},
+		addVideo(i) {
+			if (!i) return;
+			const safeUrl = new URL(i, window.location.origin).href.replace(/"/g, "&quot;");
+			this.editor.chain().focus().insertContent(`<video src="${safeUrl}" controls></video>`).run(),
+				this.reset();
+		},
+		reset() {
+			this.addVideoDialog = this.$options.data().addVideoDialog;
 		},
 	},
+},
 	N = { class: "flex items-center space-x-2" },
 	S = n(" Remove "),
 	b = ["src"],
@@ -85,54 +87,54 @@ function L(i, o, P, R, e, a) {
 											uploading: _,
 											openFileSelector: m,
 										}) => [
-											y("div", N, [
-												t(
-													s,
-													{ onClick: m },
-													{
-														default: l(() => [
-															n(
-																U(
-																	_
-																		? `Uploading ${f}%`
-																		: e.addVideoDialog.url
-																		? "Change Video"
-																		: "Upload Video"
+												y("div", N, [
+													t(
+														s,
+														{ onClick: m },
+														{
+															default: l(() => [
+																n(
+																	U(
+																		_
+																			? `Uploading ${f}%`
+																			: e.addVideoDialog.url
+																				? "Change Video"
+																				: "Upload Video"
+																	),
+																	1
 																),
-																1
-															),
-														]),
-														_: 2,
-													},
-													1032,
-													["onClick"]
-												),
-												e.addVideoDialog.url
-													? (c(),
-													  F(
-															s,
-															{
-																key: 0,
-																onClick: () => {
-																	(e.addVideoDialog.url = null),
-																		(e.addVideoDialog.file =
-																			null);
+															]),
+															_: 2,
+														},
+														1032,
+														["onClick"]
+													),
+													e.addVideoDialog.url
+														? (c(),
+															F(
+																s,
+																{
+																	key: 0,
+																	onClick: () => {
+																		(e.addVideoDialog.url = null),
+																			(e.addVideoDialog.file =
+																				null);
+																	},
 																},
-															},
-															{ default: l(() => [S]), _: 2 },
-															1032,
-															["onClick"]
-													  ))
-													: g("", !0),
-											]),
-										]
+																{ default: l(() => [S]), _: 2 },
+																1032,
+																["onClick"]
+															))
+														: g("", !0),
+												]),
+											]
 									),
 									_: 1,
 								}
 							),
 							e.addVideoDialog.url
 								? (c(),
-								  u(
+									u(
 										"video",
 										{
 											key: 0,
@@ -144,7 +146,7 @@ function L(i, o, P, R, e, a) {
 										null,
 										8,
 										b
-								  ))
+									))
 								: g("", !0),
 						]),
 						actions: l(() => [

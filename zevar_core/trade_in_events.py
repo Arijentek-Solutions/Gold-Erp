@@ -43,8 +43,15 @@ def validate_trade_in_2x_rule(doc, method=None):
 					).format(row.idx, new_item_value, minimum_new_value)
 				)
 
-			# Manager override present — allow but log the override
-			if not row.override_reason:
+			# Manager override present — allow but verify authorization
+			override_user = row.manager_override
+			if "Sales Manager" not in frappe.get_roles(override_user):
+				frappe.throw(_("Row {0}: Override user must have Sales Manager role.").format(row.idx))
+			if override_user != frappe.session.user:
+				frappe.throw(
+					_("Row {0}: Override must be approved by the logged-in manager.").format(row.idx)
+				)
+			if not (row.override_reason or "").strip():
 				frappe.throw(
 					_("Row {0}: Override reason is required when manager override is used.").format(row.idx)
 				)

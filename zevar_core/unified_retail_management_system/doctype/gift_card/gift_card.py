@@ -9,6 +9,9 @@ VALID_SOURCES = ("Purchase", "Layaway Cancellation", "Promotion")
 
 
 class GiftCard(Document):
+	def before_insert(self):
+		self.balance = flt(self.initial_value)
+
 	def validate(self):
 		self._validate_initial_value()
 		self._validate_balance()

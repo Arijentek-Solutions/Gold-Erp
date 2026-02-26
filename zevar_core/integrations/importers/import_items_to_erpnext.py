@@ -395,10 +395,12 @@ def import_items(dry_run=False, limit=None, source="all"):
 				print(f"  Imported {imported} items...")
 				frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 
-		except Exception as e:
+		except (frappe.exceptions.ValidationError, frappe.exceptions.DuplicateEntryError) as e:
 			errors += 1
 			if errors <= 5:
 				print(f"  Error with {item_code}: {str(e)[:100]}")
+		except Exception:
+			raise
 
 	if not dry_run:
 		frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
