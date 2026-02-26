@@ -655,7 +655,10 @@
 		<ProductModal
 			:show="showProductModal"
 			:item-code="selectedItemCode"
-			@close="showProductModal = false; selectedItemCode = null"
+			@close="
+				showProductModal = false
+				selectedItemCode = null
+			"
 		/>
 	</div>
 </template>
@@ -936,7 +939,10 @@ function startAutoSlide() {
 	slideTimer = setInterval(nextSlide, 5000)
 }
 function stopAutoSlide() {
-	if (slideTimer) clearInterval(slideTimer)
+	if (slideTimer) {
+		clearInterval(slideTimer)
+		slideTimer = null
+	}
 }
 
 // ---- ACTIONS ----

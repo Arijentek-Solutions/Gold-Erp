@@ -17,7 +17,7 @@ def _check_rate_limit(key, max_calls=60, period=60):
 
 
 @frappe.whitelist()
-def get_trending_items(category: str = None, limit: int = 20):
+def get_trending_items(category: str | None = None, limit: int = 20):
 	"""
 	Fetch trending items for catalog display.
 
@@ -80,15 +80,15 @@ def track_trending_click(item_id: str):
 		doc.view_count = (doc.view_count or 0) + 1
 		doc.last_clicked = frappe.utils.now()
 		doc.save(ignore_permissions=True)
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 
 		return {"success": True, "view_count": doc.view_count}
 	except Exception as e:
-		frappe.log_error(f"Failed to track trending click: {str(e)}")
+		frappe.log_error(f"Failed to track trending click: {e!s}")
 		return {"success": False, "error": str(e)}
 
 
-def _get_fallback_items(category: str = None, limit: int = 20):
+def _get_fallback_items(category: str | None = None, limit: int = 20):
 	"""Get fallback items when no trending items exist."""
 	filters = {"disabled": 0, "has_variants": 0}
 

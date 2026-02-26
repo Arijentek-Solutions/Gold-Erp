@@ -16,7 +16,7 @@
         rel="stylesheet">
     <script>
         window.csrf_token = "{{ frappe.session.csrf_token }}";
-        window.frappe_user = "{{ frappe.session.user }}";     
+        window.frappe_user = "{{ frappe.session.user }}";
     </script>
     {% set employee_portal_js = get_frontend_asset('employee-portal', 'index.js') %}
     {% set employee_portal_css = get_frontend_asset('employee-portal', 'index.css') %}

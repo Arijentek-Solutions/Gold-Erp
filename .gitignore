@@ -33,3 +33,6 @@ zevar_core/public/dist/
 zevar_core/public/node_modules/
 frontend/zevar_ui/dist/
 frontend/zevar_ui/node_modules/
+
+# Semgrep rules (cloned at CI runtime by linter workflow)
+frappe-semgrep-rules/

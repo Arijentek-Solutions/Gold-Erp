@@ -39,6 +39,8 @@ repos:
         exclude: |
             (?x)^(
                 zevar_core/public/dist/.*|
+                zevar_core/public/pos/assets/.*|
+                zevar_core/public/employee-portal/assets/.*|
                 .*node_modules.*|
                 .*boilerplate.*|
                 zevar_core/templates/includes/.*|
@@ -56,6 +58,8 @@ repos:
         exclude: |
             (?x)^(
                 zevar_core/public/dist/.*|
+                zevar_core/public/pos/assets/.*|
+                zevar_core/public/employee-portal/assets/.*|
                 cypress/.*|
                 .*node_modules.*|
                 .*boilerplate.*|

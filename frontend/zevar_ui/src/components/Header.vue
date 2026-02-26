@@ -62,11 +62,7 @@
 			<div class="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between gap-8">
 				<!-- Logo - Fixed alignment -->
 				<router-link to="/catalogues" class="flex items-center gap-3 flex-shrink-0">
-					<img
-						src="/logo.svg"
-						alt="Zevar POS"
-						class="w-9 h-9 rounded-lg"
-					/>
+					<img src="/logo.svg" alt="Zevar POS" class="w-9 h-9 rounded-lg" />
 					<div class="flex flex-col justify-center leading-none">
 						<span
 							class="font-serif font-bold text-xl tracking-tight"
@@ -228,8 +224,8 @@
 								activeCategory === cat.id
 									? 'text-[#C9A962]'
 									: isDark
-										? 'text-gray-300 hover:text-[#C9A962]'
-										: 'text-gray-700 hover:text-[#8B6914]',
+									? 'text-gray-300 hover:text-[#C9A962]'
+									: 'text-gray-700 hover:text-[#8B6914]',
 							]"
 						>
 							<span>{{ cat.name }}</span>
@@ -447,9 +443,7 @@ onMounted(async () => {
 <style scoped>
 .dropdown-enter-active,
 .dropdown-leave-active {
-	transition:
-		opacity 0.15s ease,
-		transform 0.15s ease;
+	transition: opacity 0.15s ease, transform 0.15s ease;
 }
 .dropdown-enter-from,
 .dropdown-leave-to {

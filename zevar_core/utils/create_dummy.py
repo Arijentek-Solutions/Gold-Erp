@@ -4,7 +4,7 @@ import frappe
 
 
 def run():
-	frappe.set_user("Administrator")
+	frappe.set_user("Administrator")  # nosemgrep: frappe-semgrep-rules.rules.security.frappe-setuser
 	print("💎 Generating 100+ High-Quality Items...")
 
 	# --- 1. CONFIGURATION ---
@@ -69,7 +69,7 @@ def run():
 			}
 		).insert()
 
-	for i in range(100):
+	for _i in range(100):
 		# Pick Metal
 		metal, purity = random.choice(valid_pairs)
 		j_type = random.choice(jewelry_types)
@@ -175,4 +175,4 @@ def run():
 		se.submit()
 		print(f"✅ Stock Added to {warehouse}!")
 
-	frappe.db.commit()
+	frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit

@@ -54,8 +54,8 @@ def refresh_gold_rates():
 		result = fetch_live_metal_rates()
 		return {"success": True, "message": "Gold rates refreshed successfully", "rates": result}
 	except Exception as e:
-		frappe.log_error(f"Gold rate refresh failed: {str(e)}")
-		return {"success": False, "message": f"Failed to refresh rates: {str(e)}"}
+		frappe.log_error(f"Gold rate refresh failed: {e!s}")
+		return {"success": False, "message": f"Failed to refresh rates: {e!s}"}
 
 
 def _calculate_gold_value(item) -> float:

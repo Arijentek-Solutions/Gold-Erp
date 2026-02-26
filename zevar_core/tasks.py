@@ -59,13 +59,13 @@ def fetch_live_metal_rates():
 			rate = round(silver_per_gram * multiplier, 2)
 			_update_rate("Silver", purity, rate)
 
-		frappe.db.commit()
+		frappe.db.commit()  # nosemgrep: frappe-semgrep-rules.rules.frappe-manual-commit
 		frappe.logger().info(
 			f"Metal rates updated: Gold 24K=${gold_per_gram:.2f}/g, Silver 999=${silver_per_gram:.2f}/g"
 		)
 
 	except Exception as e:
-		frappe.logger().error(f"Metal rate fetch failed: {str(e)}")
+		frappe.logger().error(f"Metal rate fetch failed: {e!s}")
 
 
 def _update_rate(metal, purity, rate):

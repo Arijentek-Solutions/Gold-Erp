@@ -1,0 +1,25 @@
+{
+    "add_total_row": 1,
+    "creation": "2026-02-25 06:39:00.000000",
+    "docstatus": 0,
+    "doctype": "Report",
+    "modified": "2026-02-25 06:39:00.000000",
+    "modified_by": "Administrator",
+    "module": "Unified Retail Management System",
+    "name": "Layaway Status",
+    "owner": "Administrator",
+    "ref_doctype": "Layaway Contract",
+    "report_name": "Layaway Status",
+    "report_type": "Script Report",
+    "roles": [
+        {
+            "role": "System Manager"
+        },
+        {
+            "role": "Sales Manager"
+        },
+        {
+            "role": "Sales User"
+        }
+    ]
+}

@@ -1,7 +1,7 @@
 [project]
 name = "zevar_core"
 authors = [
-    { name = "Arijentek Solutions", email = "akshay@arijentek.com"}
+    { name = "Zevar", email = "akshay@zevar.com"}
 ]
 description = "A centralized solution for POS operations, real-time inventory management, dynamic pricing, and CRM for Zevar Jewelery."
 requires-python = ">=3.10"

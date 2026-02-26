@@ -1,0 +1,913 @@
+var f = (j, m, c) =>
+	new Promise((w, _) => {
+		var g = (d) => {
+				try {
+					l(c.next(d));
+				} catch (v) {
+					_(v);
+				}
+			},
+			y = (d) => {
+				try {
+					l(c.throw(d));
+				} catch (v) {
+					_(v);
+				}
+			},
+			l = (d) => (d.done ? w(d.value) : Promise.resolve(d.value).then(g, y));
+		l((c = c.apply(j, m)).next());
+	});
+import {
+	i as u,
+	j as S,
+	x as ee,
+	y as te,
+	H as se,
+	b as z,
+	z as ae,
+	o as n,
+	l as e,
+	m as b,
+	I as N,
+	v as P,
+	k as i,
+	t as r,
+	n as R,
+	u as U,
+	F as T,
+	A as V,
+	U as M,
+	w as I,
+	D as re,
+	V as oe,
+	q as p,
+	W as x,
+	X as k,
+} from "./vendor.b4720657.js";
+import { u as le, A as ne } from "./AppLayout.0fa9b760.js";
+import "./ui.7e64e684.js";
+const ie = { class: "h-full flex flex-col" },
+	de = { class: "flex items-center justify-between gap-4 mb-6" },
+	ue = e(
+		"h2",
+		{ class: "text-2xl font-serif font-bold text-gray-900 dark:text-white" },
+		" Repair Terminal ",
+		-1
+	),
+	ce = { class: "flex gap-4 mb-4 flex-wrap" },
+	pe = e("option", { value: "" }, "All Statuses", -1),
+	me = e("option", { value: "Received" }, "Received", -1),
+	_e = e("option", { value: "In Progress" }, "In Progress", -1),
+	ge = e("option", { value: "Ready for Pickup" }, "Ready for Pickup", -1),
+	ye = e("option", { value: "Delivered" }, "Delivered", -1),
+	ve = [pe, me, _e, ge, ye],
+	be = { key: 0, class: "flex gap-4 mb-6 text-sm" },
+	xe = { class: "text-gray-500 dark:text-gray-400" },
+	he = p("Received: "),
+	fe = { class: "text-gray-900 dark:text-white" },
+	ke = { class: "text-gray-500 dark:text-gray-400" },
+	we = p("In Progress: "),
+	Ce = { class: "text-gray-900 dark:text-white" },
+	Re = { class: "text-gray-500 dark:text-gray-400" },
+	Se = p("Ready: "),
+	Pe = { class: "text-gray-900 dark:text-white" },
+	Te = { class: "flex-1 overflow-y-auto pb-20" },
+	Ve = { key: 0, class: "py-20 text-center" },
+	$e = e(
+		"div",
+		{
+			class: "animate-spin rounded-full h-8 w-8 border-2 border-[#8B6914] border-t-transparent mx-auto mb-4",
+		},
+		null,
+		-1
+	),
+	ze = e("span", { class: "text-gray-500 text-sm" }, "Loading repairs...", -1),
+	Ne = [$e, ze],
+	Ue = {
+		key: 1,
+		class: "py-20 text-center bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700",
+	},
+	Ie = e("p", { class: "text-gray-500" }, "No repair orders found.", -1),
+	je = [Ie],
+	Be = { key: 2, class: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" },
+	Fe = ["onClick"],
+	De = { class: "flex justify-between items-start mb-2" },
+	Ee = { class: "font-mono font-bold text-[#8B6914]" },
+	Ae = {
+		class: "text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400",
+	},
+	He = { class: "font-medium text-gray-900 dark:text-white truncate" },
+	Me = { class: "text-sm text-gray-500 truncate" },
+	Le = { class: "text-xs text-gray-400 mt-1" },
+	We = { class: "text-xs text-gray-400" },
+	qe = {
+		class: "bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto p-6",
+	},
+	Oe = e(
+		"h3",
+		{ class: "text-lg font-bold mb-4 text-gray-900 dark:text-white" },
+		" New Repair Intake ",
+		-1
+	),
+	Qe = ["onSubmit"],
+	Xe = e(
+		"label",
+		{ class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" },
+		"Customer *",
+		-1
+	),
+	Ge = { key: 0, class: "text-xs text-red-500 mt-1" },
+	Je = e(
+		"label",
+		{ class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" },
+		"Repair Type *",
+		-1
+	),
+	Ke = e("option", { value: "" }, "Select...", -1),
+	Ye = ["value"],
+	Ze = e(
+		"label",
+		{ class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" },
+		"Item Description",
+		-1
+	),
+	et = e(
+		"label",
+		{ class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" },
+		"Customer Phone",
+		-1
+	),
+	tt = e(
+		"label",
+		{ class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" },
+		"Estimated Cost",
+		-1
+	),
+	st = { class: "flex gap-2 pt-4" },
+	at = e(
+		"button",
+		{ type: "submit", class: "flex-1 py-2 bg-[#8B6914] text-white rounded-lg font-bold" },
+		" Create ",
+		-1
+	),
+	rt = {
+		class: "bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto p-6",
+	},
+	ot = { class: "flex justify-between items-start mb-4" },
+	lt = { class: "text-lg font-bold text-gray-900 dark:text-white" },
+	nt = e("span", { class: "text-gray-500" }, "Customer:", -1),
+	it = e("span", { class: "text-gray-500" }, "Repair:", -1),
+	dt = e("span", { class: "text-gray-500" }, "Handled by:", -1),
+	ut = e("span", { class: "text-gray-500" }, "Status:", -1),
+	ct = e("span", { class: "text-gray-500" }, "Total:", -1),
+	pt = { class: "mt-4 flex flex-wrap gap-2" },
+	mt = { key: 0, class: "mt-4 border-t pt-4" },
+	_t = e("h4", { class: "font-bold text-sm mb-2" }, "Customer repair history", -1),
+	gt = { class: "text-sm space-y-1" },
+	yt = { class: "mt-4 pt-4 border-t" },
+	vt = e("label", { class: "block text-sm font-medium mb-1" }, "Update status", -1),
+	bt = ["value"],
+	wt = {
+		setup(j) {
+			const m = le(),
+				c = u(""),
+				w = u(""),
+				_ = u([]),
+				g = u(null),
+				y = u(!1),
+				l = u(null),
+				d = u(""),
+				v = u([]),
+				B = u(""),
+				L = [
+					"Received",
+					"Estimated",
+					"Approved",
+					"In Progress",
+					"Quality Check",
+					"Ready for Pickup",
+					"Delivered",
+					"Cancelled",
+				],
+				o = u({
+					customer: null,
+					repair_type: "",
+					item_description: "",
+					customer_phone: "",
+					estimated_cost: null,
+				}),
+				F = S({
+					url: "frappe.client.get_list",
+					makeParams: () => ({
+						doctype: "Customer",
+						filters: { customer_name: ["like", `%${B.value}%`] },
+						fields: ["name", "customer_name", "mobile_no"],
+						limit_page_length: 10,
+					}),
+					auto: !1,
+				}),
+				W = ee(() =>
+					(F.data || []).map((a) => ({
+						label: a.customer_name + (a.mobile_no ? ` (${a.mobile_no})` : ""),
+						value: a.name,
+					}))
+				);
+			let D;
+			function q(a) {
+				(B.value = a),
+					clearTimeout(D),
+					(D = setTimeout(() => {
+						F.fetch();
+					}, 300));
+			}
+			const E = u([]),
+				O = S({
+					url: "zevar_core.api.get_repair_types",
+					onSuccess: (a) => {
+						E.value = a || [];
+					},
+				}),
+				A = S({
+					url: "zevar_core.api.get_repair_orders",
+					makeParams: () => ({
+						status: c.value || void 0,
+						warehouse: m.currentWarehouse || void 0,
+						search_term: w.value || void 0,
+						page_length: 50,
+					}),
+					onSuccess: (a) => {
+						_.value = a || [];
+					},
+				}),
+				Q = S({
+					url: "zevar_core.api.get_repair_stats",
+					makeParams: () => ({ warehouse: m.currentWarehouse || void 0 }),
+					onSuccess: (a) => {
+						g.value = a;
+					},
+				});
+			function C() {
+				A.fetch(), Q.fetch();
+			}
+			let H;
+			function X() {
+				clearTimeout(H), (H = setTimeout(C, 300));
+			}
+			function $(a) {
+				return a == null ? "0.00" : Number(a).toFixed(2);
+			}
+			function G() {
+				return f(this, null, function* () {
+					var a, s, t;
+					if (!o.value.customer || !o.value.repair_type) {
+						x({
+							title: "Missing Information",
+							message: "Customer and Repair Type are required.",
+							icon: "alert-circle",
+							intent: "error",
+						});
+						return;
+					}
+					try {
+						const h =
+							((a = o.value.customer) == null ? void 0 : a.value) ||
+							o.value.customer;
+						yield k("zevar_core.api.create_repair_order", {
+							customer: h,
+							repair_type: o.value.repair_type,
+							item_description: o.value.item_description || void 0,
+							customer_phone: o.value.customer_phone || void 0,
+							estimated_cost: o.value.estimated_cost || void 0,
+							warehouse: m.currentWarehouse || void 0,
+							handled_by: ((s = m.user) == null ? void 0 : s.email) || void 0,
+						}),
+							(y.value = !1),
+							(o.value = {
+								customer: null,
+								repair_type: "",
+								item_description: "",
+								customer_phone: "",
+								estimated_cost: null,
+							}),
+							C(),
+							x({
+								title: "Success",
+								message: "Repair order created successfully.",
+								icon: "check",
+								intent: "success",
+							});
+					} catch (h) {
+						console.error(h),
+							x({
+								title: "Error",
+								message:
+									((t = h.messages) == null ? void 0 : t[0]) ||
+									h.message ||
+									"Failed to create repair order.",
+								icon: "alert-triangle",
+								intent: "error",
+							});
+					}
+				});
+			}
+			function J(a) {
+				return f(this, null, function* () {
+					const s = yield k("zevar_core.api.get_repair_order_details", { name: a.name });
+					(l.value = s), (d.value = s.status);
+				});
+			}
+			function K(a) {
+				return f(this, null, function* () {
+					var s;
+					try {
+						yield k("zevar_core.api.update_repair_status", {
+							name: a,
+							status: d.value,
+						});
+						const t = yield k("zevar_core.api.get_repair_order_details", { name: a });
+						(l.value = t),
+							C(),
+							x({
+								title: "Updated",
+								message: `Status changed to ${d.value}`,
+								icon: "check",
+								intent: "success",
+							});
+					} catch (t) {
+						console.error(t),
+							x({
+								title: "Error",
+								message:
+									((s = t.messages) == null ? void 0 : s[0]) ||
+									"Failed to update status",
+								icon: "alert-triangle",
+								intent: "error",
+							});
+					}
+				});
+			}
+			function Y(a) {
+				return f(this, null, function* () {
+					try {
+						const s = yield k("zevar_core.api.get_repair_receipt_html", { name: a }),
+							t = window.open("", "_blank");
+						t.document.write(s), t.document.close(), t.print();
+					} catch (s) {
+						console.error(s),
+							x({
+								title: "Error",
+								message: "Failed to generate receipt",
+								icon: "alert-triangle",
+								intent: "error",
+							});
+					}
+				});
+			}
+			function Z(a) {
+				return f(this, null, function* () {
+					try {
+						const s = yield k("zevar_core.api.get_customer_repair_history", {
+							customer: a,
+							limit: 10,
+						});
+						v.value = s || [];
+					} catch (s) {
+						console.error(s),
+							x({
+								title: "Error",
+								message: "Failed to load history",
+								icon: "alert-triangle",
+								intent: "error",
+							});
+					}
+				});
+			}
+			return (
+				te(
+					() => m.currentWarehouse,
+					() => {
+						C();
+					},
+					{ immediate: !0 }
+				),
+				se(() => {
+					O.fetch();
+				}),
+				(a, s) => (
+					n(),
+					z(ne, null, {
+						default: ae(() => [
+							e("div", ie, [
+								e("div", de, [
+									ue,
+									e(
+										"button",
+										{
+											onClick: s[0] || (s[0] = (t) => (y.value = !0)),
+											class: "px-4 py-2 bg-[#8B6914] hover:bg-[#6d5210] text-white rounded-lg text-sm font-bold uppercase tracking-wider",
+										},
+										" + New Repair "
+									),
+								]),
+								e("div", ce, [
+									b(
+										e(
+											"select",
+											{
+												"onUpdate:modelValue":
+													s[1] || (s[1] = (t) => (c.value = t)),
+												onChange: C,
+												class: "px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm",
+											},
+											ve,
+											544
+										),
+										[[N, c.value]]
+									),
+									b(
+										e(
+											"input",
+											{
+												"onUpdate:modelValue":
+													s[2] || (s[2] = (t) => (w.value = t)),
+												onInput: X,
+												placeholder: "Search by repair #",
+												class: "px-3 py-2 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-sm w-48",
+											},
+											null,
+											544
+										),
+										[[P, w.value]]
+									),
+								]),
+								g.value
+									? (n(),
+									  i("div", be, [
+											e("span", xe, [
+												he,
+												e("b", fe, r(g.value.Received || 0), 1),
+											]),
+											e("span", ke, [
+												we,
+												e("b", Ce, r(g.value["In Progress"] || 0), 1),
+											]),
+											e("span", Re, [
+												Se,
+												e("b", Pe, r(g.value["Ready for Pickup"] || 0), 1),
+											]),
+									  ]))
+									: R("", !0),
+								e("div", Te, [
+									U(A).loading && !_.value.length
+										? (n(), i("div", Ve, Ne))
+										: _.value.length
+										? (n(),
+										  i("div", Be, [
+												(n(!0),
+												i(
+													T,
+													null,
+													V(
+														_.value,
+														(t) => (
+															n(),
+															i(
+																"div",
+																{
+																	key: t.name,
+																	onClick: (h) => J(t),
+																	class: "p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 hover:border-[#8B6914] cursor-pointer transition-colors",
+																},
+																[
+																	e("div", De, [
+																		e(
+																			"span",
+																			Ee,
+																			r(t.name),
+																			1
+																		),
+																		e(
+																			"span",
+																			Ae,
+																			r(t.status),
+																			1
+																		),
+																	]),
+																	e(
+																		"p",
+																		He,
+																		r(
+																			t.repair_type_name ||
+																				t.repair_type
+																		),
+																		1
+																	),
+																	e(
+																		"p",
+																		Me,
+																		r(
+																			t.customer_name ||
+																				t.customer
+																		),
+																		1
+																	),
+																	e(
+																		"p",
+																		Le,
+																		" Handled by: " +
+																			r(
+																				t.handled_by_name ||
+																					"-"
+																			),
+																		1
+																	),
+																	e(
+																		"p",
+																		We,
+																		" Est. $" +
+																			r($(t.estimated_cost)),
+																		1
+																	),
+																],
+																8,
+																Fe
+															)
+														)
+													),
+													128
+												)),
+										  ]))
+										: (n(), i("div", Ue, je)),
+								]),
+							]),
+							(n(),
+							z(M, { to: "body" }, [
+								y.value
+									? (n(),
+									  i(
+											"div",
+											{
+												key: 0,
+												class: "fixed inset-0 z-50 flex items-center justify-center bg-black/50",
+												onClick:
+													s[9] ||
+													(s[9] = I((t) => (y.value = !1), ["self"])),
+											},
+											[
+												e("div", qe, [
+													Oe,
+													e(
+														"form",
+														{
+															onSubmit: I(G, ["prevent"]),
+															class: "space-y-4",
+														},
+														[
+															e("div", null, [
+																Xe,
+																re(
+																	U(oe),
+																	{
+																		modelValue:
+																			o.value.customer,
+																		"onUpdate:modelValue":
+																			s[3] ||
+																			(s[3] = (t) =>
+																				(o.value.customer =
+																					t)),
+																		options: U(W),
+																		placeholder:
+																			"Search Customer (Name or Phone)",
+																		"onUpdate:query": q,
+																	},
+																	null,
+																	8,
+																	["modelValue", "options"]
+																),
+																o.value.customer
+																	? R("", !0)
+																	: (n(),
+																	  i(
+																			"p",
+																			Ge,
+																			" Please select a valid customer. "
+																	  )),
+															]),
+															e("div", null, [
+																Je,
+																b(
+																	e(
+																		"select",
+																		{
+																			"onUpdate:modelValue":
+																				s[4] ||
+																				(s[4] = (t) =>
+																					(o.value.repair_type =
+																						t)),
+																			required: "",
+																			class: "w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800",
+																		},
+																		[
+																			Ke,
+																			(n(!0),
+																			i(
+																				T,
+																				null,
+																				V(
+																					E.value,
+																					(t) => (
+																						n(),
+																						i(
+																							"option",
+																							{
+																								key: t.name,
+																								value: t.name,
+																							},
+																							r(
+																								t.repair_name
+																							) +
+																								" (" +
+																								r(
+																									t.base_price
+																										? "$" +
+																												t.base_price
+																										: "-"
+																								) +
+																								") ",
+																							9,
+																							Ye
+																						)
+																					)
+																				),
+																				128
+																			)),
+																		],
+																		512
+																	),
+																	[[N, o.value.repair_type]]
+																),
+															]),
+															e("div", null, [
+																Ze,
+																b(
+																	e(
+																		"textarea",
+																		{
+																			"onUpdate:modelValue":
+																				s[5] ||
+																				(s[5] = (t) =>
+																					(o.value.item_description =
+																						t)),
+																			class: "w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800",
+																			rows: "2",
+																		},
+																		null,
+																		512
+																	),
+																	[[P, o.value.item_description]]
+																),
+															]),
+															e("div", null, [
+																et,
+																b(
+																	e(
+																		"input",
+																		{
+																			"onUpdate:modelValue":
+																				s[6] ||
+																				(s[6] = (t) =>
+																					(o.value.customer_phone =
+																						t)),
+																			class: "w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800",
+																		},
+																		null,
+																		512
+																	),
+																	[[P, o.value.customer_phone]]
+																),
+															]),
+															e("div", null, [
+																tt,
+																b(
+																	e(
+																		"input",
+																		{
+																			"onUpdate:modelValue":
+																				s[7] ||
+																				(s[7] = (t) =>
+																					(o.value.estimated_cost =
+																						t)),
+																			type: "number",
+																			step: "0.01",
+																			class: "w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800",
+																		},
+																		null,
+																		512
+																	),
+																	[
+																		[
+																			P,
+																			o.value.estimated_cost,
+																			void 0,
+																			{ number: !0 },
+																		],
+																	]
+																),
+															]),
+															e("div", st, [
+																at,
+																e(
+																	"button",
+																	{
+																		type: "button",
+																		onClick:
+																			s[8] ||
+																			(s[8] = (t) =>
+																				(y.value = !1)),
+																		class: "flex-1 py-2 border border-gray-300 dark:border-gray-600 rounded-lg",
+																	},
+																	" Cancel "
+																),
+															]),
+														],
+														40,
+														Qe
+													),
+												]),
+											]
+									  ))
+									: R("", !0),
+							])),
+							(n(),
+							z(M, { to: "body" }, [
+								l.value
+									? (n(),
+									  i(
+											"div",
+											{
+												key: 0,
+												class: "fixed inset-0 z-50 flex items-center justify-center bg-black/50",
+												onClick:
+													s[15] ||
+													(s[15] = I((t) => (l.value = null), ["self"])),
+											},
+											[
+												e("div", rt, [
+													e("div", ot, [
+														e("h3", lt, r(l.value.name), 1),
+														e(
+															"button",
+															{
+																onClick:
+																	s[10] ||
+																	(s[10] = (t) =>
+																		(l.value = null)),
+																class: "text-gray-500 hover:text-gray-700",
+															},
+															" Close "
+														),
+													]),
+													e("p", null, [
+														nt,
+														p(" " + r(l.value.customer_name), 1),
+													]),
+													e("p", null, [
+														it,
+														p(" " + r(l.value.repair_type_name), 1),
+													]),
+													e("p", null, [
+														dt,
+														p(
+															" " +
+																r(l.value.handled_by_name || "-"),
+															1
+														),
+													]),
+													e("p", null, [
+														ut,
+														p(" " + r(l.value.status), 1),
+													]),
+													e("p", null, [
+														ct,
+														p(" $" + r($(l.value.total_cost)), 1),
+													]),
+													e("div", pt, [
+														e(
+															"button",
+															{
+																onClick:
+																	s[11] ||
+																	(s[11] = (t) =>
+																		Y(l.value.name)),
+																class: "px-3 py-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm font-medium",
+															},
+															" Print Receipt "
+														),
+														e(
+															"button",
+															{
+																onClick:
+																	s[12] ||
+																	(s[12] = (t) =>
+																		Z(l.value.customer)),
+																class: "px-3 py-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg text-sm font-medium",
+															},
+															" Repair History "
+														),
+													]),
+													v.value.length
+														? (n(),
+														  i("div", mt, [
+																_t,
+																e("ul", gt, [
+																	(n(!0),
+																	i(
+																		T,
+																		null,
+																		V(
+																			v.value,
+																			(t) => (
+																				n(),
+																				i(
+																					"li",
+																					{
+																						key: t.name,
+																					},
+																					r(t.name) +
+																						" - " +
+																						r(
+																							t.repair_type_name
+																						) +
+																						" - " +
+																						r(
+																							t.status
+																						) +
+																						" - $" +
+																						r(
+																							$(
+																								t.total_cost
+																							)
+																						),
+																					1
+																				)
+																			)
+																		),
+																		128
+																	)),
+																]),
+														  ]))
+														: R("", !0),
+													e("div", yt, [
+														vt,
+														b(
+															e(
+																"select",
+																{
+																	"onUpdate:modelValue":
+																		s[13] ||
+																		(s[13] = (t) =>
+																			(d.value = t)),
+																	onChange:
+																		s[14] ||
+																		(s[14] = (t) =>
+																			K(l.value.name)),
+																	class: "w-full px-3 py-2 border rounded-lg bg-white dark:bg-gray-800",
+																},
+																[
+																	(n(),
+																	i(
+																		T,
+																		null,
+																		V(L, (t) =>
+																			e(
+																				"option",
+																				{
+																					key: t,
+																					value: t,
+																				},
+																				r(t),
+																				9,
+																				bt
+																			)
+																		),
+																		64
+																	)),
+																],
+																544
+															),
+															[[N, d.value]]
+														),
+													]),
+												]),
+											]
+									  ))
+									: R("", !0),
+							])),
+						]),
+						_: 1,
+					})
+				)
+			);
+		},
+	};
+export { wt as default };

@@ -17,11 +17,7 @@
 				<div
 					class="flex items-center gap-3 bg-[#111420] p-2 rounded-lg border border-white/5"
 				>
-					<img
-						:src="logoUrl"
-						alt="Zevar"
-						class="w-8 h-8 rounded"
-					/>
+					<img :src="logoUrl" alt="Zevar" class="w-8 h-8 rounded" />
 					<span class="font-bold text-white tracking-wide">Zevar</span>
 				</div>
 			</div>
