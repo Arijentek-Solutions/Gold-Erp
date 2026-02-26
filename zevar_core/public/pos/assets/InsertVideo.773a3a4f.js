@@ -30,13 +30,15 @@ const I = {
 		openDialog() {
 			this.addVideoDialog.show = !0;
 		},
-		onVideoSelect(i) {
-			let o = i.target.files[0];
-			!o || (this.addVideoDialog.file = o);
-		},
 		addVideo(i) {
 			if (!i) return;
-			const safeUrl = new URL(i, window.location.origin).href.replace(/"/g, "&quot;");
+			let safeUrl;
+			try {
+				safeUrl = new URL(i, window.location.origin).href.replace(/"/g, "&quot;");
+			} catch {
+				console.warn("Invalid video URL:", i);
+				return;
+			}
 			this.editor.chain().focus().insertContent(`<video src="${safeUrl}" controls></video>`).run(),
 				this.reset();
 		},
@@ -140,7 +142,6 @@ function L(i, o, P, R, e, a) {
 											key: 0,
 											src: e.addVideoDialog.url,
 											class: "mt-2 w-full rounded-lg",
-											type: "video/mp4",
 											controls: "",
 										},
 										null,

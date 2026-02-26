@@ -8,7 +8,7 @@ from frappe import _
 from frappe.utils import flt
 
 
-def validate_trade_in_2x_rule(doc, method=None):
+def validate_trade_in_2x_rule(doc: "frappe.model.document.Document", _method: str | None = None) -> None:
 	"""
 	Run on Sales Invoice validate.
 	For each trade-in row, enforce that the new item value is at least
@@ -35,12 +35,13 @@ def validate_trade_in_2x_rule(doc, method=None):
 			row.upgrade_validation = "Override Required"
 
 			if not row.manager_override:
+				currency = doc.get("currency") or frappe.defaults.get_global_default("currency") or "USD"
 				frappe.throw(
 					_(
-						"Row {0}: New item value (${1:,.2f}) must be at least 2x "
-						"the trade-in value (minimum ${2:,.2f}). "
+						"Row {0}: New item value ({1} {2:,.2f}) must be at least 2x "
+						"the trade-in value (minimum {1} {3:,.2f}). "
 						"Requires Manager Override."
-					).format(row.idx, new_item_value, minimum_new_value)
+					).format(row.idx, currency, new_item_value, minimum_new_value)
 				)
 
 			# Manager override present — allow but verify authorization
