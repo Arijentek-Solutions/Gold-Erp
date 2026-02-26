@@ -136,7 +136,9 @@ async def scrape_category(category: str, limit: int = 50, download_images: bool 
 			# Save debug info
 			await page.screenshot(path=str(OUTPUT_DIR / f"debug_{category}.png"), full_page=True)
 			content = await page.content()
-			with open(OUTPUT_DIR / f"debug_{category}.html", "w") as f:  # nosemgrep: frappe-security-file-traversal
+			with open(
+				OUTPUT_DIR / f"debug_{category}.html", "w"
+			) as f:  # nosemgrep: frappe-security-file-traversal
 				f.write(content)
 			print("  Debug files saved to scraped_data/")
 

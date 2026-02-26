@@ -28,9 +28,19 @@ def get_columns():
 			"width": 160,
 		},
 		{"fieldname": "status", "label": frappe._("Status"), "fieldtype": "Data", "width": 100},
-		{"fieldname": "credit_limit", "label": frappe._("Credit Limit"), "fieldtype": "Currency", "width": 130},
+		{
+			"fieldname": "credit_limit",
+			"label": frappe._("Credit Limit"),
+			"fieldtype": "Currency",
+			"width": 130,
+		},
 		{"fieldname": "current_balance", "label": frappe._("Balance"), "fieldtype": "Currency", "width": 130},
-		{"fieldname": "available_credit", "label": frappe._("Available"), "fieldtype": "Currency", "width": 130},
+		{
+			"fieldname": "available_credit",
+			"label": frappe._("Available"),
+			"fieldtype": "Currency",
+			"width": 130,
+		},
 		{"fieldname": "utilization", "label": frappe._("% Used"), "fieldtype": "Percent", "width": 90},
 		{"fieldname": "interest_rate", "label": frappe._("APR %"), "fieldtype": "Percent", "width": 80},
 	]

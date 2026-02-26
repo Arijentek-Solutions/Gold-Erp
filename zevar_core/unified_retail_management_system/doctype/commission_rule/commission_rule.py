@@ -16,7 +16,9 @@ class CommissionRule(Document):
 
 	def _validate_calculation_type(self):
 		if self.calculation_type not in VALID_CALC_TYPES:
-			frappe.throw(frappe._("Invalid calculation type. Must be one of: {0}").format(', '.join(VALID_CALC_TYPES)))
+			frappe.throw(
+				frappe._("Invalid calculation type. Must be one of: {0}").format(", ".join(VALID_CALC_TYPES))
+			)
 
 	def _validate_flat_rate(self):
 		if self.calculation_type == "Flat Rate":
@@ -33,5 +35,7 @@ class CommissionRule(Document):
 			)
 			if existing:
 				frappe.throw(
-					frappe._("'{0}' is already the default rule. Only one default commission rule is allowed.").format(existing[0].name)
+					frappe._(
+						"'{0}' is already the default rule. Only one default commission rule is allowed."
+					).format(existing[0].name)
 				)

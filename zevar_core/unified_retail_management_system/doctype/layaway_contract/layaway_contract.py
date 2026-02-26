@@ -27,9 +27,9 @@ class LayawayContract(Document):
 		minimum = flt(self.total_amount) * 0.10
 		if flt(self.deposit_amount) < minimum:
 			frappe.throw(
-				frappe._("Deposit must be at least 10% of total amount (minimum ${0:,.2f}, got ${1:,.2f}).").format(
-					minimum, flt(self.deposit_amount)
-				)
+				frappe._(
+					"Deposit must be at least 10% of total amount (minimum ${0:,.2f}, got ${1:,.2f})."
+				).format(minimum, flt(self.deposit_amount))
 			)
 
 	def _validate_duration(self):

@@ -27,7 +27,7 @@ class GiftCard(Document):
 
 	def _validate_source(self):
 		if self.source and self.source not in VALID_SOURCES:
-			frappe.throw(frappe._("Invalid source. Must be one of: {0}").format(', '.join(VALID_SOURCES)))
+			frappe.throw(frappe._("Invalid source. Must be one of: {0}").format(", ".join(VALID_SOURCES)))
 
 	def _auto_expire(self):
 		"""Auto-set status to Expired if past expiry date."""

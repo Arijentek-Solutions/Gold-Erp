@@ -29,7 +29,12 @@ def get_columns():
 		},
 		{"fieldname": "status", "label": frappe._("Status"), "fieldtype": "Data", "width": 100},
 		{"fieldname": "contract_date", "label": frappe._("Start Date"), "fieldtype": "Date", "width": 110},
-		{"fieldname": "target_completion_date", "label": frappe._("Due Date"), "fieldtype": "Date", "width": 110},
+		{
+			"fieldname": "target_completion_date",
+			"label": frappe._("Due Date"),
+			"fieldtype": "Date",
+			"width": 110,
+		},
 		{"fieldname": "days_remaining", "label": frappe._("Days Left"), "fieldtype": "Int", "width": 90},
 		{"fieldname": "total_amount", "label": frappe._("Total"), "fieldtype": "Currency", "width": 120},
 		{"fieldname": "deposit_amount", "label": frappe._("Paid"), "fieldtype": "Currency", "width": 120},

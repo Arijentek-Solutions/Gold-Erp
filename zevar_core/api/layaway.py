@@ -96,7 +96,7 @@ def create_layaway(customer: str, items: str, deposit_amount: float, duration_mo
 		if not item.get("item_code"):
 			frappe.throw(_("Each item must have an item_code."))
 		if flt(item.get("rate", 0)) <= 0:
-			frappe.throw(_("Item {0}: rate must be greater than zero.").format(item.get('item_code')))
+			frappe.throw(_("Item {0}: rate must be greater than zero.").format(item.get("item_code")))
 
 	deposit = flt(deposit_amount)
 	total_amount = sum(flt(i.get("qty", 1)) * flt(i.get("rate")) for i in items_list)

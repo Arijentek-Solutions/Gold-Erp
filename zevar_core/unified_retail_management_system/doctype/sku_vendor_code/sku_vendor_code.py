@@ -34,7 +34,7 @@ class SkuVendorCode(Document):
 		)
 		if existing:
 			frappe.throw(
-				frappe._("A mapping for Item '{0}' + Supplier '{1}' + Vendor SKU '{2}' already exists.").format(
-					self.item_code, self.supplier, self.vendor_sku
-				)
+				frappe._(
+					"A mapping for Item '{0}' + Supplier '{1}' + Vendor SKU '{2}' already exists."
+				).format(self.item_code, self.supplier, self.vendor_sku)
 			)

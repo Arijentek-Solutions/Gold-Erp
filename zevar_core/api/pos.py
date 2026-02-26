@@ -44,9 +44,9 @@ def create_pos_invoice(
 		if not item.get("item_code"):
 			frappe.throw(_("Each item must have an item_code."))
 		if flt(item.get("qty", 0)) <= 0:
-			frappe.throw(_("Item {0}: quantity must be greater than zero.").format(item.get('item_code')))
+			frappe.throw(_("Item {0}: quantity must be greater than zero.").format(item.get("item_code")))
 		if flt(item.get("rate", 0)) <= 0:
-			frappe.throw(_("Item {0}: rate must be greater than zero.").format(item.get('item_code')))
+			frappe.throw(_("Item {0}: rate must be greater than zero.").format(item.get("item_code")))
 
 	if not warehouse or not frappe.db.exists("Warehouse", warehouse):
 		frappe.throw(_("Warehouse '{0}' not found.").format(warehouse))

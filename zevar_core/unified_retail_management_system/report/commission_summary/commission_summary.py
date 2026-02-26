@@ -22,7 +22,12 @@ def get_columns():
 		},
 		{"fieldname": "employee_name", "label": frappe._("Employee Name"), "fieldtype": "Data", "width": 180},
 		{"fieldname": "total_sales", "label": frappe._("Total Sales"), "fieldtype": "Currency", "width": 140},
-		{"fieldname": "total_commission", "label": frappe._("Total Commission"), "fieldtype": "Currency", "width": 140},
+		{
+			"fieldname": "total_commission",
+			"label": frappe._("Total Commission"),
+			"fieldtype": "Currency",
+			"width": 140,
+		},
 		{"fieldname": "avg_rate", "label": frappe._("Avg Rate %"), "fieldtype": "Percent", "width": 100},
 		{"fieldname": "split_count", "label": frappe._("# Invoices"), "fieldtype": "Int", "width": 100},
 	]
