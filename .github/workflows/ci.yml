@@ -93,6 +93,8 @@ jobs:
         run: |
           bench get-app zevar_core $GITHUB_WORKSPACE
           bench setup requirements --dev
+          # Remove fixtures that depend on ERPNext DocTypes (not available in CI)
+          rm -f apps/zevar_core/zevar_core/fixtures/*.json
           bench new-site --db-root-password root --admin-password admin test_site
           bench --site test_site install-app zevar_core
           bench --site test_site migrate
