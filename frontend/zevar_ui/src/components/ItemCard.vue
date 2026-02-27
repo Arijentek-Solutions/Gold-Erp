@@ -30,39 +30,39 @@
 				</svg>
 			</div>
 
-			<div class="absolute top-2 right-2">
+			<div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
 				<span
 					v-if="item.stock_qty <= 0"
-					class="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200 text-xs font-bold px-2 py-1 rounded-full"
+					class="bg-red-100 text-red-800 dark:bg-red-900/50 dark:text-red-200 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
 				>
 					Out of Stock
 				</span>
 				<span
 					v-else-if="item.stock_qty < 5"
-					class="bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200 text-xs font-bold px-2 py-1 rounded-full"
+					class="bg-orange-100 text-orange-800 dark:bg-orange-900/50 dark:text-orange-200 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
 				>
 					Only {{ item.stock_qty }} left
 				</span>
 			</div>
 		</div>
 
-		<div class="p-4 flex-1 flex flex-col">
-			<div class="flex items-start justify-between mb-2">
+		<div class="p-3 flex-1 flex flex-col">
+			<div class="flex items-start justify-between mb-1.5">
 				<h3
-					class="font-medium text-gray-900 dark:text-white line-clamp-2 text-sm leading-snug min-h-[2.5rem]"
+					class="font-medium text-gray-900 dark:text-white line-clamp-2 text-xs leading-snug min-h-[2rem]"
 				>
 					{{ item.item_name }}
 				</h3>
 			</div>
 
-			<div class="flex flex-wrap gap-1 mb-3">
+			<div class="flex flex-wrap gap-1 mb-2">
 				<span
-					class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+					class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
 				>
 					{{ item.metal || 'Gold' }}
 				</span>
 				<span
-					class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+					class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
 				>
 					{{ item.purity || 'Standard' }}
 				</span>
@@ -71,7 +71,7 @@
 			<!-- Weight Breakdown -->
 			<div
 				v-if="item.net_weight > 0 || item.gross_weight > 0"
-				class="text-[10px] text-gray-500 dark:text-gray-400 mb-3 space-y-0.5 bg-gray-50 dark:bg-white/5 p-2 rounded"
+				class="text-[9px] text-gray-500 dark:text-gray-400 mb-2 space-y-0.5 bg-gray-50 dark:bg-white/5 p-1.5 rounded"
 			>
 				<div v-if="item.gross_weight > 0" class="flex justify-between">
 					<span>Gross:</span> <span>{{ item.gross_weight }}g</span>
@@ -91,23 +91,23 @@
 			</div>
 
 			<div
-				class="mt-auto pt-3 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between"
+				class="mt-auto pt-2 border-t border-gray-50 dark:border-gray-800 flex items-center justify-between"
 			>
 				<div class="flex flex-col">
-					<span class="text-xs text-gray-500 dark:text-gray-400">Price</span>
-					<span class="text-lg font-bold text-gray-900 dark:text-white">
+					<span class="text-[10px] text-gray-500 dark:text-gray-400">Price</span>
+					<span class="text-base font-bold text-gray-900 dark:text-white leading-tight">
 						{{ formatCurrency(item.price) }}
 					</span>
 				</div>
 
 				<button
 					@click.stop="quickAdd"
-					class="bg-gray-900 dark:bg-white text-white dark:text-black p-2 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors shadow-md active:scale-95"
+					class="bg-gray-900 dark:bg-white text-white dark:text-black p-1.5 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors shadow-sm active:scale-95"
 					title="Add to Cart"
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"
-						class="h-5 w-5"
+						class="h-4 w-4"
 						fill="none"
 						viewBox="0 0 24 24"
 						stroke="currentColor"

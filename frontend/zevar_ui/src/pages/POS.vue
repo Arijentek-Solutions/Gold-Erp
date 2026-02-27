@@ -186,35 +186,27 @@ watch(
 	{ immediate: true }
 )
 
-async function refreshGoldRates() {
-	try {
-		const result = await call('zevar_core.api.refresh_gold_rates')
-		console.log('Gold rates updated:', result.rates)
-		// Update your UI with new rates
-	} catch (error) {
-		console.error('Failed to refresh rates:', error)
-	}
-}
+
 </script>
 
 <style scoped>
 .smart-grid {
 	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-	gap: 1rem;
+	grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+	gap: 0.75rem;
 }
 
 @media (min-width: 640px) {
 	.smart-grid {
-		grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-		gap: 1.25rem;
+		grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+		gap: 1rem;
 	}
 }
 
 @media (min-width: 1024px) {
 	.smart-grid {
-		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-		gap: 1.5rem;
+		grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+		gap: 1rem;
 	}
 }
 </style>

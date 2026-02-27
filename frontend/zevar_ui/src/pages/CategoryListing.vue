@@ -241,7 +241,7 @@
 
 					<div
 						v-if="loading"
-						class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+						class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4"
 					>
 						<div v-for="i in 8" :key="i" class="animate-pulse">
 							<div
@@ -278,7 +278,7 @@
 						</p>
 					</div>
 
-					<div v-else class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+					<div v-else class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
 						<ProductCard
 							v-for="product in products"
 							:key="product.item_code"
@@ -294,8 +294,8 @@
 			:show="showModal"
 			:item-code="selectedItem"
 			@close="
-				showModal = false
-				selectedItem = null
+				showModal = false;
+				selectedItem = null;
 			"
 		/>
 	</div>
@@ -458,7 +458,7 @@ function openProduct(product) {
 }
 
 function performSearch(q) {
-	console.log('Search:', q)
+	// Add search logic if needed
 }
 
 watch(categoryId, () => {

@@ -3,14 +3,22 @@
 
 import frappe
 from frappe.model.document import Document
-from frappe.utils import flt
+from frappe.utils import add_months, flt
 
 
 class LayawayContract(Document):
 	def validate(self):
+		self._set_target_completion_date()
 		self._validate_amounts()
 		self._validate_deposit_minimum()
 		self._validate_duration()
+
+	def _set_target_completion_date(self):
+		"""Auto-calculate target completion from contract_date + duration."""
+		if self.contract_date and self.maximum_duration_months:
+			self.target_completion_date = add_months(
+				self.contract_date, int(self.maximum_duration_months)
+			)
 
 	def _validate_amounts(self):
 		if flt(self.total_amount) <= 0:
@@ -33,5 +41,5 @@ class LayawayContract(Document):
 			)
 
 	def _validate_duration(self):
-		if self.maximum_duration_months not in ("6", "9", "12"):
-			frappe.throw(frappe._("Duration must be 6, 9, or 12 months."))
+		if self.maximum_duration_months not in ("3", "6", "9", "12"):
+			frappe.throw(frappe._("Duration must be 3, 6, 9, or 12 months."))

@@ -13,11 +13,12 @@ def create_pos_invoice(
 	items: str,
 	payments: str,
 	customer: str,
-	warehouse: str,
+	warehouse: str | None = None,
 	discount_amount: float = 0,
 	tax_exempt: str | bool = False,
 	salespersons: str | None = None,
 	layaway_reference: str | None = None,
+	trade_ins: str | None = None,
 ) -> dict:
 	"""
 	Create a complete POS Invoice with:
@@ -33,6 +34,7 @@ def create_pos_invoice(
 
 	items_list = frappe.parse_json(items) if isinstance(items, str) else items
 	payments_list = frappe.parse_json(payments) if isinstance(payments, str) else payments
+	trade_in_list = frappe.parse_json(trade_ins) if trade_ins else []
 
 	if not items_list:
 		frappe.throw(_("At least one item is required."))
@@ -48,8 +50,13 @@ def create_pos_invoice(
 		if flt(item.get("rate", 0)) <= 0:
 			frappe.throw(_("Item {0}: rate must be greater than zero.").format(item.get("item_code")))
 
+	if not warehouse:
+		store_loc = frappe.db.get_value("Store Location", {"is_active": 1}, "default_warehouse")
+		if store_loc:
+			warehouse = store_loc
+
 	if not warehouse or not frappe.db.exists("Warehouse", warehouse):
-		frappe.throw(_("Warehouse '{0}' not found.").format(warehouse))
+		frappe.throw(_("Warehouse '{0}' not found. Please ensure a store location has an active default warehouse.").format(warehouse))
 
 	salesperson_data = []
 	if salespersons:
@@ -122,6 +129,17 @@ def create_pos_invoice(
 		if layaway_reference:
 			si.custom_layaway_reference = layaway_reference
 
+		for ti in trade_in_list:
+			si.append(
+				"custom_trade_ins",
+				{
+					"trade_in_value": flt(ti.get("trade_in_value")),
+					"new_item_value": flt(ti.get("new_item_value")),
+					"manager_override": ti.get("manager_override"),
+					"override_reason": ti.get("override_reason"),
+				}
+			)
+
 		for pay in payments_list:
 			si.append(
 				"payments",
@@ -145,7 +163,7 @@ def create_pos_invoice(
 
 	except Exception as e:
 		frappe.log_error("POS Invoice Creation Failed", frappe.get_traceback())
-		raise frappe.ValidationError(f"Failed to create POS Invoice: {e!s}")
+		frappe.throw(_("Failed to create POS Invoice: {0}").format(str(e)))
 
 
 @frappe.whitelist()
