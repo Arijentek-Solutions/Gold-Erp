@@ -656,8 +656,8 @@
 			:show="showProductModal"
 			:item-code="selectedItemCode"
 			@close="
-				showProductModal = false
-				selectedItemCode = null
+				showProductModal = false;
+				selectedItemCode = null;
 			"
 		/>
 	</div>
@@ -972,7 +972,7 @@ function openPartner(partner) {
 }
 
 function performSearch(q) {
-	console.log('Search:', q)
+	// Add search logic if needed
 }
 
 onMounted(() => {

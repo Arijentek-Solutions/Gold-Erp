@@ -35,11 +35,10 @@
 					<router-link
 						to="/"
 						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
-						active-class="bg-white/10 text-white shadow-inner"
 						:class="
 							$route.path === '/'
-								? ''
-								: 'text-gray-400 hover:text-white hover:bg-white/5'
+								? 'bg-gradient-to-r from-[#D4AF37]/20 to-transparent text-[#D4AF37]'
+								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
 					>
 						<div class="relative z-10 flex items-center gap-4">
@@ -60,24 +59,15 @@
 								>POS Terminal</span
 							>
 						</div>
-						<div
-							class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300"
-							:class="
-								$route.path === '/'
-									? 'opacity-100'
-									: 'opacity-0 group-hover:opacity-100'
-							"
-						></div>
 					</router-link>
 
 					<router-link
 						to="/transactions"
 						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
-						active-class="bg-white/10 text-white shadow-inner"
 						:class="
 							$route.path === '/transactions'
-								? ''
-								: 'text-gray-400 hover:text-white hover:bg-white/5'
+								? 'bg-gradient-to-r from-[#D4AF37]/20 to-transparent text-[#D4AF37]'
+								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
 					>
 						<div class="relative z-10 flex items-center gap-4">
@@ -98,25 +88,16 @@
 								>Sales History</span
 							>
 						</div>
-						<div
-							class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300"
-							:class="
-								$route.path === '/transactions'
-									? 'opacity-100'
-									: 'opacity-0 group-hover:opacity-100'
-							"
-						></div>
 					</router-link>
 
 					<router-link
 						to="/catalogues"
 						target="_blank"
 						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
-						active-class="bg-white/10 text-white shadow-inner"
 						:class="
 							$route.path === '/catalogues'
-								? ''
-								: 'text-gray-400 hover:text-white hover:bg-white/5'
+								? 'bg-gradient-to-r from-[#D4AF37]/20 to-transparent text-[#D4AF37]'
+								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
 					>
 						<div class="relative z-10 flex items-center gap-4">
@@ -137,23 +118,15 @@
 								>Catalogues</span
 							>
 						</div>
-						<div
-							class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300"
-							:class="
-								$route.path === '/catalogues'
-									? 'opacity-100'
-									: 'opacity-0 group-hover:opacity-100'
-							"
-						></div>
 					</router-link>
+
 					<router-link
 						to="/repairs"
 						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
-						active-class="bg-white/10 text-white shadow-inner"
 						:class="
 							$route.path === '/repairs'
-								? ''
-								: 'text-gray-400 hover:text-white hover:bg-white/5'
+								? 'bg-gradient-to-r from-[#D4AF37]/20 to-transparent text-[#D4AF37]'
+								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
 					>
 						<div class="relative z-10 flex items-center gap-4">
@@ -180,15 +153,57 @@
 								>Repairs</span
 							>
 						</div>
-						<div
-							class="absolute left-0 top-0 h-full w-1 bg-[#D4AF37] shadow-[0_0_10px_#D4AF37] transition-opacity duration-300"
-							:class="
-								$route.path === '/repairs'
-									? 'opacity-100'
-									: 'opacity-0 group-hover:opacity-100'
-							"
-						></div>
 					</router-link>
+
+					<a
+						href="/app/issue/new"
+						target="_blank"
+						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent"
+					>
+						<div class="relative z-10 flex items-center gap-4">
+							<svg
+								class="w-5 h-5"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
+								></path>
+							</svg>
+							<span class="hidden lg:block font-medium tracking-wide text-sm"
+								>Support</span
+							>
+						</div>
+					</a>
+
+					<a
+						href="/app/layaway-contract"
+						target="_blank"
+						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent"
+					>
+						<div class="relative z-10 flex items-center gap-4">
+							<svg
+								class="w-5 h-5 transition-colors"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+								></path>
+							</svg>
+							<span class="hidden lg:block font-medium tracking-wide text-sm"
+								>Layaway Scheme</span
+							>
+						</div>
+					</a>
 
 					<div
 						v-if="$route.path === '/'"
@@ -197,62 +212,6 @@
 						<FilterSidebar />
 					</div>
 				</nav>
-			</div>
-
-			<!-- User Profile & Theme Toggle Footer -->
-			<div class="p-4 border-t border-white/5 bg-[#1a1c23] dark:bg-black z-20">
-				<div class="flex items-center justify-between gap-2 group">
-					<div class="flex items-center gap-3 overflow-hidden">
-						<div
-							class="w-8 h-8 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F2E6A0] flex items-center justify-center text-[#0F1115] font-bold text-xs shadow-inner"
-						>
-							{{ session.user?.full_name?.[0]?.toUpperCase() || 'U' }}
-						</div>
-						<div class="hidden lg:flex flex-col min-w-0">
-							<span class="text-xs font-bold text-white truncate">{{
-								session.user?.full_name || 'Guest'
-							}}</span>
-							<span class="text-[10px] text-gray-400 truncate">{{
-								session.user?.email || ''
-							}}</span>
-						</div>
-					</div>
-
-					<button
-						@click="ui.toggleTheme()"
-						class="hidden lg:flex w-8 h-8 items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 text-gray-400 hover:text-[#D4AF37] transition-colors border border-white/5 focus:outline-none"
-						title="Toggle Theme"
-					>
-						<svg
-							v-if="ui.isDark"
-							class="w-4 h-4"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-							></path>
-						</svg>
-						<svg
-							v-else
-							class="w-4 h-4"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-							></path>
-						</svg>
-					</button>
-				</div>
 			</div>
 		</aside>
 
@@ -297,44 +256,45 @@
 					</div>
 				</div>
 
-				<div class="flex items-center gap-6">
+				<div class="flex items-center gap-3 sm:gap-4">
+					<!-- Live Spot (fluid) -->
 					<div
-						class="hidden lg:flex items-center gap-0 bg-gray-100 dark:bg-black text-gray-900 dark:text-white pl-4 pr-2 py-2 rounded-xl border border-gray-200 dark:border-gray-800 flex-1 max-w-2xl overflow-hidden transition-colors duration-300"
+						class="hidden sm:flex items-center gap-0 bg-gray-100 dark:bg-black text-gray-900 dark:text-white pl-3 pr-1 py-1.5 lg:pl-4 lg:pr-2 lg:py-2 rounded-xl border border-gray-200 dark:border-gray-800 max-w-[140px] md:max-w-xs lg:max-w-2xl overflow-hidden transition-colors duration-300"
 					>
 						<div
-							class="flex items-center gap-2 border-r border-gray-300 dark:border-gray-800 pr-3 mr-3 flex-shrink-0"
+							class="flex items-center gap-1.5 lg:gap-2 border-r border-gray-300 dark:border-gray-800 pr-2 mr-2 lg:pr-3 lg:mr-3 flex-shrink-0"
 						>
-							<span class="relative flex h-2 w-2">
+							<span class="relative flex h-1.5 w-1.5 lg:h-2 lg:w-2">
 								<span
 									class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"
 								></span>
 								<span
-									class="relative inline-flex rounded-full h-2 w-2 bg-green-600"
+									class="relative inline-flex rounded-full h-1.5 w-1.5 lg:h-2 lg:w-2 bg-green-600"
 								></span>
 							</span>
 							<span
-								class="text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400"
+								class="text-[8px] lg:text-[10px] font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400"
 								>Live Spot</span
 							>
 						</div>
 
 						<div
-							class="flex items-center gap-8 overflow-x-auto pr-2 custom-scrollbar-horizontal pb-2 pt-1"
+							class="flex items-center gap-3 lg:gap-8 overflow-x-auto pr-1 lg:pr-2 custom-scrollbar-horizontal pb-1 lg:pb-2 pt-0.5 lg:pt-1"
 						>
 							<div
 								v-for="[key, rate] in sortedRates"
 								:key="key"
-								class="flex flex-col leading-tight flex-shrink-0 px-3"
+								class="flex flex-col leading-tight flex-shrink-0 px-1 lg:px-3"
 							>
 								<span
-									class="text-[11px] text-gray-500 dark:text-gray-400 uppercase font-bold whitespace-nowrap mb-0.5"
+									class="text-[8px] lg:text-[11px] text-gray-500 dark:text-gray-400 uppercase font-bold whitespace-nowrap mb-0.5"
 									>{{ key.replace(/-/g, ' ') }}</span
 								>
 								<span
-									class="text-lg font-mono font-bold text-[#D4AF37] tracking-wide"
+									class="text-[11px] lg:text-lg font-mono font-bold text-[#D4AF37] tracking-wide"
 									>${{ rate
 									}}<span
-										class="text-[9px] text-gray-500 dark:text-gray-500 ml-0.5 font-normal"
+										class="text-[7px] lg:text-[9px] text-gray-500 dark:text-gray-500 ml-0.5 font-normal"
 										>/oz</span
 									></span
 								>
@@ -342,6 +302,81 @@
 						</div>
 					</div>
 
+					<!-- User Profile Dropdown -->
+					<div class="relative">
+						<button 
+							@click.stop="isUserMenuOpen = !isUserMenuOpen"
+							class="flex items-center gap-2 p-1.5 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-white/10"
+						>
+							<div class="w-8 h-8 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F2E6A0] flex items-center justify-center text-[#0F1115] font-bold text-xs shadow-sm">
+								{{ session.user?.full_name?.[0]?.toUpperCase() || 'U' }}
+							</div>
+							<span class="text-sm font-semibold hidden sm:block text-gray-700 dark:text-white truncate max-w-[80px]">{{ session.user?.full_name?.split(' ')[0] || 'Guest' }}</span>
+							<svg class="w-4 h-4 text-gray-400 hidden sm:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+							</svg>
+						</button>
+
+						<!-- Overlay -->
+						<div v-if="isUserMenuOpen" @click.stop="isUserMenuOpen = false" class="fixed inset-0 z-40"></div>
+						
+						<!-- Dropdown Panel -->
+						<Transition
+							enter-active-class="transition duration-200 ease-out"
+							enter-from-class="transform scale-95 opacity-0"
+							enter-to-class="transform scale-100 opacity-100"
+							leave-active-class="transition duration-75 ease-in"
+							leave-from-class="transform scale-100 opacity-100"
+							leave-to-class="transform scale-95 opacity-0"
+						>
+							<div 
+								v-if="isUserMenuOpen" 
+								class="absolute right-0 mt-2 w-56 bg-white dark:bg-[#15171e] rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 py-2 z-50 origin-top-right overflow-hidden"
+							>
+								<div class="px-4 py-3 border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
+									<p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ session.user?.full_name || 'Guest User' }}</p>
+									<p class="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">{{ session.user?.email || 'Not logged in' }}</p>
+								</div>
+								
+								<div class="py-1 border-b border-gray-100 dark:border-white/5">
+									<a href="#" @click.prevent="isUserMenuOpen = false" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+										<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+										Profile Settings
+									</a>
+									<a href="#" @click.prevent="isUserMenuOpen = false" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+										<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path></svg>
+										Preferences
+									</a>
+									<a href="#" @click.prevent="isUserMenuOpen = false" class="flex items-center gap-3 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+										<svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+										Account History
+									</a>
+								</div>
+
+								<div class="py-1 border-b border-gray-100 dark:border-white/5">
+									<button @click.stop="ui.toggleTheme()" class="w-full flex items-center justify-between px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors">
+										<div class="flex items-center gap-3">
+											<svg v-if="ui.isDark" class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+											<svg v-else class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+											Dark Mode
+										</div>
+										<div class="w-8 h-4 bg-gray-200 dark:bg-[#C9A962] rounded-full relative transition-colors duration-300 flex items-center">
+											<div class="w-3 h-3 bg-white rounded-full absolute transition-transform duration-300 shadow-sm" :class="ui.isDark ? 'translate-x-[18px]' : 'translate-x-[2px]'"></div>
+										</div>
+									</button>
+								</div>
+
+								<div class="py-1">
+									<button @click.stop="session.logoutResource.submit()" class="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-medium">
+										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+										Sign Out
+									</button>
+								</div>
+							</div>
+						</Transition>
+					</div>
+
+					<!-- Cart Button -->
 					<button
 						@click="isCartOpen = true"
 						class="relative p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
@@ -402,6 +437,7 @@ const cartStore = useCartStore()
 const ui = useUIStore()
 
 const isCartOpen = ref(false)
+const isUserMenuOpen = ref(false)
 
 const TROY_OZ_GRAMS = 31.1035
 
@@ -435,6 +471,27 @@ const warehouses = createResource({
 		fields: ['name'],
 	},
 	auto: true,
+	onSuccess(data) {
+		// Fallback: if strict filter returns nothing, fetch all non-group warehouses
+		if (!data || data.length === 0) {
+			warehouseFallback.fetch()
+		}
+	},
+})
+
+const warehouseFallback = createResource({
+	url: 'frappe.client.get_list',
+	params: {
+		doctype: 'Warehouse',
+		filters: { is_group: 0 },
+		fields: ['name'],
+		limit_page_length: 50,
+	},
+	onSuccess(data) {
+		if (data && data.length > 0) {
+			warehouses.data = data
+		}
+	},
 })
 
 onMounted(() => {

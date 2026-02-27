@@ -4,7 +4,7 @@
 			<h3 class="text-[10px] font-bold text-[#555961] uppercase tracking-widest">Filters</h3>
 			<button
 				v-if="hasActiveFilters"
-				@click="ui.resetFilters()"
+				@click="handleReset"
 				class="text-[10px] text-[#D4AF37] hover:text-yellow-300 transition-colors"
 			>
 				Reset All
@@ -266,5 +266,10 @@ function updateMetal(val) {
 
 function updateGemstone(val) {
 	ui.setFilter('custom_gemstone', val)
+}
+
+function handleReset() {
+	currentStockFilter.value = 'all'
+	ui.resetFilters()
 }
 </script>

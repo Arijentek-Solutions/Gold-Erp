@@ -256,10 +256,9 @@ website_route_rules = [
 	{"from_route": "/pos/<path:app_path>", "to_route": "pos"},
 ]
 
-# Note: Fixtures require ERPNext DocTypes - not available in standalone CI
-# Uncomment when running with ERPNext installed
-# fixtures = ["Item Attribute", "Custom Field", "Property Setter"]
-fixtures = []
+# Note: Fixtures are disabled in CI via the ci.yml workflow.
+# They require ERPNext DocTypes to be present.
+fixtures = ["Item Attribute", "Custom Field", "Property Setter"]
 
 doc_events = {
 	"Item": {"validate": "zevar_core.item_events.calculate_net_weight_g"},

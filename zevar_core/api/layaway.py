@@ -76,7 +76,13 @@ def get_customer_layaways(customer: str) -> list:
 
 
 @frappe.whitelist(methods=["POST"])
-def create_layaway(customer: str, items: str, deposit_amount: float, duration_months: int) -> dict:
+def create_layaway(
+	customer: str,
+	items: str,
+	deposit_amount: float,
+	duration_months: int,
+	warehouse: str | None = None,
+) -> dict:
 	"""Create a new Layaway Contract with deposit and payment schedule."""
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
@@ -89,8 +95,16 @@ def create_layaway(customer: str, items: str, deposit_amount: float, duration_mo
 	if not customer or not frappe.db.exists("Customer", customer):
 		frappe.throw(_("Customer '{0}' not found.").format(customer))
 
-	if int(duration_months) not in (6, 9, 12):
-		frappe.throw(_("Duration must be 6, 9, or 12 months."))
+	if int(duration_months) not in (3, 6, 9, 12):
+		frappe.throw(_("Duration must be 3, 6, 9, or 12 months."))
+
+	if not warehouse:
+		store_loc = frappe.db.get_value("Store Location", {"is_active": 1}, "default_warehouse")
+		if store_loc:
+			warehouse = store_loc
+
+	if not warehouse or not frappe.db.exists("Warehouse", warehouse):
+		frappe.throw(_("Warehouse '{0}' not found. Please ensure a store location has an active default warehouse.").format(warehouse))
 
 	for item in items_list:
 		if not item.get("item_code"):

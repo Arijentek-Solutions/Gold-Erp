@@ -14,20 +14,20 @@
 			</div>
 
 			<!-- Badges -->
-			<div class="absolute top-3 left-3 flex flex-col gap-2">
+			<div class="absolute top-2 left-2 flex flex-col gap-1.5">
 				<span
 					v-if="product.is_featured"
-					class="px-2.5 py-1 bg-[#8B6914] text-white text-[10px] font-bold uppercase tracking-wider rounded-md"
+					class="px-2 py-0.5 bg-[#8B6914] text-white text-[9px] font-bold uppercase tracking-wider rounded-md"
 					>Featured</span
 				>
 				<span
 					v-if="product.is_trending"
-					class="px-2.5 py-1 bg-emerald-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-md"
+					class="px-2 py-0.5 bg-emerald-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-md"
 					>Trending</span
 				>
 				<span
 					v-if="product.stock_qty > 0"
-					class="px-2.5 py-1 bg-blue-500 text-white text-[10px] font-bold uppercase tracking-wider rounded-md"
+					class="px-2 py-0.5 bg-blue-500 text-white text-[9px] font-bold uppercase tracking-wider rounded-md"
 					>In Stock</span
 				>
 			</div>
@@ -48,15 +48,15 @@
 		</div>
 
 		<!-- Details -->
-		<div class="space-y-1.5">
+		<div class="space-y-1 mt-2">
 			<h3
-				class="font-medium text-sm text-gray-900 line-clamp-2 min-h-[2.5rem] group-hover:text-[#8B6914] transition-colors"
+				class="font-medium text-xs text-gray-900 line-clamp-2 min-h-[2rem] group-hover:text-[#8B6914] transition-colors"
 			>
 				{{ product.item_name }}
 			</h3>
 
 			<!-- Metal & Purity -->
-			<div class="flex items-center gap-2 text-xs text-gray-500">
+			<div class="flex items-center gap-1.5 text-[10px] text-gray-500">
 				<span v-if="product.metal">{{ product.metal }}</span>
 				<span
 					v-if="product.metal && product.purity"
@@ -66,7 +66,7 @@
 			</div>
 
 			<!-- Weight Info -->
-			<div v-if="showWeights" class="flex items-center gap-3 text-xs">
+			<div v-if="showWeights" class="flex items-center gap-2 text-[10px]">
 				<span v-if="product.gross_weight" class="text-gray-600">
 					<span class="font-medium">Gross:</span>
 					{{ formatWeight(product.gross_weight) }}
@@ -81,18 +81,18 @@
 			</div>
 
 			<!-- Price -->
-			<div class="pt-2 border-t border-gray-100">
+			<div class="pt-1.5 border-t border-gray-100">
 				<div class="flex items-baseline gap-2">
-					<span class="text-lg font-bold text-gray-900 font-serif">{{
+					<span class="text-base font-bold text-gray-900 font-serif leading-tight">{{
 						formatPrice(product.price)
 					}}</span>
 					<span
 						v-if="product.msrp && product.msrp > product.price"
-						class="text-sm text-gray-400 line-through"
+						class="text-xs text-gray-400 line-through"
 						>{{ formatPrice(product.msrp) }}</span
 					>
 				</div>
-				<p v-if="product.jewelry_type" class="text-xs text-gray-400 mt-0.5">
+				<p v-if="product.jewelry_type" class="text-[10px] text-gray-400 mt-0.5">
 					{{ product.jewelry_type }}
 				</p>
 			</div>

@@ -158,6 +158,97 @@
 				</div>
 			</div>
 
+			<!-- Trade-Ins Section -->
+			<div
+				v-if="cart.items.length > 0"
+				class="px-4 pb-2"
+			>
+				<div class="border-t border-gray-100 dark:border-white/5 pt-3">
+					<button
+						@click="showTradeInForm = !showTradeInForm"
+						class="w-full flex items-center justify-between text-sm font-medium text-[#D4AF37] hover:text-[#b5952f] transition"
+					>
+						<span class="flex items-center gap-2">
+							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+							</svg>
+							Trade-In ({{ cart.tradeIns.length }})
+						</span>
+						<svg
+							class="w-4 h-4 transition-transform"
+							:class="showTradeInForm ? 'rotate-180' : ''"
+							fill="none" stroke="currentColor" viewBox="0 0 24 24"
+						>
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+						</svg>
+					</button>
+
+					<div v-if="showTradeInForm" class="mt-3 space-y-3">
+						<!-- Existing trade-ins -->
+						<div
+							v-for="(ti, idx) in cart.tradeIns"
+							:key="idx"
+							class="flex items-center justify-between bg-orange-50 dark:bg-orange-900/10 p-2 rounded-lg border border-orange-100 dark:border-orange-800/20"
+						>
+							<div class="min-w-0">
+								<div class="text-xs font-bold text-gray-900 dark:text-white truncate">
+									{{ ti.description || 'Trade-In Item' }}
+								</div>
+								<div class="text-[10px] text-gray-500">
+									Value: {{ formatCurrency(ti.trade_in_value) }} · Min new: {{ formatCurrency(ti.trade_in_value * 2) }}
+								</div>
+							</div>
+							<button
+								@click="cart.removeTradeIn(idx)"
+								class="p-1 text-red-400 hover:text-red-600 ml-2 flex-shrink-0"
+							>
+								<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+								</svg>
+							</button>
+						</div>
+
+						<!-- Add form -->
+						<div class="space-y-2">
+							<input
+								v-model="tradeInDescription"
+								type="text"
+								placeholder="Item description (e.g. Gold Ring)"
+								class="w-full px-3 py-2 bg-white dark:bg-[#0F1115] border border-gray-200 dark:border-white/10 rounded-lg text-sm"
+							/>
+							<div class="flex gap-2">
+								<div class="flex items-center gap-1 flex-1">
+									<span class="text-gray-400 text-sm">$</span>
+									<input
+										v-model.number="tradeInValue"
+										type="number"
+										min="0"
+										placeholder="Trade-in value"
+										class="w-full px-2 py-2 bg-white dark:bg-[#0F1115] border border-gray-200 dark:border-white/10 rounded-lg text-sm font-mono"
+									/>
+								</div>
+								<button
+									@click="addTradeInItem"
+									:disabled="!tradeInValue || tradeInValue <= 0"
+									class="px-3 py-2 text-sm font-medium bg-[#D4AF37] text-black rounded-lg hover:bg-[#b5952f] disabled:opacity-50 transition flex-shrink-0"
+								>
+									Add
+								</button>
+							</div>
+						</div>
+
+						<!-- Trade-in credit total -->
+						<div
+							v-if="cart.tradeIns.length > 0"
+							class="flex justify-between text-sm font-bold text-orange-600 dark:text-orange-400 pt-2 border-t border-orange-100 dark:border-orange-800/20"
+						>
+							<span>Trade-In Credit</span>
+							<span>-{{ formatCurrency(tradeInTotal) }}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
 			<div
 				v-if="cart.items.length > 0"
 				class="p-6 bg-gray-50 dark:bg-[#15171e] border-t border-gray-200 dark:border-white/5"
@@ -170,6 +261,13 @@
 					<div class="flex justify-between text-gray-600 dark:text-gray-400">
 						<span>Tax ({{ cart.taxRate }}%)</span>
 						<span>{{ formatCurrency(cart.tax) }}</span>
+					</div>
+					<div
+						v-if="cart.tradeIns.length > 0"
+						class="flex justify-between text-orange-600 dark:text-orange-400"
+					>
+						<span>Trade-In Credit</span>
+						<span>-{{ formatCurrency(tradeInTotal) }}</span>
 					</div>
 					<div
 						class="flex justify-between text-lg font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-200 dark:border-white/10"
@@ -194,12 +292,33 @@
 <script setup>
 import { useCartStore } from '@/stores/cart.js'
 import CheckoutModal from '@/components/CheckoutModal.vue'
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 
 const props = defineProps(['isOpen'])
 const emit = defineEmits(['close'])
 const cart = useCartStore()
 const showCheckout = ref(false)
+
+// Trade-in form state
+const showTradeInForm = ref(false)
+const tradeInDescription = ref('')
+const tradeInValue = ref(null)
+
+const tradeInTotal = computed(() => {
+	return cart.tradeIns.reduce((sum, ti) => sum + (ti.trade_in_value || 0), 0)
+})
+
+function addTradeInItem() {
+	if (!tradeInValue.value || tradeInValue.value <= 0) return
+	// Auto-set new_item_value to the cart subtotal (the backend validates 2x rule at invoice level)
+	cart.addTradeIn({
+		description: tradeInDescription.value,
+		tradeInValue: tradeInValue.value,
+		newItemValue: cart.subtotal,
+	})
+	tradeInDescription.value = ''
+	tradeInValue.value = null
+}
 
 function close() {
 	emit('close')
