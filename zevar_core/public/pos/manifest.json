@@ -1,10 +1,10 @@
 {
   "index.html": {
-    "file": "assets/index.363a2e3f.js",
+    "file": "assets/index.2894e2d5.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.6970a8d7.js"
+      "_vendor.cebe5188.js"
     ],
     "dynamicImports": [
       "src/pages/Login.vue",
@@ -56,8 +56,8 @@
       "assets/Inter-DisplayBlackItalic.d561e8dd.woff2"
     ]
   },
-  "_vendor.6970a8d7.js": {
-    "file": "assets/vendor.6970a8d7.js",
+  "_vendor.cebe5188.js": {
+    "file": "assets/vendor.cebe5188.js",
     "dynamicImports": [
       "node_modules/frappe-ui/src/components/TextEditor/FontColor.vue",
       "node_modules/frappe-ui/src/components/TextEditor/InsertLink.vue",
@@ -69,118 +69,118 @@
     ]
   },
   "src/pages/Login.vue": {
-    "file": "assets/Login.b44f3e3b.js",
+    "file": "assets/Login.2675285a.js",
     "src": "src/pages/Login.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.6970a8d7.js"
+      "_vendor.cebe5188.js"
     ]
   },
   "src/pages/POS.vue": {
-    "file": "assets/POS.8c0bb1e2.js",
+    "file": "assets/POS.b3119b11.js",
     "src": "src/pages/POS.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_AppLayout.9272735f.js",
-      "_vendor.6970a8d7.js",
-      "_ui.ba6d49a6.js"
+      "_AppLayout.5ffdaab0.js",
+      "_vendor.cebe5188.js",
+      "_ui.68a5c0a9.js"
     ],
     "css": [
       "assets/POS.f909c371.css"
     ]
   },
-  "_AppLayout.9272735f.js": {
-    "file": "assets/AppLayout.9272735f.js",
+  "_AppLayout.5ffdaab0.js": {
+    "file": "assets/AppLayout.5ffdaab0.js",
     "imports": [
-      "_vendor.6970a8d7.js",
-      "_ui.ba6d49a6.js"
+      "_vendor.cebe5188.js",
+      "_ui.68a5c0a9.js"
     ],
     "css": [
       "assets/AppLayout.9b609151.css"
     ]
   },
-  "_ui.ba6d49a6.js": {
-    "file": "assets/ui.ba6d49a6.js",
+  "_ui.68a5c0a9.js": {
+    "file": "assets/ui.68a5c0a9.js",
     "imports": [
-      "_vendor.6970a8d7.js"
+      "_vendor.cebe5188.js"
     ]
   },
   "src/pages/CatalogueDashboard.vue": {
-    "file": "assets/CatalogueDashboard.062d24a8.js",
+    "file": "assets/CatalogueDashboard.f2214f19.js",
     "src": "src/pages/CatalogueDashboard.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.6970a8d7.js",
-      "_ui.ba6d49a6.js",
-      "_ProductModal.2a816599.js"
+      "_vendor.cebe5188.js",
+      "_ui.68a5c0a9.js",
+      "_ProductModal.07de17cd.js"
     ],
     "css": [
       "assets/CatalogueDashboard.32cae300.css"
     ]
   },
-  "_ProductModal.2a816599.js": {
-    "file": "assets/ProductModal.2a816599.js",
+  "_ProductModal.07de17cd.js": {
+    "file": "assets/ProductModal.07de17cd.js",
     "imports": [
-      "_vendor.6970a8d7.js",
-      "_ui.ba6d49a6.js"
+      "_vendor.cebe5188.js",
+      "_ui.68a5c0a9.js"
     ],
     "css": [
       "assets/ProductModal.2efb8475.css"
     ]
   },
   "src/pages/CategoryListing.vue": {
-    "file": "assets/CategoryListing.265a7a74.js",
+    "file": "assets/CategoryListing.aebfde85.js",
     "src": "src/pages/CategoryListing.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.6970a8d7.js",
-      "_ProductModal.2a816599.js",
-      "_ui.ba6d49a6.js"
+      "_vendor.cebe5188.js",
+      "_ProductModal.07de17cd.js",
+      "_ui.68a5c0a9.js"
     ],
     "css": [
       "assets/CategoryListing.2c09e514.css"
     ]
   },
   "src/pages/RepairTerminal.vue": {
-    "file": "assets/RepairTerminal.b152b415.js",
+    "file": "assets/RepairTerminal.dd349539.js",
     "src": "src/pages/RepairTerminal.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.6970a8d7.js",
-      "_AppLayout.9272735f.js",
-      "_ui.ba6d49a6.js"
+      "_vendor.cebe5188.js",
+      "_AppLayout.5ffdaab0.js",
+      "_ui.68a5c0a9.js"
     ]
   },
   "node_modules/frappe-ui/src/components/TextEditor/FontColor.vue": {
-    "file": "assets/FontColor.c1ffafb8.js",
+    "file": "assets/FontColor.7599327e.js",
     "src": "node_modules/frappe-ui/src/components/TextEditor/FontColor.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.6970a8d7.js"
+      "_vendor.cebe5188.js"
     ]
   },
   "node_modules/frappe-ui/src/components/TextEditor/InsertLink.vue": {
-    "file": "assets/InsertLink.83486b16.js",
+    "file": "assets/InsertLink.a55cd55e.js",
     "src": "node_modules/frappe-ui/src/components/TextEditor/InsertLink.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.6970a8d7.js"
+      "_vendor.cebe5188.js"
     ]
   },
   "node_modules/frappe-ui/src/components/TextEditor/InsertImage.vue": {
-    "file": "assets/InsertImage.d2cf1d8b.js",
+    "file": "assets/InsertImage.a5687d4b.js",
     "src": "node_modules/frappe-ui/src/components/TextEditor/InsertImage.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.6970a8d7.js"
+      "_vendor.cebe5188.js"
     ]
   },
   "node_modules/frappe-ui/src/components/TextEditor/InsertVideo.vue": {
-    "file": "assets/InsertVideo.d2f84a6d.js",
+    "file": "assets/InsertVideo.5cc9fc25.js",
     "src": "node_modules/frappe-ui/src/components/TextEditor/InsertVideo.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.6970a8d7.js"
+      "_vendor.cebe5188.js"
     ]
   }
 }
