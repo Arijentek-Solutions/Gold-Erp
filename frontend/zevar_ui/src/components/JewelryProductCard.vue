@@ -16,7 +16,7 @@
 			<!-- Image Container -->
 			<div
 				class="relative aspect-square overflow-hidden"
-				:class="isDark ? 'bg-gradient-to-br from-[#0a0a0a] to-[#050505]' : 'bg-gray-50'"
+				:class="isDark ? 'bg-gradient-to-br from-[#18181b] to-[#1e1e24]' : 'bg-gray-50'"
 			>
 				<!-- Placeholder/Emoji Display -->
 				<div class="absolute inset-0 flex items-center justify-center">

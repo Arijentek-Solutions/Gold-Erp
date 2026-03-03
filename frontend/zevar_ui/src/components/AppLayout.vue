@@ -1,9 +1,9 @@
 <template>
 	<div
-		class="flex h-screen w-screen bg-[#F8F9FA] dark:bg-[#050505] font-sans overflow-hidden transition-colors duration-300"
+		class="flex h-screen w-screen bg-[#F8F9FA] dark:bg-[#1e1e24] font-sans overflow-hidden transition-colors duration-300"
 	>
 		<aside
-			class="w-16 sm:w-20 lg:w-72 bg-[#1a1c23] dark:bg-black border-r border-white/5 flex flex-col shadow-2xl z-30 relative transition-all duration-300"
+			class="w-16 sm:w-20 lg:w-72 bg-[#1a1c23] dark:bg-[#15161a] border-r border-white/5 flex flex-col shadow-2xl z-30 relative transition-all duration-300"
 		>
 			<div
 				class="h-24 flex items-center justify-center lg:justify-start lg:px-8 border-b border-white/5"
@@ -217,7 +217,7 @@
 
 		<div class="flex-1 flex flex-col relative min-w-0">
 			<header
-				class="h-16 sm:h-20 bg-white dark:bg-[#0F1115] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-3 sm:px-6 z-20 sticky top-0 shadow-sm transition-colors duration-300"
+				class="h-16 sm:h-20 bg-white dark:bg-[#15161a] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-3 sm:px-6 z-20 sticky top-0 shadow-sm transition-colors duration-300"
 			>
 				<div class="flex items-center gap-4 flex-1 max-w-3xl">
 					<div class="relative group">
@@ -256,10 +256,10 @@
 					</div>
 				</div>
 
-				<div class="flex items-center gap-3 sm:gap-4">
+				<div class="flex items-center gap-3 sm:gap-4 sm:ml-4 lg:ml-8">
 					<!-- Live Spot (fluid) -->
 					<div
-						class="hidden sm:flex items-center gap-0 bg-gray-100 dark:bg-black text-gray-900 dark:text-white pl-3 pr-1 py-1.5 lg:pl-4 lg:pr-2 lg:py-2 rounded-xl border border-gray-200 dark:border-gray-800 max-w-[140px] md:max-w-xs lg:max-w-2xl overflow-hidden transition-colors duration-300"
+						class="hidden sm:flex items-center gap-0 bg-gray-100 dark:bg-[#15161a] text-gray-900 dark:text-white pl-3 pr-1 py-1.5 lg:pl-4 lg:pr-2 lg:py-2 rounded-xl border border-gray-200 dark:border-gray-800 max-w-[140px] md:max-w-xs lg:max-w-2xl overflow-hidden transition-colors duration-300"
 					>
 						<div
 							class="flex items-center gap-1.5 lg:gap-2 border-r border-gray-300 dark:border-gray-800 pr-2 mr-2 lg:pr-3 lg:mr-3 flex-shrink-0"
@@ -331,7 +331,7 @@
 						>
 							<div 
 								v-if="isUserMenuOpen" 
-								class="absolute right-0 mt-2 w-56 bg-white dark:bg-[#15171e] rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 py-2 z-50 origin-top-right overflow-hidden"
+								class="absolute right-0 mt-2 w-56 bg-white dark:bg-[#1a1c23] rounded-xl shadow-xl border border-gray-100 dark:border-gray-800 py-2 z-50 origin-top-right overflow-hidden"
 							>
 								<div class="px-4 py-3 border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/[0.02]">
 									<p class="text-sm font-bold text-gray-900 dark:text-white truncate">{{ session.user?.full_name || 'Guest User' }}</p>
@@ -405,7 +405,7 @@
 			</header>
 
 			<main
-				class="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 lg:p-6 bg-[#F8F9FA] dark:bg-[#050505] transition-colors duration-300"
+				class="flex-1 overflow-y-auto overflow-x-hidden p-3 sm:p-4 lg:p-6 bg-[#F8F9FA] dark:bg-[#1e1e24] transition-colors duration-300"
 			>
 				<slot></slot>
 			</main>

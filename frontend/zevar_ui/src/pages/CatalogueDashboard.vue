@@ -1,5 +1,5 @@
 <template>
-	<div class="min-h-screen" :class="isDark ? 'bg-[#0a0a0a]' : 'bg-white'">
+	<div class="min-h-screen" :class="isDark ? 'bg-[#1e1e24]' : 'bg-white'">
 		<!-- Header -->
 		<Header
 			:isDark="isDark"
@@ -455,7 +455,7 @@
 		<!-- ======== 11. PARTNER COLLECTIONS (with toggle) ======== -->
 		<section
 			class="py-16 border-t"
-			:class="isDark ? 'bg-[#0a0a0a] border-white/5' : 'bg-white border-gray-100'"
+			:class="isDark ? 'bg-[#1e1e24] border-white/5' : 'bg-white border-gray-100'"
 		>
 			<div class="max-w-6xl mx-auto px-8">
 				<div class="flex items-center justify-between mb-10">

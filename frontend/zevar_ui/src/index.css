@@ -8,13 +8,13 @@
   --font-display: 'Cinzel', serif; /* Luxury Headings */
   --font-body: 'Inter', sans-serif; /* Clean Data */
   --color-gold: #D4AF37;
-  --color-dark: #0F1115;
+  --color-dark: #15161A;
 }
 
 /* 2. Apply Defaults */
 body {
   font-family: var(--font-body);
-  @apply text-gray-900 dark:text-gray-100 bg-[#F8F9FA] dark:bg-[#050505];
+  @apply text-gray-900 dark:text-gray-100 bg-[#F8F9FA] dark:bg-[#1e1e24];
 }
 
 /* 3. Utility Class for Serif Headings */

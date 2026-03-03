@@ -1,6 +1,6 @@
 {
   "index.html": {
-    "file": "assets/index.a36d1566.js",
+    "file": "assets/index.363a2e3f.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
@@ -14,7 +14,7 @@
       "src/pages/RepairTerminal.vue"
     ],
     "css": [
-      "assets/index.552c4b6c.css"
+      "assets/index.75b19d8f.css"
     ],
     "assets": [
       "assets/Inter.var.d30c3bd0.woff2",
@@ -77,11 +77,11 @@
     ]
   },
   "src/pages/POS.vue": {
-    "file": "assets/POS.108668f7.js",
+    "file": "assets/POS.8c0bb1e2.js",
     "src": "src/pages/POS.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_AppLayout.c0802cde.js",
+      "_AppLayout.9272735f.js",
       "_vendor.6970a8d7.js",
       "_ui.ba6d49a6.js"
     ],
@@ -89,14 +89,14 @@
       "assets/POS.f909c371.css"
     ]
   },
-  "_AppLayout.c0802cde.js": {
-    "file": "assets/AppLayout.c0802cde.js",
+  "_AppLayout.9272735f.js": {
+    "file": "assets/AppLayout.9272735f.js",
     "imports": [
       "_vendor.6970a8d7.js",
       "_ui.ba6d49a6.js"
     ],
     "css": [
-      "assets/AppLayout.bd13bc40.css"
+      "assets/AppLayout.9b609151.css"
     ]
   },
   "_ui.ba6d49a6.js": {
@@ -106,35 +106,35 @@
     ]
   },
   "src/pages/CatalogueDashboard.vue": {
-    "file": "assets/CatalogueDashboard.37ad3a3d.js",
+    "file": "assets/CatalogueDashboard.062d24a8.js",
     "src": "src/pages/CatalogueDashboard.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vendor.6970a8d7.js",
       "_ui.ba6d49a6.js",
-      "_ProductModal.793c77c0.js"
+      "_ProductModal.2a816599.js"
     ],
     "css": [
-      "assets/CatalogueDashboard.98ef7703.css"
+      "assets/CatalogueDashboard.32cae300.css"
     ]
   },
-  "_ProductModal.793c77c0.js": {
-    "file": "assets/ProductModal.793c77c0.js",
+  "_ProductModal.2a816599.js": {
+    "file": "assets/ProductModal.2a816599.js",
     "imports": [
       "_vendor.6970a8d7.js",
       "_ui.ba6d49a6.js"
     ],
     "css": [
-      "assets/ProductModal.35e13a80.css"
+      "assets/ProductModal.2efb8475.css"
     ]
   },
   "src/pages/CategoryListing.vue": {
-    "file": "assets/CategoryListing.87bd9375.js",
+    "file": "assets/CategoryListing.265a7a74.js",
     "src": "src/pages/CategoryListing.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vendor.6970a8d7.js",
-      "_ProductModal.793c77c0.js",
+      "_ProductModal.2a816599.js",
       "_ui.ba6d49a6.js"
     ],
     "css": [
@@ -142,12 +142,12 @@
     ]
   },
   "src/pages/RepairTerminal.vue": {
-    "file": "assets/RepairTerminal.99336773.js",
+    "file": "assets/RepairTerminal.b152b415.js",
     "src": "src/pages/RepairTerminal.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vendor.6970a8d7.js",
-      "_AppLayout.c0802cde.js",
+      "_AppLayout.9272735f.js",
       "_ui.ba6d49a6.js"
     ]
   },
