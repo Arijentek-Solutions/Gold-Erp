@@ -473,12 +473,7 @@
 						<!-- Customer (required for layaway) -->
 						<div>
 							<label class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Customer *</label>
-							<div class="text-sm text-gray-900 dark:text-white font-semibold px-3 py-3 bg-gray-50 dark:bg-[#15171e] border border-gray-200 dark:border-white/10 rounded-xl" v-if="cart.customer">
-								{{ cart.customer.customer_name || cart.customer.name }}
-							</div>
-							<div v-else class="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm rounded-xl px-3 py-3 border border-red-200 dark:border-red-800/30">
-								⚠ Please select a customer in the cart before starting a layaway.
-							</div>
+							<CustomerSelector />
 						</div>
 
 						<!-- Items Summary -->
@@ -712,6 +707,7 @@ import { ref, watch, computed } from 'vue'
 import { createResource } from 'frappe-ui'
 import { useCartStore } from '@/stores/cart.js'
 import { useSessionStore } from '@/stores/session.js'
+import CustomerSelector from '@/components/CustomerSelector.vue'
 
 const props = defineProps(['show'])
 const emit = defineEmits(['close'])
