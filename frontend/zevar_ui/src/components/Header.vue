@@ -2,7 +2,7 @@
 	<header class="relative z-50">
 		<!-- Top Bar -->
 		<div
-			:class="isDark ? 'bg-[#111] border-white/5' : 'bg-[#faf5f0] border-gray-200'"
+			:class="isDark ? 'bg-[#1a1a1a] border-white/5' : 'bg-[#faf5f0] border-gray-200'"
 			class="border-b"
 		>
 			<div class="max-w-7xl mx-auto px-8 h-9 flex items-center justify-between text-xs">
@@ -56,7 +56,7 @@
 
 		<!-- Main Header -->
 		<div
-			:class="isDark ? 'bg-[#0a0a0a] border-white/5' : 'bg-white border-gray-200'"
+			:class="isDark ? 'bg-[#15161A] border-white/5' : 'bg-white border-gray-200'"
 			class="border-b"
 		>
 			<div class="max-w-7xl mx-auto px-8 h-16 flex items-center justify-between gap-8">
@@ -200,7 +200,7 @@
 
 		<!-- Navigation -->
 		<nav
-			:class="isDark ? 'bg-[#0a0a0a] border-white/5' : 'bg-white border-gray-100'"
+			:class="isDark ? 'bg-[#15161A] border-white/5' : 'bg-white border-gray-100'"
 			class="border-b relative"
 		>
 			<div class="max-w-7xl mx-auto px-8">

@@ -73,7 +73,13 @@
 				</button>
 			</div>
 
-			<div v-else class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
+			<div v-else class="flex-1 flex flex-col overflow-hidden">
+				<!-- Customer Selector -->
+				<div class="p-4 border-b border-gray-100 dark:border-white/5 bg-white dark:bg-[#1a1c23] flex-shrink-0 z-10">
+					<CustomerSelector />
+				</div>
+
+				<div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
 				<div
 					v-for="(item, index) in cart.items"
 					:key="index"
@@ -155,6 +161,7 @@
 							</button>
 						</div>
 					</div>
+				</div>
 				</div>
 			</div>
 
@@ -292,6 +299,7 @@
 <script setup>
 import { useCartStore } from '@/stores/cart.js'
 import CheckoutModal from '@/components/CheckoutModal.vue'
+import CustomerSelector from '@/components/CustomerSelector.vue'
 import { ref, computed } from 'vue'
 
 const props = defineProps(['isOpen'])

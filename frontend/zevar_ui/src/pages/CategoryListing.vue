@@ -1,7 +1,7 @@
 <template>
 	<div
 		class="min-h-screen"
-		:class="isDark ? 'bg-[#0a0a0a] text-white' : 'bg-white text-gray-900'"
+		:class="isDark ? 'bg-[#1e1e24] text-white' : 'bg-white text-gray-900'"
 	>
 		<Header
 			:isDark="isDark"

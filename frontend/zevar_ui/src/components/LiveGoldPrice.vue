@@ -1,12 +1,12 @@
 <template>
 	<div
 		class="py-3 border-b"
-		:class="isDark ? 'border-white/5 bg-[#0a0a0c]' : 'border-gray-200 bg-white'"
+		:class="isDark ? 'border-white/5 bg-[#18181b]' : 'border-gray-200 bg-white'"
 	>
 		<div class="max-w-6xl mx-auto px-4 sm:px-6">
 			<div class="flex items-center justify-between">
 				<!-- Live Badge -->
-				<div class="flex items-center gap-2">
+				<div class="flex items-center gap-2 flex-shrink-0">
 					<div
 						class="flex items-center gap-1.5 px-2 py-1 rounded-md"
 						:class="isDark ? 'bg-emerald-500/10' : 'bg-emerald-50'"
@@ -19,13 +19,13 @@
 					</div>
 					<span
 						class="text-[10px]"
-						:class="isDark ? 'text-gray-600' : 'text-gray-400'"
+						:class="isDark ? 'text-gray-500' : 'text-gray-400'"
 						>{{ formattedTime }}</span
 					>
 				</div>
 
-				<!-- Prices -->
-				<div class="flex items-center gap-4 overflow-x-auto scrollbar-hide">
+				<!-- Prices - Centered -->
+				<div class="flex items-center justify-center gap-6 flex-1 overflow-x-auto scrollbar-hide">
 					<div
 						v-for="metal in metals"
 						:key="metal.symbol"
@@ -43,7 +43,7 @@
 							<div class="flex items-center gap-1">
 								<span
 									class="text-xs font-semibold"
-									:class="isDark ? 'text-white' : 'text-gray-900'"
+									:class="isDark ? 'text-gray-100' : 'text-gray-900'"
 									>${{ formatPrice(metal.price) }}</span
 								>
 								<span
@@ -58,7 +58,7 @@
 							</div>
 							<span
 								class="text-[9px]"
-								:class="isDark ? 'text-gray-600' : 'text-gray-400'"
+								:class="isDark ? 'text-gray-500' : 'text-gray-400'"
 								>{{ metal.name }}</span
 							>
 						</div>
