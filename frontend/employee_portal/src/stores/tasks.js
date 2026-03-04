@@ -64,9 +64,7 @@ export const useTasksStore = defineStore("tasks", () => {
 
 	// Computed
 	const pendingTasks = computed(() => {
-		return tasks.value.filter(
-			(t) => t.status !== "Done" && t.status !== "Canceled"
-		);
+		return tasks.value.filter((t) => t.status !== "Done" && t.status !== "Canceled");
 	});
 
 	const overdueTasks = computed(() => {

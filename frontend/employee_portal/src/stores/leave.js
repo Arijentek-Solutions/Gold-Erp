@@ -42,10 +42,7 @@ export const useLeaveStore = defineStore("leave", () => {
 
 	// Computed
 	const totalLeaveBalance = computed(() => {
-		return leaveBalances.value.reduce(
-			(sum, lb) => sum + (lb.balance || 0),
-			0
-		);
+		return leaveBalances.value.reduce((sum, lb) => sum + (lb.balance || 0), 0);
 	});
 
 	const pendingApplications = computed(() => {
@@ -55,9 +52,7 @@ export const useLeaveStore = defineStore("leave", () => {
 	});
 
 	const approvedApplications = computed(() => {
-		return leaveApplications.value.filter(
-			(app) => app.status === "Approved"
-		);
+		return leaveApplications.value.filter((app) => app.status === "Approved");
 	});
 
 	// Actions

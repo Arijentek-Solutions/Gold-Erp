@@ -45,15 +45,11 @@ export const useIssuesStore = defineStore("issues", () => {
 
 	// Computed
 	const openTickets = computed(() => {
-		return tickets.value.filter(
-			(t) => t.status === "Open" || t.status === "Replied"
-		);
+		return tickets.value.filter((t) => t.status === "Open" || t.status === "Replied");
 	});
 
 	const resolvedTickets = computed(() => {
-		return tickets.value.filter(
-			(t) => t.status === "Resolved" || t.status === "Closed"
-		);
+		return tickets.value.filter((t) => t.status === "Resolved" || t.status === "Closed");
 	});
 
 	// Actions

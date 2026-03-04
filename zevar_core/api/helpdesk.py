@@ -33,7 +33,10 @@ def create_attendance_issue(
 
 	# Get employee info
 	employee = frappe.db.get_value(
-		"Employee", {"user_id": frappe.session.user}, ["name", "employee_name", "department", "designation"], as_dict=True
+		"Employee",
+		{"user_id": frappe.session.user},
+		["name", "employee_name", "department", "designation"],
+		as_dict=True,
 	)
 
 	# Build full description with employee context
@@ -138,7 +141,16 @@ def get_employee_tickets(status: str | None = None, limit: int = 50):
 		hd_tickets = frappe.get_all(
 			"HD Ticket",
 			filters=filters,
-			fields=["name", "subject", "status", "priority", "ticket_type", "creation", "modified", "resolution_details"],
+			fields=[
+				"name",
+				"subject",
+				"status",
+				"priority",
+				"ticket_type",
+				"creation",
+				"modified",
+				"resolution_details",
+			],
 			order_by="creation desc",
 			limit=limit,
 		)
@@ -167,7 +179,16 @@ def get_employee_tickets(status: str | None = None, limit: int = 50):
 		issues = frappe.get_all(
 			"Issue",
 			filters=filters,
-			fields=["name", "subject", "status", "priority", "issue_type", "creation", "modified", "resolution_details"],
+			fields=[
+				"name",
+				"subject",
+				"status",
+				"priority",
+				"issue_type",
+				"creation",
+				"modified",
+				"resolution_details",
+			],
 			order_by="creation desc",
 			limit=limit,
 		)

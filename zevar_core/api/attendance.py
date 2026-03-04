@@ -8,7 +8,7 @@ from frappe.utils import getdate, now_datetime, time_diff_in_hours
 
 
 @frappe.whitelist()
-def get_employee_roster(employee_id: str = None):
+def get_employee_roster(employee_id: str | None = None):
 	"""
 	Get employee's roster/shift configuration.
 
@@ -104,7 +104,7 @@ def get_current_employee():
 
 
 @frappe.whitelist()
-def get_today_checkin_status(employee_id: str = None):
+def get_today_checkin_status(employee_id: str | None = None):
 	"""
 	Get today's check-in status for an employee.
 

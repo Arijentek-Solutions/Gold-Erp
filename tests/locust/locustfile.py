@@ -10,7 +10,6 @@ Tests:
 import json
 import random
 import string
-
 from typing import ClassVar
 
 from locust import HttpUser, between, events, task

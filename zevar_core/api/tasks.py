@@ -32,7 +32,18 @@ def get_employee_tasks(status: str | None = None, limit: int = 50):
 	tasks = frappe.get_all(
 		"GP Task",
 		filters=filters,
-		fields=["name", "title", "description", "status", "priority", "due_date", "project", "team", "creation", "modified"],
+		fields=[
+			"name",
+			"title",
+			"description",
+			"status",
+			"priority",
+			"due_date",
+			"project",
+			"team",
+			"creation",
+			"modified",
+		],
 		order_by="due_date asc, priority desc, creation desc",
 		limit=limit,
 	)

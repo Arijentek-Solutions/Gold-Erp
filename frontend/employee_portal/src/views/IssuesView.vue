@@ -18,32 +18,52 @@
 		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
 			<div class="glass-card p-6 rounded-2xl">
 				<div class="flex items-center gap-3 mb-4">
-					<div class="w-10 h-10 rounded-full bg-blue-400/10 flex items-center justify-center">
+					<div
+						class="w-10 h-10 rounded-full bg-blue-400/10 flex items-center justify-center"
+					>
 						<span class="material-symbols-outlined text-blue-400">inbox</span>
 					</div>
-					<span class="text-xs font-bold uppercase text-white/60 tracking-wider">Total Tickets</span>
+					<span class="text-xs font-bold uppercase text-white/60 tracking-wider"
+						>Total Tickets</span
+					>
 				</div>
-				<span class="text-4xl font-bold font-mono text-white">{{ issuesStore.ticketStats.total }}</span>
+				<span class="text-4xl font-bold font-mono text-white">{{
+					issuesStore.ticketStats.total
+				}}</span>
 			</div>
 
 			<div class="glass-card p-6 rounded-2xl">
 				<div class="flex items-center gap-3 mb-4">
-					<div class="w-10 h-10 rounded-full bg-amber-400/10 flex items-center justify-center">
+					<div
+						class="w-10 h-10 rounded-full bg-amber-400/10 flex items-center justify-center"
+					>
 						<span class="material-symbols-outlined text-amber-400">pending</span>
 					</div>
-					<span class="text-xs font-bold uppercase text-white/60 tracking-wider">Open</span>
+					<span class="text-xs font-bold uppercase text-white/60 tracking-wider"
+						>Open</span
+					>
 				</div>
-				<span class="text-4xl font-bold font-mono text-white">{{ issuesStore.ticketStats.open }}</span>
+				<span class="text-4xl font-bold font-mono text-white">{{
+					issuesStore.ticketStats.open
+				}}</span>
 			</div>
 
 			<div class="glass-card p-6 rounded-2xl">
 				<div class="flex items-center gap-3 mb-4">
-					<div class="w-10 h-10 rounded-full bg-emerald-glow/10 flex items-center justify-center">
-						<span class="material-symbols-outlined text-emerald-glow">check_circle</span>
+					<div
+						class="w-10 h-10 rounded-full bg-emerald-glow/10 flex items-center justify-center"
+					>
+						<span class="material-symbols-outlined text-emerald-glow"
+							>check_circle</span
+						>
 					</div>
-					<span class="text-xs font-bold uppercase text-white/60 tracking-wider">Resolved</span>
+					<span class="text-xs font-bold uppercase text-white/60 tracking-wider"
+						>Resolved</span
+					>
 				</div>
-				<span class="text-4xl font-bold font-mono text-white">{{ issuesStore.ticketStats.closed }}</span>
+				<span class="text-4xl font-bold font-mono text-white">{{
+					issuesStore.ticketStats.closed
+				}}</span>
 			</div>
 		</div>
 
@@ -93,8 +113,12 @@
 			</div>
 
 			<div v-else-if="filteredTickets.length === 0" class="p-8 text-center">
-				<div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4">
-					<span class="material-symbols-outlined text-3xl text-white/20">support_agent</span>
+				<div
+					class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4"
+				>
+					<span class="material-symbols-outlined text-3xl text-white/20"
+						>support_agent</span
+					>
 				</div>
 				<h3 class="text-lg font-bold text-white mb-2">No Tickets Found</h3>
 				<p class="text-white/40 text-sm">
@@ -108,7 +132,9 @@
 
 			<div v-else class="overflow-x-auto">
 				<table class="w-full text-left">
-					<thead class="bg-white/5 text-xs text-white/40 uppercase font-bold tracking-wider">
+					<thead
+						class="bg-white/5 text-xs text-white/40 uppercase font-bold tracking-wider"
+					>
 						<tr>
 							<th class="px-6 py-4">Subject</th>
 							<th class="px-6 py-4">Type</th>
@@ -126,12 +152,17 @@
 						>
 							<td class="px-6 py-4">
 								<div class="flex items-center gap-3">
-									<span class="w-2 h-2 rounded-full" :class="getStatusDotColor(ticket.status)"></span>
+									<span
+										class="w-2 h-2 rounded-full"
+										:class="getStatusDotColor(ticket.status)"
+									></span>
 									<span class="font-bold text-white">{{ ticket.subject }}</span>
 								</div>
 							</td>
 							<td class="px-6 py-4">
-								<span class="text-white/60 text-sm">{{ ticket.ticket_type || "General" }}</span>
+								<span class="text-white/60 text-sm">{{
+									ticket.ticket_type || "General"
+								}}</span>
 							</td>
 							<td class="px-6 py-4">
 								<span
@@ -142,7 +173,9 @@
 								</span>
 							</td>
 							<td class="px-6 py-4">
-								<span class="text-white/40 text-sm">{{ formatDate(ticket.creation) }}</span>
+								<span class="text-white/40 text-sm">{{
+									formatDate(ticket.creation)
+								}}</span>
 							</td>
 							<td class="px-6 py-4 text-right">
 								<span
@@ -166,12 +199,16 @@
 				@click.self="showIssueModal = false"
 			>
 				<div class="absolute inset-0 bg-black/60"></div>
-				<div class="relative bg-[#111420] rounded-2xl p-6 w-full max-w-md border border-white/10">
+				<div
+					class="relative bg-[#111420] rounded-2xl p-6 w-full max-w-md border border-white/10"
+				>
 					<h3 class="font-bold text-white text-lg mb-4">Report an Issue</h3>
 
 					<div class="space-y-4">
 						<div>
-							<label class="block text-xs font-bold text-white/60 uppercase mb-2">Subject</label>
+							<label class="block text-xs font-bold text-white/60 uppercase mb-2"
+								>Subject</label
+							>
 							<input
 								v-model="newIssue.subject"
 								type="text"
@@ -181,13 +218,19 @@
 						</div>
 
 						<div>
-							<label class="block text-xs font-bold text-white/60 uppercase mb-2">Issue Type</label>
+							<label class="block text-xs font-bold text-white/60 uppercase mb-2"
+								>Issue Type</label
+							>
 							<select
 								v-model="newIssue.issue_type"
 								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50"
 							>
 								<option value="" disabled>Select issue type...</option>
-								<option v-for="type in issuesStore.issueTypes" :key="type.name" :value="type.name">
+								<option
+									v-for="type in issuesStore.issueTypes"
+									:key="type.name"
+									:value="type.name"
+								>
 									{{ type.name }}
 								</option>
 								<option value="Attendance">Attendance Issue</option>
@@ -199,7 +242,9 @@
 						</div>
 
 						<div>
-							<label class="block text-xs font-bold text-white/60 uppercase mb-2">Priority</label>
+							<label class="block text-xs font-bold text-white/60 uppercase mb-2"
+								>Priority</label
+							>
 							<select
 								v-model="newIssue.priority"
 								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50"
@@ -212,7 +257,9 @@
 						</div>
 
 						<div>
-							<label class="block text-xs font-bold text-white/60 uppercase mb-2">Description</label>
+							<label class="block text-xs font-bold text-white/60 uppercase mb-2"
+								>Description</label
+							>
 							<textarea
 								v-model="newIssue.description"
 								rows="4"
