@@ -114,16 +114,26 @@
 								v-if="cart.tradeIns.length > 0"
 								class="mt-2 pt-2 border-t border-orange-200 dark:border-orange-800/30"
 							>
-								<div class="text-xs font-bold text-orange-500 uppercase tracking-wider mb-1">Trade-Ins</div>
+								<div
+									class="text-xs font-bold text-orange-500 uppercase tracking-wider mb-1"
+								>
+									Trade-Ins
+								</div>
 								<div
 									v-for="(ti, idx) in cart.tradeIns"
 									:key="idx"
 									class="flex justify-between text-xs text-orange-600 dark:text-orange-400 mb-0.5"
 								>
-									<span class="truncate">{{ ti.description || 'Trade-In' }}</span>
-									<span class="font-mono">-{{ formatCurrency(ti.trade_in_value) }}</span>
+									<span class="truncate">{{
+										ti.description || 'Trade-In'
+									}}</span>
+									<span class="font-mono"
+										>-{{ formatCurrency(ti.trade_in_value) }}</span
+									>
 								</div>
-								<div class="flex justify-between text-sm font-bold text-orange-600 dark:text-orange-400 mt-1">
+								<div
+									class="flex justify-between text-sm font-bold text-orange-600 dark:text-orange-400 mt-1"
+								>
 									<span>Trade-In Credit</span>
 									<span>-{{ formatCurrency(tradeInTotal) }}</span>
 								</div>
@@ -182,12 +192,23 @@
 									<div
 										class="w-8 h-8 rounded-full flex items-center justify-center bg-purple-100 text-purple-600"
 									>
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"></path>
+										<svg
+											class="w-4 h-4"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"
+											></path>
 										</svg>
 									</div>
 									<div class="text-left">
-										<span class="font-medium text-gray-900 dark:text-white text-sm"
+										<span
+											class="font-medium text-gray-900 dark:text-white text-sm"
 											>Sales Associates</span
 										>
 										<span
@@ -200,9 +221,16 @@
 								<svg
 									class="w-4 h-4 text-gray-400 transition-transform"
 									:class="showSalespersons ? 'rotate-180' : ''"
-									fill="none" stroke="currentColor" viewBox="0 0 24 24"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
 								>
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M19 9l-7 7-7-7"
+									></path>
 								</svg>
 							</button>
 
@@ -235,8 +263,18 @@
 										@click="cart.removeSalesperson(idx)"
 										class="p-1 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
 									>
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+										<svg
+											class="w-4 h-4"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M6 18L18 6M6 6l12 12"
+											></path>
 										</svg>
 									</button>
 								</div>
@@ -250,7 +288,10 @@
 								</button>
 
 								<div
-									v-if="cart.salespersons.length > 0 && salespersonSplitTotal !== 100"
+									v-if="
+										cart.salespersons.length > 0 &&
+										salespersonSplitTotal !== 100
+									"
 									class="text-xs text-red-500 font-medium"
 								>
 									Splits must total 100% (currently {{ salespersonSplitTotal }}%)
@@ -326,7 +367,8 @@
 							v-if="isPaymentSelected('Gift Card')"
 							class="bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 mb-4 border border-gray-100 dark:border-white/5"
 						>
-							<label class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block"
+							<label
+								class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block"
 								>Gift Card Number</label
 							>
 							<div class="flex items-center gap-2">
@@ -439,248 +481,243 @@
 				</template>
 
 				<template v-else-if="step === 'layaway'">
-				<div
-					class="w-full flex flex-col bg-white dark:bg-[#1a1c23] relative overflow-hidden"
-				>
-					<div class="flex items-center justify-between p-6 pb-0 flex-shrink-0">
-						<button
-							@click="step = 'review'"
-							class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition text-gray-400"
-						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-							</svg>
-						</button>
-						<div>
-							<h2 class="text-xl font-bold text-gray-900 dark:text-white">
-								Layaway Plan
-							</h2>
-							<p class="text-sm text-gray-500 dark:text-gray-400">
-								Reserve items with a deposit and pay over time.
-							</p>
-						</div>
-						<button
-							@click="close"
-							class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition text-gray-400"
-						>
-							<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-							</svg>
-						</button>
-					</div>
-
-					<div class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
-						<!-- Customer (required for layaway) -->
-						<div>
-							<label class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Customer *</label>
-							<CustomerSelector />
-						</div>
-
-						<!-- Items Summary -->
-						<div class="bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 border border-gray-100 dark:border-white/5">
-							<div class="flex justify-between text-sm mb-1">
-								<span class="text-gray-500">Items Total</span>
-								<span class="font-bold text-gray-900 dark:text-white">{{ formatCurrency(cart.subtotal) }}</span>
-							</div>
-							<div class="flex justify-between text-sm">
-								<span class="text-gray-500">{{ cart.items.length }} item(s)</span>
-							</div>
-						</div>
-
-						<!-- Duration -->
-						<div>
-							<label class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">Duration</label>
-							<div class="flex gap-2">
-								<button
-									v-for="m in [3, 6, 9, 12]"
-									:key="m"
-									@click="layawayDuration = m"
-									class="flex-1 py-3 rounded-xl font-bold text-sm border transition-all"
-									:class="
-										layawayDuration === m
-											? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#D4AF37] ring-1 ring-[#D4AF37]'
-											: 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:border-gray-400'
-									"
+					<div
+						class="w-full flex flex-col bg-white dark:bg-[#1a1c23] relative overflow-hidden"
+					>
+						<div class="flex items-center justify-between p-6 pb-0 flex-shrink-0">
+							<button
+								@click="step = 'review'"
+								class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition text-gray-400"
+							>
+								<svg
+									class="w-5 h-5"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
 								>
-									{{ m }} mo
-								</button>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M15 19l-7-7 7-7"
+									></path>
+								</svg>
+							</button>
+							<div>
+								<h2 class="text-xl font-bold text-gray-900 dark:text-white">
+									Layaway Plan
+								</h2>
+								<p class="text-sm text-gray-500 dark:text-gray-400">
+									Reserve items with a deposit and pay over time.
+								</p>
+							</div>
+							<button
+								@click="close"
+								class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition text-gray-400"
+							>
+								<svg
+									class="w-5 h-5"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M6 18L18 6M6 6l12 12"
+									></path>
+								</svg>
+							</button>
+						</div>
+
+						<div class="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
+							<!-- Customer (required for layaway) -->
+							<div>
+								<label
+									class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block"
+									>Customer *</label
+								>
+								<CustomerSelector />
+							</div>
+
+							<!-- Items Summary -->
+							<div
+								class="bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 border border-gray-100 dark:border-white/5"
+							>
+								<div class="flex justify-between text-sm mb-1">
+									<span class="text-gray-500">Items Total</span>
+									<span class="font-bold text-gray-900 dark:text-white">{{
+										formatCurrency(cart.subtotal)
+									}}</span>
+								</div>
+								<div class="flex justify-between text-sm">
+									<span class="text-gray-500"
+										>{{ cart.items.length }} item(s)</span
+									>
+								</div>
+							</div>
+
+							<!-- Duration -->
+							<div>
+								<label
+									class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block"
+									>Duration</label
+								>
+								<div class="flex gap-2">
+									<button
+										v-for="m in [3, 6, 9, 12]"
+										:key="m"
+										@click="layawayDuration = m"
+										class="flex-1 py-3 rounded-xl font-bold text-sm border transition-all"
+										:class="
+											layawayDuration === m
+												? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#D4AF37] ring-1 ring-[#D4AF37]'
+												: 'border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:border-gray-400'
+										"
+									>
+										{{ m }} mo
+									</button>
+								</div>
+							</div>
+
+							<!-- Deposit -->
+							<div>
+								<label
+									class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block"
+								>
+									Deposit Amount
+									<span
+										class="text-[10px] text-gray-400 font-normal normal-case tracking-normal ml-2"
+										>(Min 10%: {{ formatCurrency(minimumDeposit) }})</span
+									>
+								</label>
+								<div class="flex items-center gap-2">
+									<span class="text-gray-400 text-lg">$</span>
+									<input
+										v-model.number="layawayDeposit"
+										type="number"
+										min="1"
+										:max="cart.subtotal - 1"
+										class="flex-1 px-3 py-3 bg-white dark:bg-[#0F1115] border rounded-xl text-lg font-mono font-bold transition-colors"
+										:class="
+											layawayDeposit && layawayDeposit < minimumDeposit
+												? 'border-red-400 dark:border-red-500 text-red-600'
+												: 'border-gray-200 dark:border-white/10'
+										"
+										placeholder="Enter deposit..."
+									/>
+								</div>
+								<p
+									v-if="layawayDeposit && layawayDeposit < minimumDeposit"
+									class="text-xs text-red-500 mt-1.5"
+								>
+									Deposit must be at least 10% of total ({{
+										formatCurrency(minimumDeposit)
+									}})
+								</p>
+							</div>
+
+							<!-- Auto-calculated Preview Panel -->
+							<div
+								v-if="layawayDeposit >= minimumDeposit && layawayDuration > 0"
+								class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-100 dark:border-blue-800/30 space-y-2"
+							>
+								<h4
+									class="text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider mb-2"
+								>
+									Payment Schedule Preview
+								</h4>
+								<div class="flex justify-between text-sm">
+									<span class="text-blue-600 dark:text-blue-400"
+										>Today's Deposit</span
+									>
+									<span class="font-bold text-blue-700 dark:text-blue-300">{{
+										formatCurrency(layawayDeposit)
+									}}</span>
+								</div>
+								<div class="flex justify-between text-sm">
+									<span class="text-blue-600 dark:text-blue-400"
+										>Remaining Balance</span
+									>
+									<span class="font-bold text-blue-700 dark:text-blue-300">{{
+										formatCurrency(cart.subtotal - layawayDeposit)
+									}}</span>
+								</div>
+								<div class="flex justify-between text-sm">
+									<span class="text-blue-600 dark:text-blue-400"
+										>Monthly Payment</span
+									>
+									<span class="font-bold text-blue-700 dark:text-blue-300">
+										{{ formatCurrency(layawayMonthlyPayment) }} ×
+										{{ layawayDuration - 1 }} mo
+									</span>
+								</div>
+								<div
+									class="flex justify-between text-sm pt-2 border-t border-blue-200 dark:border-blue-700/30"
+								>
+									<span class="text-blue-600 dark:text-blue-400"
+										>Target Completion</span
+									>
+									<span class="font-bold text-blue-700 dark:text-blue-300">{{
+										layawayTargetDate
+									}}</span>
+								</div>
 							</div>
 						</div>
 
-						<!-- Deposit -->
-						<div>
-							<label class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 block">
-								Deposit Amount
-								<span class="text-[10px] text-gray-400 font-normal normal-case tracking-normal ml-2">(Min 10%: {{ formatCurrency(minimumDeposit) }})</span>
-							</label>
-							<div class="flex items-center gap-2">
-								<span class="text-gray-400 text-lg">$</span>
-								<input
-									v-model.number="layawayDeposit"
-									type="number"
-									min="1"
-									:max="cart.subtotal - 1"
-									class="flex-1 px-3 py-3 bg-white dark:bg-[#0F1115] border rounded-xl text-lg font-mono font-bold transition-colors"
-									:class="layawayDeposit && layawayDeposit < minimumDeposit
-										? 'border-red-400 dark:border-red-500 text-red-600'
-										: 'border-gray-200 dark:border-white/10'"
-									placeholder="Enter deposit..."
-								/>
-							</div>
-							<p v-if="layawayDeposit && layawayDeposit < minimumDeposit" class="text-xs text-red-500 mt-1.5">
-								Deposit must be at least 10% of total ({{ formatCurrency(minimumDeposit) }})
-							</p>
-						</div>
-
-						<!-- Auto-calculated Preview Panel -->
-						<div
-							v-if="layawayDeposit >= minimumDeposit && layawayDuration > 0"
-							class="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-100 dark:border-blue-800/30 space-y-2"
-						>
-							<h4 class="text-xs font-bold text-blue-500 dark:text-blue-400 uppercase tracking-wider mb-2">Payment Schedule Preview</h4>
-							<div class="flex justify-between text-sm">
-								<span class="text-blue-600 dark:text-blue-400">Today's Deposit</span>
-								<span class="font-bold text-blue-700 dark:text-blue-300">{{ formatCurrency(layawayDeposit) }}</span>
-							</div>
-							<div class="flex justify-between text-sm">
-								<span class="text-blue-600 dark:text-blue-400">Remaining Balance</span>
-								<span class="font-bold text-blue-700 dark:text-blue-300">{{ formatCurrency(cart.subtotal - layawayDeposit) }}</span>
-							</div>
-							<div class="flex justify-between text-sm">
-								<span class="text-blue-600 dark:text-blue-400">Monthly Payment</span>
-								<span class="font-bold text-blue-700 dark:text-blue-300">
-									{{ formatCurrency(layawayMonthlyPayment) }} × {{ layawayDuration - 1 }} mo
+						<div class="p-6 pt-0 flex-shrink-0">
+							<button
+								@click="handleLayaway"
+								:disabled="!canSubmitLayaway || processing"
+								class="w-full py-4 rounded-xl font-bold text-lg shadow-xl transition-all flex items-center justify-center gap-2 transform active:scale-95"
+								:class="
+									!canSubmitLayaway || processing
+										? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-white/5 dark:text-gray-600'
+										: 'bg-gray-900 text-white hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f]'
+								"
+							>
+								<span
+									v-if="processing"
+									class="animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-white"
+								></span>
+								<span v-else-if="!canSubmitLayaway">
+									{{
+										!cart.customer
+											? 'Select Customer'
+											: layawayDeposit < minimumDeposit
+											? 'Deposit Too Low'
+											: 'Complete Fields'
+									}}
 								</span>
-							</div>
-							<div class="flex justify-between text-sm pt-2 border-t border-blue-200 dark:border-blue-700/30">
-								<span class="text-blue-600 dark:text-blue-400">Target Completion</span>
-								<span class="font-bold text-blue-700 dark:text-blue-300">{{ layawayTargetDate }}</span>
-							</div>
+								<span v-else
+									>Confirm Layaway —
+									{{ formatCurrency(layawayDeposit) }} Deposit</span
+								>
+							</button>
 						</div>
 					</div>
-
-					<div class="p-6 pt-0 flex-shrink-0">
-						<button
-							@click="handleLayaway"
-							:disabled="!canSubmitLayaway || processing"
-							class="w-full py-4 rounded-xl font-bold text-lg shadow-xl transition-all flex items-center justify-center gap-2 transform active:scale-95"
-							:class="
-								!canSubmitLayaway || processing
-									? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-white/5 dark:text-gray-600'
-									: 'bg-gray-900 text-white hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f]'
-							"
-						>
-							<span
-								v-if="processing"
-								class="animate-spin rounded-full h-5 w-5 border-2 border-gray-400 border-t-white"
-							></span>
-							<span v-else-if="!canSubmitLayaway">
-								{{ !cart.customer ? 'Select Customer' : layawayDeposit < minimumDeposit ? 'Deposit Too Low' : 'Complete Fields' }}
-							</span>
-							<span v-else>Confirm Layaway — {{ formatCurrency(layawayDeposit) }} Deposit</span>
-						</button>
-					</div>
-				</div>
-			</template>
+				</template>
 
 				<template v-else-if="step === 'success'">
-				<div
-					class="p-10 flex flex-col items-center justify-center text-center w-full bg-white dark:bg-[#1a1c23]"
-				>
 					<div
-						class="w-20 h-20 rounded-full flex items-center justify-center mb-6 animate-bounce-short"
-						:class="isLayawaySuccess ? 'bg-[#D4AF37]/20' : 'bg-green-100 dark:bg-green-900/30'"
+						class="p-10 flex flex-col items-center justify-center text-center w-full bg-white dark:bg-[#1a1c23]"
 					>
-						<svg
-							class="w-10 h-10"
-							:class="isLayawaySuccess ? 'text-[#D4AF37]' : 'text-green-600 dark:text-green-400'"
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2.5"
-								d="M5 13l4 4L19 7"
-							></path>
-						</svg>
-					</div>
-					<h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-						{{ isLayawaySuccess ? 'Layaway Created!' : 'Payment Successful!' }}
-					</h2>
-					<p class="text-gray-500 dark:text-gray-400 mb-8">
-						{{ isLayawaySuccess ? 'Contract has been generated and submitted.' : 'Invoice has been generated in ERPNext.' }}
-					</p>
-
-					<div
-						class="bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 w-full mb-6 border border-gray-100 dark:border-white/5 space-y-2"
-					>
-						<div class="flex justify-between text-sm">
-							<span class="text-gray-500 dark:text-gray-400">{{ isLayawaySuccess ? 'Contract ID' : 'Transaction ID' }}</span>
-							<span class="font-mono font-bold text-gray-900 dark:text-white">{{
-								lastOrderId || '—'
-							}}</span>
-						</div>
-						<div class="flex justify-between text-sm">
-							<span class="text-gray-500 dark:text-gray-400">{{ isLayawaySuccess ? 'Deposit Paid' : 'Amount Paid' }}</span>
-							<span
-								class="font-mono font-bold"
-								:class="isLayawaySuccess ? 'text-[#D4AF37]' : 'text-green-600 dark:text-green-400'"
-								>{{ formatCurrency(isLayawaySuccess ? layawayDeposit : grandTotalWithTaxExempt) }}</span
-							>
-						</div>
-						<!-- Layaway-specific details -->
-						<template v-if="isLayawaySuccess">
-							<div class="flex justify-between text-sm">
-								<span class="text-gray-500 dark:text-gray-400">Total Amount</span>
-								<span class="font-mono font-bold text-gray-900 dark:text-white">{{ formatCurrency(cart.subtotal) }}</span>
-							</div>
-							<div class="flex justify-between text-sm">
-								<span class="text-gray-500 dark:text-gray-400">Remaining Balance</span>
-								<span class="font-mono font-bold text-gray-900 dark:text-white">{{ formatCurrency(cart.subtotal - (layawayDeposit || 0)) }}</span>
-							</div>
-							<div class="flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-white/10">
-								<span class="text-gray-500 dark:text-gray-400">Monthly Payment</span>
-								<span class="font-mono font-bold text-gray-900 dark:text-white">{{ formatCurrency(layawayMonthlyPayment) }} × {{ (layawayDuration || 6) - 1 }} mo</span>
-							</div>
-							<div class="flex justify-between text-sm">
-								<span class="text-gray-500 dark:text-gray-400">Target Completion</span>
-								<span class="font-mono font-bold text-gray-900 dark:text-white">{{ layawayTargetDate }}</span>
-							</div>
-						</template>
 						<div
-							v-else-if="taxExempt"
-							class="flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-white/10"
-						>
-							<span class="text-gray-500 dark:text-gray-400">Tax Status</span>
-							<span class="text-green-500 font-medium">Exempt</span>
-						</div>
-					</div>
-
-					<div class="flex gap-3 w-full">
-						<button
-							@click="close"
-							class="flex-1 py-3 rounded-lg font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 transition"
-						>
-							New Order
-						</button>
-						<button
-							v-if="isLayawaySuccess"
-							@click="openLayawayInDesk"
-							class="flex-1 py-3 rounded-lg font-bold text-white bg-gray-900 hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f] transition flex items-center justify-center gap-2"
-						>
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path>
-							</svg>
-							View Contract
-						</button>
-						<button
-							v-else
-							class="flex-1 py-3 rounded-lg font-bold text-white bg-gray-900 hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f] transition flex items-center justify-center gap-2"
+							class="w-20 h-20 rounded-full flex items-center justify-center mb-6 animate-bounce-short"
+							:class="
+								isLayawaySuccess
+									? 'bg-[#D4AF37]/20'
+									: 'bg-green-100 dark:bg-green-900/30'
+							"
 						>
 							<svg
-								class="w-4 h-4"
+								class="w-10 h-10"
+								:class="
+									isLayawaySuccess
+										? 'text-[#D4AF37]'
+										: 'text-green-600 dark:text-green-400'
+								"
 								fill="none"
 								stroke="currentColor"
 								viewBox="0 0 24 24"
@@ -688,15 +725,154 @@
 								<path
 									stroke-linecap="round"
 									stroke-linejoin="round"
-									stroke-width="2"
-									d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2-4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+									stroke-width="2.5"
+									d="M5 13l4 4L19 7"
 								></path>
 							</svg>
-							Print Receipt
-						</button>
+						</div>
+						<h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+							{{ isLayawaySuccess ? 'Layaway Created!' : 'Payment Successful!' }}
+						</h2>
+						<p class="text-gray-500 dark:text-gray-400 mb-8">
+							{{
+								isLayawaySuccess
+									? 'Contract has been generated and submitted.'
+									: 'Invoice has been generated in ERPNext.'
+							}}
+						</p>
+
+						<div
+							class="bg-gray-50 dark:bg-[#15171e] rounded-xl p-4 w-full mb-6 border border-gray-100 dark:border-white/5 space-y-2"
+						>
+							<div class="flex justify-between text-sm">
+								<span class="text-gray-500 dark:text-gray-400">{{
+									isLayawaySuccess ? 'Contract ID' : 'Transaction ID'
+								}}</span>
+								<span class="font-mono font-bold text-gray-900 dark:text-white">{{
+									lastOrderId || '—'
+								}}</span>
+							</div>
+							<div class="flex justify-between text-sm">
+								<span class="text-gray-500 dark:text-gray-400">{{
+									isLayawaySuccess ? 'Deposit Paid' : 'Amount Paid'
+								}}</span>
+								<span
+									class="font-mono font-bold"
+									:class="
+										isLayawaySuccess
+											? 'text-[#D4AF37]'
+											: 'text-green-600 dark:text-green-400'
+									"
+									>{{
+										formatCurrency(
+											isLayawaySuccess
+												? layawayDeposit
+												: grandTotalWithTaxExempt
+										)
+									}}</span
+								>
+							</div>
+							<!-- Layaway-specific details -->
+							<template v-if="isLayawaySuccess">
+								<div class="flex justify-between text-sm">
+									<span class="text-gray-500 dark:text-gray-400"
+										>Total Amount</span
+									>
+									<span
+										class="font-mono font-bold text-gray-900 dark:text-white"
+										>{{ formatCurrency(cart.subtotal) }}</span
+									>
+								</div>
+								<div class="flex justify-between text-sm">
+									<span class="text-gray-500 dark:text-gray-400"
+										>Remaining Balance</span
+									>
+									<span
+										class="font-mono font-bold text-gray-900 dark:text-white"
+										>{{
+											formatCurrency(cart.subtotal - (layawayDeposit || 0))
+										}}</span
+									>
+								</div>
+								<div
+									class="flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-white/10"
+								>
+									<span class="text-gray-500 dark:text-gray-400"
+										>Monthly Payment</span
+									>
+									<span class="font-mono font-bold text-gray-900 dark:text-white"
+										>{{ formatCurrency(layawayMonthlyPayment) }} ×
+										{{ (layawayDuration || 6) - 1 }} mo</span
+									>
+								</div>
+								<div class="flex justify-between text-sm">
+									<span class="text-gray-500 dark:text-gray-400"
+										>Target Completion</span
+									>
+									<span
+										class="font-mono font-bold text-gray-900 dark:text-white"
+										>{{ layawayTargetDate }}</span
+									>
+								</div>
+							</template>
+							<div
+								v-else-if="taxExempt"
+								class="flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-white/10"
+							>
+								<span class="text-gray-500 dark:text-gray-400">Tax Status</span>
+								<span class="text-green-500 font-medium">Exempt</span>
+							</div>
+						</div>
+
+						<div class="flex gap-3 w-full">
+							<button
+								@click="close"
+								class="flex-1 py-3 rounded-lg font-bold text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 transition"
+							>
+								New Order
+							</button>
+							<button
+								v-if="isLayawaySuccess"
+								@click="openLayawayInDesk"
+								class="flex-1 py-3 rounded-lg font-bold text-white bg-gray-900 hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f] transition flex items-center justify-center gap-2"
+							>
+								<svg
+									class="w-4 h-4"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+									></path>
+								</svg>
+								View Contract
+							</button>
+							<button
+								v-else
+								class="flex-1 py-3 rounded-lg font-bold text-white bg-gray-900 hover:bg-black dark:bg-[#D4AF37] dark:text-black dark:hover:bg-[#b5952f] transition flex items-center justify-center gap-2"
+							>
+								<svg
+									class="w-4 h-4"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2-4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
+									></path>
+								</svg>
+								Print Receipt
+							</button>
+						</div>
 					</div>
-				</div>
-			</template>
+				</template>
 			</div>
 		</div>
 	</Transition>
@@ -733,7 +909,7 @@ const salespersonSplitTotal = computed(() => {
 
 // Layaway computeds
 const minimumDeposit = computed(() => {
-	return cart.subtotal * 0.10
+	return cart.subtotal * 0.1
 })
 
 const layawayMonthlyPayment = computed(() => {
@@ -753,7 +929,11 @@ const layawayTargetDate = computed(() => {
 const canSubmitLayaway = computed(() => {
 	if (!cart.customer) return false
 	const dep = layawayDeposit.value || 0
-	return dep >= minimumDeposit.value && dep < cart.subtotal && [3, 6, 9, 12].includes(layawayDuration.value)
+	return (
+		dep >= minimumDeposit.value &&
+		dep < cart.subtotal &&
+		[3, 6, 9, 12].includes(layawayDuration.value)
+	)
 })
 
 const isLayawaySuccess = ref(false)
@@ -781,7 +961,7 @@ const giftCardLoading = ref(false)
 
 // Computed: Grand total with tax exemption
 const grandTotalWithTaxExempt = computed(() => {
-	const base = taxExempt.value ? cart.subtotal : (cart.subtotal + cart.tax)
+	const base = taxExempt.value ? cart.subtotal : cart.subtotal + cart.tax
 	const total = base - tradeInTotal.value
 	return Math.max(0, total)
 })
@@ -926,7 +1106,9 @@ async function handlePayment() {
 		const errorMsg = e.message || String(e)
 		// Detect trade-in 2x rule failure → prompt for manager override
 		if (errorMsg.includes('Manager Override') && cart.tradeIns.length > 0) {
-			const managerUser = prompt('Trade-In 2x rule violation detected.\nEnter Manager User ID to override:')
+			const managerUser = prompt(
+				'Trade-In 2x rule violation detected.\nEnter Manager User ID to override:'
+			)
 			if (managerUser) {
 				const reason = prompt('Enter override reason:')
 				if (reason) {

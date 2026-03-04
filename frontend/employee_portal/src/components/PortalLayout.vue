@@ -121,6 +121,7 @@ const navItems = [
 	{ to: "/leave", icon: "beach_access", label: "Leave" },
 	{ to: "/expense", icon: "attach_money", label: "Expense" },
 	{ to: "/payroll", icon: "account_balance_wallet", label: "Payroll" },
+	{ to: "/issues", icon: "support_agent", label: "Issues" },
 	{ to: "/open-desk", icon: "open_in_new", label: "Open Desk" },
 ];
 

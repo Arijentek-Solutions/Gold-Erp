@@ -104,7 +104,11 @@ def create_layaway(
 			warehouse = store_loc
 
 	if not warehouse or not frappe.db.exists("Warehouse", warehouse):
-		frappe.throw(_("Warehouse '{0}' not found. Please ensure a store location has an active default warehouse.").format(warehouse))
+		frappe.throw(
+			_(
+				"Warehouse '{0}' not found. Please ensure a store location has an active default warehouse."
+			).format(warehouse)
+		)
 
 	for item in items_list:
 		if not item.get("item_code"):

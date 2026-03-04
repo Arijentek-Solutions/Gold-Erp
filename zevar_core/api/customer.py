@@ -3,6 +3,7 @@ Customer API - Customer search and details
 """
 
 import frappe
+from frappe import _
 
 
 @frappe.whitelist()
@@ -87,4 +88,147 @@ def get_customer_details(customer_name: str):
 		# Purchase history
 		"recent_orders": recent_orders,
 		"total_spent": sum(order.grand_total for order in recent_orders),
+	}
+
+
+@frappe.whitelist()
+def quick_create_customer(
+	customer_name: str,
+	mobile_no: str | None = None,
+	email_id: str | None = None,
+	address_line1: str | None = None,
+	address_line2: str | None = None,
+	city: str | None = None,
+	state: str | None = None,
+	pincode: str | None = None,
+	ring_size: str | None = None,
+	preferred_metal: str | None = None,
+	preferred_purity: str | None = None,
+	spouse_name: str | None = None,
+	anniversary: str | None = None,
+	tax_exempt: int = 0,
+):
+	"""
+	Quick create a new customer from POS.
+
+	Args:
+	    customer_name: Customer full name (required)
+	    mobile_no: Phone number
+	    email_id: Email address
+	    address_line1: Street address
+	    address_line2: Apartment/suite
+	    city: City
+	    state: State/province
+	    pincode: ZIP/postal code
+	    ring_size: Customer's ring size preference
+	    preferred_metal: Preferred metal type
+	    preferred_purity: Preferred gold purity
+	    spouse_name: Spouse name for gifting
+	    anniversary: Wedding anniversary date
+	    tax_exempt: Whether customer is tax exempt (1 or 0)
+
+	Returns:
+	    Dict with success status and customer details
+	"""
+	# Validate required field
+	if not customer_name:
+		frappe.throw(_("Customer name is required"))
+
+	# Check for duplicate by customer_name field (case-insensitive)
+	existing = frappe.db.sql(
+		"SELECT name FROM `tabCustomer` WHERE LOWER(customer_name) = LOWER(%s)",
+		(customer_name,),
+	)
+	if existing:
+		frappe.throw(_("Customer '{0}' already exists").format(customer_name))
+
+	# Get default customer_group - try multiple sources
+	customer_group = frappe.db.get_single_value("Selling Settings", "customer_group") or frappe.db.get_value(
+		"Customer Group", {"is_group": 0}, "name", order_by="creation asc"
+	)
+	if not customer_group:
+		# Create Individual group if it doesn't exist
+		if not frappe.db.exists("Customer Group", "Individual"):
+			group = frappe.get_doc(
+				{
+					"doctype": "Customer Group",
+					"customer_group_name": "Individual",
+					"is_group": 0,
+				}
+			)
+			group.insert(ignore_permissions=True)
+		customer_group = "Individual"
+
+	# Get default territory - try multiple sources
+	territory = frappe.db.get_single_value("Selling Settings", "territory") or frappe.db.get_value(
+		"Territory", {"is_group": 0}, "name", order_by="creation asc"
+	)
+	if not territory:
+		# Get All Territories or first available
+		territory = frappe.db.get_value("Territory", {"name": "All Territories"}, "name")
+		if not territory:
+			territory = frappe.db.get_value("Territory", {}, "name", order_by="creation asc")
+
+	# Create customer document
+	customer = frappe.get_doc(
+		{
+			"doctype": "Customer",
+			"customer_name": customer_name,
+			"customer_type": "Individual",
+			"customer_group": customer_group,
+			"territory": territory,
+			"mobile_no": mobile_no,
+			"email_id": email_id,
+		}
+	)
+
+	# Set custom fields only if they exist in the doctype
+	customer_meta = frappe.get_meta("Customer")
+	custom_fields = {
+		"custom_ring_size": ring_size,
+		"custom_preferred_metal": preferred_metal,
+		"custom_preferred_purity": preferred_purity,
+		"custom_spouse_name": spouse_name,
+		"custom_anniversary": anniversary,
+	}
+
+	for field_name, value in custom_fields.items():
+		if customer_meta.has_field(field_name) and value:
+			customer.set(field_name, value)
+
+	# Set tax exempt if field exists
+	if customer_meta.has_field("exempt_from_sales_tax"):
+		customer.exempt_from_sales_tax = tax_exempt == 1
+
+	customer.insert()
+
+	# Create address if provided
+	if address_line1 or city:
+		try:
+			address = frappe.get_doc(
+				{
+					"doctype": "Address",
+					"address_title": customer_name,
+					"address_type": "Billing",
+					"address_line1": address_line1,
+					"address_line2": address_line2,
+					"city": city,
+					"state": state,
+					"pincode": pincode,
+					"links": [{"link_doctype": "Customer", "link_name": customer.name}],
+				}
+			)
+			address.insert()
+		except Exception:
+			# Log address creation error but don't fail customer creation
+			frappe.log_error(frappe.get_traceback(), f"Failed to create address for {customer_name}")
+
+	return {
+		"success": True,
+		"customer_name": customer.name,
+		"display_name": customer.customer_name,
+		"mobile_no": customer.mobile_no,
+		"email_id": customer.email_id,
+		"customer_group": customer.customer_group,
+		"territory": customer.territory,
 	}

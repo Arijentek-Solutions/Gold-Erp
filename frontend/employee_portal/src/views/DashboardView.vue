@@ -47,21 +47,22 @@
 								<div
 									class="absolute top-[22%] text-[10px] text-white/30 tracking-[0.4em] font-bold uppercase font-display"
 								>
-									Current Shift
+									{{ shiftLabel }}
 								</div>
 
 								<!-- Huge Timer -->
-								<!-- Adjusted font size to fit HH:MM:SS (8 chars) in ~300px width -->
-								<!-- 360px inner width. 8 chars. ~45px per char. ~2.8rem? Let's try 4rem (approx 64px) condensed -->
 								<div
 									class="text-[4.5rem] leading-none font-mono font-bold tracking-tighter mt-2 transition-colors duration-500 z-10 drop-shadow-2xl tabular-nums"
 									:class="getTimerColor"
 								>
-									{{ clockedIn ? elapsedTime : "00:00:00" }}
+									{{ displayTime }}
 								</div>
 
 								<!-- Active Indicators -->
-								<div class="absolute bottom-[22%] flex gap-3" v-if="clockedIn">
+								<div
+									class="absolute bottom-[22%] flex gap-3"
+									v-if="attendance.isCheckedIn"
+								>
 									<span
 										class="w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor]"
 										:class="getDotColor"
@@ -84,28 +85,30 @@
 				<div class="mt-8 flex gap-4 w-full max-w-sm z-10">
 					<button
 						@click="handleClockIn"
-						:disabled="clockedIn || loading"
+						:disabled="attendance.isCheckedIn || attendance.loading"
 						class="flex-1 h-14 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-sm uppercase"
 						:class="[
-							!clockedIn
+							!attendance.isCheckedIn
 								? 'bg-[#FCD34D] text-black hover:bg-[#FDE047] hover:scale-[1.02] shadow-[0_0_30px_rgba(252,211,77,0.3)]'
 								: 'bg-white/5 border border-white/5 text-white/20 cursor-not-allowed',
 						]"
 					>
-						Clock In
+						<span v-if="attendance.loading" class="animate-spin">⏳</span>
+						<span v-else>Clock In</span>
 					</button>
 
 					<button
 						@click="handleClockOut"
-						:disabled="!clockedIn || loading"
+						:disabled="!attendance.isCheckedIn || attendance.loading"
 						class="flex-1 h-14 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-sm uppercase"
 						:class="[
-							clockedIn
+							attendance.isCheckedIn
 								? 'bg-[#1a1a1a] border border-white/10 text-white hover:bg-[#252525] hover:border-white/20 hover:text-red-400 shadow-lg'
 								: 'bg-white/5 border border-white/5 text-white/20 cursor-not-allowed',
 						]"
 					>
-						Clock Out
+						<span v-if="attendance.loading" class="animate-spin">⏳</span>
+						<span v-else>Clock Out</span>
 					</button>
 				</div>
 			</div>
@@ -131,13 +134,15 @@
 							<div
 								class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-primary/20"
 							>
-								AW
+								{{ userInitials }}
 							</div>
 							<div>
 								<p class="text-sm font-bold text-white leading-tight">
-									Alexander Wright
+									{{ employeeName }}
 								</p>
-								<p class="text-[10px] text-primary mt-0.5">Senior Jeweler</p>
+								<p class="text-[10px] text-primary mt-0.5">
+									{{ employeeDesignation }}
+								</p>
 							</div>
 						</div>
 					</div>
@@ -168,19 +173,21 @@
 							<div
 								class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xs ring-1 ring-blue-500/30"
 							>
-								RK
+								{{ managerInitials }}
 							</div>
 							<div>
-								<p class="text-sm font-bold text-white">Rajesh Kumar</p>
-								<p class="text-[10px] text-white/50">Production Head</p>
+								<p class="text-sm font-bold text-white">{{ managerName }}</p>
+								<p class="text-[10px] text-white/50">{{ managerDesignation }}</p>
 							</div>
 						</div>
 					</div>
-					<button
-						class="mt-auto py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-bold text-white/70 border border-white/5 w-full transition-all"
-					>
-						View Team
-					</button>
+					<router-link to="/team" class="block">
+						<button
+							class="mt-auto py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-bold text-white/70 border border-white/5 w-full transition-all"
+						>
+							View Team
+						</button>
+					</router-link>
 				</div>
 
 				<!-- Payslip -->
@@ -198,20 +205,24 @@
 						>
 							Payroll
 						</p>
-						<p class="text-base font-bold text-white">Oct 2023</p>
+						<p class="text-base font-bold text-white">{{ payslipMonth }}</p>
 						<p
+							v-if="payslipStatus"
 							class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1 bg-emerald-400/10 w-fit px-1.5 py-0.5 rounded"
 						>
 							<span class="material-symbols-outlined text-[10px]">check_circle</span>
-							Paid
+							{{ payslipStatus }}
 						</p>
+						<p v-else class="text-[10px] text-white/40 mt-1">No payslip available</p>
 					</div>
-					<button
-						class="mt-4 py-2 px-3 bg-primary/10 hover:bg-primary/20 rounded-lg text-[10px] font-bold text-primary border border-primary/20 flex items-center justify-center gap-2 w-full transition-all"
-					>
-						<span class="material-symbols-outlined text-[14px]">visibility</span>
-						View Slip
-					</button>
+					<router-link to="/payroll" class="block">
+						<button
+							class="mt-4 py-2 px-3 bg-primary/10 hover:bg-primary/20 rounded-lg text-[10px] font-bold text-primary border border-primary/20 flex items-center justify-center gap-2 w-full transition-all"
+						>
+							<span class="material-symbols-outlined text-[14px]">visibility</span>
+							View Slip
+						</button>
+					</router-link>
 				</div>
 			</div>
 		</div>
@@ -228,60 +239,21 @@
 				</div>
 
 				<div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2">
-					<!-- Static Notifications for Demo -->
-					<div class="flex gap-3 relative group">
-						<div
-							class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center shrink-0 border border-blue-500/20 text-blue-400"
-						>
-							<span class="material-symbols-outlined text-[16px]"
-								>assignment_turned_in</span
-							>
-						</div>
-						<div>
-							<p
-								class="text-xs font-bold text-white leading-snug group-hover:text-blue-400 transition-colors"
-							>
-								New Task Assigned
-							</p>
-							<p class="text-[10px] text-white/40 mt-0.5">
-								"Gemstone Inventory Check" assigned by Rajesh K.
-							</p>
-							<p class="text-[9px] text-white/20 mt-1">2 mins ago</p>
-						</div>
+					<!-- No activity message -->
+					<div v-if="recentActivity.length === 0" class="text-center text-white/40 py-8">
+						<span class="material-symbols-outlined text-4xl mb-2">history</span>
+						<p class="text-sm">No recent activity</p>
 					</div>
 
-					<div class="flex gap-3 relative group">
-						<div
-							class="w-8 h-8 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20 text-emerald-400"
-						>
-							<span class="material-symbols-outlined text-[16px]">check_circle</span>
-						</div>
-						<div>
-							<p
-								class="text-xs font-bold text-white leading-snug group-hover:text-emerald-400 transition-colors"
-							>
-								Leave Approved
-							</p>
-							<p class="text-[10px] text-white/40 mt-0.5">
-								Your leave for Nov 14th has been approved.
-							</p>
-							<p class="text-[9px] text-white/20 mt-1">1 hour ago</p>
-						</div>
-					</div>
-
-					<!-- Recent Clock Logs -->
+					<!-- Activity items -->
 					<div
-						v-for="log in recentLogs"
+						v-for="log in recentActivity"
 						:key="log.id"
 						class="flex gap-3 relative group opacity-60 hover:opacity-100 transition-opacity"
 					>
 						<div
 							class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border bg-[#0a0c1a]"
-							:class="
-								log.type === 'clock-out'
-									? 'border-primary/50 text-primary'
-									: 'border-white/10 text-white/40'
-							"
+							:class="getActivityIconClass(log.type)"
 						>
 							<span class="material-symbols-outlined text-[16px]">{{
 								log.icon
@@ -304,6 +276,7 @@
 				<div class="flex items-center justify-between mb-4">
 					<h3 class="font-bold text-lg text-white font-display">My Tasks</h3>
 					<button
+						@click="showAddTodo = true"
 						class="w-6 h-6 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-all border border-white/5"
 					>
 						<span class="material-symbols-outlined text-[16px]">add</span>
@@ -311,26 +284,49 @@
 				</div>
 
 				<div class="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-2">
+					<!-- Gameplan not installed -->
+					<div v-if="!tasksStore.gameplanInstalled" class="text-center py-4">
+						<p class="text-xs text-white/40">
+							Gameplan not installed. Showing personal todos only.
+						</p>
+					</div>
+
+					<!-- No tasks -->
 					<div
-						v-for="todo in todos"
+						v-if="tasksStore.openTodos.length === 0"
+						class="text-center text-white/40 py-8"
+					>
+						<span class="material-symbols-outlined text-4xl mb-2">check_circle</span>
+						<p class="text-sm">No pending tasks</p>
+					</div>
+
+					<!-- Task items -->
+					<div
+						v-for="todo in tasksStore.openTodos.slice(0, 5)"
 						:key="todo.id"
+						@click="toggleTodo(todo.id, todo.status)"
 						class="group flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all border border-transparent hover:border-white/5 cursor-pointer"
 					>
 						<div
-							class="w-4 h-4 rounded border border-white/20 flex items-center justify-center group-hover:border-primary transition-colors text-transparent group-hover:text-white/20"
+							class="w-4 h-4 rounded border border-white/20 flex items-center justify-center group-hover:border-primary transition-colors"
 						>
-							<span class="material-symbols-outlined text-[12px]">check</span>
+							<span
+								class="material-symbols-outlined text-[12px] text-transparent group-hover:text-white/20"
+								>check</span
+							>
 						</div>
 						<div class="flex-1 min-w-0">
 							<p
 								class="text-xs font-medium text-white group-hover:text-primary/90 transition-colors truncate"
 							>
-								{{ todo.text }}
+								{{ todo.description }}
 							</p>
 							<div class="flex items-center gap-2 mt-0.5">
-								<span class="text-[9px] text-white/30">{{ todo.due }}</span>
+								<span class="text-[9px] text-white/30">{{
+									formatDate(todo.date)
+								}}</span>
 								<span
-									v-if="todo.urgent"
+									v-if="todo.priority === 'High'"
 									class="w-1.5 h-1.5 rounded-full bg-red-400"
 								></span>
 							</div>
@@ -339,98 +335,296 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Add Todo Modal -->
+		<Teleport to="body">
+			<div
+				v-if="showAddTodo"
+				class="fixed inset-0 z-50 flex items-center justify-center p-4"
+				@click.self="showAddTodo = false"
+			>
+				<div class="absolute inset-0 bg-black/60"></div>
+				<div
+					class="relative bg-[#111420] rounded-2xl p-6 w-full max-w-md border border-white/10"
+				>
+					<h3 class="font-bold text-white text-lg mb-4">Add Task</h3>
+					<input
+						v-model="newTodoText"
+						type="text"
+						placeholder="Task description..."
+						class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50 mb-4"
+						@keyup.enter="addTodo"
+					/>
+					<div class="flex gap-3">
+						<button
+							@click="showAddTodo = false"
+							class="flex-1 py-3 bg-white/5 hover:bg-white/10 rounded-xl text-white/60 text-sm font-bold transition-colors"
+						>
+							Cancel
+						</button>
+						<button
+							@click="addTodo"
+							:disabled="!newTodoText.trim()"
+							class="flex-1 py-3 bg-primary text-black rounded-xl text-sm font-bold hover:bg-yellow-400 transition-colors disabled:opacity-50"
+						>
+							Add Task
+						</button>
+					</div>
+				</div>
+			</div>
+		</Teleport>
 	</div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import { ref, computed, onMounted, onUnmounted, inject } from "vue";
+import { useAuthStore } from "@/stores/auth";
+import { useEmployeeStore } from "@/stores/employee";
+import { useAttendanceStore } from "@/stores/attendance";
+import { useTasksStore } from "@/stores/tasks";
+import { usePayrollStore } from "@/stores/payroll";
 
-const clockedIn = ref(false);
-const elapsedTime = ref("00:00:00");
-const loading = ref(false);
-const shiftSeconds = ref(0);
-let shiftTimerInterval;
+const auth = useAuthStore();
+const employeeStore = useEmployeeStore();
+const attendance = useAttendanceStore();
+const tasksStore = useTasksStore();
+const payrollStore = usePayrollStore();
 
-const recentLogs = ref([
-	{
-		id: 1,
-		title: "Clock Out",
-		time: "Yesterday, 6:00 PM",
-		icon: "check_circle",
-		type: "clock-out",
-	},
-	{ id: 3, title: "Clocked In", time: "Yesterday, 9:02 AM", icon: "login", type: "info" },
-]);
+const showAddTodo = ref(false);
+const newTodoText = ref("");
+const displayTime = ref("00:00:00");
+let timerInterval = null;
 
-const todos = ref([
-	{ id: 1, text: "Review diamond inventory", due: "Today, 2:00 PM", urgent: true },
-	{ id: 2, text: "Submit weekly report", due: "Tomorrow", urgent: false },
-	{ id: 3, text: "Call with design team", due: "Oct 25", urgent: false },
-	{ id: 4, text: "Approve pending leaves", due: "Oct 26", urgent: false },
-	{ id: 5, text: "Check safety gear", due: "Oct 27", urgent: false },
-]);
+// Computed from employee store
+const employeeName = computed(() => {
+	return employeeStore.employee?.employee_name || auth.user?.full_name || "Employee";
+});
 
+const employeeDesignation = computed(() => {
+	return employeeStore.employee?.designation || "Staff";
+});
+
+const userInitials = computed(() => {
+	const name = employeeName.value;
+	return name
+		.split(" ")
+		.map((n) => n[0])
+		.join("")
+		.substring(0, 2)
+		.toUpperCase();
+});
+
+// Manager info - placeholder until we fetch from HRMS
+const managerName = computed(() => {
+	return "Not Assigned";
+});
+
+const managerDesignation = computed(() => {
+	return "Manager";
+});
+
+const managerInitials = computed(() => {
+	return managerName.value
+		.split(" ")
+		.map((n) => n[0])
+		.join("")
+		.substring(0, 2)
+		.toUpperCase();
+});
+
+// Payroll info
+const payslipMonth = computed(() => {
+	const slip = payrollStore.latestSalarySlip;
+	if (slip) {
+		const date = new Date(slip.posting_date || slip.start_date);
+		return date.toLocaleDateString("en-US", { month: "short", year: "numeric" });
+	}
+	return "No Payslip";
+});
+
+const payslipStatus = computed(() => {
+	const slip = payrollStore.latestSalarySlip;
+	if (slip && slip.docstatus === 1) {
+		return "Paid";
+	}
+	return null;
+});
+
+// Shift info
+const shiftLabel = computed(() => {
+	if (attendance.roster?.has_roster) {
+		return attendance.roster.shift_name || "Current Shift";
+	}
+	const hours = attendance.workingHoursTarget || 8;
+	return `${hours}h Shift`;
+});
+
+// Timer color based on hours worked
 const getTimerColor = computed(() => {
-	if (!clockedIn.value) return "text-white/20";
-	return shiftSeconds.value >= 28800 ? "text-green-500" : "text-red-500"; // Red < 8h, Green > 8h
+	if (!attendance.isCheckedIn) return "text-white/20";
+	const target = attendance.workingHoursTarget || 8;
+	const worked = attendance.totalHoursToday || 0;
+	return worked >= target ? "text-green-500" : "text-red-500";
 });
 
 const getDotColor = computed(() => {
-	return shiftSeconds.value >= 28800 ? "bg-green-500" : "bg-red-500";
+	const target = attendance.workingHoursTarget || 8;
+	const worked = attendance.totalHoursToday || 0;
+	return worked >= target ? "bg-green-500" : "bg-red-500";
 });
 
-function handleClockIn() {
-	loading.value = true;
-	setTimeout(() => {
-		clockedIn.value = true;
-		shiftSeconds.value = 0;
-		loading.value = false;
-		recentLogs.value.unshift({
-			id: Date.now(),
-			title: "Clocked In",
-			time: "Just now",
-			icon: "login",
-			type: "info",
-		});
-		startShiftTimer();
-	}, 800);
+// Recent activity from check-in history
+const recentActivity = computed(() => {
+	if (!attendance.todayStatus?.logs) return [];
+
+	return attendance.todayStatus.logs
+		.map((log, index) => ({
+			id: index,
+			title: log.log_type === "IN" ? "Clocked In" : "Clocked Out",
+			time: formatTime(log.time),
+			type: log.log_type === "IN" ? "info" : "clock-out",
+			icon: log.log_type === "IN" ? "login" : "check_circle",
+		}))
+		.slice(0, 5);
+});
+
+function getActivityIconClass(type) {
+	return type === "clock-out"
+		? "border-primary/50 text-primary"
+		: "border-white/10 text-white/40";
 }
 
-function handleClockOut() {
-	loading.value = true;
-	setTimeout(() => {
-		clockedIn.value = false;
-		loading.value = false;
-		recentLogs.value.unshift({
-			id: Date.now(),
-			title: "Clocked Out",
-			time: "Just now",
-			icon: "logout",
-			type: "clock-out",
-		});
-		stopShiftTimer();
-	}, 800);
+// Clock in/out handlers
+async function handleClockIn() {
+	const employeeId = employeeStore.employee?.employee_id;
+	if (!employeeId) return;
+
+	try {
+		// Get location if available
+		let latitude = null;
+		let longitude = null;
+
+		if (navigator.geolocation) {
+			try {
+				const position = await new Promise((resolve, reject) => {
+					navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+				});
+				latitude = position.coords.latitude;
+				longitude = position.coords.longitude;
+			} catch (e) {
+				console.log("Location not available");
+			}
+		}
+
+		await attendance.clockIn(employeeId, latitude, longitude);
+		startTimer();
+	} catch (error) {
+		console.error("Clock in failed:", error);
+	}
 }
 
-function startShiftTimer() {
-	shiftTimerInterval = setInterval(() => {
-		shiftSeconds.value++;
-		const h = Math.floor(shiftSeconds.value / 3600)
-			.toString()
-			.padStart(2, "0");
-		const m = Math.floor((shiftSeconds.value % 3600) / 60)
-			.toString()
-			.padStart(2, "0");
-		const s = (shiftSeconds.value % 60).toString().padStart(2, "0");
-		elapsedTime.value = `${h}:${m}:${s}`;
+async function handleClockOut() {
+	const employeeId = employeeStore.employee?.employee_id;
+	if (!employeeId) return;
+
+	try {
+		let latitude = null;
+		let longitude = null;
+
+		if (navigator.geolocation) {
+			try {
+				const position = await new Promise((resolve, reject) => {
+					navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+				});
+				latitude = position.coords.latitude;
+				longitude = position.coords.longitude;
+			} catch (e) {
+				console.log("Location not available");
+			}
+		}
+
+		await attendance.clockOut(employeeId, latitude, longitude);
+		stopTimer();
+	} catch (error) {
+		console.error("Clock out failed:", error);
+	}
+}
+
+// Timer functions
+function startTimer() {
+	if (timerInterval) clearInterval(timerInterval);
+
+	let seconds = Math.floor((attendance.totalHoursToday || 0) * 3600);
+	updateDisplayTime(seconds);
+
+	timerInterval = setInterval(() => {
+		seconds++;
+		updateDisplayTime(seconds);
 	}, 1000);
 }
 
-function stopShiftTimer() {
-	clearInterval(shiftTimerInterval);
+function stopTimer() {
+	if (timerInterval) {
+		clearInterval(timerInterval);
+		timerInterval = null;
+	}
 }
 
+function updateDisplayTime(totalSeconds) {
+	const h = Math.floor(totalSeconds / 3600)
+		.toString()
+		.padStart(2, "0");
+	const m = Math.floor((totalSeconds % 3600) / 60)
+		.toString()
+		.padStart(2, "0");
+	const s = (totalSeconds % 60).toString().padStart(2, "0");
+	displayTime.value = `${h}:${m}:${s}`;
+}
+
+// Todo functions
+async function addTodo() {
+	if (!newTodoText.value.trim()) return;
+
+	await tasksStore.createTodo(newTodoText.value.trim());
+	newTodoText.value = "";
+	showAddTodo.value = false;
+}
+
+async function toggleTodo(todoId, currentStatus) {
+	await tasksStore.toggleTodo(todoId, currentStatus);
+}
+
+// Utility functions
+function formatDate(dateStr) {
+	if (!dateStr) return "";
+	const date = new Date(dateStr);
+	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+function formatTime(timeStr) {
+	if (!timeStr) return "";
+	const date = new Date(timeStr);
+	return date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+}
+
+// Initialize
+onMounted(async () => {
+	await employeeStore.init();
+	const employeeId = employeeStore.employee?.employee_id;
+
+	if (employeeId) {
+		attendance.init(employeeId);
+		tasksStore.init();
+		payrollStore.init();
+	}
+
+	// Start timer if already checked in
+	if (attendance.isCheckedIn) {
+		startTimer();
+	}
+});
+
 onUnmounted(() => {
-	clearInterval(shiftTimerInterval);
+	stopTimer();
 });
 </script>

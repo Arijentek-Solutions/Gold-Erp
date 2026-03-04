@@ -25,7 +25,9 @@
 				</div>
 
 				<!-- Prices - Centered -->
-				<div class="flex items-center justify-center gap-6 flex-1 overflow-x-auto scrollbar-hide">
+				<div
+					class="flex items-center justify-center gap-6 flex-1 overflow-x-auto scrollbar-hide"
+				>
 					<div
 						v-for="metal in metals"
 						:key="metal.symbol"

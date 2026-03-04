@@ -656,8 +656,8 @@
 			:show="showProductModal"
 			:item-code="selectedItemCode"
 			@close="
-				showProductModal = false;
-				selectedItemCode = null;
+				showProductModal = false
+				selectedItemCode = null
 			"
 		/>
 	</div>

@@ -3,8 +3,36 @@
     "file": "assets/_plugin-vue_export-helper-DlAUqK2U.js",
     "name": "_plugin-vue_export-helper"
   },
+  "_attendance-C5frAN0L.js": {
+    "file": "assets/attendance-C5frAN0L.js",
+    "name": "attendance",
+    "imports": [
+      "index.html"
+    ]
+  },
+  "_employee-CerCT-pa.js": {
+    "file": "assets/employee-CerCT-pa.js",
+    "name": "employee",
+    "imports": [
+      "index.html"
+    ]
+  },
+  "_payroll-BfpJyrJT.js": {
+    "file": "assets/payroll-BfpJyrJT.js",
+    "name": "payroll",
+    "imports": [
+      "index.html"
+    ]
+  },
+  "_tasks-BWDZt6Lo.js": {
+    "file": "assets/tasks-BWDZt6Lo.js",
+    "name": "tasks",
+    "imports": [
+      "index.html"
+    ]
+  },
   "index.html": {
-    "file": "assets/index-CB7xg2j0.js",
+    "file": "assets/index-B55GiH5b.js",
     "name": "index",
     "src": "index.html",
     "isEntry": true,
@@ -16,10 +44,11 @@
       "src/views/LeaveView.vue",
       "src/views/PayrollView.vue",
       "src/views/ExpenseView.vue",
+      "src/views/IssuesView.vue",
       "src/views/TeamView.vue"
     ],
     "css": [
-      "assets/index-DryEh9d3.css"
+      "assets/index-DWVep7Mc.css"
     ],
     "assets": [
       "assets/Inter.var-C9xDBOS3.woff2",
@@ -35,25 +64,31 @@
     "src": "node_modules/frappe-ui/src/fonts/Inter/Inter.var.woff2"
   },
   "src/views/AttendanceView.vue": {
-    "file": "assets/AttendanceView-CJTbtUp6.js",
+    "file": "assets/AttendanceView-BSQUHvqw.js",
     "name": "AttendanceView",
     "src": "src/views/AttendanceView.vue",
     "isDynamicEntry": true,
     "imports": [
+      "_employee-CerCT-pa.js",
+      "_attendance-C5frAN0L.js",
       "index.html"
     ]
   },
   "src/views/DashboardView.vue": {
-    "file": "assets/DashboardView-ScQII2Gi.js",
+    "file": "assets/DashboardView-CvD_FZJ4.js",
     "name": "DashboardView",
     "src": "src/views/DashboardView.vue",
     "isDynamicEntry": true,
     "imports": [
-      "index.html"
+      "index.html",
+      "_employee-CerCT-pa.js",
+      "_attendance-C5frAN0L.js",
+      "_tasks-BWDZt6Lo.js",
+      "_payroll-BfpJyrJT.js"
     ]
   },
   "src/views/ExpenseView.vue": {
-    "file": "assets/ExpenseView-CCGfGNvU.js",
+    "file": "assets/ExpenseView-Ba0POxto.js",
     "name": "ExpenseView",
     "src": "src/views/ExpenseView.vue",
     "isDynamicEntry": true,
@@ -62,18 +97,27 @@
       "index.html"
     ]
   },
+  "src/views/IssuesView.vue": {
+    "file": "assets/IssuesView-D2_gu5VO.js",
+    "name": "IssuesView",
+    "src": "src/views/IssuesView.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "index.html"
+    ]
+  },
   "src/views/LeaveView.vue": {
-    "file": "assets/LeaveView-C7Fe25wN.js",
+    "file": "assets/LeaveView-XiOdtwtu.js",
     "name": "LeaveView",
     "src": "src/views/LeaveView.vue",
     "isDynamicEntry": true,
     "imports": [
-      "__plugin-vue_export-helper-DlAUqK2U.js",
-      "index.html"
+      "index.html",
+      "_employee-CerCT-pa.js"
     ]
   },
   "src/views/Login.vue": {
-    "file": "assets/Login-LCA8wq1F.js",
+    "file": "assets/Login-jkoutA-w.js",
     "name": "Login",
     "src": "src/views/Login.vue",
     "isDynamicEntry": true,
@@ -82,26 +126,28 @@
     ]
   },
   "src/views/PayrollView.vue": {
-    "file": "assets/PayrollView-Cwfz9iwx.js",
+    "file": "assets/PayrollView-BA-sZPgQ.js",
     "name": "PayrollView",
     "src": "src/views/PayrollView.vue",
     "isDynamicEntry": true,
     "imports": [
-      "__plugin-vue_export-helper-DlAUqK2U.js",
-      "index.html"
+      "index.html",
+      "_payroll-BfpJyrJT.js",
+      "_employee-CerCT-pa.js"
     ]
   },
   "src/views/TasksView.vue": {
-    "file": "assets/TasksView-BUCkh_AX.js",
+    "file": "assets/TasksView-Cwd-8Yv_.js",
     "name": "TasksView",
     "src": "src/views/TasksView.vue",
     "isDynamicEntry": true,
     "imports": [
-      "index.html"
+      "index.html",
+      "_tasks-BWDZt6Lo.js"
     ]
   },
   "src/views/TeamView.vue": {
-    "file": "assets/TeamView-DF001HDq.js",
+    "file": "assets/TeamView-DHNqgSZt.js",
     "name": "TeamView",
     "src": "src/views/TeamView.vue",
     "isDynamicEntry": true,
