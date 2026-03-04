@@ -3,6 +3,8 @@
 import frappe
 import requests
 
+from zevar_core.constants import TROY_OZ_TO_GRAMS
+
 
 def fetch_live_metal_rates():
 	"""
@@ -30,9 +32,9 @@ def fetch_live_metal_rates():
 		gold_price_per_oz = data["items"][0]["xauPrice"]
 		silver_price_per_oz = data["items"][0]["xagPrice"]
 
-		# Convert to per gram (1 troy oz = 31.1035 grams)
-		gold_per_gram = gold_price_per_oz / 31.1035
-		silver_per_gram = silver_price_per_oz / 31.1035
+		# Convert to per gram
+		gold_per_gram = gold_price_per_oz / TROY_OZ_TO_GRAMS
+		silver_per_gram = silver_price_per_oz / TROY_OZ_TO_GRAMS
 
 		# Gold purities
 		gold_purities = {

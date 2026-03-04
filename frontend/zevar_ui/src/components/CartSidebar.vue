@@ -75,118 +75,134 @@
 
 			<div v-else class="flex-1 flex flex-col overflow-hidden">
 				<!-- Customer Selector -->
-				<div class="p-4 border-b border-gray-100 dark:border-white/5 bg-white dark:bg-[#1a1c23] flex-shrink-0 z-10">
+				<div
+					class="p-4 border-b border-gray-100 dark:border-white/5 bg-white dark:bg-[#1a1c23] flex-shrink-0 z-10"
+				>
 					<CustomerSelector />
 				</div>
 
 				<div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-				<div
-					v-for="(item, index) in cart.items"
-					:key="index"
-					class="flex gap-4 border-b border-gray-100 dark:border-white/5 pb-4 last:border-0"
-				>
 					<div
-						class="w-16 h-16 bg-gray-100 dark:bg-[#0F1115] rounded-lg flex-shrink-0 overflow-hidden border border-gray-200 dark:border-white/5 relative"
+						v-for="(item, index) in cart.items"
+						:key="index"
+						class="flex gap-4 border-b border-gray-100 dark:border-white/5 pb-4 last:border-0"
 					>
-						<img
-							v-if="item.image"
-							:src="item.image"
-							loading="lazy"
-							class="w-full h-full object-cover"
-						/>
 						<div
-							v-else
-							class="w-full h-full flex items-center justify-center text-xs text-gray-400 dark:text-gray-600"
+							class="w-16 h-16 bg-gray-100 dark:bg-[#0F1115] rounded-lg flex-shrink-0 overflow-hidden border border-gray-200 dark:border-white/5 relative"
 						>
-							No Img
-						</div>
-
-						<div
-							v-if="item.qty > 1"
-							class="absolute bottom-0 right-0 bg-black dark:bg-[#D4AF37] text-white dark:text-black text-[10px] font-bold px-1.5 py-0.5 rounded-tl-md"
-						>
-							x{{ item.qty }}
-						</div>
-					</div>
-
-					<div class="flex-1 min-w-0">
-						<h3 class="text-sm font-bold text-gray-900 dark:text-white truncate">
-							{{ item.item_name }}
-						</h3>
-						<p class="text-xs text-gray-500 dark:text-gray-400 truncate">
-							{{ item.item_code }}
-						</p>
-
-						<div class="flex items-center gap-2 mt-1">
-							<span
-								class="text-[10px] uppercase font-bold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-500 px-1.5 py-0.5 rounded"
-								>{{ item.metal }}</span
+							<img
+								v-if="item.image"
+								:src="item.image"
+								loading="lazy"
+								class="w-full h-full object-cover"
+							/>
+							<div
+								v-else
+								class="w-full h-full flex items-center justify-center text-xs text-gray-400 dark:text-gray-600"
 							>
-							<span
-								class="text-[10px] uppercase font-bold bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 px-1.5 py-0.5 rounded"
-								>{{ item.purity }}</span
-							>
-						</div>
-
-						<div class="mt-2 flex items-center justify-between">
-							<div class="flex flex-col">
-								<span class="text-xs text-gray-400 dark:text-gray-500"
-									>{{ formatCurrency(item.amount) }} ea</span
-								>
-								<span
-									class="font-mono text-sm font-bold text-gray-900 dark:text-white"
-								>
-									{{ formatCurrency(item.amount * item.qty) }}
-								</span>
+								No Img
 							</div>
 
-							<button
-								@click="cart.removeItem(index)"
-								class="text-red-400 hover:text-red-600 p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
-								title="Remove Item"
+							<div
+								v-if="item.qty > 1"
+								class="absolute bottom-0 right-0 bg-black dark:bg-[#D4AF37] text-white dark:text-black text-[10px] font-bold px-1.5 py-0.5 rounded-tl-md"
 							>
-								<svg
-									class="w-4 h-4"
-									fill="none"
-									stroke="currentColor"
-									viewBox="0 0 24 24"
+								x{{ item.qty }}
+							</div>
+						</div>
+
+						<div class="flex-1 min-w-0">
+							<h3 class="text-sm font-bold text-gray-900 dark:text-white truncate">
+								{{ item.item_name }}
+							</h3>
+							<p class="text-xs text-gray-500 dark:text-gray-400 truncate">
+								{{ item.item_code }}
+							</p>
+
+							<div class="flex items-center gap-2 mt-1">
+								<span
+									class="text-[10px] uppercase font-bold bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-500 px-1.5 py-0.5 rounded"
+									>{{ item.metal }}</span
 								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										stroke-width="2"
-										d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-									></path>
-								</svg>
-							</button>
+								<span
+									class="text-[10px] uppercase font-bold bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-300 px-1.5 py-0.5 rounded"
+									>{{ item.purity }}</span
+								>
+							</div>
+
+							<div class="mt-2 flex items-center justify-between">
+								<div class="flex flex-col">
+									<span class="text-xs text-gray-400 dark:text-gray-500"
+										>{{ formatCurrency(item.amount) }} ea</span
+									>
+									<span
+										class="font-mono text-sm font-bold text-gray-900 dark:text-white"
+									>
+										{{ formatCurrency(item.amount * item.qty) }}
+									</span>
+								</div>
+
+								<button
+									@click="cart.removeItem(index)"
+									class="text-red-400 hover:text-red-600 p-1 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+									title="Remove Item"
+								>
+									<svg
+										class="w-4 h-4"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+										></path>
+									</svg>
+								</button>
+							</div>
 						</div>
 					</div>
-				</div>
 				</div>
 			</div>
 
 			<!-- Trade-Ins Section -->
-			<div
-				v-if="cart.items.length > 0"
-				class="px-4 pb-2"
-			>
+			<div v-if="cart.items.length > 0" class="px-4 pb-2">
 				<div class="border-t border-gray-100 dark:border-white/5 pt-3">
 					<button
 						@click="showTradeInForm = !showTradeInForm"
 						class="w-full flex items-center justify-between text-sm font-medium text-[#D4AF37] hover:text-[#b5952f] transition"
 					>
 						<span class="flex items-center gap-2">
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+							<svg
+								class="w-4 h-4"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="2"
+									d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+								></path>
 							</svg>
 							Trade-In ({{ cart.tradeIns.length }})
 						</span>
 						<svg
 							class="w-4 h-4 transition-transform"
 							:class="showTradeInForm ? 'rotate-180' : ''"
-							fill="none" stroke="currentColor" viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
 						>
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M19 9l-7 7-7-7"
+							></path>
 						</svg>
 					</button>
 
@@ -198,19 +214,32 @@
 							class="flex items-center justify-between bg-orange-50 dark:bg-orange-900/10 p-2 rounded-lg border border-orange-100 dark:border-orange-800/20"
 						>
 							<div class="min-w-0">
-								<div class="text-xs font-bold text-gray-900 dark:text-white truncate">
+								<div
+									class="text-xs font-bold text-gray-900 dark:text-white truncate"
+								>
 									{{ ti.description || 'Trade-In Item' }}
 								</div>
 								<div class="text-[10px] text-gray-500">
-									Value: {{ formatCurrency(ti.trade_in_value) }} · Min new: {{ formatCurrency(ti.trade_in_value * 2) }}
+									Value: {{ formatCurrency(ti.trade_in_value) }} · Min new:
+									{{ formatCurrency(ti.trade_in_value * 2) }}
 								</div>
 							</div>
 							<button
 								@click="cart.removeTradeIn(idx)"
 								class="p-1 text-red-400 hover:text-red-600 ml-2 flex-shrink-0"
 							>
-								<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+								<svg
+									class="w-3.5 h-3.5"
+									fill="none"
+									stroke="currentColor"
+									viewBox="0 0 24 24"
+								>
+									<path
+										stroke-linecap="round"
+										stroke-linejoin="round"
+										stroke-width="2"
+										d="M6 18L18 6M6 6l12 12"
+									></path>
 								</svg>
 							</button>
 						</div>

@@ -4,6 +4,7 @@ Tests: create_pos_invoice, tax calculation, trade-in deduction logic
 """
 
 import json
+
 import frappe
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import flt
@@ -27,49 +28,57 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 
 		# Create test customer
 		if not frappe.db.exists("Customer", "Test POS Customer"):
-			cls.test_customer = frappe.get_doc({
-				"doctype": "Customer",
-				"customer_name": "Test POS Customer",
-				"customer_type": "Individual",
-				"customer_group": "Individual",
-				"territory": "All Territories",
-			}).insert(ignore_permissions=True)
+			cls.test_customer = frappe.get_doc(
+				{
+					"doctype": "Customer",
+					"customer_name": "Test POS Customer",
+					"customer_type": "Individual",
+					"customer_group": "Individual",
+					"territory": "All Territories",
+				}
+			).insert(ignore_permissions=True)
 		else:
 			cls.test_customer = "Test POS Customer"
 
 		# Create test warehouse
 		if not frappe.db.exists("Warehouse", "Test POS Warehouse - _TC"):
-			cls.test_warehouse = frappe.get_doc({
-				"doctype": "Warehouse",
-				"warehouse_name": "Test POS Warehouse",
-				"company": cls.company,
-			}).insert(ignore_permissions=True)
+			cls.test_warehouse = frappe.get_doc(
+				{
+					"doctype": "Warehouse",
+					"warehouse_name": "Test POS Warehouse",
+					"company": cls.company,
+				}
+			).insert(ignore_permissions=True)
 		else:
 			cls.test_warehouse = "Test POS Warehouse - _TC"
 
 		# Create test item group
 		if not frappe.db.exists("Item Group", "Test POS Items"):
-			frappe.get_doc({
-				"doctype": "Item Group",
-				"item_group_name": "Test POS Items",
-				"parent_item_group": "All Item Groups",
-			}).insert(ignore_permissions=True)
+			frappe.get_doc(
+				{
+					"doctype": "Item Group",
+					"item_group_name": "Test POS Items",
+					"parent_item_group": "All Item Groups",
+				}
+			).insert(ignore_permissions=True)
 
 		# Create test items
 		cls.test_items = []
 		for i in range(1, 4):
 			item_code = f"TEST-POS-ITEM-{i:03d}"
 			if not frappe.db.exists("Item", item_code):
-				item = frappe.get_doc({
-					"doctype": "Item",
-					"item_code": item_code,
-					"item_name": f"Test POS Item {i}",
-					"item_group": "Test POS Items",
-					"stock_uom": "Nos",
-					"is_stock_item": 1,
-					"is_sales_item": 1,
-					"standard_rate": 100.0 * i,
-				}).insert(ignore_permissions=True)
+				item = frappe.get_doc(
+					{
+						"doctype": "Item",
+						"item_code": item_code,
+						"item_name": f"Test POS Item {i}",
+						"item_group": "Test POS Items",
+						"stock_uom": "Nos",
+						"is_stock_item": 1,
+						"is_sales_item": 1,
+						"standard_rate": 100.0 * i,
+					}
+				).insert(ignore_permissions=True)
 				cls.test_items.append(item.name)
 			else:
 				cls.test_items.append(item_code)
@@ -92,22 +101,32 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 		"""Test basic POS invoice creation with single item and payment."""
 		from zevar_core.api.pos import create_pos_invoice
 
-		items = json.dumps([{
-			"item_code": self.test_items[0],
-			"qty": 1,
-			"rate": 100.0,
-		}])
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_items[0],
+					"qty": 1,
+					"rate": 100.0,
+				}
+			]
+		)
 
-		payments = json.dumps([{
-			"mode_of_payment": "Cash",
-			"amount": 100.0,
-		}])
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 100.0,
+				}
+			]
+		)
 
 		result = create_pos_invoice(
 			items=items,
 			payments=payments,
-			customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
-			warehouse=self.test_warehouse.name if hasattr(self.test_warehouse, 'name') else self.test_warehouse,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
 		)
 
 		self.assertTrue(result.get("success"))
@@ -124,21 +143,29 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 		"""Test POS invoice creation with multiple items."""
 		from zevar_core.api.pos import create_pos_invoice
 
-		items = json.dumps([
-			{"item_code": self.test_items[0], "qty": 2, "rate": 100.0},
-			{"item_code": self.test_items[1], "qty": 1, "rate": 200.0},
-		])
+		items = json.dumps(
+			[
+				{"item_code": self.test_items[0], "qty": 2, "rate": 100.0},
+				{"item_code": self.test_items[1], "qty": 1, "rate": 200.0},
+			]
+		)
 
-		payments = json.dumps([{
-			"mode_of_payment": "Cash",
-			"amount": 400.0,
-		}])
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 400.0,
+				}
+			]
+		)
 
 		result = create_pos_invoice(
 			items=items,
 			payments=payments,
-			customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
-			warehouse=self.test_warehouse.name if hasattr(self.test_warehouse, 'name') else self.test_warehouse,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
 		)
 
 		self.assertTrue(result.get("success"))
@@ -149,22 +176,30 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 		"""Test POS invoice with multiple payment modes (split tender)."""
 		from zevar_core.api.pos import create_pos_invoice
 
-		items = json.dumps([{
-			"item_code": self.test_items[0],
-			"qty": 1,
-			"rate": 500.0,
-		}])
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_items[0],
+					"qty": 1,
+					"rate": 500.0,
+				}
+			]
+		)
 
-		payments = json.dumps([
-			{"mode_of_payment": "Cash", "amount": 200.0},
-			{"mode_of_payment": "Credit Card", "amount": 300.0},
-		])
+		payments = json.dumps(
+			[
+				{"mode_of_payment": "Cash", "amount": 200.0},
+				{"mode_of_payment": "Credit Card", "amount": 300.0},
+			]
+		)
 
 		result = create_pos_invoice(
 			items=items,
 			payments=payments,
-			customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
-			warehouse=self.test_warehouse.name if hasattr(self.test_warehouse, 'name') else self.test_warehouse,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
 		)
 
 		self.assertTrue(result.get("success"))
@@ -179,7 +214,9 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 			create_pos_invoice(
 				items="[]",
 				payments=json.dumps([{"mode_of_payment": "Cash", "amount": 100.0}]),
-				customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
+				customer=self.test_customer.name
+				if hasattr(self.test_customer, "name")
+				else self.test_customer,
 			)
 
 	def test_create_pos_invoice_no_payments_throws_error(self):
@@ -190,7 +227,9 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 			create_pos_invoice(
 				items=json.dumps([{"item_code": self.test_items[0], "qty": 1, "rate": 100.0}]),
 				payments="[]",
-				customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
+				customer=self.test_customer.name
+				if hasattr(self.test_customer, "name")
+				else self.test_customer,
 			)
 
 	def test_create_pos_invoice_invalid_qty_throws_error(self):
@@ -201,7 +240,9 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 			create_pos_invoice(
 				items=json.dumps([{"item_code": self.test_items[0], "qty": 0, "rate": 100.0}]),
 				payments=json.dumps([{"mode_of_payment": "Cash", "amount": 100.0}]),
-				customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
+				customer=self.test_customer.name
+				if hasattr(self.test_customer, "name")
+				else self.test_customer,
 			)
 
 	def test_create_pos_invoice_invalid_rate_throws_error(self):
@@ -212,7 +253,9 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 			create_pos_invoice(
 				items=json.dumps([{"item_code": self.test_items[0], "qty": 1, "rate": 0}]),
 				payments=json.dumps([{"mode_of_payment": "Cash", "amount": 100.0}]),
-				customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
+				customer=self.test_customer.name
+				if hasattr(self.test_customer, "name")
+				else self.test_customer,
 			)
 
 	def test_create_pos_invoice_with_salespersons(self):
@@ -221,12 +264,14 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 
 		# Create test employee
 		if not frappe.db.exists("Employee", "TEST-EMP-001"):
-			emp = frappe.get_doc({
-				"doctype": "Employee",
-				"first_name": "Test",
-				"last_name": "Salesperson",
-				"naming_series": "EMP-",
-			}).insert(ignore_permissions=True)
+			emp = frappe.get_doc(
+				{
+					"doctype": "Employee",
+					"first_name": "Test",
+					"last_name": "Salesperson",
+					"naming_series": "EMP-",
+				}
+			).insert(ignore_permissions=True)
 			emp_id = emp.name
 		else:
 			emp_id = "TEST-EMP-001"
@@ -238,8 +283,10 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 		result = create_pos_invoice(
 			items=items,
 			payments=payments,
-			customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
-			warehouse=self.test_warehouse.name if hasattr(self.test_warehouse, 'name') else self.test_warehouse,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
 			salespersons=salespersons,
 		)
 
@@ -257,12 +304,14 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 		for i in range(2):
 			emp_id = f"TEST-EMP-{i:03d}"
 			if not frappe.db.exists("Employee", emp_id):
-				emp = frappe.get_doc({
-					"doctype": "Employee",
-					"first_name": f"Test {i}",
-					"last_name": "Salesperson",
-					"naming_series": "EMP-",
-				}).insert(ignore_permissions=True)
+				emp = frappe.get_doc(
+					{
+						"doctype": "Employee",
+						"first_name": f"Test {i}",
+						"last_name": "Salesperson",
+						"naming_series": "EMP-",
+					}
+				).insert(ignore_permissions=True)
 				employees.append(emp.name)
 			else:
 				employees.append(emp_id)
@@ -270,17 +319,23 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 		items = json.dumps([{"item_code": self.test_items[0], "qty": 1, "rate": 100.0}])
 		payments = json.dumps([{"mode_of_payment": "Cash", "amount": 100.0}])
 		# Splits total 80%, should fail
-		salespersons = json.dumps([
-			{"employee": employees[0], "split": 50},
-			{"employee": employees[1], "split": 30},
-		])
+		salespersons = json.dumps(
+			[
+				{"employee": employees[0], "split": 50},
+				{"employee": employees[1], "split": 30},
+			]
+		)
 
 		with self.assertRaises(frappe.exceptions.ValidationError):
 			create_pos_invoice(
 				items=items,
 				payments=payments,
-				customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
-				warehouse=self.test_warehouse.name if hasattr(self.test_warehouse, 'name') else self.test_warehouse,
+				customer=self.test_customer.name
+				if hasattr(self.test_customer, "name")
+				else self.test_customer,
+				warehouse=self.test_warehouse.name
+				if hasattr(self.test_warehouse, "name")
+				else self.test_warehouse,
 				salespersons=salespersons,
 			)
 
@@ -305,10 +360,12 @@ class TestTaxCalculation(FrappeTestCase):
 		"""Test basic invoice totals calculation without tax."""
 		from zevar_core.api.pos import calculate_invoice_totals
 
-		items = json.dumps([
-			{"item_code": "ITEM-001", "qty": 2, "rate": 100.0},
-			{"item_code": "ITEM-002", "qty": 1, "rate": 50.0},
-		])
+		items = json.dumps(
+			[
+				{"item_code": "ITEM-001", "qty": 2, "rate": 100.0},
+				{"item_code": "ITEM-002", "qty": 1, "rate": 50.0},
+			]
+		)
 
 		result = calculate_invoice_totals(items=items, tax_exempt=True)
 
@@ -424,38 +481,44 @@ class TestTradeInDeduction(FrappeTestCase):
 
 		# Create test customer
 		if not frappe.db.exists("Customer", "Test Trade-In Customer"):
-			cls.test_customer = frappe.get_doc({
-				"doctype": "Customer",
-				"customer_name": "Test Trade-In Customer",
-				"customer_type": "Individual",
-				"customer_group": "Individual",
-				"territory": "All Territories",
-			}).insert(ignore_permissions=True)
+			cls.test_customer = frappe.get_doc(
+				{
+					"doctype": "Customer",
+					"customer_name": "Test Trade-In Customer",
+					"customer_type": "Individual",
+					"customer_group": "Individual",
+					"territory": "All Territories",
+				}
+			).insert(ignore_permissions=True)
 		else:
 			cls.test_customer = "Test Trade-In Customer"
 
 		# Create test warehouse
 		if not frappe.db.exists("Warehouse", "Test Trade-In Warehouse - _TC"):
-			cls.test_warehouse = frappe.get_doc({
-				"doctype": "Warehouse",
-				"warehouse_name": "Test Trade-In Warehouse",
-				"company": cls.company,
-			}).insert(ignore_permissions=True)
+			cls.test_warehouse = frappe.get_doc(
+				{
+					"doctype": "Warehouse",
+					"warehouse_name": "Test Trade-In Warehouse",
+					"company": cls.company,
+				}
+			).insert(ignore_permissions=True)
 		else:
 			cls.test_warehouse = "Test Trade-In Warehouse - _TC"
 
 		# Create test item
 		if not frappe.db.exists("Item", "TEST-TRADEIN-ITEM"):
-			cls.test_item = frappe.get_doc({
-				"doctype": "Item",
-				"item_code": "TEST-TRADEIN-ITEM",
-				"item_name": "Test Trade-In Item",
-				"item_group": "All Item Groups",
-				"stock_uom": "Nos",
-				"is_stock_item": 1,
-				"is_sales_item": 1,
-				"standard_rate": 500.0,
-			}).insert(ignore_permissions=True)
+			cls.test_item = frappe.get_doc(
+				{
+					"doctype": "Item",
+					"item_code": "TEST-TRADEIN-ITEM",
+					"item_name": "Test Trade-In Item",
+					"item_group": "All Item Groups",
+					"stock_uom": "Nos",
+					"is_stock_item": 1,
+					"is_sales_item": 1,
+					"standard_rate": 500.0,
+				}
+			).insert(ignore_permissions=True)
 		else:
 			cls.test_item = "TEST-TRADEIN-ITEM"
 
@@ -471,29 +534,43 @@ class TestTradeInDeduction(FrappeTestCase):
 		"""Test POS invoice creation with trade-in items."""
 		from zevar_core.api.pos import create_pos_invoice
 
-		items = json.dumps([{
-			"item_code": self.test_item.name if hasattr(self.test_item, 'name') else self.test_item,
-			"qty": 1,
-			"rate": 500.0,
-		}])
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_item.name if hasattr(self.test_item, "name") else self.test_item,
+					"qty": 1,
+					"rate": 500.0,
+				}
+			]
+		)
 
-		payments = json.dumps([{
-			"mode_of_payment": "Cash",
-			"amount": 300.0,  # Reduced by trade-in value
-		}])
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 300.0,  # Reduced by trade-in value
+				}
+			]
+		)
 
-		trade_ins = json.dumps([{
-			"trade_in_value": 200.0,
-			"new_item_value": 500.0,
-			"manager_override": "",
-			"override_reason": "",
-		}])
+		trade_ins = json.dumps(
+			[
+				{
+					"trade_in_value": 200.0,
+					"new_item_value": 500.0,
+					"manager_override": "",
+					"override_reason": "",
+				}
+			]
+		)
 
 		result = create_pos_invoice(
 			items=items,
 			payments=payments,
-			customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
-			warehouse=self.test_warehouse.name if hasattr(self.test_warehouse, 'name') else self.test_warehouse,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
 			trade_ins=trade_ins,
 		)
 
@@ -506,27 +583,49 @@ class TestTradeInDeduction(FrappeTestCase):
 		"""Test POS invoice with multiple trade-in items."""
 		from zevar_core.api.pos import create_pos_invoice
 
-		items = json.dumps([{
-			"item_code": self.test_item.name if hasattr(self.test_item, 'name') else self.test_item,
-			"qty": 1,
-			"rate": 1000.0,
-		}])
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_item.name if hasattr(self.test_item, "name") else self.test_item,
+					"qty": 1,
+					"rate": 1000.0,
+				}
+			]
+		)
 
-		payments = json.dumps([{
-			"mode_of_payment": "Cash",
-			"amount": 500.0,
-		}])
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 500.0,
+				}
+			]
+		)
 
-		trade_ins = json.dumps([
-			{"trade_in_value": 300.0, "new_item_value": 500.0, "manager_override": "", "override_reason": ""},
-			{"trade_in_value": 200.0, "new_item_value": 500.0, "manager_override": "", "override_reason": ""},
-		])
+		trade_ins = json.dumps(
+			[
+				{
+					"trade_in_value": 300.0,
+					"new_item_value": 500.0,
+					"manager_override": "",
+					"override_reason": "",
+				},
+				{
+					"trade_in_value": 200.0,
+					"new_item_value": 500.0,
+					"manager_override": "",
+					"override_reason": "",
+				},
+			]
+		)
 
 		result = create_pos_invoice(
 			items=items,
 			payments=payments,
-			customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
-			warehouse=self.test_warehouse.name if hasattr(self.test_warehouse, 'name') else self.test_warehouse,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
 			trade_ins=trade_ins,
 		)
 
@@ -538,29 +637,43 @@ class TestTradeInDeduction(FrappeTestCase):
 		"""Test POS invoice with trade-in requiring manager override."""
 		from zevar_core.api.pos import create_pos_invoice
 
-		items = json.dumps([{
-			"item_code": self.test_item.name if hasattr(self.test_item, 'name') else self.test_item,
-			"qty": 1,
-			"rate": 500.0,
-		}])
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_item.name if hasattr(self.test_item, "name") else self.test_item,
+					"qty": 1,
+					"rate": 500.0,
+				}
+			]
+		)
 
-		payments = json.dumps([{
-			"mode_of_payment": "Cash",
-			"amount": 200.0,
-		}])
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 200.0,
+				}
+			]
+		)
 
-		trade_ins = json.dumps([{
-			"trade_in_value": 300.0,
-			"new_item_value": 500.0,
-			"manager_override": "Manager Name",
-			"override_reason": "Customer loyalty discount",
-		}])
+		trade_ins = json.dumps(
+			[
+				{
+					"trade_in_value": 300.0,
+					"new_item_value": 500.0,
+					"manager_override": "Manager Name",
+					"override_reason": "Customer loyalty discount",
+				}
+			]
+		)
 
 		result = create_pos_invoice(
 			items=items,
 			payments=payments,
-			customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
-			warehouse=self.test_warehouse.name if hasattr(self.test_warehouse, 'name') else self.test_warehouse,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
 			trade_ins=trade_ins,
 		)
 
@@ -573,29 +686,43 @@ class TestTradeInDeduction(FrappeTestCase):
 		"""Test POS invoice with zero trade-in value."""
 		from zevar_core.api.pos import create_pos_invoice
 
-		items = json.dumps([{
-			"item_code": self.test_item.name if hasattr(self.test_item, 'name') else self.test_item,
-			"qty": 1,
-			"rate": 500.0,
-		}])
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_item.name if hasattr(self.test_item, "name") else self.test_item,
+					"qty": 1,
+					"rate": 500.0,
+				}
+			]
+		)
 
-		payments = json.dumps([{
-			"mode_of_payment": "Cash",
-			"amount": 500.0,
-		}])
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 500.0,
+				}
+			]
+		)
 
-		trade_ins = json.dumps([{
-			"trade_in_value": 0.0,
-			"new_item_value": 500.0,
-			"manager_override": "",
-			"override_reason": "",
-		}])
+		trade_ins = json.dumps(
+			[
+				{
+					"trade_in_value": 0.0,
+					"new_item_value": 500.0,
+					"manager_override": "",
+					"override_reason": "",
+				}
+			]
+		)
 
 		result = create_pos_invoice(
 			items=items,
 			payments=payments,
-			customer=self.test_customer.name if hasattr(self.test_customer, 'name') else self.test_customer,
-			warehouse=self.test_warehouse.name if hasattr(self.test_warehouse, 'name') else self.test_warehouse,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
 			trade_ins=trade_ins,
 		)
 

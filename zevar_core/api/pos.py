@@ -56,7 +56,11 @@ def create_pos_invoice(
 			warehouse = store_loc
 
 	if not warehouse or not frappe.db.exists("Warehouse", warehouse):
-		frappe.throw(_("Warehouse '{0}' not found. Please ensure a store location has an active default warehouse.").format(warehouse))
+		frappe.throw(
+			_(
+				"Warehouse '{0}' not found. Please ensure a store location has an active default warehouse."
+			).format(warehouse)
+		)
 
 	salesperson_data = []
 	if salespersons:
@@ -137,7 +141,7 @@ def create_pos_invoice(
 					"new_item_value": flt(ti.get("new_item_value")),
 					"manager_override": ti.get("manager_override"),
 					"override_reason": ti.get("override_reason"),
-				}
+				},
 			)
 
 		for pay in payments_list:

@@ -22,7 +22,10 @@
 					<div class="font-semibold text-gray-900 dark:text-white text-sm">
 						{{ customer.display_name || customer.customer_name || customer.name }}
 					</div>
-					<div v-if="customer.mobile_no || customer.email_id" class="text-xs text-gray-500">
+					<div
+						v-if="customer.mobile_no || customer.email_id"
+						class="text-xs text-gray-500"
+					>
 						{{ customer.mobile_no || customer.email_id }}
 					</div>
 				</div>
@@ -74,7 +77,12 @@
 					@click="clearSearch"
 					class="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full"
 				>
-					<svg class="w-3 h-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg
+						class="w-3 h-3 text-gray-400"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
 						<path
 							stroke-linecap="round"
 							stroke-linejoin="round"
@@ -86,7 +94,9 @@
 
 				<!-- Search Results Dropdown -->
 				<div
-					v-if="showDropdown && (searchResults.length > 0 || searching || showCreateOption)"
+					v-if="
+						showDropdown && (searchResults.length > 0 || searching || showCreateOption)
+					"
 					class="absolute z-50 w-full mt-1 bg-white dark:bg-[#1a1c23] border border-gray-200 dark:border-white/10 rounded-xl shadow-lg max-h-60 overflow-y-auto"
 				>
 					<!-- Searching indicator -->
@@ -94,11 +104,7 @@
 						v-if="searching"
 						class="px-4 py-3 text-sm text-gray-500 flex items-center gap-2"
 					>
-						<svg
-							class="animate-spin w-4 h-4"
-							fill="none"
-							viewBox="0 0 24 24"
-						>
+						<svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24">
 							<circle
 								class="opacity-25"
 								cx="12"
@@ -126,7 +132,12 @@
 						<div
 							class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500"
 						>
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg
+								class="w-4 h-4"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
 								<path
 									stroke-linecap="round"
 									stroke-linejoin="round"
@@ -136,11 +147,17 @@
 							</svg>
 						</div>
 						<div class="min-w-0 flex-1">
-							<div class="font-medium text-gray-900 dark:text-white text-sm truncate">
+							<div
+								class="font-medium text-gray-900 dark:text-white text-sm truncate"
+							>
 								{{ result.display_name || result.customer_name }}
 							</div>
 							<div class="text-xs text-gray-500 truncate">
-								{{ [result.mobile_no, result.email_id].filter(Boolean).join(' · ') || 'No contact info' }}
+								{{
+									[result.mobile_no, result.email_id]
+										.filter(Boolean)
+										.join(' · ') || 'No contact info'
+								}}
 							</div>
 						</div>
 					</button>
@@ -148,13 +165,21 @@
 					<!-- Create New Customer Option -->
 					<button
 						v-if="showCreateOption"
-						@click="showCreateModal = true; showDropdown = false"
+						@click="
+							showCreateModal = true
+							showDropdown = false
+						"
 						class="w-full px-4 py-3 text-left hover:bg-[#D4AF37]/10 flex items-center gap-3 border-t-2 border-gray-100 dark:border-white/10"
 					>
 						<div
 							class="w-8 h-8 rounded-full bg-[#D4AF37]/20 flex items-center justify-center text-[#D4AF37]"
 						>
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg
+								class="w-4 h-4"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
 								<path
 									stroke-linecap="round"
 									stroke-linejoin="round"
@@ -165,7 +190,9 @@
 						</div>
 						<div class="text-sm">
 							<span class="font-medium text-[#D4AF37]">Create new customer</span>
-							<span v-if="searchQuery" class="text-gray-500">: "{{ searchQuery }}"</span>
+							<span v-if="searchQuery" class="text-gray-500"
+								>: "{{ searchQuery }}"</span
+							>
 						</div>
 					</button>
 				</div>
@@ -211,26 +238,44 @@
 						class="relative bg-white dark:bg-[#1a1c23] rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col border border-transparent dark:border-white/10"
 					>
 						<!-- Header -->
-						<div class="p-6 pb-4 border-b border-gray-100 dark:border-white/10 flex-shrink-0">
+						<div
+							class="p-6 pb-4 border-b border-gray-100 dark:border-white/10 flex-shrink-0"
+						>
 							<h3 class="text-lg font-bold text-gray-900 dark:text-white">
 								Add New Customer
 							</h3>
-							<p class="text-sm text-gray-500 mt-1">Fill in customer details below</p>
+							<p class="text-sm text-gray-500 mt-1">
+								Fill in customer details below
+							</p>
 						</div>
 
 						<!-- Form Content - Scrollable -->
 						<div class="flex-1 overflow-y-auto p-6 space-y-5">
 							<!-- Basic Information -->
 							<div class="space-y-4">
-								<h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-									<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+								<h4
+									class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2"
+								>
+									<svg
+										class="w-4 h-4"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+										></path>
 									</svg>
 									Basic Information
 								</h4>
 								<div class="grid grid-cols-2 gap-3">
 									<div class="col-span-2">
-										<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
+										<label
+											class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+										>
 											Full Name <span class="text-red-500">*</span>
 										</label>
 										<input
@@ -241,7 +286,9 @@
 										/>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
+										<label
+											class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+										>
 											Phone Number
 										</label>
 										<input
@@ -252,7 +299,9 @@
 										/>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">
+										<label
+											class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+										>
 											Email
 										</label>
 										<input
@@ -266,29 +315,61 @@
 							</div>
 
 							<!-- Address Section (Collapsible) -->
-							<div class="border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden">
+							<div
+								class="border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden"
+							>
 								<button
 									@click="showAddressFields = !showAddressFields"
 									class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-[#15171e] hover:bg-gray-100 dark:hover:bg-white/5 transition"
 								>
-									<span class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+									<span
+										class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2"
+									>
+										<svg
+											class="w-4 h-4"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+											></path>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+											></path>
 										</svg>
 										Address
 									</span>
 									<svg
 										class="w-4 h-4 text-gray-400 transition-transform"
 										:class="showAddressFields ? 'rotate-180' : ''"
-										fill="none" stroke="currentColor" viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
 									>
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M19 9l-7 7-7-7"
+										></path>
 									</svg>
 								</button>
-								<div v-if="showAddressFields" class="p-4 space-y-3 bg-white dark:bg-[#1a1c23]">
+								<div
+									v-if="showAddressFields"
+									class="p-4 space-y-3 bg-white dark:bg-[#1a1c23]"
+								>
 									<div>
-										<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">Street Address</label>
+										<label
+											class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+											>Street Address</label
+										>
 										<input
 											v-model="newCustomer.address_line1"
 											type="text"
@@ -297,7 +378,10 @@
 										/>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">Apt / Suite</label>
+										<label
+											class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+											>Apt / Suite</label
+										>
 										<input
 											v-model="newCustomer.address_line2"
 											type="text"
@@ -307,7 +391,10 @@
 									</div>
 									<div class="grid grid-cols-3 gap-3">
 										<div class="col-span-2">
-											<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">City</label>
+											<label
+												class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+												>City</label
+											>
 											<input
 												v-model="newCustomer.city"
 												type="text"
@@ -316,7 +403,10 @@
 											/>
 										</div>
 										<div>
-											<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">State</label>
+											<label
+												class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+												>State</label
+											>
 											<input
 												v-model="newCustomer.state"
 												type="text"
@@ -326,7 +416,10 @@
 										</div>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">ZIP Code</label>
+										<label
+											class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+											>ZIP Code</label
+										>
 										<input
 											v-model="newCustomer.pincode"
 											type="text"
@@ -338,39 +431,75 @@
 							</div>
 
 							<!-- Jewelry Preferences (Collapsible) -->
-							<div class="border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden">
+							<div
+								class="border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden"
+							>
 								<button
 									@click="showPreferenceFields = !showPreferenceFields"
 									class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-[#15171e] hover:bg-gray-100 dark:hover:bg-white/5 transition"
 								>
-									<span class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path>
+									<span
+										class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2"
+									>
+										<svg
+											class="w-4 h-4"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+											></path>
 										</svg>
 										Jewelry Preferences
 									</span>
 									<svg
 										class="w-4 h-4 text-gray-400 transition-transform"
 										:class="showPreferenceFields ? 'rotate-180' : ''"
-										fill="none" stroke="currentColor" viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
 									>
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M19 9l-7 7-7-7"
+										></path>
 									</svg>
 								</button>
-								<div v-if="showPreferenceFields" class="p-4 space-y-3 bg-white dark:bg-[#1a1c23]">
+								<div
+									v-if="showPreferenceFields"
+									class="p-4 space-y-3 bg-white dark:bg-[#1a1c23]"
+								>
 									<div class="grid grid-cols-2 gap-3">
 										<div>
-											<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">Ring Size</label>
+											<label
+												class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+												>Ring Size</label
+											>
 											<select
 												v-model="newCustomer.ring_size"
 												class="w-full px-3 py-2 bg-gray-50 dark:bg-[#0F1115] border border-gray-200 dark:border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
 											>
 												<option value="">Select...</option>
-												<option v-for="size in ringSizes" :key="size" :value="size">{{ size }}</option>
+												<option
+													v-for="size in ringSizes"
+													:key="size"
+													:value="size"
+												>
+													{{ size }}
+												</option>
 											</select>
 										</div>
 										<div>
-											<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">Preferred Metal</label>
+											<label
+												class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+												>Preferred Metal</label
+											>
 											<select
 												v-model="newCustomer.preferred_metal"
 												class="w-full px-3 py-2 bg-gray-50 dark:bg-[#0F1115] border border-gray-200 dark:border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
@@ -385,7 +514,10 @@
 										</div>
 									</div>
 									<div>
-										<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">Preferred Gold Purity</label>
+										<label
+											class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+											>Preferred Gold Purity</label
+										>
 										<select
 											v-model="newCustomer.preferred_purity"
 											class="w-full px-3 py-2 bg-gray-50 dark:bg-[#0F1115] border border-gray-200 dark:border-white/10 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/50"
@@ -402,29 +534,56 @@
 							</div>
 
 							<!-- Additional Info (Collapsible) -->
-							<div class="border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden">
+							<div
+								class="border border-gray-200 dark:border-white/10 rounded-xl overflow-hidden"
+							>
 								<button
 									@click="showAdditionalFields = !showAdditionalFields"
 									class="w-full px-4 py-3 flex items-center justify-between bg-gray-50 dark:bg-[#15171e] hover:bg-gray-100 dark:hover:bg-white/5 transition"
 								>
-									<span class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2">
-										<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+									<span
+										class="text-xs font-bold text-gray-400 uppercase tracking-wider flex items-center gap-2"
+									>
+										<svg
+											class="w-4 h-4"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+											></path>
 										</svg>
 										Additional Info
 									</span>
 									<svg
 										class="w-4 h-4 text-gray-400 transition-transform"
 										:class="showAdditionalFields ? 'rotate-180' : ''"
-										fill="none" stroke="currentColor" viewBox="0 0 24 24"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
 									>
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M19 9l-7 7-7-7"
+										></path>
 									</svg>
 								</button>
-								<div v-if="showAdditionalFields" class="p-4 space-y-3 bg-white dark:bg-[#1a1c23]">
+								<div
+									v-if="showAdditionalFields"
+									class="p-4 space-y-3 bg-white dark:bg-[#1a1c23]"
+								>
 									<div class="grid grid-cols-2 gap-3">
 										<div>
-											<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">Spouse Name</label>
+											<label
+												class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+												>Spouse Name</label
+											>
 											<input
 												v-model="newCustomer.spouse_name"
 												type="text"
@@ -433,7 +592,10 @@
 											/>
 										</div>
 										<div>
-											<label class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block">Anniversary</label>
+											<label
+												class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
+												>Anniversary</label
+											>
 											<input
 												v-model="newCustomer.anniversary"
 												type="date"
@@ -441,30 +603,45 @@
 											/>
 										</div>
 									</div>
-									<label class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-[#0F1115] rounded-lg cursor-pointer">
+									<label
+										class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-[#0F1115] rounded-lg cursor-pointer"
+									>
 										<input
 											v-model="newCustomer.tax_exempt"
 											type="checkbox"
 											class="w-4 h-4 rounded border-gray-300 text-[#D4AF37] focus:ring-[#D4AF37]"
 										/>
 										<div>
-											<span class="text-sm font-medium text-gray-700 dark:text-gray-300">Tax Exempt</span>
-											<p class="text-xs text-gray-500">Customer is exempt from sales tax</p>
+											<span
+												class="text-sm font-medium text-gray-700 dark:text-gray-300"
+												>Tax Exempt</span
+											>
+											<p class="text-xs text-gray-500">
+												Customer is exempt from sales tax
+											</p>
 										</div>
 									</label>
 								</div>
 							</div>
 
 							<!-- Error Message -->
-							<div v-if="createError" class="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 px-4 py-3 rounded-lg border border-red-200 dark:border-red-800/30">
+							<div
+								v-if="createError"
+								class="text-sm text-red-500 bg-red-50 dark:bg-red-900/20 px-4 py-3 rounded-lg border border-red-200 dark:border-red-800/30"
+							>
 								{{ createError }}
 							</div>
 						</div>
 
 						<!-- Footer -->
-						<div class="p-6 pt-4 border-t border-gray-100 dark:border-white/10 flex gap-3 flex-shrink-0">
+						<div
+							class="p-6 pt-4 border-t border-gray-100 dark:border-white/10 flex gap-3 flex-shrink-0"
+						>
 							<button
-								@click="showCreateModal = false; resetCreateForm()"
+								@click="
+									showCreateModal = false
+									resetCreateForm()
+								"
 								class="flex-1 py-2.5 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 transition"
 							>
 								Cancel
@@ -529,7 +706,31 @@ const emit = defineEmits(['selected', 'cleared'])
 const cart = useCartStore()
 
 // Ring sizes for dropdown
-const ringSizes = ['3', '3.5', '4', '4.5', '5', '5.5', '6', '6.5', '7', '7.5', '8', '8.5', '9', '9.5', '10', '10.5', '11', '11.5', '12', '12.5', '13', '13.5', '14']
+const ringSizes = [
+	'3',
+	'3.5',
+	'4',
+	'4.5',
+	'5',
+	'5.5',
+	'6',
+	'6.5',
+	'7',
+	'7.5',
+	'8',
+	'8.5',
+	'9',
+	'9.5',
+	'10',
+	'10.5',
+	'11',
+	'11.5',
+	'12',
+	'12.5',
+	'13',
+	'13.5',
+	'14',
+]
 
 // State
 const showSearch = ref(!cart.customer)

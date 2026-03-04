@@ -16,9 +16,7 @@ class LayawayContract(Document):
 	def _set_target_completion_date(self):
 		"""Auto-calculate target completion from contract_date + duration."""
 		if self.contract_date and self.maximum_duration_months:
-			self.target_completion_date = add_months(
-				self.contract_date, int(self.maximum_duration_months)
-			)
+			self.target_completion_date = add_months(self.contract_date, int(self.maximum_duration_months))
 
 	def _validate_amounts(self):
 		if flt(self.total_amount) <= 0:

@@ -8,7 +8,7 @@ from frappe.tests import IntegrationTestCase
 # link-field test record dependencies are recursively loaded
 # Use these module variables to add/remove to/from that list
 EXTRA_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
-IGNORE_TEST_RECORD_DEPENDENCIES = []  # eg. ["User"]
+IGNORE_TEST_RECORD_DEPENDENCIES = ["Employee"]  # eg. ["User"]
 
 
 class IntegrationTestSalesCommissionSplit(IntegrationTestCase):
