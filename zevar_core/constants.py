@@ -36,4 +36,13 @@ DEFAULT_TAX_RATES = {
 }
 
 # Payment Modes
-PAYMENT_MODES = ["Cash", "Credit Card", "Debit Card", "Check", "Wire Transfer", "Zelle"]
+PAYMENT_MODES = [
+	"Cash",
+	"Credit Card",
+	"Debit Card",
+	"Check",
+	"Wire Transfer",
+	"Zelle",
+	"Gift Card",
+	"Trade-In",
+]

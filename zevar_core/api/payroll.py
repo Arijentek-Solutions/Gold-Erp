@@ -45,23 +45,35 @@ def get_salary_slips(year: int | None = None, limit: int = 12):
 		limit=limit,
 	)
 
+	if not salary_slips:
+		return []
+
+	# Batch fetch all earnings and deductions to avoid N+1 queries
+	slip_names = [s.name for s in salary_slips]
+	all_details = frappe.get_all(
+		"Salary Detail",
+		filters={"parent": ["in", slip_names], "parentfield": ["in", ["earnings", "deductions"]]},
+		fields=["parent", "parentfield", "salary_component", "amount", "abbr", "idx"],
+		order_by="parent, idx",
+	)
+
+	# Build lookup maps for earnings and deductions
+	earnings_map = {}
+	deductions_map = {}
+	for detail in all_details:
+		if detail.parentfield == "earnings":
+			if detail.parent not in earnings_map:
+				earnings_map[detail.parent] = []
+			earnings_map[detail.parent].append(detail)
+		elif detail.parentfield == "deductions":
+			if detail.parent not in deductions_map:
+				deductions_map[detail.parent] = []
+			deductions_map[detail.parent].append(detail)
+
 	result = []
 	for slip in salary_slips:
-		# Get earnings breakdown
-		earnings = frappe.get_all(
-			"Salary Detail",
-			filters={"parent": slip.name, "parentfield": "earnings"},
-			fields=["salary_component", "amount", "abbr"],
-			order_by="idx",
-		)
-
-		# Get deductions breakdown
-		deductions = frappe.get_all(
-			"Salary Detail",
-			filters={"parent": slip.name, "parentfield": "deductions"},
-			fields=["salary_component", "amount", "abbr"],
-			order_by="idx",
-		)
+		earnings = earnings_map.get(slip.name, [])
+		deductions = deductions_map.get(slip.name, [])
 
 		result.append(
 			{

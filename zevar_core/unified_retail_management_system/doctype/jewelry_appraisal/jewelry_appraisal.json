@@ -86,14 +86,15 @@
         },
         {
             "fieldname": "metal_type",
-            "fieldtype": "Select",
+            "fieldtype": "Link",
             "label": "Metal Type",
-            "options": "Gold\nSilver\nPlatinum\nOther"
+            "options": "Zevar Metal"
         },
         {
             "fieldname": "metal_purity",
-            "fieldtype": "Data",
-            "label": "Metal Purity (e.g. 14K, 18K, 925)"
+            "fieldtype": "Link",
+            "label": "Metal Purity",
+            "options": "Zevar Purity"
         },
         {
             "fieldname": "total_weight_grams",

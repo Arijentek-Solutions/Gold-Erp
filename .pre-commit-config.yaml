@@ -35,16 +35,21 @@ repos:
     hooks:
       - id: prettier
         types_or: [javascript, vue, scss]
-        # Ignore any files that might contain jinja / bundles
+        # Ignore any files that might contain jinja / bundles / build output
         exclude: |
             (?x)^(
                 zevar_core/public/dist/.*|
                 zevar_core/public/pos/assets/.*|
                 zevar_core/public/employee-portal/assets/.*|
+                zevar_core/public/employee_portal_v2/.*|
+                frontend/zevar_core/public/.*|
                 .*node_modules.*|
                 .*boilerplate.*|
                 zevar_core/templates/includes/.*|
-                zevar_core/public/js/lib/.*
+                zevar_core/public/js/lib/.*|
+                frontend/.*/tailwind\.config\.js|
+                frontend/.*/postcss\.config\.js|
+                frontend/.*/\.eslintrc\.cjs
             )$
 
 
@@ -54,17 +59,23 @@ repos:
       - id: eslint
         types_or: [javascript]
         args: ['--quiet']
-        # Ignore any files that might contain jinja / bundles
+        # Ignore any files that might contain jinja / bundles / build output / config files
         exclude: |
             (?x)^(
                 zevar_core/public/dist/.*|
                 zevar_core/public/pos/assets/.*|
                 zevar_core/public/employee-portal/assets/.*|
+                zevar_core/public/employee_portal_v2/.*|
+                zevar_core/public/pos/sw\.js|
+                frontend/zevar_core/public/.*|
                 cypress/.*|
                 .*node_modules.*|
                 .*boilerplate.*|
                 zevar_core/templates/includes/.*|
-                zevar_core/public/js/lib/.*
+                zevar_core/public/js/lib/.*|
+                frontend/.*/tailwind\.config\.js|
+                frontend/.*/postcss\.config\.js|
+                frontend/.*/\.eslintrc\.cjs
             )$
 
 ci:

@@ -35,9 +35,14 @@ def create_attendance_issue(
 	employee = frappe.db.get_value(
 		"Employee",
 		{"user_id": frappe.session.user},
-		["name", "employee_name", "department", "designation"],
+		["name", "employee_name", "department", "designation", "reports_to"],
 		as_dict=True,
 	)
+
+	# Find reporting manager user ID
+	manager_user_id = None
+	if employee and employee.get("reports_to"):
+		manager_user_id = frappe.db.get_value("Employee", {"name": employee.reports_to}, "user_id")
 
 	# Build full description with employee context
 	full_description = f"""**Reported by Employee:** {employee.employee_name if employee else frappe.session.user}
@@ -54,17 +59,21 @@ def create_attendance_issue(
 
 	# Check if Helpdesk is installed
 	if frappe.db.exists("DocType", "HD Ticket"):
-		ticket = frappe.get_doc(
-			{
-				"doctype": "HD Ticket",
-				"subject": subject,
-				"description": full_description,
-				"raised_by": frappe.session.user,
-				"priority": priority,
-				"ticket_type": issue_type,
-				"status": "Open",
-			}
-		)
+		ticket_doc = {
+			"doctype": "HD Ticket",
+			"subject": subject,
+			"description": full_description,
+			"raised_by": frappe.session.user,
+			"priority": priority,
+			"ticket_type": issue_type,
+			"status": "Open",
+		}
+
+		# Assign to reporting manager if found
+		if manager_user_id:
+			ticket_doc["allocated_to"] = manager_user_id
+
+		ticket = frappe.get_doc(ticket_doc)
 		ticket.insert()
 
 		return {
@@ -76,18 +85,32 @@ def create_attendance_issue(
 
 	# Fallback to Frappe Issue doctype
 	if frappe.db.exists("DocType", "Issue"):
-		issue = frappe.get_doc(
-			{
-				"doctype": "Issue",
-				"subject": subject,
-				"description": full_description,
-				"raised_by": frappe.session.user,
-				"priority": priority,
-				"issue_type": issue_type,
-				"status": "Open",
-			}
-		)
+		issue_doc = {
+			"doctype": "Issue",
+			"subject": subject,
+			"description": full_description,
+			"raised_by": frappe.session.user,
+			"priority": priority,
+			"issue_type": issue_type,
+			"status": "Open",
+		}
+
+		issue = frappe.get_doc(issue_doc)
 		issue.insert()
+
+		# Assign to reporting manager if found (for Frappe Issue, this is usually via ToDo)
+		if manager_user_id:
+			todo = frappe.get_doc(
+				{
+					"doctype": "ToDo",
+					"reference_type": "Issue",
+					"reference_name": issue.name,
+					"description": f"New issue assigned: {subject}",
+					"allocated_to": manager_user_id,
+					"status": "Open",
+				}
+			)
+			todo.insert(ignore_permissions=True)
 
 		return {
 			"success": True,
@@ -96,12 +119,16 @@ def create_attendance_issue(
 			"helpdesk_installed": False,
 		}
 
-	# Last resort: Create a TODO for HR Manager
+	# Last resort: Create a TODO for HR Manager or Reporting Manager
+	allocated_to = manager_user_id
+	if not allocated_to:
+		allocated_to = frappe.db.get_value("User", {"role": "HR Manager"}, "name") or "Administrator"
+
 	todo = frappe.get_doc(
 		{
 			"doctype": "TODO",
 			"description": f"[{issue_type}] {subject}\n\n{full_description}",
-			"allocated_to": frappe.db.get_value("User", {"role": "HR Manager"}, "name") or "Administrator",
+			"allocated_to": allocated_to,
 			"priority": priority,
 			"status": "Open",
 			"date": frappe.utils.today(),

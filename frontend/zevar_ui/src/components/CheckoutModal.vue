@@ -1081,19 +1081,8 @@ async function handlePayment() {
 		const result = await cart.submitOrder(selectedPayments.value, {
 			taxExempt: taxExempt.value,
 			warehouse: session.currentWarehouse,
+			giftCardNumber: gcPayment ? giftCardNumber.value : undefined,
 		})
-
-		// Process Gift Card deduction after successful invoice
-		if (gcPayment && gcPayment.amount > 0) {
-			await createResource({
-				url: 'zevar_core.api.gift_card.process_gift_card_payment',
-				method: 'POST',
-				params: {
-					gift_card_number: giftCardNumber.value,
-					amount: gcPayment.amount,
-				},
-			}).fetch()
-		}
 
 		if (result && result.invoice_name) {
 			lastOrderId.value = result.invoice_name
@@ -1103,7 +1092,31 @@ async function handlePayment() {
 		isLayawaySuccess.value = false
 		step.value = 'success'
 	} catch (e) {
-		const errorMsg = e.message || String(e)
+		// Extract meaningful error from Frappe's response structure
+		let errorMsg = ''
+		if (e?.exc_type && e?.message) {
+			errorMsg = e.message
+		} else if (e?._server_messages) {
+			try {
+				const msgs = JSON.parse(e._server_messages)
+				errorMsg = msgs
+					.map((m) => {
+						try {
+							return JSON.parse(m).message
+						} catch {
+							return m
+						}
+					})
+					.join('\n')
+			} catch {
+				errorMsg = String(e._server_messages)
+			}
+		} else {
+			errorMsg = e?.message || String(e)
+		}
+		// Strip HTML tags for clean display
+		errorMsg = errorMsg.replace(/<[^>]+>/g, '')
+
 		// Detect trade-in 2x rule failure → prompt for manager override
 		if (errorMsg.includes('Manager Override') && cart.tradeIns.length > 0) {
 			const managerUser = prompt(

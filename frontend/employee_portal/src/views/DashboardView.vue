@@ -1,340 +1,430 @@
 <template>
-	<div class="grid grid-cols-12 gap-6 max-w-7xl mx-auto h-[calc(100vh-6rem)]">
-		<!-- Left Column: Clock & Widgets -->
-		<div class="col-span-12 lg:col-span-8 flex flex-col gap-6 h-full">
-			<!-- Clock Section -->
-			<div
-				class="flex-1 flex flex-col items-center justify-center py-2 glass-card rounded-[2rem] border border-white/5 relative bg-gradient-to-b from-white/5 to-transparent overflow-visible"
-			>
-				<!-- Background decorative elements -->
-				<div
-					class="absolute top-0 left-0 w-full h-full diamond-pattern opacity-30 pointer-events-none rounded-[2rem] overflow-hidden"
-				></div>
-				<div
-					class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/40 pointer-events-none rounded-[2rem]"
-				></div>
-
-				<div class="relative group z-10 scale-100">
-					<!-- Outer Bezel (Massive) -->
-					<div
-						class="w-[380px] h-[380px] rounded-full metallic-bezel border-[4px] border-[#2a2a2a] flex items-center justify-center relative p-1 shadow-[0_0_60px_rgba(0,0,0,0.8)]"
-					>
-						<!-- Glowing Border Ring -->
+	<div class="max-w-7xl mx-auto h-[calc(100vh-8rem)] splitpanes-dashboard">
+		<splitpanes class="default-theme" @resize="onMainResize">
+			<!-- Left Column: Clock & Bottom Widgets -->
+			<pane :size="66" min-size="40" class="pr-2 bg-transparent overflow-hidden">
+				<splitpanes horizontal class="default-theme" @resize="onLeftResize">
+					<!-- Clock Section -->
+					<pane :size="75" class="pb-2 bg-transparent overflow-hidden">
 						<div
-							class="absolute inset-0 rounded-full border border-primary/20 shadow-[0_0_40px_rgba(252,211,77,0.1)]"
-						></div>
-
-						<!-- Inner Bezel Detail -->
-						<div
-							class="w-full h-full rounded-full border-[10px] border-[#0a0c1a] shadow-inner flex items-center justify-center relative bg-[#05070a]"
+							class="flex-1 flex flex-col items-center justify-center py-2 glass-card rounded-[2.5rem] border border-white/5 relative bg-gradient-to-b from-white/5 to-transparent overflow-hidden h-full"
 						>
-							<!-- Digital Face -->
+							<!-- Background decorative elements -->
 							<div
-								class="w-full h-full rounded-full flex flex-col items-center justify-center relative overflow-hidden bg-[radial-gradient(circle_at_center,_#1a1d2d_0%,_#05070a_70%)]"
+								class="absolute top-0 left-0 w-full h-full diamond-pattern opacity-10 pointer-events-none rounded-[2.5rem] overflow-hidden"
+							></div>
+							<div
+								class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(252,211,77,0.05)_0%,_transparent_50%)] pointer-events-none rounded-[2.5rem]"
+							></div>
+							<div
+								class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none rounded-[2.5rem]"
+							></div>
+
+							<div
+								class="relative group z-10 scale-[0.85] lg:scale-100 flex-1 flex flex-col justify-center w-full items-center"
 							>
-								<!-- Subtle grid/texture on face -->
+								<!-- Outer Bezel -->
 								<div
-									class="absolute inset-0 opacity-10"
-									style="
-										background-image: radial-gradient(
-											#fff 1px,
-											transparent 1px
-										);
-										background-size: 20px 20px;
-									"
-								></div>
-
-								<div
-									class="absolute top-[22%] text-[10px] text-white/30 tracking-[0.4em] font-bold uppercase font-display"
+									class="w-[340px] h-[340px] lg:w-[380px] lg:h-[380px] rounded-full metallic-bezel border-[4px] border-[#222] flex items-center justify-center relative p-1 shadow-[0_0_80px_rgba(0,0,0,0.6)]"
 								>
-									{{ shiftLabel }}
-								</div>
+									<!-- Glowing Border Ring -->
+									<div
+										class="absolute inset-0 rounded-full border border-primary/10 shadow-[0_0_40px_rgba(252,211,77,0.05)]"
+									></div>
 
-								<!-- Huge Timer -->
-								<div
-									class="text-[4.5rem] leading-none font-mono font-bold tracking-tighter mt-2 transition-colors duration-500 z-10 drop-shadow-2xl tabular-nums"
-									:class="getTimerColor"
+									<!-- Inner Bezel Detail -->
+									<div
+										class="w-full h-full rounded-full border-[10px] border-[#0a0c1a] shadow-inner flex items-center justify-center relative bg-[#05070a]"
+									>
+										<!-- Digital Face -->
+										<div
+											class="w-full h-full rounded-full flex flex-col items-center justify-center relative overflow-hidden bg-[radial-gradient(circle_at_center,_#121520_0%,_#05070a_70%)]"
+										>
+											<!-- Subtle grid/texture on face -->
+											<div
+												class="absolute inset-0 opacity-5"
+												style="
+													background-image: radial-gradient(
+														#fff 1px,
+														transparent 1px
+													);
+													background-size: 24px 24px;
+												"
+											></div>
+											<div
+												class="absolute top-[22%] text-[9px] text-white/20 tracking-[0.5em] font-bold uppercase font-display"
+											>
+												{{ shiftLabel }}
+											</div>
+
+											<!-- Huge Timer -->
+											<div
+												class="text-[3.5rem] lg:text-[4.5rem] leading-none font-mono font-bold tracking-tighter mt-2 transition-colors duration-500 z-10 drop-shadow-2xl tabular-nums"
+												:class="getTimerColor"
+											>
+												{{ displayTime }}
+											</div>
+
+											<!-- Active Indicators -->
+											<div
+												class="absolute bottom-[22%] flex gap-2.5"
+												v-if="attendance.isCheckedIn"
+											>
+												<span
+													class="w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor] bg-primary"
+												></span>
+												<span
+													class="w-2 h-2 rounded-full opacity-20 bg-primary"
+												></span>
+												<span
+													class="w-2 h-2 rounded-full opacity-10 bg-primary"
+												></span>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Buttons -->
+							<div class="pb-8 flex gap-4 w-full max-w-sm z-10 px-4">
+								<button
+									@click="handleClockIn"
+									:disabled="attendance.isCheckedIn || attendance.loading"
+									class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-xs uppercase"
+									:class="[
+										!attendance.isCheckedIn
+											? 'bg-primary text-black hover:bg-yellow-400 hover:scale-[1.02] shadow-[0_0_30px_rgba(252,211,77,0.2)]'
+											: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
+									]"
 								>
-									{{ displayTime }}
-								</div>
+									<span v-if="attendance.loading" class="animate-spin text-sm"
+										>rotate_right</span
+									>
+									<span v-else>Clock In</span>
+								</button>
 
-								<!-- Active Indicators -->
+								<button
+									@click="handleClockOut"
+									:disabled="!attendance.isCheckedIn || attendance.loading"
+									class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-xs uppercase"
+									:class="[
+										attendance.isCheckedIn
+											? 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:border-red-500/50 hover:text-red-400 shadow-lg'
+											: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
+									]"
+								>
+									<span v-if="attendance.loading" class="animate-spin text-sm"
+										>rotate_right</span
+									>
+									<span v-else>Clock Out</span>
+								</button>
+							</div>
+						</div>
+					</pane>
+
+					<!-- Bottom Info Row -->
+					<pane :size="25" min-size="15" class="pt-2 bg-transparent overflow-hidden">
+						<splitpanes class="default-theme">
+							<!-- Profile -->
+							<pane :size="33.3" class="pr-2 bg-transparent overflow-hidden">
 								<div
-									class="absolute bottom-[22%] flex gap-3"
-									v-if="attendance.isCheckedIn"
+									class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors h-full"
+								>
+									<div
+										class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"
+									>
+										<span class="material-symbols-outlined text-5xl"
+											>badge</span
+										>
+									</div>
+									<div>
+										<p
+											class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2"
+										>
+											My Profile
+										</p>
+										<div class="flex items-center gap-3 mt-1">
+											<div
+												class="w-10 h-10 rounded-full bg-gradient-to-br from-primary/80 to-amber-600 flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-primary/10 shrink-0"
+											>
+												{{ userInitials }}
+											</div>
+											<div class="min-w-0">
+												<p
+													class="text-xs font-bold text-white leading-tight truncate"
+												>
+													{{ employeeName }}
+												</p>
+												<p class="text-[9px] text-primary mt-1 truncate">
+													{{ employeeDesignation }}
+												</p>
+											</div>
+										</div>
+									</div>
+									<button
+										class="mt-3 py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold text-white/70 border border-white/5 flex items-center gap-2 w-full justify-center transition-all"
+									>
+										<span class="material-symbols-outlined text-[14px]"
+											>account_box</span
+										>
+										Employee Settings
+									</button>
+								</div>
+							</pane>
+
+							<!-- Reporting Manager -->
+							<pane :size="33.4" class="px-2 bg-transparent overflow-hidden">
+								<div
+									class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors h-full"
+								>
+									<div
+										class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"
+									>
+										<span class="material-symbols-outlined text-5xl"
+											>supervisor_account</span
+										>
+									</div>
+									<div>
+										<p
+											class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2"
+										>
+											Direct Manager
+										</p>
+										<div class="flex items-center gap-3 mt-1">
+											<div
+												class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold text-xs ring-1 ring-blue-500/20 shrink-0 uppercase"
+											>
+												{{ managerInitials }}
+											</div>
+											<div class="min-w-0">
+												<p class="text-xs font-bold text-white truncate">
+													{{ managerName }}
+												</p>
+												<p class="text-[9px] text-white/40 truncate mt-1">
+													Supervisory Role
+												</p>
+											</div>
+										</div>
+									</div>
+									<button
+										class="mt-3 py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold text-white/50 border border-white/5 transition-all w-full"
+									>
+										View Management
+									</button>
+								</div>
+							</pane>
+
+							<!-- Payslip -->
+							<pane :size="33.3" class="pl-2 bg-transparent overflow-hidden">
+								<div
+									class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors h-full"
+								>
+									<div
+										class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"
+									>
+										<span class="material-symbols-outlined text-5xl"
+											>payments</span
+										>
+									</div>
+									<div>
+										<p
+											class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2"
+										>
+											My Payroll
+										</p>
+										<p class="text-sm font-bold text-white truncate">
+											{{ payslipMonth }}
+										</p>
+										<div
+											v-if="payslipStatus"
+											class="flex items-center gap-1.5 mt-2"
+										>
+											<span
+												class="w-1.5 h-1.5 rounded-full bg-emerald-400"
+											></span>
+											<span
+												class="text-[9px] text-emerald-400/80 font-bold uppercase tracking-wider"
+												>{{ payslipStatus }}</span
+											>
+										</div>
+										<p v-else class="text-[9px] text-white/30 mt-2 italic">
+											Processing...
+										</p>
+									</div>
+									<router-link to="/payroll" class="block mt-3 shrink-0">
+										<button
+											class="w-full py-2 px-3 bg-primary/5 hover:bg-primary/10 rounded-lg text-[9px] font-bold text-primary/80 border border-primary/10 flex items-center justify-center gap-2 transition-all"
+										>
+											<span class="material-symbols-outlined text-[14px]"
+												>receipt_long</span
+											>
+											Salary History
+										</button>
+									</router-link>
+								</div>
+							</pane>
+						</splitpanes>
+					</pane>
+				</splitpanes>
+			</pane>
+
+			<!-- Right Column: Activity / Todos -->
+			<pane :size="34" min-size="20" class="pl-2 bg-transparent overflow-hidden">
+				<splitpanes horizontal class="default-theme" @resize="onRightResize">
+					<!-- Activity -->
+					<pane :size="50" class="pb-2 bg-transparent overflow-hidden">
+						<div
+							class="glass-card rounded-[2.5rem] p-7 h-full border border-white/5 flex flex-col bg-white/[0.02]"
+						>
+							<div class="flex items-center justify-between mb-6">
+								<div>
+									<h3 class="font-bold text-lg text-white font-display">
+										Activity Stream
+									</h3>
+									<p
+										class="text-[9px] text-white/20 uppercase tracking-widest mt-1"
+									>
+										Real-time alerts
+									</p>
+								</div>
+								<div
+									class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center"
+								>
+									<span class="material-symbols-outlined text-white/30 text-base"
+										>notifications</span
+									>
+								</div>
+							</div>
+							<div class="flex-1 overflow-y-auto custom-scrollbar space-y-5 pr-2">
+								<div
+									v-if="recentActivity.length === 0"
+									class="text-center text-white/20 py-12"
 								>
 									<span
-										class="w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor]"
-										:class="getDotColor"
-									></span>
-									<span
-										class="w-2 h-2 rounded-full opacity-30"
-										:class="getDotColor"
-									></span>
-									<span
-										class="w-2 h-2 rounded-full opacity-20"
-										:class="getDotColor"
-									></span>
+										class="material-symbols-outlined text-4xl mb-3 opacity-20"
+										>history</span
+									>
+									<p class="text-xs">Initial scan complete. No logs found.</p>
+								</div>
+								<div
+									v-for="log in recentActivity"
+									:key="log.id"
+									class="flex gap-4 relative group"
+								>
+									<div
+										class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border bg-black/40 backdrop-blur-md transition-all group-hover:border-primary/30"
+										:class="getActivityIconClass(log.type)"
+									>
+										<span class="material-symbols-outlined text-lg">{{
+											log.icon
+										}}</span>
+									</div>
+									<div class="min-w-0">
+										<p
+											class="text-[11px] font-bold text-white transition-colors group-hover:text-primary leading-tight"
+										>
+											{{ log.title }}
+										</p>
+										<p
+											class="text-[9px] text-white/30 mt-1 font-mono uppercase"
+										>
+											{{ log.time }}
+										</p>
+									</div>
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>
+					</pane>
 
-				<!-- Buttons -->
-				<div class="mt-8 flex gap-4 w-full max-w-sm z-10">
-					<button
-						@click="handleClockIn"
-						:disabled="attendance.isCheckedIn || attendance.loading"
-						class="flex-1 h-14 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-sm uppercase"
-						:class="[
-							!attendance.isCheckedIn
-								? 'bg-[#FCD34D] text-black hover:bg-[#FDE047] hover:scale-[1.02] shadow-[0_0_30px_rgba(252,211,77,0.3)]'
-								: 'bg-white/5 border border-white/5 text-white/20 cursor-not-allowed',
-						]"
-					>
-						<span v-if="attendance.loading" class="animate-spin">⏳</span>
-						<span v-else>Clock In</span>
-					</button>
-
-					<button
-						@click="handleClockOut"
-						:disabled="!attendance.isCheckedIn || attendance.loading"
-						class="flex-1 h-14 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-sm uppercase"
-						:class="[
-							attendance.isCheckedIn
-								? 'bg-[#1a1a1a] border border-white/10 text-white hover:bg-[#252525] hover:border-white/20 hover:text-red-400 shadow-lg'
-								: 'bg-white/5 border border-white/5 text-white/20 cursor-not-allowed',
-						]"
-					>
-						<span v-if="attendance.loading" class="animate-spin">⏳</span>
-						<span v-else>Clock Out</span>
-					</button>
-				</div>
-			</div>
-
-			<!-- Bottom Info Row -->
-			<div class="grid grid-cols-3 gap-6 shrink-0 h-72">
-				<!-- Profile & Designation -->
-				<div
-					class="glass-card rounded-2xl p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors"
-				>
-					<div
-						class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"
-					>
-						<span class="material-symbols-outlined text-6xl">badge</span>
-					</div>
-					<div>
-						<p
-							class="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1"
-						>
-							My Profile
-						</p>
-						<div class="flex items-center gap-3 mt-1">
-							<div
-								class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-orange-500 flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-primary/20"
-							>
-								{{ userInitials }}
-							</div>
-							<div>
-								<p class="text-sm font-bold text-white leading-tight">
-									{{ employeeName }}
-								</p>
-								<p class="text-[10px] text-primary mt-0.5">
-									{{ employeeDesignation }}
-								</p>
-							</div>
-						</div>
-					</div>
-					<button
-						class="mt-2 py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-bold text-white border border-white/5 flex items-center gap-2 w-full justify-center transition-all group-hover:bg-white/10"
-					>
-						<span class="material-symbols-outlined text-[14px]">account_box</span>
-						View Profile
-					</button>
-				</div>
-
-				<!-- Reporting Manager -->
-				<div
-					class="glass-card rounded-2xl p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors"
-				>
-					<div
-						class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"
-					>
-						<span class="material-symbols-outlined text-6xl">supervisor_account</span>
-					</div>
-					<div>
-						<p
-							class="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1"
-						>
-							Reporting To
-						</p>
-						<div class="flex items-center gap-3 mt-2">
-							<div
-								class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400 font-bold text-xs ring-1 ring-blue-500/30"
-							>
-								{{ managerInitials }}
-							</div>
-							<div>
-								<p class="text-sm font-bold text-white">{{ managerName }}</p>
-								<p class="text-[10px] text-white/50">{{ managerDesignation }}</p>
-							</div>
-						</div>
-					</div>
-					<router-link to="/team" class="block">
-						<button
-							class="mt-auto py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[10px] font-bold text-white/70 border border-white/5 w-full transition-all"
-						>
-							View Team
-						</button>
-					</router-link>
-				</div>
-
-				<!-- Payslip -->
-				<div
-					class="glass-card rounded-2xl p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors"
-				>
-					<div
-						class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"
-					>
-						<span class="material-symbols-outlined text-6xl">payments</span>
-					</div>
-					<div>
-						<p
-							class="text-[10px] text-white/40 font-bold uppercase tracking-wider mb-1"
-						>
-							Payroll
-						</p>
-						<p class="text-base font-bold text-white">{{ payslipMonth }}</p>
-						<p
-							v-if="payslipStatus"
-							class="text-[10px] text-emerald-400 mt-1 flex items-center gap-1 bg-emerald-400/10 w-fit px-1.5 py-0.5 rounded"
-						>
-							<span class="material-symbols-outlined text-[10px]">check_circle</span>
-							{{ payslipStatus }}
-						</p>
-						<p v-else class="text-[10px] text-white/40 mt-1">No payslip available</p>
-					</div>
-					<router-link to="/payroll" class="block">
-						<button
-							class="mt-4 py-2 px-3 bg-primary/10 hover:bg-primary/20 rounded-lg text-[10px] font-bold text-primary border border-primary/20 flex items-center justify-center gap-2 w-full transition-all"
-						>
-							<span class="material-symbols-outlined text-[14px]">visibility</span>
-							View Slip
-						</button>
-					</router-link>
-				</div>
-			</div>
-		</div>
-
-		<!-- Right Column: Split Activity & Todos -->
-		<div class="col-span-12 lg:col-span-4 flex flex-col gap-6 h-full">
-			<!-- Top: Notifications / Activity -->
-			<div class="glass-card rounded-[2rem] p-6 h-1/2 border border-white/10 flex flex-col">
-				<div class="flex items-center justify-between mb-4">
-					<h3 class="font-bold text-lg text-white font-display">Activity & Alerts</h3>
-					<span
-						class="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_8px_#FCD34D]"
-					></span>
-				</div>
-
-				<div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2">
-					<!-- No activity message -->
-					<div v-if="recentActivity.length === 0" class="text-center text-white/40 py-8">
-						<span class="material-symbols-outlined text-4xl mb-2">history</span>
-						<p class="text-sm">No recent activity</p>
-					</div>
-
-					<!-- Activity items -->
-					<div
-						v-for="log in recentActivity"
-						:key="log.id"
-						class="flex gap-3 relative group opacity-60 hover:opacity-100 transition-opacity"
-					>
+					<!-- Todos -->
+					<pane :size="50" class="pt-2 bg-transparent overflow-hidden">
 						<div
-							class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 border bg-[#0a0c1a]"
-							:class="getActivityIconClass(log.type)"
+							class="glass-card rounded-[2.5rem] p-7 h-full border border-white/5 flex flex-col bg-white/[0.02]"
 						>
-							<span class="material-symbols-outlined text-[16px]">{{
-								log.icon
-							}}</span>
-						</div>
-						<div>
-							<p
-								class="text-xs font-bold text-white transition-colors group-hover:text-primary leading-snug"
-							>
-								{{ log.title }}
-							</p>
-							<p class="text-[9px] text-white/30 mt-0.5">{{ log.time }}</p>
-						</div>
-					</div>
-				</div>
-			</div>
-
-			<!-- Bottom: Todos -->
-			<div class="glass-card rounded-[2rem] p-6 h-1/2 border border-white/10 flex flex-col">
-				<div class="flex items-center justify-between mb-4">
-					<h3 class="font-bold text-lg text-white font-display">My Tasks</h3>
-					<button
-						@click="showAddTodo = true"
-						class="w-6 h-6 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-white/50 hover:text-white transition-all border border-white/5"
-					>
-						<span class="material-symbols-outlined text-[16px]">add</span>
-					</button>
-				</div>
-
-				<div class="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-2">
-					<!-- Gameplan not installed -->
-					<div v-if="!tasksStore.gameplanInstalled" class="text-center py-4">
-						<p class="text-xs text-white/40">
-							Gameplan not installed. Showing personal todos only.
-						</p>
-					</div>
-
-					<!-- No tasks -->
-					<div
-						v-if="tasksStore.openTodos.length === 0"
-						class="text-center text-white/40 py-8"
-					>
-						<span class="material-symbols-outlined text-4xl mb-2">check_circle</span>
-						<p class="text-sm">No pending tasks</p>
-					</div>
-
-					<!-- Task items -->
-					<div
-						v-for="todo in tasksStore.openTodos.slice(0, 5)"
-						:key="todo.id"
-						@click="toggleTodo(todo.id, todo.status)"
-						class="group flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-all border border-transparent hover:border-white/5 cursor-pointer"
-					>
-						<div
-							class="w-4 h-4 rounded border border-white/20 flex items-center justify-center group-hover:border-primary transition-colors"
-						>
-							<span
-								class="material-symbols-outlined text-[12px] text-transparent group-hover:text-white/20"
-								>check</span
-							>
-						</div>
-						<div class="flex-1 min-w-0">
-							<p
-								class="text-xs font-medium text-white group-hover:text-primary/90 transition-colors truncate"
-							>
-								{{ todo.description }}
-							</p>
-							<div class="flex items-center gap-2 mt-0.5">
-								<span class="text-[9px] text-white/30">{{
-									formatDate(todo.date)
-								}}</span>
-								<span
-									v-if="todo.priority === 'High'"
-									class="w-1.5 h-1.5 rounded-full bg-red-400"
-								></span>
+							<div class="flex items-center justify-between mb-6">
+								<div>
+									<h3 class="font-bold text-lg text-white font-display">
+										Priority Tasks
+									</h3>
+									<p
+										class="text-[9px] text-white/20 uppercase tracking-widest mt-1"
+									>
+										Personal Board
+									</p>
+								</div>
+								<button
+									@click="showAddTodo = true"
+									class="w-8 h-8 rounded-xl bg-primary text-black hover:bg-yellow-400 flex items-center justify-center transition-all shadow-lg shadow-primary/10"
+								>
+									<span class="material-symbols-outlined text-lg font-bold"
+										>add</span
+									>
+								</button>
+							</div>
+							<div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
+								<div
+									v-if="tasksStore.openTodos.length === 0"
+									class="text-center text-white/20 py-12"
+								>
+									<div
+										class="w-14 h-14 rounded-full border border-white/5 flex items-center justify-center mx-auto mb-4 bg-white/5"
+									>
+										<span class="material-symbols-outlined text-2xl opacity-30"
+											>check_circle</span
+										>
+									</div>
+									<p class="text-xs">Zero tasks remaining for today</p>
+								</div>
+								<div
+									v-for="todo in tasksStore.openTodos.slice(0, 5)"
+									:key="todo.id"
+									@click="toggleTodo(todo.id, todo.status)"
+									class="group flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] transition-all border border-white/5 cursor-pointer"
+								>
+									<div
+										class="w-5 h-5 rounded-md border-2 border-white/10 flex items-center justify-center group-hover:border-primary transition-all bg-black/20"
+									>
+										<span
+											class="material-symbols-outlined text-[14px] text-transparent group-hover:text-primary"
+											>done</span
+										>
+									</div>
+									<div class="flex-1 min-w-0">
+										<p
+											class="text-xs font-bold text-white group-hover:text-primary/90 transition-colors truncate"
+										>
+											{{ todo.description }}
+										</p>
+										<div class="flex items-center gap-3 mt-1.5">
+											<span
+												class="text-[9px] text-white/30 flex items-center gap-1 font-mono uppercase"
+											>
+												<span class="material-symbols-outlined text-[10px]"
+													>calendar_today</span
+												>
+												{{ formatDate(todo.date) }}
+											</span>
+											<div
+												v-if="todo.priority === 'High'"
+												class="flex items-center gap-1"
+											>
+												<span
+													class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"
+												></span>
+												<span
+													class="text-[8px] text-red-500 font-black uppercase tracking-widest"
+													>Urgent</span
+												>
+											</div>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+					</pane>
+				</splitpanes>
+			</pane>
+		</splitpanes>
 
 		<!-- Add Todo Modal -->
 		<Teleport to="body">
@@ -383,6 +473,8 @@ import { useEmployeeStore } from "@/stores/employee";
 import { useAttendanceStore } from "@/stores/attendance";
 import { useTasksStore } from "@/stores/tasks";
 import { usePayrollStore } from "@/stores/payroll";
+import { Splitpanes, Pane } from "splitpanes";
+import "splitpanes/dist/splitpanes.css";
 
 const auth = useAuthStore();
 const employeeStore = useEmployeeStore();
@@ -394,6 +486,17 @@ const showAddTodo = ref(false);
 const newTodoText = ref("");
 const displayTime = ref("00:00:00");
 let timerInterval = null;
+
+// Splitpanes resize sync (optional cross resize support)
+function onMainResize(panes) {
+	// console.log('Main Resize', panes)
+}
+function onLeftResize(panes) {
+	// console.log('Left Column Resize', panes)
+}
+function onRightResize(panes) {
+	// console.log('Right Column Resize', panes)
+}
 
 // Computed from employee store
 const employeeName = computed(() => {
@@ -414,9 +517,9 @@ const userInitials = computed(() => {
 		.toUpperCase();
 });
 
-// Manager info - placeholder until we fetch from HRMS
+// Manager info
 const managerName = computed(() => {
-	return "Not Assigned";
+	return employeeStore.employee?.reports_to || "Not Assigned";
 });
 
 const managerDesignation = computed(() => {
@@ -464,13 +567,13 @@ const getTimerColor = computed(() => {
 	if (!attendance.isCheckedIn) return "text-white/20";
 	const target = attendance.workingHoursTarget || 8;
 	const worked = attendance.totalHoursToday || 0;
-	return worked >= target ? "text-green-500" : "text-red-500";
+	return worked >= target ? "text-green-500" : "text-amber-500";
 });
 
 const getDotColor = computed(() => {
 	const target = attendance.workingHoursTarget || 8;
 	const worked = attendance.totalHoursToday || 0;
-	return worked >= target ? "bg-green-500" : "bg-red-500";
+	return worked >= target ? "bg-green-500" : "bg-amber-500";
 });
 
 // Recent activity from check-in history
@@ -498,12 +601,9 @@ function getActivityIconClass(type) {
 async function handleClockIn() {
 	const employeeId = employeeStore.employee?.employee_id;
 	if (!employeeId) return;
-
 	try {
-		// Get location if available
 		let latitude = null;
 		let longitude = null;
-
 		if (navigator.geolocation) {
 			try {
 				const position = await new Promise((resolve, reject) => {
@@ -515,7 +615,6 @@ async function handleClockIn() {
 				console.log("Location not available");
 			}
 		}
-
 		await attendance.clockIn(employeeId, latitude, longitude);
 		startTimer();
 	} catch (error) {
@@ -526,11 +625,9 @@ async function handleClockIn() {
 async function handleClockOut() {
 	const employeeId = employeeStore.employee?.employee_id;
 	if (!employeeId) return;
-
 	try {
 		let latitude = null;
 		let longitude = null;
-
 		if (navigator.geolocation) {
 			try {
 				const position = await new Promise((resolve, reject) => {
@@ -542,7 +639,6 @@ async function handleClockOut() {
 				console.log("Location not available");
 			}
 		}
-
 		await attendance.clockOut(employeeId, latitude, longitude);
 		stopTimer();
 	} catch (error) {
@@ -553,10 +649,8 @@ async function handleClockOut() {
 // Timer functions
 function startTimer() {
 	if (timerInterval) clearInterval(timerInterval);
-
 	let seconds = Math.floor((attendance.totalHoursToday || 0) * 3600);
 	updateDisplayTime(seconds);
-
 	timerInterval = setInterval(() => {
 		seconds++;
 		updateDisplayTime(seconds);
@@ -584,7 +678,6 @@ function updateDisplayTime(totalSeconds) {
 // Todo functions
 async function addTodo() {
 	if (!newTodoText.value.trim()) return;
-
 	await tasksStore.createTodo(newTodoText.value.trim());
 	newTodoText.value = "";
 	showAddTodo.value = false;
@@ -611,14 +704,11 @@ function formatTime(timeStr) {
 onMounted(async () => {
 	await employeeStore.init();
 	const employeeId = employeeStore.employee?.employee_id;
-
 	if (employeeId) {
 		attendance.init(employeeId);
 		tasksStore.init();
 		payrollStore.init();
 	}
-
-	// Start timer if already checked in
 	if (attendance.isCheckedIn) {
 		startTimer();
 	}
@@ -628,3 +718,83 @@ onUnmounted(() => {
 	stopTimer();
 });
 </script>
+
+<style>
+/* Splitpanes Theme Customization */
+.splitpanes-dashboard {
+	transition: opacity 0.3s;
+}
+
+.splitpanes-dashboard .splitpanes__pane {
+	background-color: transparent !important;
+}
+
+.splitpanes-dashboard .splitpanes__splitter {
+	background-color: transparent;
+	position: relative;
+	box-sizing: border-box;
+	transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+	z-index: 20;
+}
+
+/* Subtle Splitter Handles */
+.splitpanes-dashboard .splitpanes__splitter:after {
+	content: "";
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: rgba(255, 255, 255, 0.05);
+	border-radius: 10px;
+	transition: background-color 0.2s;
+}
+
+.splitpanes-dashboard .splitpanes--vertical > .splitpanes__splitter:after {
+	width: 2px;
+	height: 30px;
+}
+
+.splitpanes-dashboard .splitpanes--horizontal > .splitpanes__splitter:after {
+	width: 30px;
+	height: 2px;
+}
+
+.splitpanes-dashboard .splitpanes__splitter:hover:after {
+	background-color: var(--primary);
+	box-shadow: 0 0 10px var(--primary);
+}
+
+.splitpanes-dashboard .splitpanes--vertical > .splitpanes__splitter {
+	width: 10px;
+	margin-left: -5px;
+	margin-right: -5px;
+	cursor: col-resize;
+}
+
+.splitpanes-dashboard .splitpanes--horizontal > .splitpanes__splitter {
+	height: 10px;
+	margin-top: -5px;
+	margin-bottom: -5px;
+	cursor: row-resize;
+}
+
+/* Custom scrollbar for activity/todos */
+.custom-scrollbar::-webkit-scrollbar {
+	width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+	background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+	background: rgba(255, 255, 255, 0.05);
+	border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+	background: rgba(255, 255, 255, 0.1);
+}
+
+.diamond-pattern {
+	background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+	background-size: 32px 32px;
+}
+</style>
