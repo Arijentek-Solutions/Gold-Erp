@@ -51,7 +51,7 @@ def execute():
 		try:
 			# Check if index already exists
 			existing = frappe.db.sql(
-				f"""
+				"""
                 SELECT INDEX_NAME
                 FROM INFORMATION_SCHEMA.STATISTICS
                 WHERE TABLE_SCHEMA = DATABASE()
