@@ -73,12 +73,16 @@ def get_pos_items(
 			if gem_filter:
 				if gem_filter == "No Stone":
 					items_with_stones = frappe.get_all("Zevar Gemstone Detail", pluck="parent")
+					# Filter out any empty/None values
+					items_with_stones = [item for item in items_with_stones if item]
 					if items_with_stones:
 						query_filters.append(["name", "not in", items_with_stones])
 				else:
 					matching_items = frappe.get_all(
 						"Zevar Gemstone Detail", filters={"gem_type": gem_filter}, pluck="parent"
 					)
+					# Filter out any empty/None values
+					matching_items = [item for item in matching_items if item]
 					if not matching_items:
 						return []
 					query_filters.append(["name", "in", matching_items])

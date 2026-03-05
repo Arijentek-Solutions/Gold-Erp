@@ -1,6 +1,6 @@
 {
   "index.html": {
-    "file": "assets/index.de409327.js",
+    "file": "assets/index.41d99764.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
@@ -14,7 +14,7 @@
       "src/pages/RepairTerminal.vue"
     ],
     "css": [
-      "assets/index.e3657ce3.css"
+      "assets/index.8a84be0d.css"
     ],
     "assets": [
       "assets/Inter.var.d30c3bd0.woff2",
@@ -77,26 +77,26 @@
     ]
   },
   "src/pages/POS.vue": {
-    "file": "assets/POS.f6ac0f15.js",
+    "file": "assets/POS.8d4686fa.js",
     "src": "src/pages/POS.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_AppLayout.7995dd03.js",
+      "_AppLayout.4007a055.js",
       "_vendor.0696dbb8.js",
       "_ui.11fe1900.js"
     ],
     "css": [
-      "assets/POS.f909c371.css"
+      "assets/POS.dcc24a07.css"
     ]
   },
-  "_AppLayout.7995dd03.js": {
-    "file": "assets/AppLayout.7995dd03.js",
+  "_AppLayout.4007a055.js": {
+    "file": "assets/AppLayout.4007a055.js",
     "imports": [
       "_vendor.0696dbb8.js",
       "_ui.11fe1900.js"
     ],
     "css": [
-      "assets/AppLayout.3ae7f50a.css"
+      "assets/AppLayout.2e3d3786.css"
     ]
   },
   "_ui.11fe1900.js": {
@@ -106,7 +106,7 @@
     ]
   },
   "src/pages/CatalogueDashboard.vue": {
-    "file": "assets/CatalogueDashboard.7972ab6c.js",
+    "file": "assets/CatalogueDashboard.e2dffe1f.js",
     "src": "src/pages/CatalogueDashboard.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -115,7 +115,7 @@
       "_ProductModal.19e0fc43.js"
     ],
     "css": [
-      "assets/CatalogueDashboard.32cae300.css"
+      "assets/CatalogueDashboard.8b44c16a.css"
     ]
   },
   "_ProductModal.19e0fc43.js": {
@@ -129,7 +129,7 @@
     ]
   },
   "src/pages/CategoryListing.vue": {
-    "file": "assets/CategoryListing.c49de699.js",
+    "file": "assets/CategoryListing.37ef8c4c.js",
     "src": "src/pages/CategoryListing.vue",
     "isDynamicEntry": true,
     "imports": [
@@ -142,12 +142,12 @@
     ]
   },
   "src/pages/RepairTerminal.vue": {
-    "file": "assets/RepairTerminal.fb72ff53.js",
+    "file": "assets/RepairTerminal.3cf8055e.js",
     "src": "src/pages/RepairTerminal.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vendor.0696dbb8.js",
-      "_AppLayout.7995dd03.js",
+      "_AppLayout.4007a055.js",
       "_ui.11fe1900.js"
     ]
   },

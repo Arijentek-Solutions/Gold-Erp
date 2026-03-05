@@ -19,6 +19,7 @@ def create_pos_invoice(
 	salespersons: str | None = None,
 	layaway_reference: str | None = None,
 	trade_ins: str | None = None,
+	gift_card_number: str | None = None,
 ) -> dict:
 	"""
 	Create a complete POS Invoice with:
@@ -76,6 +77,34 @@ def create_pos_invoice(
 
 	if not frappe.db.exists("Customer", customer):
 		frappe.throw(_("Customer '{0}' not found.").format(customer))
+
+	# Validate gift card before creating invoice
+	gc_payment_amount = 0
+	for pay in payments_list:
+		mode = pay.get("mode_of_payment") or pay.get("mode", "")
+		if mode == "Gift Card":
+			gc_payment_amount = flt(pay.get("amount"))
+			break
+
+	if gc_payment_amount > 0:
+		if not gift_card_number:
+			frappe.throw(_("Gift Card number is required when using Gift Card payment."))
+		if not frappe.db.exists("Gift Card", gift_card_number):
+			frappe.throw(_("Gift Card '{0}' not found.").format(gift_card_number))
+
+		from frappe.utils import getdate, today
+
+		gc_doc = frappe.get_doc("Gift Card", gift_card_number)
+		if gc_doc.status != "Active":
+			frappe.throw(_("Gift Card is {0}. Cannot process payment.").format(gc_doc.status))
+		if gc_doc.expiry_date and getdate(gc_doc.expiry_date) < getdate(today()):
+			frappe.throw(_("Gift Card has expired."))
+		if gc_payment_amount > flt(gc_doc.balance):
+			frappe.throw(
+				_("Gift Card balance insufficient. Available: {0}, Requested: {1}").format(
+					flt(gc_doc.balance), gc_payment_amount
+				)
+			)
 
 	try:
 		si = frappe.new_doc("Sales Invoice")
@@ -144,6 +173,19 @@ def create_pos_invoice(
 				},
 			)
 
+		# Add trade-in credit as a payment entry
+		total_trade_in_credit = (
+			sum(flt(ti.get("trade_in_value")) for ti in trade_in_list) if trade_in_list else 0
+		)
+		if total_trade_in_credit > 0:
+			si.append(
+				"payments",
+				{
+					"mode_of_payment": "Trade-In",
+					"amount": flt(total_trade_in_credit),
+				},
+			)
+
 		for pay in payments_list:
 			si.append(
 				"payments",
@@ -155,6 +197,14 @@ def create_pos_invoice(
 
 		si.insert(ignore_permissions=True)
 		si.submit()
+
+		# Deduct gift card balance after successful invoice submission
+		if gc_payment_amount > 0 and gift_card_number:
+			gc_doc = frappe.get_doc("Gift Card", gift_card_number)
+			gc_doc.balance = flt(gc_doc.balance) - gc_payment_amount
+			if gc_doc.balance <= 0:
+				gc_doc.status = "Used"
+			gc_doc.save(ignore_permissions=True)
 
 		return {
 			"success": True,

@@ -204,13 +204,35 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useUIStore } from '@/stores/ui'
+import { createResource } from 'frappe-ui'
 
 const ui = useUIStore()
 
 // Data Options
-const gemstoneOptions = ['Diamond', 'Ruby', 'Sapphire', 'Emerald', 'Polki', 'Kundan', 'No Stone']
+const gemstoneOptions = ref([
+	'Diamond',
+	'Ruby',
+	'Sapphire',
+	'Emerald',
+	'Polki',
+	'Kundan',
+	'No Stone',
+])
+
+const filtersResource = createResource({
+	url: 'zevar_core.api.catalog.get_catalog_filters',
+	onSuccess(data) {
+		if (data && data.gemstones) {
+			gemstoneOptions.value = data.gemstones
+		}
+	},
+})
+
+onMounted(() => {
+	filtersResource.fetch()
+})
 
 const metalPurityMap = {
 	'Yellow Gold': ['24K', '22K', '18K', '14K'],

@@ -2,11 +2,11 @@
 	<PortalLayout>
 		<div class="px-10 pb-10 flex flex-col items-center font-portal">
 			<div
-				class="w-full max-w-6xl glass-card rounded-2xl p-8 md:p-12 relative overflow-hidden mt-8"
+				class="w-full max-w-6xl glass-card rounded-2xl p-6 md:p-8 relative overflow-hidden mt-4"
 			>
 				<!-- Welcome Section -->
 				<div
-					class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12"
+					class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8"
 				>
 					<div>
 						<h1 class="text-4xl md:text-5xl font-800 tracking-tight mb-2">
@@ -24,7 +24,7 @@
 					</button>
 				</div>
 
-				<div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+				<div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
 					<!-- Calendar Section -->
 					<div class="lg:col-span-7">
 						<div class="flex items-center justify-between mb-8 px-4">
@@ -59,14 +59,14 @@
 							<div>Fri</div>
 							<div>Sat</div>
 						</div>
-						<div class="grid grid-cols-7 gap-y-4">
+						<div class="grid grid-cols-7 gap-y-2">
 							<div
 								v-for="d in 28"
 								:key="d"
-								class="flex justify-center items-center h-12"
+								class="flex justify-center items-center h-8"
 							>
 								<div
-									class="w-10 h-10 flex items-center justify-center rounded-full transition-all cursor-pointer font-bold"
+									class="w-8 h-8 flex items-center justify-center rounded-full transition-all cursor-pointer font-bold"
 									:class="{
 										'bg-[#7f13ec] text-white neon-glow': d === 18,
 										'bg-white/5 text-white/40 hover:bg-white/10 hover:text-white':

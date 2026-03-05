@@ -191,9 +191,10 @@ export const useCartStore = defineStore('cart', () => {
 	 * @param {object} options - Additional options.
 	 * @param {boolean} [options.taxExempt=false] - Whether to exempt tax.
 	 * @param {string} [options.warehouse] - Warehouse for stock deduction.
+	 * @param {string} [options.giftCardNumber] - Gift card number if paying by gift card.
 	 * @returns {Promise<object>} The API response.
 	 */
-	async function submitOrder(payments, { taxExempt = false, warehouse } = {}) {
+	async function submitOrder(payments, { taxExempt = false, warehouse, giftCardNumber } = {}) {
 		const itemsPayload = items.value.map((i) => ({
 			item_code: i.item_code,
 			qty: i.qty || 1,
@@ -213,6 +214,11 @@ export const useCartStore = defineStore('cart', () => {
 			customer: customerName,
 			warehouse: warehouse || '',
 			tax_exempt: taxExempt,
+		}
+
+		// Attach gift card number if provided
+		if (giftCardNumber) {
+			params.gift_card_number = giftCardNumber
 		}
 
 		// Attach salespersons if any are assigned

@@ -7,6 +7,7 @@ export const useLeaveStore = defineStore("leave", () => {
 	const leaveApplications = ref([]);
 	const leaveTypes = ref([]);
 	const loading = ref(false);
+	const employeeId = ref(null);
 
 	// Get leave balance map from HRMS
 	const leaveBalanceResource = createResource({
@@ -57,18 +58,21 @@ export const useLeaveStore = defineStore("leave", () => {
 
 	// Actions
 	async function fetchLeaveBalances() {
-		await leaveBalanceResource.fetch();
+		if (!employeeId.value) return;
+		await leaveBalanceResource.fetch({ employee: employeeId.value });
 	}
 
 	async function fetchLeaveApplications() {
-		await leaveApplicationsResource.fetch();
+		if (!employeeId.value) return;
+		await leaveApplicationsResource.fetch({ employee: employeeId.value });
 	}
 
 	async function fetchLeaveTypes() {
 		await leaveTypesResource.fetch();
 	}
 
-	function init() {
+	function init(empId) {
+		employeeId.value = empId;
 		fetchLeaveBalances();
 		fetchLeaveApplications();
 		fetchLeaveTypes();

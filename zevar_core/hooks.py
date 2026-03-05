@@ -46,3 +46,6 @@ doc_events = {
 
 # Scheduler events
 scheduler_events = {"cron": {"*/15 * * * *": ["zevar_core.tasks.fetch_live_gold_rate"]}}
+
+# Installation hooks
+after_install = "zevar_core.install.create_required_modes_of_payment"

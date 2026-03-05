@@ -729,3 +729,284 @@ class TestTradeInDeduction(FrappeTestCase):
 		self.assertTrue(result.get("success"))
 		si = frappe.get_doc("Sales Invoice", result.get("invoice_name"))
 		self.assertEqual(flt(si.custom_trade_ins[0].trade_in_value), 0.0)
+
+	def test_trade_in_creates_payment_entry(self):
+		"""Test that trade-in creates a payment entry with mode 'Trade-In'."""
+		from zevar_core.api.pos import create_pos_invoice
+
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_item.name if hasattr(self.test_item, "name") else self.test_item,
+					"qty": 1,
+					"rate": 500.0,
+				}
+			]
+		)
+
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 300.0,
+				}
+			]
+		)
+
+		trade_ins = json.dumps(
+			[
+				{
+					"trade_in_value": 200.0,
+					"new_item_value": 500.0,
+					"manager_override": "",
+					"override_reason": "",
+				}
+			]
+		)
+
+		result = create_pos_invoice(
+			items=items,
+			payments=payments,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
+			trade_ins=trade_ins,
+		)
+
+		self.assertTrue(result.get("success"))
+		si = frappe.get_doc("Sales Invoice", result.get("invoice_name"))
+
+		# Verify trade-in payment entry exists
+		trade_in_payment = [p for p in si.payments if p.mode_of_payment == "Trade-In"]
+		self.assertEqual(len(trade_in_payment), 1, "Trade-In payment entry should exist")
+		self.assertEqual(flt(trade_in_payment[0].amount), 200.0)
+
+		# Verify total paid_amount covers grand_total
+		total_paid = sum(flt(p.amount) for p in si.payments)
+		self.assertGreaterEqual(
+			total_paid, flt(si.grand_total) - 0.01, "Total payments should cover grand total"
+		)
+
+	def test_multiple_trade_ins_summed_in_payment_entry(self):
+		"""Test that multiple trade-ins are summed into single payment entry."""
+		from zevar_core.api.pos import create_pos_invoice
+
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_item.name if hasattr(self.test_item, "name") else self.test_item,
+					"qty": 1,
+					"rate": 1000.0,
+				}
+			]
+		)
+
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 500.0,
+				}
+			]
+		)
+
+		trade_ins = json.dumps(
+			[
+				{
+					"trade_in_value": 300.0,
+					"new_item_value": 500.0,
+					"manager_override": "",
+					"override_reason": "",
+				},
+				{
+					"trade_in_value": 200.0,
+					"new_item_value": 500.0,
+					"manager_override": "",
+					"override_reason": "",
+				},
+			]
+		)
+
+		result = create_pos_invoice(
+			items=items,
+			payments=payments,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
+			trade_ins=trade_ins,
+		)
+
+		self.assertTrue(result.get("success"))
+		si = frappe.get_doc("Sales Invoice", result.get("invoice_name"))
+
+		# Verify single trade-in payment entry with summed amount
+		trade_in_payment = [p for p in si.payments if p.mode_of_payment == "Trade-In"]
+		self.assertEqual(len(trade_in_payment), 1)
+		self.assertEqual(flt(trade_in_payment[0].amount), 500.0)  # 300 + 200
+
+	def test_trade_in_covers_full_amount(self):
+		"""Test trade-in that covers full invoice amount with no additional payment."""
+		from zevar_core.api.pos import create_pos_invoice
+
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_item.name if hasattr(self.test_item, "name") else self.test_item,
+					"qty": 1,
+					"rate": 500.0,
+				}
+			]
+		)
+
+		# No additional payment needed - trade-in covers full amount
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 0.0,
+				}
+			]
+		)
+
+		trade_ins = json.dumps(
+			[
+				{
+					"trade_in_value": 500.0,
+					"new_item_value": 1000.0,
+					"manager_override": "",
+					"override_reason": "",
+				}
+			]
+		)
+
+		result = create_pos_invoice(
+			items=items,
+			payments=payments,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
+			trade_ins=trade_ins,
+			tax_exempt=True,
+		)
+
+		self.assertTrue(result.get("success"))
+		si = frappe.get_doc("Sales Invoice", result.get("invoice_name"))
+
+		# Verify trade-in payment covers full amount
+		trade_in_payment = [p for p in si.payments if p.mode_of_payment == "Trade-In"]
+		self.assertEqual(flt(trade_in_payment[0].amount), 500.0)
+
+		# Verify invoice is fully paid
+		total_paid = sum(flt(p.amount) for p in si.payments)
+		self.assertGreaterEqual(total_paid, flt(si.grand_total) - 0.01)
+
+	def test_trade_in_with_split_tender(self):
+		"""Test trade-in combined with other payment modes (split tender)."""
+		from zevar_core.api.pos import create_pos_invoice
+
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_item.name if hasattr(self.test_item, "name") else self.test_item,
+					"qty": 1,
+					"rate": 1000.0,
+				}
+			]
+		)
+
+		payments = json.dumps(
+			[
+				{"mode_of_payment": "Cash", "amount": 300.0},
+				{"mode_of_payment": "Credit Card", "amount": 200.0},
+			]
+		)
+
+		trade_ins = json.dumps(
+			[
+				{
+					"trade_in_value": 500.0,
+					"new_item_value": 1000.0,
+					"manager_override": "",
+					"override_reason": "",
+				}
+			]
+		)
+
+		result = create_pos_invoice(
+			items=items,
+			payments=payments,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
+			trade_ins=trade_ins,
+			tax_exempt=True,
+		)
+
+		self.assertTrue(result.get("success"))
+		si = frappe.get_doc("Sales Invoice", result.get("invoice_name"))
+
+		# Verify all payment modes exist
+		payment_modes = {p.mode_of_payment for p in si.payments}
+		self.assertIn("Trade-In", payment_modes)
+		self.assertIn("Cash", payment_modes)
+		self.assertIn("Credit Card", payment_modes)
+
+		# Verify total paid covers grand total
+		total_paid = sum(flt(p.amount) for p in si.payments)
+		self.assertGreaterEqual(total_paid, flt(si.grand_total) - 0.01)
+
+	def test_zero_trade_in_no_payment_entry(self):
+		"""Test that zero trade-in value does not create a payment entry."""
+		from zevar_core.api.pos import create_pos_invoice
+
+		items = json.dumps(
+			[
+				{
+					"item_code": self.test_item.name if hasattr(self.test_item, "name") else self.test_item,
+					"qty": 1,
+					"rate": 500.0,
+				}
+			]
+		)
+
+		payments = json.dumps(
+			[
+				{
+					"mode_of_payment": "Cash",
+					"amount": 500.0,
+				}
+			]
+		)
+
+		trade_ins = json.dumps(
+			[
+				{
+					"trade_in_value": 0.0,
+					"new_item_value": 500.0,
+					"manager_override": "",
+					"override_reason": "",
+				}
+			]
+		)
+
+		result = create_pos_invoice(
+			items=items,
+			payments=payments,
+			customer=self.test_customer.name if hasattr(self.test_customer, "name") else self.test_customer,
+			warehouse=self.test_warehouse.name
+			if hasattr(self.test_warehouse, "name")
+			else self.test_warehouse,
+			trade_ins=trade_ins,
+			tax_exempt=True,
+		)
+
+		self.assertTrue(result.get("success"))
+		si = frappe.get_doc("Sales Invoice", result.get("invoice_name"))
+
+		# Verify no Trade-In payment entry for zero value
+		trade_in_payment = [p for p in si.payments if p.mode_of_payment == "Trade-In"]
+		self.assertEqual(len(trade_in_payment), 0, "Zero trade-in should not create payment entry")

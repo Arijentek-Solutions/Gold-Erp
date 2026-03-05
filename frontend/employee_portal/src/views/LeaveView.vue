@@ -396,6 +396,9 @@ async function submitLeave() {
 
 onMounted(async () => {
 	await employeeStore.init();
-	leaveStore.init();
+	const employeeId = employeeStore.employee?.employee_id;
+	if (employeeId) {
+		leaveStore.init(employeeId);
+	}
 });
 </script>
