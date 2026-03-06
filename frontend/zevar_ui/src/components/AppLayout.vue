@@ -219,23 +219,44 @@
 			<header
 				class="h-16 sm:h-20 bg-white dark:bg-[#15161a] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-3 sm:px-6 z-20 sticky top-0 shadow-sm transition-colors duration-300"
 			>
-				<div class="flex items-center gap-4 flex-1 max-w-3xl">
-					<div class="relative group">
+				<!-- Mobile Filter Button -->
+				<button
+					v-if="$route.path === '/'"
+					@click="isFilterDrawerOpen = true"
+					class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors mr-2"
+				>
+					<svg
+						class="w-5 h-5 text-gray-600 dark:text-gray-300"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"
+						></path>
+					</svg>
+				</button>
+
+				<div class="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+					<div class="relative group flex-shrink-0">
 						<select
 							v-model="session.currentWarehouse"
 							@change="session.setWarehouse($event.target.value)"
-							class="h-11 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 pl-4 pr-10 rounded-lg text-sm font-bold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] cursor-pointer min-w-[200px] transition-all hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm outline-none"
+							class="h-10 sm:h-11 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 pl-3 sm:pl-4 pr-8 sm:pr-10 rounded-lg text-xs sm:text-sm font-bold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] cursor-pointer w-auto sm:min-w-[200px] transition-all hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm outline-none"
 						>
-							<option value="null" disabled>Select Store Location</option>
+							<option value="null" disabled>Store</option>
 							<option v-for="wh in warehouses.data" :key="wh.name" :value="wh.name">
 								{{ wh.name }}
 							</option>
 						</select>
 					</div>
 
-					<div class="relative flex-1">
+					<div class="relative flex-1 min-w-0">
 						<svg
-							class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+							class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -250,16 +271,16 @@
 						<input
 							type="text"
 							v-model="ui.searchQuery"
-							placeholder="Search collection..."
-							class="h-11 w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent text-sm font-medium pl-11 transition-all"
+							placeholder="Search..."
+							class="h-10 sm:h-11 w-full bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent text-xs sm:text-sm font-medium pl-9 sm:pl-11 transition-all"
 						/>
 					</div>
 				</div>
 
-				<div class="flex items-center gap-3 sm:gap-4 sm:ml-4 lg:ml-8">
-					<!-- Live Spot (fluid) -->
+				<div class="flex items-center gap-2 sm:gap-3 sm:ml-4 lg:ml-8 flex-shrink-0">
+					<!-- Live Spot (fluid) - Hidden on mobile and tablet -->
 					<div
-						class="hidden sm:flex items-center gap-0 bg-gray-100 dark:bg-[#15161a] text-gray-900 dark:text-white pl-3 pr-1 py-1.5 lg:pl-4 lg:pr-2 lg:py-2 rounded-xl border border-gray-200 dark:border-gray-800 max-w-[140px] md:max-w-xs lg:max-w-2xl overflow-hidden transition-colors duration-300"
+						class="hidden lg:flex items-center gap-0 bg-gray-100 dark:bg-[#15161a] text-gray-900 dark:text-white pl-3 pr-1 py-1.5 lg:pl-4 lg:pr-2 lg:py-2 rounded-xl border border-gray-200 dark:border-gray-800 max-w-xs xl:max-w-2xl overflow-hidden transition-colors duration-300"
 					>
 						<div
 							class="flex items-center gap-1.5 lg:gap-2 border-r border-gray-300 dark:border-gray-800 pr-2 mr-2 lg:pr-3 lg:mr-3 flex-shrink-0"
@@ -306,19 +327,19 @@
 					<div class="relative">
 						<button
 							@click.stop="isUserMenuOpen = !isUserMenuOpen"
-							class="flex items-center gap-2 p-1.5 pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-white/10"
+							class="flex items-center gap-1 sm:gap-2 p-1 sm:p-1.5 sm:pr-3 rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border border-transparent hover:border-gray-200 dark:hover:border-white/10"
 						>
 							<div
-								class="w-8 h-8 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F2E6A0] flex items-center justify-center text-[#0F1115] font-bold text-xs shadow-sm"
+								class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#F2E6A0] flex items-center justify-center text-[#0F1115] font-bold text-[10px] sm:text-xs shadow-sm"
 							>
 								{{ session.user?.full_name?.[0]?.toUpperCase() || 'U' }}
 							</div>
 							<span
-								class="text-sm font-semibold hidden sm:block text-gray-700 dark:text-white truncate max-w-[80px]"
+								class="text-sm font-semibold hidden md:block text-gray-700 dark:text-white truncate max-w-[80px]"
 								>{{ session.user?.full_name?.split(' ')[0] || 'Guest' }}</span
 							>
 							<svg
-								class="w-4 h-4 text-gray-400 hidden sm:block"
+								class="w-4 h-4 text-gray-400 hidden md:block"
 								fill="none"
 								stroke="currentColor"
 								viewBox="0 0 24 24"
@@ -509,10 +530,10 @@
 					<!-- Cart Button -->
 					<button
 						@click="isCartOpen = true"
-						class="relative p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
+						class="relative p-2 sm:p-3 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors group"
 					>
 						<svg
-							class="w-6 h-6 text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"
+							class="w-5 h-5 sm:w-6 sm:h-6 text-gray-600 dark:text-gray-300 group-hover:text-black dark:group-hover:text-white transition-colors"
 							fill="none"
 							stroke="currentColor"
 							viewBox="0 0 24 24"
@@ -526,7 +547,7 @@
 						</svg>
 						<span
 							v-if="cartStore.totalItems > 0"
-							class="absolute top-1 right-0.5 h-5 w-5 flex items-center justify-center bg-[#D4AF37] text-white text-[10px] font-bold rounded-full shadow-md transform group-hover:scale-110 transition-transform"
+							class="absolute -top-0.5 -right-0.5 sm:top-1 sm:right-0.5 h-4 w-4 sm:h-5 sm:w-5 flex items-center justify-center bg-[#D4AF37] text-white text-[9px] sm:text-[10px] font-bold rounded-full shadow-md transform group-hover:scale-110 transition-transform"
 						>
 							{{ cartStore.totalItems }}
 						</span>
@@ -542,6 +563,38 @@
 		</div>
 
 		<CartSidebar :isOpen="isCartOpen" @close="isCartOpen = false" />
+
+		<!-- Mobile Filter Drawer -->
+		<Teleport to="body">
+			<div
+				v-if="isFilterDrawerOpen && $route.path === '/'"
+				@click="isFilterDrawerOpen = false"
+				class="fixed inset-0 bg-black/50 backdrop-blur-sm z-[60] lg:hidden"
+			></div>
+			<div
+				v-if="$route.path === '/'"
+				class="fixed top-0 left-0 h-full w-72 bg-[#1a1c23] dark:bg-[#15161a] z-[61] transform transition-transform duration-300 ease-in-out lg:hidden overflow-y-auto"
+				:class="isFilterDrawerOpen ? 'translate-x-0' : '-translate-x-full'"
+			>
+				<div class="p-4 border-b border-white/5 flex items-center justify-between">
+					<h3 class="text-sm font-bold text-white uppercase tracking-widest">Filters</h3>
+					<button
+						@click="isFilterDrawerOpen = false"
+						class="p-2 hover:bg-white/10 rounded-full transition-colors text-gray-400"
+					>
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M6 18L18 6M6 6l12 12"
+							></path>
+						</svg>
+					</button>
+				</div>
+				<FilterSidebar />
+			</div>
+		</Teleport>
 	</div>
 </template>
 
@@ -568,6 +621,7 @@ const ui = useUIStore()
 
 const isCartOpen = ref(false)
 const isUserMenuOpen = ref(false)
+const isFilterDrawerOpen = ref(false)
 
 const TROY_OZ_GRAMS = 31.1035
 

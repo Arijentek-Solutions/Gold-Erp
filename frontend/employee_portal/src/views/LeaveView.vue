@@ -1,187 +1,227 @@
 <template>
-	<div class="flex flex-col gap-8">
-		<div class="flex items-center justify-between">
-			<div>
-				<h2 class="text-3xl font-bold font-display text-white mb-2">
-					Time Off Management
-				</h2>
-				<p class="text-white/40">Manage your leave requests and balances</p>
+	<div class="flex flex-col gap-4 h-full overflow-hidden">
+		<!-- Header Stats -->
+		<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 shrink-0">
+			<div class="glass-card p-3 sm:p-4 rounded-xl">
+				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Annual Leave</p>
+				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ getLeaveBalance('Annual Leave') }}<span class="text-xs sm:text-sm text-white/40 ml-1">days</span></p>
 			</div>
-			<button
-				@click="showLeaveModal = true"
-				class="bg-primary text-background-dark px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-yellow-400 transition-colors shadow-lg shadow-primary/20"
-			>
-				<span class="material-symbols-outlined">add_circle</span>
-				Request Leave
-			</button>
-		</div>
-
-		<!-- Balances -->
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			<div v-if="leaveStore.loading" class="col-span-3 text-center py-8">
-				<p class="text-white/40">Loading leave balances...</p>
+			<div class="glass-card p-3 sm:p-4 rounded-xl">
+				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Sick Leave</p>
+				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ getLeaveBalance('Sick Leave') }}<span class="text-xs sm:text-sm text-white/40 ml-1">days</span></p>
 			</div>
-
-			<div v-else-if="leaveStore.leaveBalances.length === 0" class="col-span-3">
-				<div class="glass-card p-8 rounded-2xl text-center">
-					<div
-						class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4"
-					>
-						<span class="material-symbols-outlined text-3xl text-white/20"
-							>beach_access</span
-						>
-					</div>
-					<h3 class="text-lg font-bold text-white mb-2">No Leave Balances Found</h3>
-					<p class="text-white/40 text-sm">
-						Your leave balances will appear here once configured in HRMS.
-					</p>
+			<div class="glass-card p-3 sm:p-4 rounded-xl">
+				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Pending</p>
+				<p class="text-lg sm:text-2xl font-bold text-amber-400 font-mono">{{ pendingCount }}<span class="text-xs sm:text-sm text-white/40 ml-1">req</span></p>
+			</div>
+			<div class="glass-card p-3 sm:p-4 rounded-xl flex items-center justify-between">
+				<div>
+					<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Total Used</p>
+					<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ totalUsedDays }}<span class="text-xs sm:text-sm text-white/40 ml-1">days</span></p>
 				</div>
-			</div>
-
-			<template v-else>
-				<div
-					v-for="(balance, index) in displayedBalances"
-					:key="balance.leave_type"
-					class="glass-card p-6 rounded-2xl relative overflow-hidden group"
+				<button
+					@click="showLeaveModal = true"
+					class="bg-primary text-black px-3 sm:px-4 py-2 rounded-lg text-[10px] sm:text-xs font-bold hover:bg-yellow-400 transition-colors"
 				>
-					<div
-						class="absolute -right-8 -top-8 text-9xl"
-						:class="getBalanceColor(index).bg"
-					>
-						<span class="material-symbols-outlined text-[150px]">{{
-							getBalanceIcon(index)
-						}}</span>
-					</div>
-					<div class="flex items-center gap-3 mb-4">
-						<span
-							class="material-symbols-outlined"
-							:class="getBalanceColor(index).text"
-							>{{ getBalanceIcon(index) }}</span
-						>
-						<span class="text-xs font-bold uppercase text-white/60 tracking-wider">
-							{{ balance.leave_type }}
-						</span>
-					</div>
-					<div class="flex items-baseline gap-2 mb-2">
-						<span class="text-5xl font-bold font-mono text-white">{{
-							balance.balance || 0
-						}}</span>
-						<span class="text-white/40 text-sm">Days Available</span>
-					</div>
-					<div
-						class="flex justify-between text-xs text-white/30 border-t border-white/5 pt-4 mt-4"
-					>
-						<span>Allocated: {{ balance.total_leaves || 0 }} days</span>
-						<span v-if="balance.leaves_taken" class="text-primary font-bold">
-							{{ balance.leaves_taken }} used
-						</span>
-					</div>
-				</div>
-			</template>
+					+ Request
+				</button>
+			</div>
 		</div>
 
-		<!-- Leave History -->
-		<div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
-			<div class="p-6 border-b border-white/5 flex items-center justify-between">
-				<h3 class="font-bold text-lg text-white">Leave History</h3>
-				<div class="flex gap-2">
-					<button
-						@click="filterHistory = 'all'"
-						class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition"
-						:class="
-							filterHistory === 'all'
-								? 'bg-white/10 text-white'
-								: 'text-white/40 hover:text-white hover:bg-white/5'
-						"
-					>
-						All History
-					</button>
-					<button
-						@click="filterHistory = 'pending'"
-						class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition"
-						:class="
-							filterHistory === 'pending'
-								? 'bg-white/10 text-white'
-								: 'text-white/40 hover:text-white hover:bg-white/5'
-						"
-					>
-						Pending Only
-					</button>
+		<!-- Main Content -->
+		<div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 overflow-hidden">
+			<!-- Leave Applications List -->
+			<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+				<div class="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
+					<div>
+						<h2 class="text-base sm:text-xl font-bold text-white">Leave Applications</h2>
+						<p class="text-[10px] sm:text-xs text-white/40">Your time off requests</p>
+					</div>
+					<div class="flex gap-1 sm:gap-2">
+						<button
+							@click="filterHistory = 'all'"
+							class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[9px] sm:text-[10px] font-bold uppercase transition"
+							:class="filterHistory === 'all' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white'"
+						>
+							All
+						</button>
+						<button
+							@click="filterHistory = 'pending'"
+							class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[9px] sm:text-[10px] font-bold uppercase transition"
+							:class="filterHistory === 'pending' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white'"
+						>
+							Pending
+						</button>
+						<button
+							@click="filterHistory = 'approved'"
+							class="hidden sm:block px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition"
+							:class="filterHistory === 'approved' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white'"
+						>
+							Approved
+						</button>
+					</div>
 				</div>
-			</div>
 
-			<div class="overflow-x-auto">
-				<table class="w-full text-left">
-					<thead
-						class="bg-white/5 text-xs text-white/40 uppercase font-bold tracking-wider"
-					>
-						<tr>
-							<th class="px-6 py-4">Type</th>
-							<th class="px-6 py-4">Date Range</th>
-							<th class="px-6 py-4">Duration</th>
-							<th class="px-6 py-4">Reason</th>
-							<th class="px-6 py-4 text-right">Status</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-white/5">
-						<tr v-if="filteredApplications.length === 0">
-							<td colspan="5" class="px-6 py-12 text-center text-white/40">
-								<div class="flex flex-col items-center gap-2">
-									<span class="material-symbols-outlined text-3xl"
-										>event_busy</span
-									>
-									<span>No leave applications found</span>
-								</div>
-							</td>
-						</tr>
-						<tr
+				<!-- Table Header - Hidden on mobile -->
+				<div class="hidden sm:grid glass-card rounded-t-xl px-3 sm:px-4 py-2 sm:py-3 grid-cols-5 gap-2 sm:gap-4 text-[9px] sm:text-[10px] uppercase tracking-widest text-white/40 font-bold border-b border-white/5">
+					<div>Leave Type</div>
+					<div>Date Range</div>
+					<div>Duration</div>
+					<div>Reason</div>
+					<div>Status</div>
+				</div>
+
+				<!-- Leave Records -->
+				<div class="flex-1 overflow-y-auto custom-scrollbar">
+					<div v-if="filteredApplications.length === 0" class="text-center py-12">
+						<span class="material-symbols-outlined text-4xl text-white/20 mb-3">beach_access</span>
+						<p class="text-white/40 text-sm">No leave applications found</p>
+					</div>
+
+					<!-- Mobile Card View -->
+					<div class="sm:hidden space-y-2 p-2">
+						<div
 							v-for="app in filteredApplications"
 							:key="app.name"
-							class="group hover:bg-white/5 transition-colors"
+							class="glass-card rounded-xl p-3 border border-white/5"
 						>
-							<td class="px-6 py-4">
-								<div class="flex items-center gap-3">
-									<span
-										class="w-2 h-2 rounded-full"
-										:class="getStatusDotColor(app.status)"
-									></span>
-									<span class="font-bold text-white">{{ app.leave_type }}</span>
-								</div>
-							</td>
-							<td class="px-6 py-4">
-								<p class="text-white text-sm">
-									{{ formatDateRange(app.from_date, app.to_date) }}
-								</p>
-								<p class="text-xs text-white/30">
-									{{ getDurationLabel(app.from_date, app.to_date) }}
-								</p>
-							</td>
-							<td class="px-6 py-4">
+							<div class="flex items-center justify-between mb-2">
+								<p class="text-sm font-bold text-white">{{ app.leave_type }}</p>
 								<span
-									class="bg-white/10 px-3 py-1 rounded-full text-xs text-white font-medium"
-								>
-									{{ app.total_leave_days || 1 }}
-									{{ (app.total_leave_days || 1) === 1 ? "Day" : "Days" }}
-								</span>
-							</td>
-							<td class="px-6 py-4 text-white/60 text-sm italic max-w-xs truncate">
-								{{ app.description || "No reason provided" }}
-							</td>
-							<td class="px-6 py-4 text-right">
+									class="text-[9px] px-2 py-1 rounded-full font-bold uppercase"
+									:class="getStatusStyle(app.status)"
+								>{{ app.status }}</span>
+							</div>
+							<div class="flex items-center justify-between text-[10px]">
+								<span class="text-white/60">{{ formatDateShort(app.from_date) }}{{ app.to_date && app.from_date !== app.to_date ? ' - ' + formatDateShort(app.to_date) : '' }}</span>
+								<span class="text-white/40">{{ app.total_leave_days || 1 }} {{ (app.total_leave_days || 1) === 1 ? 'day' : 'days' }}</span>
+							</div>
+							<p v-if="app.description" class="text-[10px] text-white/30 mt-2 truncate">{{ app.description }}</p>
+						</div>
+					</div>
+
+					<!-- Desktop Table View -->
+					<div class="hidden sm:block glass-card rounded-b-xl">
+						<div
+							v-for="app in filteredApplications"
+							:key="app.name"
+							class="grid grid-cols-5 gap-2 sm:gap-4 px-3 sm:px-4 py-2 sm:py-3 border-b border-white/5 hover:bg-white/[0.02] transition-colors items-center"
+						>
+							<div>
+								<p class="text-xs sm:text-sm font-bold text-white">{{ app.leave_type }}</p>
+							</div>
+							<div>
+								<p class="text-xs sm:text-sm text-white">{{ formatDateShort(app.from_date) }}</p>
+								<p v-if="app.to_date && app.from_date !== app.to_date" class="text-[9px] sm:text-[10px] text-white/30">
+									to {{ formatDateShort(app.to_date) }}
+								</p>
+							</div>
+							<div>
+								<span class="text-xs sm:text-sm font-mono text-white">{{ app.total_leave_days || 1 }}</span>
+								<span class="text-[9px] sm:text-[10px] text-white/40 ml-1">{{ (app.total_leave_days || 1) === 1 ? 'day' : 'days' }}</span>
+							</div>
+							<div>
+								<p class="text-[10px] sm:text-xs text-white/50 truncate max-w-[100px] sm:max-w-[150px]">{{ app.description || 'No reason provided' }}</p>
+							</div>
+							<div>
 								<span
-									class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase"
+									class="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full font-bold uppercase"
 									:class="getStatusStyle(app.status)"
 								>
-									<span
-										class="w-1.5 h-1.5 rounded-full"
-										:class="getStatusDotColor(app.status)"
-									></span>
 									{{ app.status }}
 								</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Mini Calendar - Hidden on mobile -->
+			<div class="hidden lg:block w-72 shrink-0">
+				<div class="glass-card rounded-xl p-4 border border-white/5">
+					<!-- Calendar Header -->
+					<div class="flex items-center justify-between mb-4">
+						<h3 class="text-sm font-bold text-white">{{ currentMonthYear }}</h3>
+						<div class="flex gap-1">
+							<button
+								@click="previousMonth"
+								class="p-1 rounded hover:bg-white/5 text-white/40 hover:text-white transition-colors"
+							>
+								<span class="material-symbols-outlined text-lg">chevron_left</span>
+							</button>
+							<button
+								@click="nextMonth"
+								class="p-1 rounded hover:bg-white/5 text-white/40 hover:text-white transition-colors"
+							>
+								<span class="material-symbols-outlined text-lg">chevron_right</span>
+							</button>
+						</div>
+					</div>
+
+					<!-- Day Headers -->
+					<div class="grid grid-cols-7 gap-1 mb-2">
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">M</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">T</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">W</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">T</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">F</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">S</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">S</div>
+					</div>
+
+					<!-- Calendar Grid -->
+					<div class="grid grid-cols-7 gap-1">
+						<!-- Empty cells for days before month start -->
+						<div v-for="i in firstDayOfMonth" :key="'empty-' + i" class="aspect-square"></div>
+
+						<!-- Days -->
+						<div
+							v-for="day in calendarDays"
+							:key="day.date"
+							class="aspect-square rounded-md flex items-center justify-center text-xs relative transition-all"
+							:class="[
+								day.isToday
+									? 'bg-primary/20 text-primary font-bold'
+									: day.hasLeave
+									? 'bg-emerald-500/15 text-emerald-400'
+									: day.hasPending
+									? 'bg-amber-500/15 text-amber-400'
+									: day.isWeekend
+									? 'text-white/20'
+									: 'text-white/50'
+							]"
+						>
+							{{ day.day }}
+						</div>
+					</div>
+
+					<!-- Legend -->
+					<div class="mt-4 pt-3 border-t border-white/5 flex flex-wrap gap-3 text-[9px]">
+						<div class="flex items-center gap-1">
+							<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+							<span class="text-white/40">Approved</span>
+						</div>
+						<div class="flex items-center gap-1">
+							<span class="w-2 h-2 rounded-full bg-amber-400"></span>
+							<span class="text-white/40">Pending</span>
+						</div>
+						<div class="flex items-center gap-1">
+							<span class="w-2 h-2 rounded-full bg-primary"></span>
+							<span class="text-white/40">Today</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Quick Info -->
+				<div class="glass-card rounded-xl p-4 mt-4 border border-white/5">
+					<h4 class="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Leave Policy</h4>
+					<div class="space-y-2 text-[11px] text-white/40">
+						<p>• Submit requests 3 days in advance</p>
+						<p>• Annual leave: 21 days/year</p>
+						<p>• Sick leave: 10 days/year</p>
+						<p>• Contact HR for emergencies</p>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -200,9 +240,7 @@
 
 					<div class="space-y-4">
 						<div>
-							<label class="block text-xs font-bold text-white/60 uppercase mb-2"
-								>Leave Type</label
-							>
+							<label class="block text-[10px] text-white/40 uppercase tracking-widest mb-2">Leave Type</label>
 							<select
 								v-model="newLeave.leave_type"
 								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50"
@@ -220,9 +258,7 @@
 
 						<div class="grid grid-cols-2 gap-4">
 							<div>
-								<label class="block text-xs font-bold text-white/60 uppercase mb-2"
-									>From Date</label
-								>
+								<label class="block text-[10px] text-white/40 uppercase tracking-widest mb-2">From Date</label>
 								<input
 									v-model="newLeave.from_date"
 									type="date"
@@ -230,9 +266,7 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-xs font-bold text-white/60 uppercase mb-2"
-									>To Date</label
-								>
+								<label class="block text-[10px] text-white/40 uppercase tracking-widest mb-2">To Date</label>
 								<input
 									v-model="newLeave.to_date"
 									type="date"
@@ -242,9 +276,7 @@
 						</div>
 
 						<div>
-							<label class="block text-xs font-bold text-white/60 uppercase mb-2"
-								>Reason</label
-							>
+							<label class="block text-[10px] text-white/40 uppercase tracking-widest mb-2">Reason</label>
 							<textarea
 								v-model="newLeave.description"
 								rows="3"
@@ -285,6 +317,7 @@ const employeeStore = useEmployeeStore();
 
 const showLeaveModal = ref(false);
 const filterHistory = ref("all");
+const currentDate = ref(new Date());
 
 const newLeave = ref({
 	leave_type: "",
@@ -293,19 +326,107 @@ const newLeave = ref({
 	description: "",
 });
 
-// Display first 3 leave balances
-const displayedBalances = computed(() => {
-	return leaveStore.leaveBalances.slice(0, 3);
+// Current month display
+const currentMonthYear = computed(() => {
+	return currentDate.value.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+});
+
+// Get first day of month (0 = Sunday, 1 = Monday, etc.)
+const firstDayOfMonth = computed(() => {
+	const firstDay = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), 1);
+	const day = firstDay.getDay();
+	return day === 0 ? 6 : day - 1;
+});
+
+// Get days in month
+const daysInMonth = computed(() => {
+	return new Date(
+		currentDate.value.getFullYear(),
+		currentDate.value.getMonth() + 1,
+		0
+	).getDate();
+});
+
+// Get leave dates for calendar
+const leaveDates = computed(() => {
+	const dates = new Set();
+	leaveStore.leaveApplications
+		.filter(app => app.status === 'Approved')
+		.forEach(app => {
+			const start = new Date(app.from_date);
+			const end = new Date(app.to_date || app.from_date);
+			for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
+				dates.add(d.toISOString().split('T')[0]);
+			}
+		});
+	return dates;
+});
+
+const pendingDates = computed(() => {
+	const dates = new Set();
+	leaveStore.leaveApplications
+		.filter(app => app.status === 'Open' || app.status === 'Pending')
+		.forEach(app => {
+			const start = new Date(app.from_date);
+			const end = new Date(app.to_date || app.from_date);
+			for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
+				dates.add(d.toISOString().split('T')[0]);
+			}
+		});
+	return dates;
+});
+
+// Calendar days
+const calendarDays = computed(() => {
+	const today = new Date();
+	const days = [];
+
+	for (let i = 1; i <= daysInMonth.value; i++) {
+		const dayDate = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), i);
+		const dateStr = dayDate.toISOString().split('T')[0];
+		const isToday =
+			dayDate.getDate() === today.getDate() &&
+			dayDate.getMonth() === today.getMonth() &&
+			dayDate.getFullYear() === today.getFullYear();
+
+		const dayOfWeek = dayDate.getDay();
+		const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+		days.push({
+			day: i,
+			date: dateStr,
+			isToday,
+			isWeekend,
+			hasLeave: leaveDates.value.has(dateStr),
+			hasPending: pendingDates.value.has(dateStr),
+		});
+	}
+
+	return days;
+});
+
+// Stats
+const pendingCount = computed(() => {
+	return leaveStore.leaveApplications.filter(
+		app => app.status === 'Open' || app.status === 'Pending'
+	).length;
+});
+
+const totalUsedDays = computed(() => {
+	return leaveStore.leaveApplications
+		.filter(app => app.status === 'Approved')
+		.reduce((sum, app) => sum + (app.total_leave_days || 1), 0);
 });
 
 // Filtered applications
 const filteredApplications = computed(() => {
-	if (filterHistory.value === "pending") {
-		return leaveStore.leaveApplications.filter(
-			(app) => app.status === "Open" || app.status === "Pending"
-		);
+	let apps = leaveStore.leaveApplications;
+	if (filterHistory.value === 'pending') {
+		apps = apps.filter(app => app.status === 'Open' || app.status === 'Pending');
+	} else if (filterHistory.value === 'approved') {
+		apps = apps.filter(app => app.status === 'Approved');
 	}
-	return leaveStore.leaveApplications;
+	return apps.sort((a, b) => new Date(b.from_date) - new Date(a.from_date));
 });
 
 const canSubmitLeave = computed(() => {
@@ -313,78 +434,48 @@ const canSubmitLeave = computed(() => {
 });
 
 // Helper functions
-function getBalanceColor(index) {
-	const colors = [
-		{ bg: "text-primary/5", text: "text-primary" },
-		{ bg: "text-blue-400/5", text: "text-blue-400" },
-		{ bg: "text-purple-400/5", text: "text-purple-400" },
-	];
-	return colors[index % colors.length];
-}
-
-function getBalanceIcon(index) {
-	const icons = ["flight_takeoff", "medication", "person"];
-	return icons[index % icons.length];
-}
-
-function getStatusDotColor(status) {
-	switch (status) {
-		case "Approved":
-			return "bg-emerald-glow";
-		case "Open":
-		case "Pending":
-			return "bg-blue-400";
-		case "Rejected":
-			return "bg-red-400";
-		default:
-			return "bg-white/40";
-	}
+function getLeaveBalance(type) {
+	const balance = leaveStore.leaveBalances.find(b => b.leave_type === type);
+	return balance?.balance || 0;
 }
 
 function getStatusStyle(status) {
 	switch (status) {
 		case "Approved":
-			return "bg-emerald-glow/20 text-emerald-glow";
+			return "bg-emerald-500/15 text-emerald-400";
 		case "Open":
 		case "Pending":
-			return "bg-blue-400/20 text-blue-400";
+			return "bg-amber-500/15 text-amber-400";
 		case "Rejected":
-			return "bg-red-400/20 text-red-400";
+			return "bg-red-500/15 text-red-400";
 		default:
 			return "bg-white/10 text-white/40";
 	}
 }
 
-function formatDateRange(fromDate, toDate) {
-	if (!fromDate) return "";
-	const from = new Date(fromDate);
-	if (!toDate || fromDate === toDate) {
-		return from.toLocaleDateString("en-US", {
-			month: "short",
-			day: "numeric",
-			year: "numeric",
-		});
-	}
-	const to = new Date(toDate);
-	return `${from.toLocaleDateString("en-US", {
-		month: "short",
-		day: "numeric",
-	})} - ${to.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`;
+function formatDateShort(dateStr) {
+	if (!dateStr) return "";
+	const date = new Date(dateStr);
+	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-function getDurationLabel(fromDate, toDate) {
-	if (!fromDate || !toDate) return "SINGLE DAY";
-	const from = new Date(fromDate);
-	const to = new Date(toDate);
-	const diffTime = Math.abs(to - from);
-	const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-	if (diffDays === 0) return "SINGLE DAY";
-	return `${diffDays + 1} DAYS`;
+function previousMonth() {
+	currentDate.value = new Date(
+		currentDate.value.getFullYear(),
+		currentDate.value.getMonth() - 1,
+		1
+	);
+}
+
+function nextMonth() {
+	currentDate.value = new Date(
+		currentDate.value.getFullYear(),
+		currentDate.value.getMonth() + 1,
+		1
+	);
 }
 
 async function submitLeave() {
-	// This would call HRMS API to create leave application
-	// For now, just close the modal
 	showLeaveModal.value = false;
 	newLeave.value = {
 		leave_type: "",
@@ -396,7 +487,7 @@ async function submitLeave() {
 
 onMounted(async () => {
 	await employeeStore.init();
-	const employeeId = employeeStore.employee?.employee_id;
+	const employeeId = employeeStore.employee?.name;
 	if (employeeId) {
 		leaveStore.init(employeeId);
 	}
