@@ -84,7 +84,6 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		loading.value = true;
 		try {
 			const result = await clockInResource.fetch({
-				employee_id: employeeId,
 				latitude,
 				longitude,
 			});
@@ -99,7 +98,6 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		loading.value = true;
 		try {
 			const result = await clockOutResource.fetch({
-				employee_id: employeeId,
 				latitude,
 				longitude,
 			});

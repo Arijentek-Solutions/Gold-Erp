@@ -24,6 +24,7 @@ export const useCartStore = defineStore('cart', () => {
 
 	// Customer linked to this sale
 	const customer = ref(null)
+	const customerType = ref('Individual') // 'Individual', 'Company', 'Walkin'
 	const items = ref(storedItems)
 	const taxRate = ref(0)
 	const currency = ref('USD')
@@ -151,6 +152,7 @@ export const useCartStore = defineStore('cart', () => {
 	function clearCart() {
 		items.value = []
 		customer.value = null
+		customerType.value = 'Individual'
 		salespersons.value = []
 		tradeIns.value = []
 		saveToStorage()
@@ -206,7 +208,7 @@ export const useCartStore = defineStore('cart', () => {
 			amount: p.amount,
 		}))
 
-		const customerName = customer.value?.name || 'Walk-In Customer'
+		const customerName = customerType.value === 'Walkin' ? 'Walk-In Customer' : (customer.value?.name || 'Walk-In Customer')
 
 		const params = {
 			items: JSON.stringify(itemsPayload),
@@ -266,7 +268,7 @@ export const useCartStore = defineStore('cart', () => {
 			rate: i.amount || 0,
 		}))
 
-		const customerName = customer.value?.name || 'Walk-In Customer'
+		const customerName = customerType.value === 'Walkin' ? 'Walk-In Customer' : (customer.value?.name || 'Walk-In Customer')
 
 		const r = await createResource({
 			url: 'zevar_core.api.layaway.create_layaway',
@@ -300,6 +302,7 @@ export const useCartStore = defineStore('cart', () => {
 		submitOrder,
 		submitLayaway,
 		customer,
+		customerType,
 		setCustomer,
 		clearCustomer,
 		salespersons,

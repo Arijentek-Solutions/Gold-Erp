@@ -78,7 +78,33 @@
 				<div
 					class="p-4 border-b border-gray-100 dark:border-white/5 bg-white dark:bg-[#1a1c23] flex-shrink-0 z-10"
 				>
-					<CustomerSelector />
+					<div class="mb-3">
+						<label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">Customer <span class="text-red-500">*</span></label>
+						<div class="flex bg-gray-100 dark:bg-[#0F1115] p-1 rounded-lg">
+							<button 
+								class="flex-1 text-xs font-medium py-1.5 rounded-md transition-colors"
+								:class="cart.customerType === 'Individual' ? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white' : 'text-gray-500'"
+								@click="cart.customerType = 'Individual'; cart.clearCustomer()"
+							>
+								Individual
+							</button>
+							<button 
+								class="flex-1 text-xs font-medium py-1.5 rounded-md transition-colors"
+								:class="cart.customerType === 'Company' ? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white' : 'text-gray-500'"
+								@click="cart.customerType = 'Company'; cart.clearCustomer()"
+							>
+								Company
+							</button>
+							<button 
+								class="flex-1 text-xs font-medium py-1.5 rounded-md transition-colors"
+								:class="cart.customerType === 'Walkin' ? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white' : 'text-gray-500'"
+								@click="cart.customerType = 'Walkin'; cart.clearCustomer()"
+							>
+								Walk-In
+							</button>
+						</div>
+					</div>
+					<CustomerSelector v-if="cart.customerType !== 'Walkin'" />
 				</div>
 
 				<div class="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
@@ -315,9 +341,11 @@
 
 				<button
 					@click="showCheckout = true"
-					class="w-full bg-gray-900 dark:bg-[#D4AF37] text-white dark:text-black py-3 rounded-lg font-bold shadow-lg hover:bg-gray-800 dark:hover:bg-[#b5952f] active:scale-95 transition-all"
+					:disabled="!isCheckoutReady"
+					class="w-full py-3 rounded-lg font-bold shadow-lg transition-all flex items-center justify-center gap-2"
+					:class="isCheckoutReady ? 'bg-gray-900 dark:bg-[#D4AF37] text-white dark:text-black hover:bg-gray-800 dark:hover:bg-[#b5952f] active:scale-95' : 'bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-gray-600 cursor-not-allowed'"
 				>
-					Checkout
+					{{ checkoutButtonText }}
 				</button>
 			</div>
 		</div>
@@ -335,6 +363,16 @@ const props = defineProps(['isOpen'])
 const emit = defineEmits(['close'])
 const cart = useCartStore()
 const showCheckout = ref(false)
+
+const isCheckoutReady = computed(() => {
+	if (cart.customerType !== 'Walkin' && !cart.customer) return false
+	return true
+})
+
+const checkoutButtonText = computed(() => {
+	if (cart.customerType !== 'Walkin' && !cart.customer) return 'Select Customer'
+	return 'Checkout'
+})
 
 // Trade-in form state
 const showTradeInForm = ref(false)

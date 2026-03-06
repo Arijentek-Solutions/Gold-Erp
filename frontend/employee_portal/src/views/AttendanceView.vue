@@ -1,279 +1,241 @@
 <template>
-	<div class="flex flex-col gap-8">
-		<!-- Stats Row -->
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			<div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
-				<div
-					class="absolute inset-0 bg-primary/5 group-hover:bg-primary/10 transition-colors"
-				></div>
-				<h3 class="text-xs font-bold text-white/40 uppercase mb-2 relative z-10">
-					Total Hours This Month
-				</h3>
-				<div class="flex items-end gap-3 relative z-10">
-					<span class="text-4xl font-bold font-mono text-white">{{
-						totalHours.toFixed(1)
-					}}</span>
-					<span class="text-emerald-glow text-xs font-bold mb-1">hours</span>
-				</div>
-				<div class="absolute right-4 top-1/2 -translate-y-1/2">
-					<div class="relative w-16 h-16 flex items-center justify-center">
-						<svg class="w-full h-full transform -rotate-90">
-							<circle
-								class="text-white/5"
-								cx="32"
-								cy="32"
-								fill="transparent"
-								r="28"
-								stroke="currentColor"
-								stroke-width="4"
-							></circle>
-							<circle
-								class="text-emerald-glow"
-								cx="32"
-								cy="32"
-								fill="transparent"
-								r="28"
-								stroke="currentColor"
-								:stroke-dasharray="175"
-								:stroke-dashoffset="175 - (175 * hoursProgress) / 100"
-								stroke-width="4"
-							></circle>
-						</svg>
-						<span class="absolute text-[10px] font-bold">{{ hoursProgress }}%</span>
-					</div>
-				</div>
+	<div class="flex flex-col gap-4 h-full overflow-hidden">
+		<!-- Header Stats -->
+		<div class="grid grid-cols-3 sm:grid-cols-3 gap-2 sm:gap-4 shrink-0">
+			<div class="glass-card p-3 sm:p-4 rounded-xl">
+				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">This Month</p>
+				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ totalHours.toFixed(1) }}<span class="text-xs sm:text-sm text-white/40 ml-1">hrs</span></p>
 			</div>
-
-			<div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
-				<div
-					class="absolute inset-0 bg-gold-accent/5 group-hover:bg-gold-accent/10 transition-colors"
-				></div>
-				<h3 class="text-xs font-bold text-white/40 uppercase mb-2 relative z-10">
-					On-time Rate
-				</h3>
-				<div class="flex items-end gap-3 relative z-10">
-					<span class="text-4xl font-bold font-mono text-white">{{ onTimeRate }}%</span>
-					<span class="text-gold-accent text-xs font-bold mb-1">
-						{{
-							onTimeRate >= 90
-								? "Excellent"
-								: onTimeRate >= 75
-								? "Good"
-								: "Needs Work"
-						}}
-					</span>
-				</div>
-				<div class="absolute right-4 top-1/2 -translate-y-1/2">
-					<div class="relative w-16 h-16 flex items-center justify-center">
-						<svg class="w-full h-full transform -rotate-90">
-							<circle
-								class="text-white/5"
-								cx="32"
-								cy="32"
-								fill="transparent"
-								r="28"
-								stroke="currentColor"
-								stroke-width="4"
-							></circle>
-							<circle
-								class="text-gold-accent"
-								cx="32"
-								cy="32"
-								fill="transparent"
-								r="28"
-								stroke="currentColor"
-								:stroke-dasharray="175"
-								:stroke-dashoffset="175 - (175 * onTimeRate) / 100"
-								stroke-width="4"
-							></circle>
-						</svg>
-						<span class="absolute text-[10px] font-bold">{{ onTimeRate }}%</span>
-					</div>
-				</div>
+			<div class="glass-card p-3 sm:p-4 rounded-xl">
+				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">On-Time</p>
+				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ onTimeRate }}<span class="text-xs sm:text-sm text-white/40 ml-1">%</span></p>
 			</div>
-
-			<div class="glass-card p-6 rounded-2xl relative overflow-hidden group">
-				<div
-					class="absolute inset-0 bg-blue-500/5 group-hover:bg-blue-500/10 transition-colors"
-				></div>
-				<h3 class="text-xs font-bold text-white/40 uppercase mb-2 relative z-10">
-					Average Shift
-				</h3>
-				<div class="relative z-10">
-					<span class="text-4xl font-bold font-mono text-white"
-						>{{ averageShiftHours }}h</span
-					>
-					<span class="text-sm text-white/40">{{ averageShiftMinutes }}m</span>
-					<div class="mt-3 h-1 w-full bg-white/10 rounded-full overflow-hidden">
-						<div
-							class="h-full bg-blue-500 rounded-full shadow-[0_0_10px_rgba(59,130,246,0.5)] transition-all"
-							:style="{
-								width: `${Math.min(
-									100,
-									(averageShiftHours / workingHoursTarget) * 100
-								)}%`,
-							}"
-						></div>
-					</div>
-				</div>
+			<div class="glass-card p-3 sm:p-4 rounded-xl">
+				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Avg Shift</p>
+				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ averageShiftHours }}<span class="text-xs sm:text-sm text-white/40 ml-1">hrs</span></p>
 			</div>
 		</div>
 
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-			<!-- Calendar Section -->
-			<div class="lg:col-span-2 glass-card rounded-2xl p-8 border border-white/5">
-				<div class="flex items-center justify-between mb-8">
+		<!-- Main Content - Responsive Layout -->
+		<div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 overflow-hidden">
+			<!-- Daily Attendance List -->
+			<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+				<div class="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
 					<div>
-						<h2 class="text-2xl font-bold text-white">{{ currentMonthYear }}</h2>
-						<p class="text-sm text-white/40">Monthly Attendance Performance</p>
+						<h2 class="text-base sm:text-xl font-bold text-white">Daily Attendance</h2>
+						<p class="text-[10px] sm:text-xs text-white/40">Your clock in/out history</p>
 					</div>
-					<div class="flex gap-2">
-						<button
-							@click="previousMonth"
-							class="p-2 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-colors"
-						>
-							<span class="material-symbols-outlined">chevron_left</span>
-						</button>
-						<button
-							@click="nextMonth"
-							class="p-2 rounded-lg hover:bg-white/5 text-white/60 hover:text-white transition-colors"
-						>
-							<span class="material-symbols-outlined">chevron_right</span>
-						</button>
-					</div>
-				</div>
-
-				<!-- Calendar Grid -->
-				<div class="grid grid-cols-7 gap-y-8 gap-x-4 text-center">
-					<div class="text-[10px] font-bold uppercase text-white/30 mb-2">Mon</div>
-					<div class="text-[10px] font-bold uppercase text-white/30 mb-2">Tue</div>
-					<div class="text-[10px] font-bold uppercase text-white/30 mb-2">Wed</div>
-					<div class="text-[10px] font-bold uppercase text-white/30 mb-2">Thu</div>
-					<div class="text-[10px] font-bold uppercase text-white/30 mb-2">Fri</div>
-					<div class="text-[10px] font-bold uppercase text-white/30 mb-2">Sat</div>
-					<div class="text-[10px] font-bold uppercase text-white/30 mb-2">Sun</div>
-
-					<!-- Empty cells for days before month start -->
-					<div
-						v-for="i in firstDayOfMonth"
-						:key="'empty-' + i"
-						class="aspect-square"
-					></div>
-
-					<!-- Days -->
 					<button
-						v-for="day in calendarDays"
-						:key="day.date"
-						class="aspect-square rounded-full flex flex-col items-center justify-center relative transition-all group"
-						:class="[
-							day.status === 'present' ? 'hover:bg-white/5' : '',
-							day.status === 'absent' ? 'hover:bg-red-500/10' : '',
-							day.isToday
-								? 'border border-primary text-primary shadow-[0_0_10px_rgba(244,192,37,0.2)]'
-								: 'text-white/60',
-						]"
+						@click="loadMoreHistory"
+						class="text-[10px] sm:text-xs text-primary hover:text-yellow-400 font-bold transition-colors"
 					>
-						<span class="text-sm font-medium">{{ day.day }}</span>
-						<span
-							v-if="day.status === 'present'"
-							class="w-1 h-1 rounded-full bg-emerald-glow mt-1"
-						></span>
-						<span
-							v-if="day.status === 'absent'"
-							class="w-1 h-1 rounded-full bg-red-400 mt-1"
-						></span>
-						<span
-							v-if="day.status === 'leave'"
-							class="w-1 h-1 rounded-full bg-blue-400 mt-1"
-						></span>
-						<span
-							v-if="day.status === 'holiday'"
-							class="w-1 h-1 rounded-full bg-purple-400 mt-1"
-						></span>
+						Load More
 					</button>
 				</div>
 
-				<!-- Legend -->
-				<div class="mt-6 flex gap-6 justify-center text-xs text-white/40">
-					<div class="flex items-center gap-2">
-						<span class="w-2 h-2 rounded-full bg-emerald-glow"></span>
-						<span>Present</span>
+				<!-- Table Header - Hidden on mobile -->
+				<div class="hidden sm:grid glass-card rounded-t-xl px-3 sm:px-4 py-2 sm:py-3 grid-cols-5 gap-2 sm:gap-4 text-[9px] sm:text-[10px] uppercase tracking-widest text-white/40 font-bold border-b border-white/5">
+					<div>Date</div>
+					<div>Clock In</div>
+					<div>Clock Out</div>
+					<div>Hours</div>
+					<div>Status</div>
+				</div>
+
+				<!-- Daily Records -->
+				<div class="flex-1 overflow-y-auto custom-scrollbar">
+					<div v-if="dailyRecords.length === 0" class="text-center py-12">
+						<span class="material-symbols-outlined text-4xl text-white/20 mb-3">event_busy</span>
+						<p class="text-white/40 text-sm">No attendance records found</p>
 					</div>
-					<div class="flex items-center gap-2">
-						<span class="w-2 h-2 rounded-full bg-red-400"></span>
-						<span>Absent</span>
+
+					<!-- Mobile Card View -->
+					<div class="sm:hidden space-y-2 p-2">
+						<div
+							v-for="record in dailyRecords"
+							:key="record.date"
+							class="glass-card rounded-xl p-3 border border-white/5"
+						>
+							<div class="flex items-center justify-between mb-2">
+								<div>
+									<p class="text-sm font-bold text-white">{{ formatDate(record.date) }}</p>
+									<p class="text-[10px] text-white/30">{{ formatDay(record.date) }}</p>
+								</div>
+								<span
+									v-if="record.status === 'present'"
+									class="text-[9px] px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-bold uppercase"
+								>Present</span>
+								<span
+									v-else-if="record.status === 'late'"
+									class="text-[9px] px-2 py-1 rounded-full bg-amber-500/15 text-amber-400 font-bold uppercase"
+								>Late</span>
+								<span
+									v-else-if="record.status === 'absent'"
+									class="text-[9px] px-2 py-1 rounded-full bg-red-500/15 text-red-400 font-bold uppercase"
+								>Absent</span>
+								<span
+									v-else-if="record.status === 'weekend'"
+									class="text-[9px] px-2 py-1 rounded-full bg-white/5 text-white/30 font-bold uppercase"
+								>Off</span>
+								<span v-else class="text-[9px] text-white/20">—</span>
+							</div>
+							<div class="grid grid-cols-3 gap-2 text-center">
+								<div>
+									<p class="text-[9px] text-white/30 uppercase">In</p>
+									<p class="text-xs font-mono text-emerald-400">{{ record.clockIn ? formatTime(record.clockIn) : '—' }}</p>
+								</div>
+								<div>
+									<p class="text-[9px] text-white/30 uppercase">Out</p>
+									<p class="text-xs font-mono text-blue-400">{{ record.clockOut ? formatTime(record.clockOut) : '—' }}</p>
+								</div>
+								<div>
+									<p class="text-[9px] text-white/30 uppercase">Hours</p>
+									<p class="text-xs font-mono text-white">{{ record.totalHours ? record.totalHours.toFixed(1) : '—' }}</p>
+								</div>
+							</div>
+						</div>
 					</div>
-					<div class="flex items-center gap-2">
-						<span class="w-2 h-2 rounded-full bg-blue-400"></span>
-						<span>Leave</span>
-					</div>
-					<div class="flex items-center gap-2">
-						<span class="w-2 h-2 rounded-full bg-purple-400"></span>
-						<span>Holiday</span>
+
+					<!-- Desktop Table View -->
+					<div class="hidden sm:block">
+						<div
+							v-for="record in dailyRecords"
+							:key="record.date"
+							class="grid grid-cols-5 gap-2 sm:gap-4 px-3 sm:px-4 py-2 sm:py-3 border-b border-white/5 hover:bg-white/[0.02] transition-colors items-center"
+						>
+							<div>
+								<p class="text-xs sm:text-sm font-bold text-white">{{ formatDate(record.date) }}</p>
+								<p class="text-[9px] sm:text-[10px] text-white/30">{{ formatDay(record.date) }}</p>
+							</div>
+							<div>
+								<p v-if="record.clockIn" class="text-xs sm:text-sm font-mono text-emerald-400">
+									{{ formatTime(record.clockIn) }}
+								</p>
+								<p v-else class="text-xs sm:text-sm text-white/20">—</p>
+							</div>
+							<div>
+								<p v-if="record.clockOut" class="text-xs sm:text-sm font-mono text-blue-400">
+									{{ formatTime(record.clockOut) }}
+								</p>
+								<p v-else class="text-xs sm:text-sm text-white/20">—</p>
+							</div>
+							<div>
+								<p v-if="record.totalHours" class="text-xs sm:text-sm font-mono text-white">
+									{{ record.totalHours.toFixed(2) }}
+								</p>
+								<p v-else class="text-xs sm:text-sm text-white/20">—</p>
+							</div>
+							<div>
+								<span
+									v-if="record.status === 'present'"
+									class="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-bold uppercase"
+								>Present</span>
+								<span
+									v-else-if="record.status === 'late'"
+									class="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-amber-500/15 text-amber-400 font-bold uppercase"
+								>Late</span>
+								<span
+									v-else-if="record.status === 'absent'"
+									class="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-red-500/15 text-red-400 font-bold uppercase"
+								>Absent</span>
+								<span
+									v-else-if="record.status === 'weekend'"
+									class="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-white/5 text-white/30 font-bold uppercase"
+								>Off</span>
+								<span
+									v-else-if="record.status === 'leave'"
+									class="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full bg-blue-500/15 text-blue-400 font-bold uppercase"
+								>Leave</span>
+								<span v-else class="text-[9px] sm:text-[10px] text-white/20">—</span>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
 
-			<!-- Recent Activity / Timeline -->
-			<div class="col-span-1 space-y-6">
-				<div class="flex items-center justify-between">
-					<h3 class="font-bold text-lg text-white">Recent Activity</h3>
-				</div>
-
-				<div class="space-y-4">
-					<!-- No activity message -->
-					<div v-if="recentActivity.length === 0" class="text-center py-8">
-						<div
-							class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4"
-						>
-							<span class="material-symbols-outlined text-3xl text-white/20"
-								>history</span
+			<!-- Mini Calendar - Hidden on mobile, shows below on tablet -->
+			<div class="hidden lg:block w-72 shrink-0">
+				<div class="glass-card rounded-xl p-4 border border-white/5">
+					<!-- Calendar Header -->
+					<div class="flex items-center justify-between mb-4">
+						<h3 class="text-sm font-bold text-white">{{ currentMonthYear }}</h3>
+						<div class="flex gap-1">
+							<button
+								@click="previousMonth"
+								class="p-1 rounded hover:bg-white/5 text-white/40 hover:text-white transition-colors"
 							>
+								<span class="material-symbols-outlined text-lg">chevron_left</span>
+							</button>
+							<button
+								@click="nextMonth"
+								class="p-1 rounded hover:bg-white/5 text-white/40 hover:text-white transition-colors"
+							>
+								<span class="material-symbols-outlined text-lg">chevron_right</span>
+							</button>
 						</div>
-						<p class="text-white/40 text-sm">No recent activity</p>
-						<p class="text-white/20 text-xs mt-1">Clock in to start tracking</p>
 					</div>
 
-					<!-- Activity items -->
-					<div
-						v-for="log in recentActivity"
-						:key="log.name"
-						class="glass-card p-4 rounded-xl border border-white/5 flex gap-4 items-center group hover:bg-white/5 transition-colors"
-					>
-						<div
-							class="w-10 h-10 rounded-full flex items-center justify-center"
-							:class="getLogStyle(log.log_type).bg"
+					<!-- Day Headers -->
+					<div class="grid grid-cols-7 gap-1 mb-2">
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">M</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">T</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">W</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">T</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">F</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">S</div>
+						<div class="text-[9px] text-center text-white/30 font-bold uppercase">S</div>
+					</div>
+
+					<!-- Calendar Grid -->
+					<div class="grid grid-cols-7 gap-1">
+						<!-- Empty cells for days before month start -->
+						<div v-for="i in firstDayOfMonth" :key="'empty-' + i" class="aspect-square"></div>
+
+						<!-- Days -->
+						<button
+							v-for="day in calendarDays"
+							:key="day.date"
+							class="aspect-square rounded-md flex items-center justify-center text-xs relative transition-all"
+							:class="[
+								day.isToday
+									? 'bg-primary/20 text-primary font-bold'
+									: day.status === 'present'
+									? 'text-emerald-400'
+									: day.status === 'absent'
+									? 'text-red-400'
+									: day.status === 'weekend'
+									? 'text-white/20'
+									: 'text-white/50 hover:bg-white/5'
+							]"
 						>
+							{{ day.day }}
 							<span
-								class="material-symbols-outlined text-lg"
-								:class="getLogStyle(log.log_type).text"
-							>
-								{{ getLogStyle(log.log_type).icon }}
-							</span>
+								v-if="day.status === 'present' && !day.isToday"
+								class="absolute bottom-0.5 w-1 h-1 rounded-full bg-emerald-400"
+							></span>
+							<span
+								v-if="day.status === 'absent'"
+								class="absolute bottom-0.5 w-1 h-1 rounded-full bg-red-400"
+							></span>
+						</button>
+					</div>
+
+					<!-- Legend -->
+					<div class="mt-4 pt-3 border-t border-white/5 flex flex-wrap gap-3 text-[9px]">
+						<div class="flex items-center gap-1">
+							<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+							<span class="text-white/40">Present</span>
 						</div>
-						<div class="flex-1">
-							<div class="flex justify-between items-center mb-1">
-								<p class="text-sm font-bold text-white">
-									{{ getLogStyle(log.log_type).label }}
-								</p>
-								<span
-									v-if="log.log_type === 'IN'"
-									class="text-[10px] bg-emerald-glow/20 text-emerald-glow px-1.5 py-0.5 rounded font-bold uppercase"
-								>
-									{{ log.on_time !== false ? "On Time" : "Late" }}
-								</span>
-							</div>
-							<p class="text-xs text-white/40">{{ formatDateTime(log.time) }}</p>
+						<div class="flex items-center gap-1">
+							<span class="w-2 h-2 rounded-full bg-red-400"></span>
+							<span class="text-white/40">Absent</span>
+						</div>
+						<div class="flex items-center gap-1">
+							<span class="w-2 h-2 rounded-full bg-primary"></span>
+							<span class="text-white/40">Today</span>
 						</div>
 					</div>
 				</div>
-
-				<button
-					@click="loadMoreHistory"
-					class="w-full py-4 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white glass-card rounded-xl hover:bg-white/5 transition-colors"
-				>
-					Load Previous History
-				</button>
 			</div>
 		</div>
 	</div>
@@ -292,13 +254,12 @@ const historyDays = ref(30);
 
 // Current month display
 const currentMonthYear = computed(() => {
-	return currentDate.value.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+	return currentDate.value.toLocaleDateString("en-US", { month: "short", year: "numeric" });
 });
 
 // Get first day of month (0 = Sunday, 1 = Monday, etc.)
 const firstDayOfMonth = computed(() => {
 	const firstDay = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), 1);
-	// Adjust for Monday start (0 = Monday, 6 = Sunday)
 	const day = firstDay.getDay();
 	return day === 0 ? 6 : day - 1;
 });
@@ -324,7 +285,6 @@ const calendarDays = computed(() => {
 			dayDate.getMonth() === today.getMonth() &&
 			dayDate.getFullYear() === today.getFullYear();
 
-		// Check status from attendance history
 		const status = getDayStatus(dayDate);
 
 		days.push({
@@ -338,50 +298,100 @@ const calendarDays = computed(() => {
 	return days;
 });
 
-// Stats
-const totalHours = computed(() => {
-	return attendanceStore.totalHoursToday || 0;
+// Daily records from history
+const dailyRecords = computed(() => {
+	const records = [];
+	const history = attendanceStore.history || [];
+
+	// Group logs by date
+	const logsByDate = {};
+	history.forEach(log => {
+		if (!log.time) return;
+		const dateStr = log.time.split('T')[0];
+		if (!logsByDate[dateStr]) {
+			logsByDate[dateStr] = { logs: [], date: dateStr };
+		}
+		logsByDate[dateStr].logs.push(log);
+	});
+
+	// Convert to array and process
+	Object.values(logsByDate).forEach(dayData => {
+		const date = new Date(dayData.date);
+		const dayOfWeek = date.getDay();
+		const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
+		// Find first IN and last OUT
+		const inLogs = dayData.logs.filter(l => l.log_type === 'IN');
+		const outLogs = dayData.logs.filter(l => l.log_type === 'OUT');
+
+		const clockIn = inLogs.length > 0 ? inLogs[0].time : null;
+		const clockOut = outLogs.length > 0 ? outLogs[outLogs.length - 1].time : null;
+
+		// Calculate total hours
+		let totalHours = 0;
+		if (clockIn && clockOut) {
+			const inTime = new Date(clockIn);
+			const outTime = new Date(clockOut);
+			totalHours = (outTime - inTime) / (1000 * 60 * 60);
+		}
+
+		// Determine status
+		let status = '';
+		if (isWeekend) {
+			status = 'weekend';
+		} else if (clockIn) {
+			// Check if late (after 9 AM or configured start time)
+			const inTime = new Date(clockIn);
+			const lateThreshold = new Date(date);
+			lateThreshold.setHours(9, 0, 0);
+			status = inTime > lateThreshold ? 'late' : 'present';
+		} else {
+			const today = new Date();
+			if (date < today) {
+				status = 'absent';
+			}
+		}
+
+		records.push({
+			date: dayData.date,
+			clockIn,
+			clockOut,
+			totalHours,
+			status
+		});
+	});
+
+	// Sort by date descending
+	records.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+	return records;
 });
 
-const hoursProgress = computed(() => {
-	const target = (attendanceStore.workingHoursTarget || 8) * 22; // ~22 working days
-	const actual = totalHours.value;
-	return Math.min(100, Math.round((actual / target) * 100));
+// Stats
+const totalHours = computed(() => {
+	return dailyRecords.value.reduce((sum, r) => sum + (r.totalHours || 0), 0);
 });
 
 const onTimeRate = computed(() => {
-	// Placeholder - would calculate from actual check-in times
-	return 95;
+	const present = dailyRecords.value.filter(r => r.status === 'present' || r.status === 'late');
+	const onTime = present.filter(r => r.status === 'present');
+	return present.length > 0 ? Math.round((onTime.length / present.length) * 100) : 100;
 });
 
 const averageShiftHours = computed(() => {
-	const hours = attendanceStore.workingHoursTarget || 8;
-	return Math.floor(hours);
-});
-
-const averageShiftMinutes = computed(() => {
-	const hours = attendanceStore.workingHoursTarget || 8;
-	return Math.round((hours % 1) * 60);
-});
-
-const workingHoursTarget = computed(() => {
-	return attendanceStore.roster?.working_hours || 8;
-});
-
-// Recent activity
-const recentActivity = computed(() => {
-	return attendanceStore.history.slice(0, 5);
+	const withHours = dailyRecords.value.filter(r => r.totalHours > 0);
+	if (withHours.length === 0) return 0;
+	const total = withHours.reduce((sum, r) => sum + r.totalHours, 0);
+	return (total / withHours.length).toFixed(1);
 });
 
 // Methods
 function getDayStatus(date) {
-	// Check if it's a weekend
 	const dayOfWeek = date.getDay();
 	if (dayOfWeek === 0 || dayOfWeek === 6) {
 		return "weekend";
 	}
 
-	// Check from history
 	const dateStr = date.toISOString().split("T")[0];
 	const logs = attendanceStore.history.filter((log) => log.time && log.time.startsWith(dateStr));
 
@@ -389,7 +399,6 @@ function getDayStatus(date) {
 		return "present";
 	}
 
-	// Future date
 	const today = new Date();
 	if (date > today) {
 		return "";
@@ -398,41 +407,22 @@ function getDayStatus(date) {
 	return "absent";
 }
 
-function getLogStyle(logType) {
-	switch (logType) {
-		case "IN":
-			return {
-				bg: "bg-emerald-glow/10 border border-emerald-glow/20",
-				text: "text-emerald-glow",
-				icon: "login",
-				label: "Shift Started",
-			};
-		case "OUT":
-			return {
-				bg: "bg-blue-500/10 border border-blue-500/20",
-				text: "text-blue-400",
-				icon: "logout",
-				label: "Shift Ended",
-			};
-		default:
-			return {
-				bg: "bg-white/5 border border-white/10",
-				text: "text-white/40",
-				icon: "circle",
-				label: "Activity",
-			};
-	}
+function formatDate(dateStr) {
+	if (!dateStr) return "";
+	const date = new Date(dateStr);
+	return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-function formatDateTime(timeStr) {
+function formatDay(dateStr) {
+	if (!dateStr) return "";
+	const date = new Date(dateStr);
+	return date.toLocaleDateString("en-US", { weekday: "short" });
+}
+
+function formatTime(timeStr) {
 	if (!timeStr) return "";
 	const date = new Date(timeStr);
-	return date.toLocaleDateString("en-US", {
-		month: "short",
-		day: "numeric",
-		hour: "numeric",
-		minute: "2-digit",
-	});
+	return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 }
 
 function previousMonth() {
@@ -453,7 +443,7 @@ function nextMonth() {
 
 async function loadMoreHistory() {
 	historyDays.value += 30;
-	const employeeId = employeeStore.employee?.employee_id;
+	const employeeId = employeeStore.employee?.name;
 	if (employeeId) {
 		await attendanceStore.fetchHistory(employeeId, historyDays.value);
 	}
@@ -462,7 +452,7 @@ async function loadMoreHistory() {
 // Initialize
 onMounted(async () => {
 	await employeeStore.init();
-	const employeeId = employeeStore.employee?.employee_id;
+	const employeeId = employeeStore.employee?.name;
 	if (employeeId) {
 		attendanceStore.init(employeeId);
 		await attendanceStore.fetchHistory(employeeId, historyDays.value);

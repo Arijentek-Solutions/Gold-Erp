@@ -32,17 +32,17 @@
 		</div>
 
 		<div v-else class="h-full flex flex-col">
-			<div class="flex items-center gap-4 mb-6">
+			<div class="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
 				<h2
-					class="text-2xl font-serif font-bold text-gray-900 dark:text-white transition-colors"
+					class="text-lg sm:text-2xl font-serif font-bold text-gray-900 dark:text-white transition-colors"
 				>
 					Collection
 				</h2>
 
 				<span
-					class="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-3 py-1 rounded-full shadow-sm border border-gray-100 dark:border-gray-700 transition-colors"
+					class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 sm:px-3 py-1 rounded-full shadow-sm border border-gray-100 dark:border-gray-700 transition-colors"
 				>
-					{{ catalog.length }} Items Found
+					{{ catalog.length }} Items
 				</span>
 			</div>
 

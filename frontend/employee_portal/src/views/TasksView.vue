@@ -24,6 +24,14 @@
 					class="flex-1 bg-transparent border-none outline-none text-white placeholder:text-white/20 text-sm"
 					@keyup.enter="addTodo"
 				/>
+				<select
+					v-model="newTodoPriority"
+					class="bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-xs text-white/70 outline-none cursor-pointer"
+				>
+					<option value="Low" class="bg-gray-800">Low</option>
+					<option value="Medium" class="bg-gray-800">Medium</option>
+					<option value="High" class="bg-gray-800">High</option>
+				</select>
 				<button
 					@click="addTodo"
 					:disabled="!newTodoText.trim() || tasksStore.loading"
@@ -210,7 +218,7 @@
 
 					<div class="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-2">
 						<div
-							v-if="tasksStore.openTodos.length === 0"
+							v-if="sortedOpenTodos.length === 0"
 							class="glass-card rounded-xl p-5 text-center"
 						>
 							<span class="material-symbols-outlined text-3xl text-white/20 mb-2"
@@ -223,7 +231,7 @@
 						</div>
 
 						<div
-							v-for="todo in tasksStore.openTodos"
+							v-for="todo in sortedOpenTodos"
 							:key="todo.id"
 							class="glass-card glass-card-hover rounded-xl p-5 transition-all duration-300 hover:-translate-y-1 cursor-pointer group border border-white/5 hover:border-white/10"
 						>
@@ -275,6 +283,7 @@ import { useTasksStore } from "@/stores/tasks";
 
 const tasksStore = useTasksStore();
 const newTodoText = ref("");
+const newTodoPriority = ref("Medium");
 
 // Computed task groups
 const assignedTasks = computed(() => {
@@ -287,12 +296,23 @@ const inProgressTasks = computed(() => {
 	return tasksStore.tasks.filter((t) => t.status === "In Progress");
 });
 
+// Priority order for sorting
+const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+
+// Sort open todos by priority
+const sortedOpenTodos = computed(() => {
+	return [...tasksStore.openTodos].sort((a, b) => {
+		return (priorityOrder[a.priority] || 99) - (priorityOrder[b.priority] || 99);
+	});
+});
+
 // Actions
 async function addTodo() {
 	if (!newTodoText.value.trim()) return;
 
-	await tasksStore.createTodo(newTodoText.value.trim());
+	await tasksStore.createTodo(newTodoText.value.trim(), null, newTodoPriority.value);
 	newTodoText.value = "";
+	newTodoPriority.value = "Medium";
 }
 
 async function toggleTodoStatus(todo) {

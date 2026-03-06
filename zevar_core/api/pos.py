@@ -33,12 +33,29 @@ def create_pos_invoice(
 
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
+	if not warehouse:
+		frappe.throw(_("Warehouse is required to process POS transactions."), frappe.ValidationError)
+
 	items_list = frappe.parse_json(items) if isinstance(items, str) else items
 	payments_list = frappe.parse_json(payments) if isinstance(payments, str) else payments
 	trade_in_list = frappe.parse_json(trade_ins) if trade_ins else []
 
 	if not items_list:
 		frappe.throw(_("At least one item is required."))
+
+	# Debug logging
+	frappe.log_error("POS Invoice Debug Params", frappe.as_json({
+		"items": items,
+		"payments": payments,
+		"customer": customer,
+		"warehouse": warehouse,
+		"discount_amount": discount_amount,
+		"tax_exempt": tax_exempt,
+		"salespersons": salespersons,
+		"layaway_reference": layaway_reference,
+		"trade_ins": trade_ins,
+		"gift_card_number": gift_card_number
+	}))
 
 	if not payments_list:
 		frappe.throw(_("At least one payment mode is required."))
@@ -76,7 +93,11 @@ def create_pos_invoice(
 		customer = frappe.db.get_single_value("Global Defaults", "default_customer") or "Walk-In Customer"
 
 	if not frappe.db.exists("Customer", customer):
-		frappe.throw(_("Customer '{0}' not found.").format(customer))
+		if customer == "Walk-In Customer":
+			from zevar_core.api.customer import quick_create_customer
+			quick_create_customer(customer_name="Walk-In Customer")
+		else:
+			frappe.throw(_("Customer '{0}' not found.").format(customer))
 
 	# Validate gift card before creating invoice
 	gc_payment_amount = 0
@@ -142,6 +163,7 @@ def create_pos_invoice(
 					"qty": flt(item.get("qty", 1)),
 					"rate": flt(item.get("rate")),
 					"warehouse": warehouse,
+					"allow_zero_valuation_rate": 1,
 				},
 			)
 
@@ -163,15 +185,26 @@ def create_pos_invoice(
 			si.custom_layaway_reference = layaway_reference
 
 		for ti in trade_in_list:
-			si.append(
-				"custom_trade_ins",
-				{
-					"trade_in_value": flt(ti.get("trade_in_value")),
-					"new_item_value": flt(ti.get("new_item_value")),
-					"manager_override": ti.get("manager_override"),
-					"override_reason": ti.get("override_reason"),
-				},
-			)
+			trade_in_item = {
+				"trade_in_value": flt(ti.get("trade_in_value")),
+				"new_item_value": flt(ti.get("new_item_value")),
+				"manager_override": ti.get("manager_override"),
+				"override_reason": ti.get("override_reason"),
+			}
+			# Use first item from cart as new_item_code if not provided
+			if not ti.get("new_item_code") and items_list:
+				trade_in_item["new_item_code"] = items_list[0].get("item_code")
+			
+			# Map description to original_item_code if it's a valid item code, though it's optional now
+			if ti.get("original_item_code"):
+				trade_in_item["original_item_code"] = ti.get("original_item_code")
+			elif ti.get("description"):
+				# If description is provided but not a valid item code, we can't put it in original_item_code (Link)
+				# but we can log it or put it in override_reason if blank
+				if not trade_in_item.get("override_reason"):
+					trade_in_item["override_reason"] = f"Trade-In Item: {ti.get('description')}"
+
+			si.append("custom_trade_ins", trade_in_item)
 
 		# Add trade-in credit as a payment entry
 		total_trade_in_credit = (
@@ -217,6 +250,8 @@ def create_pos_invoice(
 
 	except Exception as e:
 		frappe.log_error("POS Invoice Creation Failed", frappe.get_traceback())
+		if isinstance(e, frappe.ValidationError):
+			raise
 		frappe.throw(_("Failed to create POS Invoice: {0}").format(str(e)))
 
 

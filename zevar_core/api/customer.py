@@ -94,6 +94,7 @@ def get_customer_details(customer_name: str):
 @frappe.whitelist()
 def quick_create_customer(
 	customer_name: str,
+	customer_type: str = "Individual",
 	mobile_no: str | None = None,
 	email_id: str | None = None,
 	address_line1: str | None = None,
@@ -113,6 +114,7 @@ def quick_create_customer(
 
 	Args:
 	    customer_name: Customer full name (required)
+	    customer_type: Customer Type (Individual/Company)
 	    mobile_no: Phone number
 	    email_id: Email address
 	    address_line1: Street address
@@ -133,14 +135,6 @@ def quick_create_customer(
 	# Validate required field
 	if not customer_name:
 		frappe.throw(_("Customer name is required"))
-
-	# Check for duplicate by customer_name field (case-insensitive)
-	existing = frappe.db.sql(
-		"SELECT name FROM `tabCustomer` WHERE LOWER(customer_name) = LOWER(%s)",
-		(customer_name,),
-	)
-	if existing:
-		frappe.throw(_("Customer '{0}' already exists").format(customer_name))
 
 	# Get default customer_group - try multiple sources
 	customer_group = frappe.db.get_single_value("Selling Settings", "customer_group") or frappe.db.get_value(
@@ -169,12 +163,11 @@ def quick_create_customer(
 		if not territory:
 			territory = frappe.db.get_value("Territory", {}, "name", order_by="creation asc")
 
-	# Create customer document
 	customer = frappe.get_doc(
 		{
 			"doctype": "Customer",
 			"customer_name": customer_name,
-			"customer_type": "Individual",
+			"customer_type": customer_type,
 			"customer_group": customer_group,
 			"territory": territory,
 			"mobile_no": mobile_no,

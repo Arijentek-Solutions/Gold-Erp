@@ -176,7 +176,7 @@ def create_personal_todo(description: str, date: str | None = None, priority: st
 
 	todo = frappe.get_doc(
 		{
-			"doctype": "TODO",
+			"doctype": "ToDo",
 			"description": description,
 			"allocated_to": frappe.session.user,
 			"date": date or today(),
