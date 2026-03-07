@@ -80,28 +80,36 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		await historyResource.fetch({ employee_id: employeeId, days });
 	}
 
-	async function clockIn(employeeId, latitude = null, longitude = null) {
+	async function clockIn(_employeeId, latitude = null, longitude = null, notes = null) {
 		loading.value = true;
 		try {
 			const result = await clockInResource.fetch({
 				latitude,
 				longitude,
+				notes,
 			});
-			await fetchTodayStatus(employeeId);
+			// Use status from response instead of fetching again
+			if (result.status) {
+				todayStatus.value = result.status;
+			}
 			return result;
 		} finally {
 			loading.value = false;
 		}
 	}
 
-	async function clockOut(employeeId, latitude = null, longitude = null) {
+	async function clockOut(_employeeId, latitude = null, longitude = null, notes = null) {
 		loading.value = true;
 		try {
 			const result = await clockOutResource.fetch({
 				latitude,
 				longitude,
+				notes,
 			});
-			await fetchTodayStatus(employeeId);
+			// Use status from response instead of fetching again
+			if (result.status) {
+				todayStatus.value = result.status;
+			}
 			return result;
 		} finally {
 			loading.value = false;

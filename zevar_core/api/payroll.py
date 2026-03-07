@@ -38,8 +38,6 @@ def get_salary_slips(year: int | None = None, limit: int = 12):
 			"net_pay",
 			"total_deduction",
 			"currency",
-			"month",
-			"fiscal_year",
 		],
 		order_by="start_date desc",
 		limit=limit,
@@ -85,8 +83,6 @@ def get_salary_slips(year: int | None = None, limit: int = 12):
 				"net_pay": slip.net_pay,
 				"total_deduction": slip.total_deduction,
 				"currency": slip.currency,
-				"month": slip.month,
-				"fiscal_year": slip.fiscal_year,
 				"earnings": [
 					{"component": e.salary_component, "amount": e.amount, "abbr": e.abbr} for e in earnings
 				],
@@ -133,8 +129,6 @@ def get_salary_slip_details(slip_name: str):
 		"total_deduction": slip.total_deduction,
 		"total_earnings": slip.gross_pay,
 		"currency": slip.currency,
-		"month": slip.month,
-		"fiscal_year": slip.fiscal_year,
 		"earnings": [
 			{"component": e.salary_component, "amount": e.amount, "abbr": e.abbr, "formula": e.formula}
 			for e in slip.earnings
@@ -161,7 +155,7 @@ def get_payroll_summary(year: int | None = None):
 	"""
 	employee = _get_current_employee_id()
 	if not employee:
-		return {"total_earnings": 0, "total_deductions": 0, "total_net_pay": 0, "months": []}
+		return {"total_earnings": 0, "total_deductions": 0, "total_net_pay": 0, "slips": []}
 
 	from frappe.utils import getdate
 
@@ -170,7 +164,7 @@ def get_payroll_summary(year: int | None = None):
 	salary_slips = frappe.get_all(
 		"Salary Slip",
 		filters={"employee": employee, "docstatus": 1, "start_date": (">=", f"{year}-01-01")},
-		fields=["gross_pay", "net_pay", "total_deduction", "month"],
+		fields=["name", "start_date", "end_date", "gross_pay", "net_pay", "total_deduction"],
 		order_by="start_date asc",
 	)
 
@@ -179,25 +173,23 @@ def get_payroll_summary(year: int | None = None):
 		"total_earnings": 0,
 		"total_deductions": 0,
 		"total_net_pay": 0,
-		"months": [],
+		"slips": [],
 		"slip_count": len(salary_slips),
 	}
 
-	month_data = {}
 	for slip in salary_slips:
 		summary["total_earnings"] += slip.gross_pay or 0
 		summary["total_deductions"] += slip.total_deduction or 0
 		summary["total_net_pay"] += slip.net_pay or 0
 
-		if slip.month:
-			month_data[slip.month] = {
-				"month": slip.month,
-				"gross_pay": slip.gross_pay,
-				"deductions": slip.total_deduction,
-				"net_pay": slip.net_pay,
-			}
-
-	summary["months"] = list(month_data.values())
+		summary["slips"].append({
+			"id": slip.name,
+			"start_date": str(slip.start_date),
+			"end_date": str(slip.end_date),
+			"gross_pay": slip.gross_pay,
+			"deductions": slip.total_deduction,
+			"net_pay": slip.net_pay,
+		})
 
 	return summary
 
