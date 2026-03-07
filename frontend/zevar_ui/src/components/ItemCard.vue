@@ -71,7 +71,7 @@
 			<!-- Weight Breakdown -->
 			<div
 				v-if="item.net_weight > 0 || item.gross_weight > 0"
-				class="text-[9px] text-gray-500 dark:text-gray-400 mb-2 space-y-0.5 bg-gray-50 dark:bg-white/5 p-1.5 rounded"
+				class="hidden lg:block text-[9px] text-gray-500 dark:text-gray-400 mb-2 space-y-0.5 bg-gray-50 dark:bg-white/5 p-1.5 rounded"
 			>
 				<div v-if="item.gross_weight > 0" class="flex justify-between">
 					<span>Gross:</span> <span>{{ item.gross_weight }}g</span>

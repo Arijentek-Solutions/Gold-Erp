@@ -104,12 +104,13 @@ def get_current_employee():
 
 
 @frappe.whitelist()
-def get_today_checkin_status(employee_id: str | None = None):
+def get_today_checkin_status(employee_id: str | None = None, skip_roster: bool = False):
 	"""
 	Get today's check-in status for an employee.
 
 	Args:
 	    employee_id: Employee ID (optional, defaults to current user)
+	    skip_roster: Skip roster lookup for faster response
 
 	Returns:
 	    Dict with check-in status and logs
@@ -151,9 +152,13 @@ def get_today_checkin_status(employee_id: str | None = None):
 	if checked_in and last_log:
 		total_hours += time_diff_in_hours(now_datetime(), last_log.time)
 
-	# Get roster for comparison
-	roster = get_employee_roster(employee_id)
-	overtime = max(0, total_hours - roster.get("working_hours", 8))
+	# Get roster for comparison (skip if not needed for speed)
+	working_hours_target = 8
+	overtime = 0
+	if not skip_roster:
+		roster = get_employee_roster(employee_id)
+		working_hours_target = roster.get("working_hours", 8)
+		overtime = max(0, total_hours - working_hours_target)
 
 	return {
 		"checked_in": checked_in,
@@ -161,7 +166,7 @@ def get_today_checkin_status(employee_id: str | None = None):
 		"last_log_time": str(last_log.time) if last_log else None,
 		"total_hours_today": round(total_hours, 2),
 		"overtime_hours": round(overtime, 2),
-		"working_hours_target": roster.get("working_hours", 8),
+		"working_hours_target": working_hours_target,
 		"logs": [{"log_type": l.log_type, "time": str(l.time)} for l in logs],
 	}
 
@@ -214,8 +219,8 @@ def clock_in(latitude: float | None = None, longitude: float | None = None, note
 	)
 	checkin.insert()
 
-	# Get updated status
-	status = get_today_checkin_status(employee_id)
+	# Get updated status (skip roster for speed)
+	status = get_today_checkin_status(employee_id, skip_roster=True)
 
 	return {
 		"success": True,
@@ -274,8 +279,8 @@ def clock_out(latitude: float | None = None, longitude: float | None = None, not
 	# Calculate hours for this session
 	hours_worked = time_diff_in_hours(checkout.time, last_log.time)
 
-	# Get updated status
-	status = get_today_checkin_status(employee_id)
+	# Get updated status (skip roster for speed)
+	status = get_today_checkin_status(employee_id, skip_roster=True)
 
 	return {
 		"success": True,
@@ -318,3 +323,158 @@ def get_attendance_history(employee_id: str | None = None, days: int = 30):
 	)
 
 	return logs
+
+
+@frappe.whitelist()
+def get_weekly_roster(employee_id: str | None = None, start_date: str | None = None):
+	"""
+	Get weekly roster/schedule for an employee.
+
+	Args:
+	    employee_id: Employee ID (optional, defaults to current user)
+	    start_date: Start date for the week (optional, defaults to current week start)
+
+	Returns:
+	    Dict with weekly schedule including shifts for each day
+	"""
+	from frappe.utils import add_days, get_first_day, get_last_day
+
+	if not employee_id:
+		employee_id = frappe.db.get_value("Employee", {"user_id": frappe.session.user}, "name")
+
+	if not employee_id:
+		frappe.throw(_("No employee record found for current user"))
+
+	today = getdate()
+
+	# Get start of current week (Monday)
+	if start_date:
+		week_start = getdate(start_date)
+	else:
+		week_start = today - timedelta(days=today.weekday())
+
+	week_end = add_days(week_start, 6)
+
+	# Get all shift assignments for the employee in this date range
+	shift_assignments = frappe.get_all(
+		"Shift Assignment",
+		filters={
+			"employee": employee_id,
+			"docstatus": 1,
+			"start_date": ["<=", week_end],
+		},
+		fields=["name", "shift_type", "start_date", "end_date", "status"],
+		order_by="start_date asc",
+	)
+
+	# Build daily schedule
+	schedule = []
+	current_date = week_start
+
+	while current_date <= week_end:
+		day_schedule = {
+			"date": str(current_date),
+			"day_name": current_date.strftime("%A"),
+			"day_short": current_date.strftime("%a"),
+			"day_num": current_date.day,
+			"is_today": current_date == today,
+			"is_past": current_date < today,
+			"shift": None,
+			"checkins": [],
+			"total_hours": 0,
+			"status": "off",
+		}
+
+		# Find applicable shift for this day
+		for assignment in shift_assignments:
+			assign_start = getdate(assignment.start_date)
+			assign_end = getdate(assignment.end_date) if assignment.end_date else None
+
+			if assign_start <= current_date and (not assign_end or assign_end >= current_date):
+				if assignment.status == "Active":
+					# Get shift type details
+					shift_type = frappe.get_doc("Shift Type", assignment.shift_type)
+					day_schedule["shift"] = {
+						"name": shift_type.name,
+						"shift_name": shift_type.shift_name,
+						"start_time": str(shift_type.start_time) if shift_type.start_time else None,
+						"end_time": str(shift_type.end_time) if shift_type.end_time else None,
+						"working_hours": shift_type.working_hours or 8,
+					}
+					day_schedule["status"] = "working"
+					break
+
+		# If no shift assignment, check if it's a weekend or use default
+		if not day_schedule["shift"]:
+			# Check employment type for default hours
+			employee = frappe.get_doc("Employee", employee_id)
+			employment_type = employee.employment_type or "Full-time"
+			default_hours = 8
+			if "Part" in employment_type:
+				default_hours = 4
+
+			# Default: Mon-Fri are working days
+			if current_date.weekday() < 5:  # Monday = 0, Friday = 4
+				day_schedule["shift"] = {
+					"name": "Standard",
+					"shift_name": "Standard Hours",
+					"start_time": "09:00:00",
+					"end_time": "17:00:00" if default_hours == 8 else "13:00:00",
+					"working_hours": default_hours,
+				}
+				day_schedule["status"] = "working"
+			else:
+				day_schedule["status"] = "off"
+
+		# Get check-in logs for this day
+		checkins = frappe.get_all(
+			"Employee Checkin",
+			filters={"employee": employee_id, "time": [">=", current_date, "<", add_days(current_date, 1)]},
+			fields=["name", "log_type", "time"],
+			order_by="time asc",
+		)
+
+		if checkins:
+			day_schedule["checkins"] = [{"log_type": c.log_type, "time": str(c.time)} for c in checkins]
+
+			# Calculate total hours
+			total_hours = 0
+			check_in_time = None
+			for log in checkins:
+				if log.log_type == "IN":
+					check_in_time = log.time
+				elif log.log_type == "OUT" and check_in_time:
+					total_hours += time_diff_in_hours(log.time, check_in_time)
+					check_in_time = None
+
+			day_schedule["total_hours"] = round(total_hours, 2)
+
+			# Update status based on hours
+			target_hours = day_schedule["shift"]["working_hours"] if day_schedule["shift"] else 8
+			if total_hours >= target_hours:
+				day_schedule["status"] = "complete"
+			elif total_hours > 0:
+				day_schedule["status"] = "partial"
+
+		schedule.append(day_schedule)
+		current_date = add_days(current_date, 1)
+
+	# Get roster summary
+	roster = get_employee_roster(employee_id)
+
+	return {
+		"employee_id": employee_id,
+		"week_start": str(week_start),
+		"week_end": str(week_end),
+		"schedule": schedule,
+		"roster": roster,
+		"summary": {
+			"total_working_days": len([d for d in schedule if d["status"] != "off"]),
+			"completed_days": len([d for d in schedule if d["status"] == "complete"]),
+			"total_hours": sum(d["total_hours"] for d in schedule),
+			"target_hours": sum(d["shift"]["working_hours"] for d in schedule if d["shift"]),
+		},
+	}
+
+
+from datetime import timedelta

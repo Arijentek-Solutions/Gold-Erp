@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="flex h-screen w-full overflow-hidden bg-background-dark font-display text-white selection:bg-primary/30 relative"
+		class="h-[100dvh] w-full flex overflow-hidden bg-[#0b0f19] font-display text-white selection:bg-primary/30 relative"
 	>
 		<!-- Ambient Glows -->
 		<div
@@ -10,16 +10,36 @@
 			class="fixed bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-blue-500/5 blur-[120px] rounded-full -z-10"
 		></div>
 
+		<!-- Mobile Sidebar Overlay -->
+		<div
+			v-if="mobileMenuOpen"
+			class="fixed inset-0 bg-black/60 z-40 lg:hidden"
+			@click="mobileMenuOpen = false"
+		></div>
+
+		<!-- Mobile Hamburger Button -->
+		<button
+			@click="mobileMenuOpen = !mobileMenuOpen"
+			class="fixed top-4 left-4 z-50 lg:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center"
+		>
+			<span class="material-symbols-outlined text-white">{{
+				mobileMenuOpen ? 'close' : 'menu'
+			}}</span>
+		</button>
+
 		<!-- Sidebar -->
 		<aside
-			class="shrink-0 flex flex-col bg-[#0a0c1a] border-r border-white/5 z-20 transition-all duration-300"
-			:class="sidebarCollapsed ? 'w-20 items-center' : 'w-64'"
+			class="shrink-0 flex flex-col bg-[#0a0c1a] border-r border-white/5 z-20 transition-all duration-300 fixed lg:relative h-full"
+			:class="[
+				sidebarCollapsed ? 'lg:w-20 lg:items-center' : 'lg:w-64',
+				mobileMenuOpen ? 'w-64 translate-x-0' : '-translate-x-full lg:translate-x-0'
+			]"
 		>
 			<!-- Header -->
-			<div class="p-6" :class="sidebarCollapsed ? 'px-3' : ''">
+			<div class="p-6" :class="sidebarCollapsed ? 'lg:px-3' : ''">
 				<div
 					class="flex items-center gap-3 bg-[#111420] p-2 rounded-lg border border-white/5"
-					:class="sidebarCollapsed ? 'justify-center' : ''"
+					:class="sidebarCollapsed ? 'lg:justify-center' : ''"
 				>
 					<img :src="logoUrl" alt="Zevar" class="w-8 h-8 rounded shrink-0" />
 					<span v-show="!sidebarCollapsed" class="font-bold text-white tracking-wide"
@@ -34,13 +54,14 @@
 					v-for="item in navItems"
 					:key="item.to"
 					:to="item.to"
+					@click="mobileMenuOpen = false"
 					class="flex items-center rounded-xl transition-all group"
 					:class="[
 						route.path === item.to
 							? 'bg-[#111822] text-primary shadow-sm'
 							: 'text-gray-400 hover:text-white hover:bg-white/5',
 						sidebarCollapsed
-							? 'justify-center px-2 py-3'
+							? 'lg:justify-center lg:px-2 lg:py-3'
 							: 'justify-between px-4 py-3',
 					]"
 				>
@@ -65,7 +86,7 @@
 					target="_blank"
 					class="flex items-center rounded-xl transition-all group text-gray-400 hover:text-white hover:bg-white/5 mt-4"
 					:class="
-						sidebarCollapsed ? 'justify-center px-2 py-3' : 'justify-between px-4 py-3'
+						sidebarCollapsed ? 'lg:justify-center lg:px-2 lg:py-3' : 'justify-between px-4 py-3'
 					"
 				>
 					<div class="flex items-center gap-3">
@@ -79,8 +100,8 @@
 				</a>
 			</nav>
 
-			<!-- Collapse Toggle -->
-			<div class="p-4">
+			<!-- Collapse Toggle (Desktop Only) -->
+			<div class="p-4 hidden lg:block">
 				<button
 					@click="sidebarCollapsed = !sidebarCollapsed"
 					class="w-full py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center gap-2 border border-white/5"
@@ -96,12 +117,14 @@
 		</aside>
 
 		<!-- Main Content -->
-		<main class="flex-1 flex flex-col relative overflow-hidden bg-background-dark">
+		<main class="flex-1 flex flex-col h-full overflow-hidden bg-[#0b0f19]">
 			<!-- Header -->
 			<header
-				class="flex items-center justify-end px-8 py-4 border-b border-white/5 shrink-0"
+				class="flex items-center justify-end px-4 md:px-8 py-4 border-b border-white/5 shrink-0"
 			>
-				<div class="relative">
+				<!-- Mobile spacer for hamburger -->
+				<div class="w-10 lg:hidden"></div>
+				<div class="relative ml-auto">
 					<!-- Overlay for clicking outside -->
 					<div
 						v-if="userMenuOpen"
@@ -111,15 +134,15 @@
 
 					<!-- Profile Button -->
 					<button
-						class="relative z-50 flex items-center gap-3 bg-white/5 hover:bg-white/10 pl-2 pr-4 py-1.5 rounded-full border border-white/10 transition-colors"
+						class="relative z-50 flex items-center gap-2 md:gap-3 bg-white/5 hover:bg-white/10 pl-2 pr-3 md:pr-4 py-1.5 rounded-full border border-white/10 transition-colors"
 						@click="userMenuOpen = !userMenuOpen"
 					>
 						<div
-							class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs"
+							class="w-7 h-7 md:w-8 md:h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-[10px] md:text-xs"
 						>
 							{{ userInitials }}
 						</div>
-						<span class="text-sm font-semibold text-white">{{
+						<span class="text-xs md:text-sm font-semibold text-white hidden sm:block">{{
 							auth.user?.full_name || "User"
 						}}</span>
 						<span
@@ -198,8 +221,8 @@
 				</div>
 			</header>
 
-			<!-- Dashboard Content -->
-			<div class="flex-1 overflow-y-auto p-4 md:p-8 custom-scrollbar relative">
+			<!-- Page Content Container -->
+			<div class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar relative">
 				<slot />
 			</div>
 		</main>
@@ -250,6 +273,7 @@ const auth = useAuthStore();
 const route = useRoute();
 
 const sidebarCollapsed = ref(false);
+const mobileMenuOpen = ref(false);
 const userMenuOpen = ref(false);
 const showComingSoon = ref(false);
 const isDark = ref(true); // Default to dark theme as per Zevar design language
@@ -261,6 +285,7 @@ const navItems = [
 	{ to: "/", icon: "dashboard", label: "Dashboard" },
 	{ to: "/tasks", icon: "check_circle", label: "Tasks" },
 	{ to: "/attendance", icon: "calendar_month", label: "Attendance" },
+	{ to: "/roster", icon: "schedule", label: "Roster" },
 	{ to: "/leave", icon: "beach_access", label: "Leave" },
 	{ to: "/expense", icon: "attach_money", label: "Expense" },
 	{ to: "/payroll", icon: "account_balance_wallet", label: "Payroll" },

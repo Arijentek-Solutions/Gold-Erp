@@ -8,7 +8,7 @@ module.exports = {
 	],
 	theme: {
 		fontFamily: {
-			sans: ["Plus Jakarta Sans", "ui-sans-serif", "system-ui", "sans-serif"],
+			sans: ["Inter", "ui-sans-serif", "system-ui", "sans-serif"],
 			portal: ["Plus Jakarta Sans", "sans-serif"],
 		},
 		extend: {
@@ -27,9 +27,9 @@ module.exports = {
 				"portal-bg-dark": "#0a0c1a", // Mapped to Dark
 			},
 			fontFamily: {
-				sans: ["Plus Jakarta Sans", "sans-serif"],
-				display: ["Space Grotesk", "sans-serif"],
-				serif: ["Playfair Display", "serif"],
+				sans: ["Inter", "sans-serif"],
+				display: ["Spline Sans", "sans-serif"],
+				serif: ["Cinzel", "serif"],
 			},
 			borderRadius: {
 				xl: "0.75rem",
