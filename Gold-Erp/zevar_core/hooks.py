@@ -6,7 +6,6 @@ app_email = "akshay@arijentek.com"
 app_license = "mit"
 app_logo_url = "/assets/zevar_core/images/pos_logo.svg"
 splash_image = "/assets/zevar_core/images/pos_logo.svg"
-required_apps = ["erpnext"]
 
 add_to_apps_screen = [
 	{

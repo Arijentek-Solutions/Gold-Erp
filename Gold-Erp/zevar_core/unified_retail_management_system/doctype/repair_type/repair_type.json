@@ -1,0 +1,99 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "field:repair_name",
+  "creation": "2026-02-09 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "repair_name",
+    "category",
+    "base_price",
+    "estimated_days",
+    "column_break_1",
+    "is_active",
+    "description"
+  ],
+  "fields": [
+    {
+      "fieldname": "repair_name",
+      "fieldtype": "Data",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Repair Name",
+      "reqd": 1
+    },
+    {
+      "fieldname": "category",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Category",
+      "options": "Ring\nNecklace\nBracelet\nEarring\nWatch\nChain\nPendant\nOther"
+    },
+    {
+      "fieldname": "base_price",
+      "fieldtype": "Currency",
+      "in_list_view": 1,
+      "label": "Base Price (USD)"
+    },
+    {
+      "fieldname": "estimated_days",
+      "fieldtype": "Int",
+      "label": "Estimated Days",
+      "description": "Typical turnaround time"
+    },
+    {
+      "fieldname": "column_break_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "default": "1",
+      "fieldname": "is_active",
+      "fieldtype": "Check",
+      "label": "Active"
+    },
+    {
+      "fieldname": "description",
+      "fieldtype": "Small Text",
+      "label": "Description"
+    }
+  ],
+  "index_web_pages_for_search": 0,
+  "links": [],
+  "modified": "2026-02-09 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Unified Retail Management System",
+  "name": "Repair Type",
+  "naming_rule": "By fieldname",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 0,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Sales User",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

@@ -1,0 +1,76 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "autoname": "format:GR-{MM}-{DD}-{#####}",
+ "creation": "2025-12-23 00:29:34.056604",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "metal",
+  "purity",
+  "rate_per_gram",
+  "source",
+  "timestamp"
+ ],
+ "fields": [
+  {
+   "fieldname": "metal",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Metal",
+   "options": "Zevar Metal",
+   "reqd": 1
+  },
+  {
+   "fieldname": "rate_per_gram",
+   "fieldtype": "Currency",
+   "label": "Rate per Gram",
+   "reqd": 1
+  },
+  {
+   "fieldname": "source",
+   "fieldtype": "Data",
+   "label": "Source",
+   "options": "e.g., \"API\", \"Manual Override\""
+  },
+  {
+   "default": "Now",
+   "fieldname": "timestamp",
+   "fieldtype": "Datetime",
+   "label": "Timestamp"
+  },
+  {
+   "fieldname": "purity",
+   "fieldtype": "Link",
+   "label": "Purity",
+   "options": "Zevar Purity"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-12-23 01:50:40.490061",
+ "modified_by": "Administrator",
+ "module": "Unified Retail Management System",
+ "name": "Gold Rate Log",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

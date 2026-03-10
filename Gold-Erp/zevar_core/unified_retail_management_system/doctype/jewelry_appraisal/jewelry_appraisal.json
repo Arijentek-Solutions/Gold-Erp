@@ -1,0 +1,183 @@
+{
+    "actions": [],
+    "autoname": "format:APR-{YYYY}-{####}",
+    "creation": "2026-02-25 06:08:00.000000",
+    "doctype": "DocType",
+    "engine": "InnoDB",
+    "field_order": [
+        "customer",
+        "appraisal_date",
+        "column_break_1",
+        "appraiser",
+        "status",
+        "section_item",
+        "item_description",
+        "item_type",
+        "column_break_2",
+        "metal_type",
+        "metal_purity",
+        "total_weight_grams",
+        "section_valuation",
+        "appraised_value",
+        "replacement_value",
+        "column_break_3",
+        "insurance_value",
+        "section_notes",
+        "notes",
+        "certificate_number"
+    ],
+    "fields": [
+        {
+            "fieldname": "customer",
+            "fieldtype": "Link",
+            "in_list_view": 1,
+            "label": "Customer",
+            "options": "Customer",
+            "reqd": 1
+        },
+        {
+            "default": "Today",
+            "fieldname": "appraisal_date",
+            "fieldtype": "Date",
+            "in_list_view": 1,
+            "label": "Appraisal Date",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_1",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "appraiser",
+            "fieldtype": "Link",
+            "label": "Appraiser",
+            "options": "Employee",
+            "reqd": 1
+        },
+        {
+            "default": "Draft",
+            "fieldname": "status",
+            "fieldtype": "Select",
+            "in_list_view": 1,
+            "label": "Status",
+            "options": "Draft\nCompleted\nCancelled"
+        },
+        {
+            "fieldname": "section_item",
+            "fieldtype": "Section Break",
+            "label": "Item Details"
+        },
+        {
+            "fieldname": "item_description",
+            "fieldtype": "Data",
+            "label": "Item Description",
+            "reqd": 1
+        },
+        {
+            "fieldname": "item_type",
+            "fieldtype": "Select",
+            "label": "Item Type",
+            "options": "Ring\nNecklace\nBracelet\nEarring\nPendant\nWatch\nOther",
+            "reqd": 1
+        },
+        {
+            "fieldname": "column_break_2",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "metal_type",
+            "fieldtype": "Link",
+            "label": "Metal Type",
+            "options": "Zevar Metal"
+        },
+        {
+            "fieldname": "metal_purity",
+            "fieldtype": "Link",
+            "label": "Metal Purity",
+            "options": "Zevar Purity"
+        },
+        {
+            "fieldname": "total_weight_grams",
+            "fieldtype": "Float",
+            "label": "Total Weight (grams)"
+        },
+        {
+            "fieldname": "section_valuation",
+            "fieldtype": "Section Break",
+            "label": "Valuation"
+        },
+        {
+            "fieldname": "appraised_value",
+            "fieldtype": "Currency",
+            "in_list_view": 1,
+            "label": "Appraised Value",
+            "reqd": 1
+        },
+        {
+            "fieldname": "replacement_value",
+            "fieldtype": "Currency",
+            "label": "Replacement Value"
+        },
+        {
+            "fieldname": "column_break_3",
+            "fieldtype": "Column Break"
+        },
+        {
+            "fieldname": "insurance_value",
+            "fieldtype": "Currency",
+            "label": "Insurance Value"
+        },
+        {
+            "fieldname": "section_notes",
+            "fieldtype": "Section Break",
+            "label": "Notes & Certificate"
+        },
+        {
+            "fieldname": "notes",
+            "fieldtype": "Text Editor",
+            "label": "Appraisal Notes"
+        },
+        {
+            "fieldname": "certificate_number",
+            "fieldtype": "Data",
+            "label": "Certificate Number",
+            "unique": 1
+        }
+    ],
+    "index_web_pages_for_search": 1,
+    "links": [],
+    "modified": "2026-02-25 06:08:00.000000",
+    "modified_by": "Administrator",
+    "module": "Unified Retail Management System",
+    "name": "Jewelry Appraisal",
+    "naming_rule": "Expression (old style)",
+    "owner": "Administrator",
+    "permissions": [
+        {
+            "create": 1,
+            "delete": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "System Manager",
+            "share": 1,
+            "write": 1
+        },
+        {
+            "create": 1,
+            "email": 1,
+            "export": 1,
+            "print": 1,
+            "read": 1,
+            "report": 1,
+            "role": "Sales User",
+            "share": 1,
+            "write": 1
+        }
+    ],
+    "sort_field": "creation",
+    "sort_order": "DESC",
+    "states": []
+}

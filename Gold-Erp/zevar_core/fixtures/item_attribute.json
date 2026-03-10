@@ -1,0 +1,196 @@
+[
+ {
+  "attribute_name": "Size",
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Item Attribute",
+  "from_range": 0.0,
+  "increment": 0.0,
+  "item_attribute_values": [
+   {
+    "abbr": "XS",
+    "attribute_value": "Extra Small"
+   },
+   {
+    "abbr": "S",
+    "attribute_value": "Small"
+   },
+   {
+    "abbr": "M",
+    "attribute_value": "Medium"
+   },
+   {
+    "abbr": "L",
+    "attribute_value": "Large"
+   },
+   {
+    "abbr": "XL",
+    "attribute_value": "Extra Large"
+   }
+  ],
+  "modified": "2025-12-22 00:37:49.164508",
+  "name": "Size",
+  "numeric_values": 0,
+  "to_range": 0.0
+ },
+ {
+  "attribute_name": "Colour",
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Item Attribute",
+  "from_range": 0.0,
+  "increment": 0.0,
+  "item_attribute_values": [
+   {
+    "abbr": "RED",
+    "attribute_value": "Red"
+   },
+   {
+    "abbr": "GRE",
+    "attribute_value": "Green"
+   },
+   {
+    "abbr": "BLU",
+    "attribute_value": "Blue"
+   },
+   {
+    "abbr": "BLA",
+    "attribute_value": "Black"
+   },
+   {
+    "abbr": "WHI",
+    "attribute_value": "White"
+   }
+  ],
+  "modified": "2025-12-22 00:37:49.170189",
+  "name": "Colour",
+  "numeric_values": 0,
+  "to_range": 0.0
+ },
+ {
+  "attribute_name": "Metal Type",
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Item Attribute",
+  "from_range": 0.0,
+  "increment": 0.0,
+  "item_attribute_values": [
+   {
+    "abbr": "YGLD",
+    "attribute_value": "Yellow Gold"
+   },
+   {
+    "abbr": "SLV",
+    "attribute_value": "Silver"
+   },
+   {
+    "abbr": "PLT",
+    "attribute_value": "Platinum"
+   },
+   {
+    "abbr": "RGLD",
+    "attribute_value": "Rose Gold"
+   },
+   {
+    "abbr": "WGLD",
+    "attribute_value": "White Gold"
+   }
+  ],
+  "modified": "2026-01-01 23:58:43.441588",
+  "name": "Metal Type",
+  "numeric_values": 0,
+  "to_range": 0.0
+ },
+ {
+  "attribute_name": "Purity",
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Item Attribute",
+  "from_range": 0.0,
+  "increment": 0.0,
+  "item_attribute_values": [
+   {
+    "abbr": "24K",
+    "attribute_value": "24 Karat"
+   },
+   {
+    "abbr": "22K",
+    "attribute_value": "22 Karat"
+   },
+   {
+    "abbr": "18K",
+    "attribute_value": "18 Karat"
+   },
+   {
+    "abbr": "14K",
+    "attribute_value": "14 Karat"
+   },
+   {
+    "abbr": "10K",
+    "attribute_value": "10 Karat"
+   },
+   {
+    "abbr": "925",
+    "attribute_value": "925 Sterling"
+   },
+   {
+    "abbr": "999",
+    "attribute_value": "999 Sterling"
+   },
+   {
+    "abbr": "AS",
+    "attribute_value": "Argentium Silver"
+   }
+  ],
+  "modified": "2025-12-23 00:47:39.048583",
+  "name": "Purity",
+  "numeric_values": 0,
+  "to_range": 0.0
+ },
+ {
+  "attribute_name": "Stone Type",
+  "disabled": 0,
+  "docstatus": 0,
+  "doctype": "Item Attribute",
+  "from_range": 0.0,
+  "increment": 0.0,
+  "item_attribute_values": [
+   {
+    "abbr": "DD",
+    "attribute_value": "Diamond"
+   },
+   {
+    "abbr": "RY",
+    "attribute_value": "Ruby"
+   },
+   {
+    "abbr": "ED",
+    "attribute_value": "Emerald"
+   },
+   {
+    "abbr": "CZ",
+    "attribute_value": "Cubic Zirconia"
+   },
+   {
+    "abbr": "SR",
+    "attribute_value": "Sapphire"
+   },
+   {
+    "abbr": "MS",
+    "attribute_value": "Moissanite"
+   },
+   {
+    "abbr": "PK",
+    "attribute_value": "Polki"
+   },
+   {
+    "abbr": "KN",
+    "attribute_value": "Kundan"
+   }
+  ],
+  "modified": "2025-12-22 03:40:55.246896",
+  "name": "Stone Type",
+  "numeric_values": 0,
+  "to_range": 0.0
+ }
+]

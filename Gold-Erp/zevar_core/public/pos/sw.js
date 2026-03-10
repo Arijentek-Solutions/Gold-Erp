@@ -158,30 +158,30 @@ async function queueRequest(request) {
 }
 
 // Background sync event - retry failed requests
-self.addEventListener("sync", (event) => {
-	if (event.tag === "sync-pos-transactions") {
-		console.log("[SW] Background sync triggered");
-		event.waitUntil(syncPendingTransactions());
+self.addEventListener('sync', (event) => {
+	if (event.tag === 'sync-pos-transactions') {
+		console.log('[SW] Background sync triggered')
+		event.waitUntil(syncPendingTransactions())
 	}
-});
+})
 
 async function syncPendingTransactions() {
 	// In production, retrieve queued requests from IndexedDB
 	// and retry them
-	console.log("[SW] Syncing pending transactions...");
+	console.log('[SW] Syncing pending transactions...')
 	// TODO: Implement IndexedDB retrieval and retry logic
-	return Promise.resolve();
+	return Promise.resolve()
 }
 
 // Message handling for manual sync triggers
-self.addEventListener("message", (event) => {
-	if (event.data && event.data.type === "SKIP_WAITING") {
-		self.skipWaiting();
+self.addEventListener('message', (event) => {
+	if (event.data && event.data.type === 'SKIP_WAITING') {
+		self.skipWaiting()
 	}
 
-	if (event.data && event.data.type === "SYNC_NOW") {
+	if (event.data && event.data.type === 'SYNC_NOW') {
 		syncPendingTransactions().then(() => {
-			event.ports[0].postMessage({ success: true });
-		});
+			event.ports[0].postMessage({ success: true })
+		})
 	}
-});
+})

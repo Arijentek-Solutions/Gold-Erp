@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Zevar POS</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Inter:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="icon" href="/assets/zevar_core/images/pos_logo.svg">
+
+    {% set pos_css = get_frontend_asset('pos', 'index.css') %}
+    {% set vendor_css = get_frontend_asset('pos', 'vendor.css') %}
+
+    {%- block head %}{% endblock %}
+
+    {% if vendor_css %}
+    <link rel="stylesheet" href="{{ vendor_css }}" crossorigin="anonymous" />
+    {% endif %}
+    {% if pos_css %}
+    <link rel="stylesheet" href="{{ pos_css }}" crossorigin="anonymous" />
+    {% endif %}
+</head>
+
+<body class="antialiased selection:bg-[#D4AF37] selection:text-black">
+    <div id="app"></div>
+    <div id="modals"></div>
+    <div id="popovers"></div>
+
+    {% set pos_js = get_frontend_asset('pos', 'index.js') %}
+    {% set pos_css = get_frontend_asset('pos', 'index.css') %}
+    {% set vendor_js = get_frontend_asset('pos', 'vendor.js') %}
+    {% set vendor_css = get_frontend_asset('pos', 'vendor.css') %}
+
+    <script>
+        window.csrf_token = "{{ frappe.session.csrf_token }}";
+    </script>
+
+    {% if vendor_js %}
+    <link rel="modulepreload" href="{{ vendor_js }}" />
+    {% endif %}
+
+    {% if pos_js %}
+    <script type="module" crossorigin src="{{ pos_js }}"></script>
+    {% endif %}
+</body>
+
+</html>

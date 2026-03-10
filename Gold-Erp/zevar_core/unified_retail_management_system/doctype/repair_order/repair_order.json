@@ -1,0 +1,282 @@
+{
+  "actions": [],
+  "allow_rename": 0,
+  "autoname": "naming_series:",
+  "creation": "2026-02-09 00:00:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "naming_series",
+    "status",
+    "priority",
+    "column_break_1",
+    "warehouse",
+    "received_date",
+    "section_customer",
+    "customer",
+    "customer_phone",
+    "handled_by",
+    "section_item",
+    "repair_type",
+    "item_description",
+    "metal_type",
+    "purity",
+    "item_weight",
+    "item_photo",
+    "customer_notes",
+    "section_estimate",
+    "estimated_cost",
+    "material_cost",
+    "labor_cost",
+    "total_cost",
+    "payment_status",
+    "section_parts",
+    "parts",
+    "section_dates",
+    "promised_date",
+    "completed_date",
+    "delivered_date",
+    "section_assign",
+    "assigned_to",
+    "work_notes",
+    "parts_stock_created"
+  ],
+  "fields": [
+    {
+      "default": "RPR-.YYYY.-",
+      "fieldname": "naming_series",
+      "fieldtype": "Select",
+      "label": "Series",
+      "options": "RPR-.YYYY.-"
+    },
+    {
+      "fieldname": "status",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Status",
+      "options": "Received\nEstimated\nApproved\nIn Progress\nQuality Check\nReady for Pickup\nDelivered\nCancelled",
+      "reqd": 1
+    },
+    {
+      "fieldname": "priority",
+      "fieldtype": "Select",
+      "in_list_view": 1,
+      "label": "Priority",
+      "options": "Low\nMedium\nHigh\nUrgent"
+    },
+    {
+      "fieldname": "column_break_1",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "warehouse",
+      "fieldtype": "Link",
+      "in_standard_filter": 1,
+      "label": "Warehouse",
+      "options": "Warehouse"
+    },
+    {
+      "fieldname": "received_date",
+      "fieldtype": "Datetime",
+      "label": "Received Date"
+    },
+    {
+      "fieldname": "section_customer",
+      "fieldtype": "Section Break",
+      "label": "Customer"
+    },
+    {
+      "fieldname": "customer",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Customer",
+      "options": "Customer",
+      "reqd": 1
+    },
+    {
+      "fieldname": "customer_phone",
+      "fieldtype": "Data",
+      "label": "Customer Phone"
+    },
+    {
+      "description": "Person who handles the customer (sales person)",
+      "fieldname": "handled_by",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "label": "Handled By",
+      "options": "User"
+    },
+    {
+      "fieldname": "section_item",
+      "fieldtype": "Section Break",
+      "label": "Item Details"
+    },
+    {
+      "fieldname": "repair_type",
+      "fieldtype": "Link",
+      "in_list_view": 1,
+      "label": "Repair Type",
+      "options": "Repair Type",
+      "reqd": 1
+    },
+    {
+      "fieldname": "item_description",
+      "fieldtype": "Small Text",
+      "label": "Item Description"
+    },
+    {
+      "fieldname": "metal_type",
+      "fieldtype": "Link",
+      "label": "Metal",
+      "options": "Zevar Metal"
+    },
+    {
+      "fieldname": "purity",
+      "fieldtype": "Link",
+      "label": "Purity",
+      "options": "Zevar Purity"
+    },
+    {
+      "fieldname": "item_weight",
+      "fieldtype": "Float",
+      "label": "Item Weight (g)"
+    },
+    {
+      "fieldname": "item_photo",
+      "fieldtype": "Attach Image",
+      "label": "Item Photo"
+    },
+    {
+      "fieldname": "customer_notes",
+      "fieldtype": "Text",
+      "label": "Customer Notes"
+    },
+    {
+      "fieldname": "section_estimate",
+      "fieldtype": "Section Break",
+      "label": "Estimate & Billing"
+    },
+    {
+      "fieldname": "estimated_cost",
+      "fieldtype": "Currency",
+      "label": "Estimated Cost"
+    },
+    {
+      "fieldname": "material_cost",
+      "fieldtype": "Currency",
+      "label": "Material Cost"
+    },
+    {
+      "fieldname": "labor_cost",
+      "fieldtype": "Currency",
+      "label": "Labor Cost"
+    },
+    {
+      "fieldname": "total_cost",
+      "fieldtype": "Currency",
+      "label": "Total Cost",
+      "read_only": 1
+    },
+    {
+      "fieldname": "payment_status",
+      "fieldtype": "Select",
+      "label": "Payment Status",
+      "options": "Unpaid\nPartial\nPaid"
+    },
+    {
+      "fieldname": "section_parts",
+      "fieldtype": "Section Break",
+      "label": "Parts / Materials Consumed"
+    },
+    {
+      "fieldname": "parts",
+      "fieldtype": "Table",
+      "label": "Parts",
+      "options": "Repair Order Item"
+    },
+    {
+      "fieldname": "section_dates",
+      "fieldtype": "Section Break",
+      "label": "Dates"
+    },
+    {
+      "fieldname": "promised_date",
+      "fieldtype": "Date",
+      "label": "Promised Date"
+    },
+    {
+      "fieldname": "completed_date",
+      "fieldtype": "Datetime",
+      "label": "Completed Date"
+    },
+    {
+      "fieldname": "delivered_date",
+      "fieldtype": "Datetime",
+      "label": "Delivered Date"
+    },
+    {
+      "fieldname": "section_assign",
+      "fieldtype": "Section Break",
+      "label": "Assignment"
+    },
+    {
+      "fieldname": "assigned_to",
+      "fieldtype": "Link",
+      "label": "Assigned To",
+      "options": "User"
+    },
+    {
+      "fieldname": "work_notes",
+      "fieldtype": "Text",
+      "label": "Work Notes"
+    },
+    {
+      "default": "0",
+      "fieldname": "parts_stock_created",
+      "fieldtype": "Check",
+      "hidden": 1,
+      "label": "Parts Stock Created",
+      "read_only": 1
+    }
+  ],
+  "index_web_pages_for_search": 0,
+  "links": [],
+  "modified": "2026-02-09 00:00:00.000000",
+  "modified_by": "Administrator",
+  "module": "Unified Retail Management System",
+  "name": "Repair Order",
+  "naming_rule": "By \"Naming Series\" field",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 0,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Sales User",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "states": []
+}

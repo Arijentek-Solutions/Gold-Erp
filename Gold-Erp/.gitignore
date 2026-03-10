@@ -1,0 +1,38 @@
+# Python
+*.pyc
+*.egg-info
+*.swp
+__pycache__
+*.pyo
+*.egg
+dist/
+build/
+
+# Node
+node_modules/
+
+# OS
+.DS_Store
+Thumbs.db
+tags
+
+# IDE
+.vscode/
+.idea/
+*.code-workspace
+
+# Scraped data (regenerable, not source of truth)
+zevar_core/scripts/scraped_data/
+
+# Environment / secrets
+.env
+*.local
+
+# Frappe build artifacts
+zevar_core/public/dist/
+zevar_core/public/node_modules/
+frontend/zevar_ui/dist/
+frontend/zevar_ui/node_modules/
+
+# Semgrep rules (cloned at CI runtime by linter workflow)
+frappe-semgrep-rules/

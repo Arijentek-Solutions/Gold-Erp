@@ -1,0 +1,11 @@
+# Ignore compiled frontend assets
+public/pos/assets/*
+public/employee-portal/assets/*
+public/dist/*
+*.min.js
+node_modules/
+zevar_core/public/pos/assets/*
+zevar_core/public/employee-portal/assets/*
+zevar_core/public/dist/*
+frontend/zevar_ui/dist/*
+frontend/employee_portal/dist/*

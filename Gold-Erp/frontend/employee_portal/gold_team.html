@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Zevar - Team Directory</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "sapphire-dark": "#05101a",
+                        "sapphire-med": "#0a2336",
+                        "emerald-glow": "#10b981",
+                        "gold-accent": "#fbbf24",
+                        "ruby-glow": "#f87171",
+                        "diamond-white": "#e2e8f0",
+                        "glass-border": "rgba(255, 255, 255, 0.15)",
+                    },
+                    fontFamily: {
+                        "sans": ["Spline Sans", "sans-serif"],
+                        "serif": ["Playfair Display", "serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "1.5rem",
+                        "xl": "2.5rem",
+                        "2xl": "3rem",
+                    },
+                    boxShadow: {
+                        "glow-gold": "0 0 15px rgba(251, 191, 36, 0.2)",
+                        "glow-emerald": "0 0 10px rgba(16, 185, 129, 0.4)",
+                        "glow-ruby": "0 0 10px rgba(248, 113, 113, 0.4)",
+                        "glow-sapphire": "0 0 10px rgba(59, 130, 246, 0.4)",
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        body {
+            font-family: 'Spline Sans', sans-serif;
+            background-color: #05101a;
+            color: #e2e8f0;
+        }
+        .diamond-dust-bg {
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(251, 191, 36, 0.05) 0%, transparent 25%),
+                url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .glass-panel {
+            background: rgba(10, 35, 54, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        .sidebar-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.1), transparent);
+            border-left: 3px solid #fbbf24;
+        }
+        .sidebar-link:hover .material-symbols-outlined, 
+        .sidebar-link.active .material-symbols-outlined {
+            color: #fbbf24;
+            text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1); 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1); 
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="bg-sapphire-dark text-diamond-white overflow-hidden diamond-dust-bg">
+<div class="flex h-screen w-full overflow-hidden">
+<aside class="w-24 lg:w-72 flex flex-col border-r border-white/5 bg-sapphire-dark/80 backdrop-blur-xl z-20 transition-all duration-300">
+<div class="flex items-center gap-4 px-6 py-8 mb-6">
+<div class="relative size-10 shrink-0 flex items-center justify-center">
+<span class="material-symbols-outlined text-gold-accent text-4xl" style="font-variation-settings: 'FILL' 1;">diamond</span>
+<div class="absolute inset-0 bg-gold-accent/20 blur-xl rounded-full"></div>
+</div>
+<div class="hidden lg:block overflow-hidden">
+<h1 class="text-2xl font-serif font-bold tracking-tight text-white">Zevar</h1>
+</div>
+</div>
+<nav class="flex-1 flex flex-col gap-2 px-3">
+<a class="sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-white/60 hover:text-white" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium hidden lg:block">Dashboard</span>
+</a>
+<a class="sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-white/60 hover:text-white" href="#">
+<span class="material-symbols-outlined">schedule</span>
+<span class="font-medium hidden lg:block">Attendance</span>
+</a>
+<a class="sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-white/60 hover:text-white" href="#">
+<span class="material-symbols-outlined">flight_takeoff</span>
+<span class="font-medium hidden lg:block">Time Off</span>
+</a>
+<a class="sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-white/60 hover:text-white" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-medium hidden lg:block">Payroll</span>
+</a>
+<a class="sidebar-link active flex items-center gap-4 px-4 py-3.5 rounded-xl text-white hover:text-white" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-medium hidden lg:block">Team</span>
+</a>
+<a class="sidebar-link flex items-center gap-4 px-4 py-3.5 rounded-xl text-white/60 hover:text-white" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium hidden lg:block">Settings</span>
+</a>
+</nav>
+<div class="p-4 mt-auto">
+<div class="hidden lg:flex items-center gap-3 glass-panel p-3 rounded-xl cursor-pointer hover:bg-white/5 transition-colors border border-white/5">
+<div class="size-10 rounded-full bg-cover bg-center border-2 border-gold-accent/30" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnQJq8q1gAPlq-d17pt8MWUZvSZ-e3HtdAvxGssLOU8lP369oHj2hjrlSKn5zUOiEAwvP9W0P1XiABRXa5ntNhm7dqXwiT16MPKqAPxUZ3VNRyhbr-yj9fVvuw72k5PVeMYKtjqw2Zf9SCMVzoPcLmnoC58TZkv0DC2UenKxK1hYlyrNpI2X0GOLluWjgWcCgajvIfT1ImVoxHB_73JFVPYDPzZdFPOmHoVmqHP46qkc1k9XQCPoyTCfR7RYLkhmct1yAAN7Rn2dTG')"></div>
+<div class="overflow-hidden">
+<p class="text-sm font-semibold truncate text-white">Alex Rivera</p>
+<p class="text-xs text-white/40 truncate">Senior Jeweler</p>
+</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 flex flex-col relative overflow-hidden">
+<header class="flex flex-col md:flex-row md:items-center justify-between px-8 py-8 z-10 gap-6">
+<div class="flex flex-col">
+<h2 class="text-3xl font-serif text-white/90">Team Directory</h2>
+<p class="text-sm text-white/40">Managing 128 brilliant artisans &amp; staff</p>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gold-accent text-xl">search</span>
+<input class="bg-sapphire-med/50 border border-white/10 rounded-xl py-3 pl-11 pr-4 text-sm text-white placeholder:text-white/20 focus:ring-1 focus:ring-gold-accent/50 focus:border-gold-accent/50 w-full md:w-80 transition-all" placeholder="Search by name, role, or department..." type="text"/>
+</div>
+<button class="size-12 rounded-xl glass-panel flex items-center justify-center hover:bg-white/10 transition text-white/70">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+<button class="bg-gold-accent hover:bg-gold-accent/90 text-sapphire-dark px-6 py-3 rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+<span class="material-symbols-outlined text-lg">person_add</span>
+                    Add Member
+                </button>
+</div>
+</header>
+<div class="px-8 mb-8">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="glass-panel p-4 rounded-xl border-l-4 border-emerald-500">
+<p class="text-xs text-white/40 uppercase tracking-widest font-bold">Online Now</p>
+<p class="text-2xl font-bold text-white mt-1">94</p>
+</div>
+<div class="glass-panel p-4 rounded-xl border-l-4 border-blue-400">
+<p class="text-xs text-white/40 uppercase tracking-widest font-bold">In Meeting</p>
+<p class="text-2xl font-bold text-white mt-1">12</p>
+</div>
+<div class="glass-panel p-4 rounded-xl border-l-4 border-amber-400">
+<p class="text-xs text-white/40 uppercase tracking-widest font-bold">On Break</p>
+<p class="text-2xl font-bold text-white mt-1">8</p>
+</div>
+<div class="glass-panel p-4 rounded-xl border-l-4 border-white/20">
+<p class="text-xs text-white/40 uppercase tracking-widest font-bold">Offline</p>
+<p class="text-2xl font-bold text-white mt-1">14</p>
+</div>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-8 pb-10 custom-scrollbar">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+<div class="glass-panel p-6 rounded-2xl group hover:border-gold-accent/40 transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-4 right-4 flex items-center gap-1.5 bg-emerald-500/10 px-2 py-1 rounded-full">
+<span class="size-2 rounded-full bg-emerald-500 shadow-glow-emerald"></span>
+<span class="text-[10px] font-bold text-emerald-400 uppercase tracking-tight">Available</span>
+</div>
+<div class="relative mb-4 mt-2">
+<div class="size-24 rounded-full border-4 border-gold-accent/20 p-1 group-hover:border-gold-accent/40 transition-colors">
+<div class="w-full h-full rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDnQJq8q1gAPlq-d17pt8MWUZvSZ-e3HtdAvxGssLOU8lP369oHj2hjrlSKn5zUOiEAwvP9W0P1XiABRXa5ntNhm7dqXwiT16MPKqAPxUZ3VNRyhbr-yj9fVvuw72k5PVeMYKtjqw2Zf9SCMVzoPcLmnoC58TZkv0DC2UenKxK1hYlyrNpI2X0GOLluWjgWcCgajvIfT1ImVoxHB_73JFVPYDPzZdFPOmHoVmqHP46qkc1k9XQCPoyTCfR7RYLkhmct1yAAN7Rn2dTG')"></div>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white">Alex Rivera</h3>
+<p class="text-sm text-gold-accent/80 font-medium mb-4">Senior Gemologist</p>
+<div class="w-full h-px bg-white/5 mb-4"></div>
+<div class="grid grid-cols-2 w-full gap-2">
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Department</p>
+<p class="text-xs text-white/70">Appraisal</p>
+</div>
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Join Date</p>
+<p class="text-xs text-white/70">Jan 2022</p>
+</div>
+</div>
+<div class="mt-6 flex gap-2 w-full">
+<button class="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold transition">Profile</button>
+<button class="size-9 rounded-lg bg-sapphire-med flex items-center justify-center text-gold-accent hover:bg-gold-accent hover:text-sapphire-dark transition">
+<span class="material-symbols-outlined text-lg">mail</span>
+</button>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-2xl group hover:border-gold-accent/40 transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-4 right-4 flex items-center gap-1.5 bg-blue-500/10 px-2 py-1 rounded-full">
+<span class="size-2 rounded-full bg-blue-400 shadow-glow-sapphire"></span>
+<span class="text-[10px] font-bold text-blue-400 uppercase tracking-tight">In Meeting</span>
+</div>
+<div class="relative mb-4 mt-2">
+<div class="size-24 rounded-full border-4 border-gold-accent/20 p-1 group-hover:border-gold-accent/40 transition-colors">
+<div class="w-full h-full rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDid9V-fbYLA_831Gr3L2z1sxOJyMsCTPm9joY8KH4wTB8ZUYilE6qTiA8SaZdPu2FcdDsFBkH71Xw3yb0KIpj6u7VW8wx6fpTCT4H-ZsFWgJg6ubqaYsvSbKVKHMoaUW5oY4LQzWNdxJAijwAfGFnhoUs7o8IUK-OnyoMg3-NKAJU-NuD4bXGFXr97d0HE7Puhlink686C5rF8UksGmogOCwJqzkrweZtmGOmMW1qZTaN3zitNZl-u8AG5Zf1VDy9CCQOxKgM_yhn_')"></div>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white">Elena Thorne</h3>
+<p class="text-sm text-gold-accent/80 font-medium mb-4">Master Craftsman</p>
+<div class="w-full h-px bg-white/5 mb-4"></div>
+<div class="grid grid-cols-2 w-full gap-2">
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Department</p>
+<p class="text-xs text-white/70">Production</p>
+</div>
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Join Date</p>
+<p class="text-xs text-white/70">Mar 2021</p>
+</div>
+</div>
+<div class="mt-6 flex gap-2 w-full">
+<button class="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold transition">Profile</button>
+<button class="size-9 rounded-lg bg-sapphire-med flex items-center justify-center text-gold-accent hover:bg-gold-accent hover:text-sapphire-dark transition">
+<span class="material-symbols-outlined text-lg">mail</span>
+</button>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-2xl group hover:border-gold-accent/40 transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-4 right-4 flex items-center gap-1.5 bg-white/10 px-2 py-1 rounded-full">
+<span class="size-2 rounded-full bg-white/40"></span>
+<span class="text-[10px] font-bold text-white/40 uppercase tracking-tight">Clocked Out</span>
+</div>
+<div class="relative mb-4 mt-2">
+<div class="size-24 rounded-full border-4 border-gold-accent/20 p-1 group-hover:border-gold-accent/40 transition-colors">
+<div class="w-full h-full rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDehVwKddD8PcN25MnCUOKkuZgfuWsoXZbTXzO47i76t0XMryVQErJwSAsNKCit2YNfkN09LMkEA5pnDhu1yvKTnvlljEhqqpBk2GnMObggeC0MYkCNDIKiX2o4Si9lxvzVN20gqAmFoxehox1K80Nnnd01fS5TZ-WfGc5N8ycbljetcz5H9Z-AxcRPx0U2dZw5txz0U3reXA9bt2WYgXxXRH6Cf5vZA7Ftba0PO1wfw_CDyKk-fkktf6S4SjT0so7lPrTjGxRi50Ht')"></div>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white">Marcus Sterling</h3>
+<p class="text-sm text-gold-accent/80 font-medium mb-4">VDC Designer</p>
+<div class="w-full h-px bg-white/5 mb-4"></div>
+<div class="grid grid-cols-2 w-full gap-2">
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Department</p>
+<p class="text-xs text-white/70">Creative</p>
+</div>
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Join Date</p>
+<p class="text-xs text-white/70">May 2023</p>
+</div>
+</div>
+<div class="mt-6 flex gap-2 w-full">
+<button class="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold transition">Profile</button>
+<button class="size-9 rounded-lg bg-sapphire-med flex items-center justify-center text-gold-accent hover:bg-gold-accent hover:text-sapphire-dark transition">
+<span class="material-symbols-outlined text-lg">mail</span>
+</button>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-2xl group hover:border-gold-accent/40 transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-4 right-4 flex items-center gap-1.5 bg-emerald-500/10 px-2 py-1 rounded-full">
+<span class="size-2 rounded-full bg-emerald-500 shadow-glow-emerald"></span>
+<span class="text-[10px] font-bold text-emerald-400 uppercase tracking-tight">Available</span>
+</div>
+<div class="relative mb-4 mt-2">
+<div class="size-24 rounded-full border-4 border-gold-accent/20 p-1 group-hover:border-gold-accent/40 transition-colors">
+<div class="w-full h-full rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB-osjf8VvDmm4HcgrrWTEDxfPBCEddJbjd2h-5Af4LWsrJXT7umm3OHSFGQ6hxBEUj3nPh0hul3FBu8pRyFQ7kCLNGCWauzYtsojuh3hi3u3PyTERUyRvVL9HbfTW-tmwmS9ewx0CwIWaWtYVpBSv8qTnqXa7N8b0xHSchguSW3V8FkW6pAiKuEHQXVUDbhHSKO1QmJCt0bFrtm30sGA5v83EKgjAMAhaoGmMkciShg98PGodEMUHHlVwx85Ki8kapsu2ezOnZXCl8')"></div>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white">Sarah Jenkins</h3>
+<p class="text-sm text-gold-accent/80 font-medium mb-4">Marketing Lead</p>
+<div class="w-full h-px bg-white/5 mb-4"></div>
+<div class="grid grid-cols-2 w-full gap-2">
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Department</p>
+<p class="text-xs text-white/70">Sales</p>
+</div>
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Join Date</p>
+<p class="text-xs text-white/70">Aug 2022</p>
+</div>
+</div>
+<div class="mt-6 flex gap-2 w-full">
+<button class="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold transition">Profile</button>
+<button class="size-9 rounded-lg bg-sapphire-med flex items-center justify-center text-gold-accent hover:bg-gold-accent hover:text-sapphire-dark transition">
+<span class="material-symbols-outlined text-lg">mail</span>
+</button>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-2xl group hover:border-gold-accent/40 transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-4 right-4 flex items-center gap-1.5 bg-amber-500/10 px-2 py-1 rounded-full">
+<span class="size-2 rounded-full bg-amber-400"></span>
+<span class="text-[10px] font-bold text-amber-400 uppercase tracking-tight">On Break</span>
+</div>
+<div class="relative mb-4 mt-2">
+<div class="size-24 rounded-full border-4 border-gold-accent/20 p-1 group-hover:border-gold-accent/40 transition-colors">
+<div class="w-full h-full rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCcqe3OqAqBxLWqzMKE89KnyAqQnbJ8h_dKJ5ZXL7BdzXcQva0YCIKTlDH3DGCPEl9IK8xKvqePP_418rjvkq1eLpLcc2mpWK5qntrZafHWdBx-_aqMhRa_pp38BCNaG0FraPs6S6CdFnRPBajdGMiL7FUzCZwjjugQoTyZ_AT-S20BNFaRsq3F9wQG_v6-iTCDrkAPice__803ftkorskGgB4_scY0FNpCCalpa9Yw7z4e5RLaDwI1AyPI-bEmrAYQ5nJ9mid8mzw3')"></div>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white">David Chen</h3>
+<p class="text-sm text-gold-accent/80 font-medium mb-4">Supply Specialist</p>
+<div class="w-full h-px bg-white/5 mb-4"></div>
+<div class="grid grid-cols-2 w-full gap-2">
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Department</p>
+<p class="text-xs text-white/70">Logistics</p>
+</div>
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Join Date</p>
+<p class="text-xs text-white/70">Oct 2021</p>
+</div>
+</div>
+<div class="mt-6 flex gap-2 w-full">
+<button class="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold transition">Profile</button>
+<button class="size-9 rounded-lg bg-sapphire-med flex items-center justify-center text-gold-accent hover:bg-gold-accent hover:text-sapphire-dark transition">
+<span class="material-symbols-outlined text-lg">mail</span>
+</button>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-2xl group hover:border-gold-accent/40 transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-4 right-4 flex items-center gap-1.5 bg-emerald-500/10 px-2 py-1 rounded-full">
+<span class="size-2 rounded-full bg-emerald-500 shadow-glow-emerald"></span>
+<span class="text-[10px] font-bold text-emerald-400 uppercase tracking-tight">Available</span>
+</div>
+<div class="relative mb-4 mt-2">
+<div class="size-24 rounded-full border-4 border-gold-accent/20 p-1 group-hover:border-gold-accent/40 transition-colors">
+<div class="w-full h-full rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDlvVvFKcj4c-Ay3lx03Fw44iOHmxu6nbcGhHzzAOWYr433YrSN5bnohnTrtXsRJ4dLqG6Suyctsp-X3YGMnpW9yOOlpIExT1aspRullBmK0ldm8VVOLkOsLdSnOy9fQD7JrE3VF5D2AT-LVR89jwLhbBhh2dauFBnfE_xSybLBavqm0jQqCoDkxq-iTtyg9dSrfvnLVwtDAOjMxLkIoxz9AkBng7FanaOYwm30ZRix5fSBBf-tjckySMzTs7s1mWQ5IopRAwl1lbZ8')"></div>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white">Leila Farrah</h3>
+<p class="text-sm text-gold-accent/80 font-medium mb-4">Head of Design</p>
+<div class="w-full h-px bg-white/5 mb-4"></div>
+<div class="grid grid-cols-2 w-full gap-2">
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Department</p>
+<p class="text-xs text-white/70">Creative</p>
+</div>
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Join Date</p>
+<p class="text-xs text-white/70">Nov 2019</p>
+</div>
+</div>
+<div class="mt-6 flex gap-2 w-full">
+<button class="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold transition">Profile</button>
+<button class="size-9 rounded-lg bg-sapphire-med flex items-center justify-center text-gold-accent hover:bg-gold-accent hover:text-sapphire-dark transition">
+<span class="material-symbols-outlined text-lg">mail</span>
+</button>
+</div>
+</div>
+<div class="glass-panel p-6 rounded-2xl group hover:border-gold-accent/40 transition-all duration-300 flex flex-col items-center text-center relative overflow-hidden">
+<div class="absolute top-4 right-4 flex items-center gap-1.5 bg-emerald-500/10 px-2 py-1 rounded-full">
+<span class="size-2 rounded-full bg-emerald-500 shadow-glow-emerald"></span>
+<span class="text-[10px] font-bold text-emerald-400 uppercase tracking-tight">Available</span>
+</div>
+<div class="relative mb-4 mt-2">
+<div class="size-24 rounded-full border-4 border-gold-accent/20 p-1 group-hover:border-gold-accent/40 transition-colors">
+<div class="w-full h-full rounded-full bg-cover bg-center" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDvQcj2wjfkUMHO_DyzjppAHfTnu9m1JMt6ERLloyYrQl74uzlvqTWCCa8Tc5xS6wN_IAVIdk6sYZq6UGhEd9I-4wP9WMSrObMWYMd3KwhUvVHrM80ctb6QBVnYcwY2D-8Qu2Axk4PFbazJ396ckAluJDqBCoqgZZdH4rOqpV3iEKzJd-lObHL_cvzSlbtcaI1bQIyvka9jRkpUgAQuvFddPe1LNucW0NZpQ-bV6757unDkyhTxlaY-sxhKwgLFwQL3--NfHgXIkMDZ')"></div>
+</div>
+</div>
+<h3 class="text-lg font-bold text-white">Oliver Quinn</h3>
+<p class="text-sm text-gold-accent/80 font-medium mb-4">Vault Manager</p>
+<div class="w-full h-px bg-white/5 mb-4"></div>
+<div class="grid grid-cols-2 w-full gap-2">
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Department</p>
+<p class="text-xs text-white/70">Security</p>
+</div>
+<div class="text-left">
+<p class="text-[10px] text-white/30 uppercase font-bold">Join Date</p>
+<p class="text-xs text-white/70">Dec 2020</p>
+</div>
+</div>
+<div class="mt-6 flex gap-2 w-full">
+<button class="flex-1 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-semibold transition">Profile</button>
+<button class="size-9 rounded-lg bg-sapphire-med flex items-center justify-center text-gold-accent hover:bg-gold-accent hover:text-sapphire-dark transition">
+<span class="material-symbols-outlined text-lg">mail</span>
+</button>
+</div>
+</div>
+<div class="border-2 border-dashed border-white/10 p-6 rounded-2xl flex flex-col items-center justify-center text-center group hover:border-gold-accent/30 transition-all cursor-pointer">
+<div class="size-16 rounded-full bg-white/5 flex items-center justify-center mb-4 group-hover:bg-gold-accent/10 transition">
+<span class="material-symbols-outlined text-3xl text-white/20 group-hover:text-gold-accent transition">person_add</span>
+</div>
+<h3 class="text-white/60 font-semibold">Invite Team Member</h3>
+<p class="text-xs text-white/30 mt-1">Send a magic link to join Zevar</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+
+</body></html>

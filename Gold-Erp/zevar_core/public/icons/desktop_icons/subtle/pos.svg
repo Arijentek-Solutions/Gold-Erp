@@ -1,0 +1,21 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Subtle background -->
+<rect width="48" height="48" rx="8" fill="#1a1a22"/>
+<!-- Faded diamond -->
+<path d="M24 6L28 10L24 14L20 10Z" fill="#D4AF37" fill-opacity="0.15"/>
+<!-- POS terminal -->
+<rect x="12" y="16" width="24" height="16" rx="2" fill="#D4AF37" fill-opacity="0.6"/>
+<rect x="14" y="18" width="20" height="8" rx="1" fill="#1a1a22"/>
+<text x="24" y="24.5" text-anchor="middle" font-family="serif" font-size="6" fill="#D4AF37" fill-opacity="0.6" font-weight="bold">₹</text>
+<!-- Keypad -->
+<circle cx="17" cy="29" r="1" fill="#1a1a22"/>
+<circle cx="21" cy="29" r="1" fill="#1a1a22"/>
+<circle cx="25" cy="29" r="1" fill="#1a1a22"/>
+<circle cx="29" cy="29" r="1" fill="#1a1a22"/>
+<circle cx="33" cy="29" r="1" fill="#1a1a22"/>
+<!-- Receipt -->
+<rect x="19" y="32" width="10" height="8" rx="1" fill="#f5f5f0" fill-opacity="0.5"/>
+<line x1="21" y1="34.5" x2="27" y2="34.5" stroke="#D4AF37" stroke-width="0.6" stroke-opacity="0.3"/>
+<line x1="21" y1="36.5" x2="25" y2="36.5" stroke="#D4AF37" stroke-width="0.6" stroke-opacity="0.3"/>
+<line x1="21" y1="38.5" x2="27" y2="38.5" stroke="#D4AF37" stroke-width="0.6" stroke-opacity="0.15"/>
+</svg>
