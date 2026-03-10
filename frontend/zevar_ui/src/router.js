@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+import POSOpening from './pages/POSOpening.vue'
+import POSClosing from './pages/POSClosing.vue'
+import SalesHistory from './pages/SalesHistory.vue'
+
 const routes = [
 	{
 		path: '/login',
@@ -31,6 +35,24 @@ const routes = [
 		component: () => import('./pages/RepairTerminal.vue'),
 		meta: { requiresAuth: true },
 	},
+	{
+		path: '/pos-opening',
+		name: 'POSOpening',
+		component: () => import('./pages/POSOpening.vue'),
+		meta: { requiresAuth: true },
+	},
+	{
+		path: '/pos-closing',
+		name: 'POSClosing',
+		component: () => import('./pages/POSClosing.vue'),
+		meta: { requiresAuth: true },
+	},
+	{
+		path: '/sales-history',
+		name: 'SalesHistory',
+		component: () => import('./pages/SalesHistory.vue'),
+		meta: { requiresAuth: true },
+	},
 	// Catch-all → POS
 	{
 		path: '/:pathMatch(.*)*',
@@ -43,7 +65,7 @@ const router = createRouter({
 	routes,
 })
 
-// Auth guard — redirect unauthenticated users to login
+// Auth guard - redirect unauthenticated users to login
 router.beforeEach(async (to, _from, next) => {
 	// Skip guard for guest routes
 	if (to.meta.guest) {
