@@ -2,7 +2,7 @@ app_name = "zevar_core"
 app_title = "Unified Retail Management System"
 app_publisher = "Zevar"
 app_description = "A centralized solution for POS operations, real-time inventory management, dynamic pricing, and CRM for Zevar Jewelery."
-app_email = "akshay@zevar.com"
+app_email = "akshay@arijentek.com"
 app_license = "mit"
 app_logo_url = "/assets/zevar_core/images/pos_logo.svg"
 splash_image = "/assets/zevar_core/images/pos_logo.svg"
@@ -13,6 +13,12 @@ add_to_apps_screen = [
 		"logo": "/assets/zevar_core/images/pos_logo.svg",
 		"title": "Zevar POS",
 		"route": "/pos",
+	},
+	{
+		"name": "zevar_catalogues",
+		"logo": "/assets/zevar_core/images/pos_logo.svg",
+		"title": "Zevar Catalogues",
+		"route": "/pos/catalogues",
 	}
 ]
 
@@ -27,9 +33,10 @@ jinja = {"methods": ["zevar_core.utils.assets.get_frontend_asset"]}
 website_route_rules = [
 	{"from_route": "/employee-portal/<path:app_path>", "to_route": "employee-portal"},
 	{"from_route": "/pos/<path:app_path>", "to_route": "pos"},
+	{"from_route": "/catalogues/<path:app_path>", "to_route": "catalogues"},
 ]
 
-# Fixtures (disabled in CI via ci.yml — require ERPNext DocTypes)
+# Fixtures
 fixtures = ["Item Attribute", "Custom Field", "Property Setter"]
 
 # Document Events

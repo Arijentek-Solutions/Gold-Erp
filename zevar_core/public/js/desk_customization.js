@@ -5,6 +5,8 @@ const update_icons = () => {
 		POS: "/assets/zevar_core/images/pos_logo.svg",
 		"Employee Portal": "/assets/zevar_core/images/employee_portal_logo.svg",
 		"Zevar POS": "/assets/zevar_core/images/pos_logo.svg",
+		"Zevar Catalogues": "/assets/zevar_core/images/pos_logo.svg",
+		"Catalogues": "/assets/zevar_core/images/pos_logo.svg",
 	};
 
 	// Strategy 1: Modify in-memory data
@@ -31,6 +33,9 @@ const update_icons = () => {
 				let iconUrl = overrides[cleanTitle];
 				if (!iconUrl && cleanTitle.startsWith("Employee P")) {
 					iconUrl = overrides["Employee Portal"];
+				}
+				if (!iconUrl && cleanTitle.startsWith("Zevar Cat")) {
+					iconUrl = overrides["Zevar Catalogues"];
 				}
 
 				if (iconUrl) {
