@@ -1,7 +1,7 @@
 <template>
-	<div class="h-full">
-		<!-- Mobile Layout (sm and below) -->
-		<div class="sm:hidden h-full overflow-y-auto custom-scrollbar p-3 space-y-3">
+	<div class="h-full overflow-hidden">
+		<!-- Mobile Layout (md and below) -->
+		<div class="md:hidden h-full overflow-y-auto custom-scrollbar p-3 flex flex-col gap-3">
 			<!-- Mobile Clock Section -->
 			<div class="glass-card rounded-2xl p-4 border border-white/5">
 				<div class="flex flex-col items-center py-4">
@@ -27,27 +27,37 @@
 						<button
 							@click="handleClockIn"
 							:disabled="attendance.isCheckedIn || attendance.loading"
-							class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-all"
+							class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
 							:class="[
 								!attendance.isCheckedIn
 									? 'bg-primary text-black hover:bg-yellow-400'
 									: 'bg-white/5 text-white/20 cursor-not-allowed',
 							]"
 						>
-							<span v-if="attendance.loading" class="animate-spin text-sm">rotate_right</span>
+							<span v-if="attendance.loading" class="text-sm">...</span>
 							<span v-else>Clock In</span>
+						</button>
+						<button
+							v-if="attendance.isCheckedIn"
+							@click="handleBreak"
+							:disabled="attendance.loading"
+							class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
+							:class="isOnBreak ? 'bg-primary text-black' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10'"
+						>
+							<span v-if="attendance.loading" class="text-sm">...</span>
+							<span v-else>{{ isOnBreak ? 'End Break' : 'Start Break' }}</span>
 						</button>
 						<button
 							@click="handleClockOut"
 							:disabled="!attendance.isCheckedIn || attendance.loading"
-							class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-all"
+							class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
 							:class="[
 								attendance.isCheckedIn
-									? 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10'
+									? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30'
 									: 'bg-white/5 text-white/20 cursor-not-allowed',
 							]"
 						>
-							<span v-if="attendance.loading" class="animate-spin text-sm">rotate_right</span>
+							<span v-if="attendance.loading" class="text-sm">...</span>
 							<span v-else>Clock Out</span>
 						</button>
 					</div>
@@ -160,11 +170,11 @@
 			</div>
 		</div>
 
-		<!-- Tablet Layout (sm to lg) -->
-		<div class="hidden sm:block lg:hidden h-full overflow-y-auto custom-scrollbar p-4">
-			<div class="grid grid-cols-2 gap-4 h-full">
-				<!-- Left Column -->
-				<div class="space-y-4 overflow-y-auto custom-scrollbar pr-2">
+		<!-- Tablet Layout (md to xl) -->
+		<div class="hidden md:block xl:hidden h-full overflow-y-auto custom-scrollbar p-4">
+			<div class="grid grid-cols-2 gap-4 h-full auto-rows-min">
+				<!-- Timer spans 2 columns -->
+				<div class="col-span-2">
 					<!-- Clock Section -->
 					<div class="glass-card rounded-2xl p-6 border border-white/5">
 						<div class="flex flex-col items-center py-2">
@@ -184,27 +194,37 @@
 								<button
 									@click="handleClockIn"
 									:disabled="attendance.isCheckedIn || attendance.loading"
-									class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-all"
+									class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
 									:class="[
 										!attendance.isCheckedIn
 											? 'bg-primary text-black hover:bg-yellow-400 shadow-[0_0_20px_rgba(252,211,77,0.2)]'
 											: 'bg-white/5 text-white/20 cursor-not-allowed',
 									]"
 								>
-									<span v-if="attendance.loading" class="animate-spin text-sm">rotate_right</span>
+									<span v-if="attendance.loading" class="text-sm">...</span>
 									<span v-else>Clock In</span>
+								</button>
+								<button
+									v-if="attendance.isCheckedIn"
+									@click="handleBreak"
+									:disabled="attendance.loading"
+									class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
+									:class="isOnBreak ? 'bg-primary text-black' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10'"
+								>
+									<span v-if="attendance.loading" class="text-sm">...</span>
+									<span v-else>{{ isOnBreak ? 'End Break' : 'Start Break' }}</span>
 								</button>
 								<button
 									@click="handleClockOut"
 									:disabled="!attendance.isCheckedIn || attendance.loading"
-									class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-all"
+									class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
 									:class="[
 										attendance.isCheckedIn
-											? 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10'
+											? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.15)]'
 											: 'bg-white/5 text-white/20 cursor-not-allowed',
 									]"
 								>
-									<span v-if="attendance.loading" class="animate-spin text-sm">rotate_right</span>
+									<span v-if="attendance.loading" class="text-sm">...</span>
 									<span v-else>Clock Out</span>
 								</button>
 							</div>
@@ -253,20 +273,233 @@
 					</div>
 				</div>
 
-				<!-- Right Column -->
-				<div class="space-y-4 overflow-y-auto custom-scrollbar pl-2">
+				<!-- Activity & Tasks Row (2 columns) -->
+				<div class="glass-card rounded-2xl p-5 border border-white/5">
+					<div class="flex items-center justify-between mb-4">
+						<h3 class="font-bold text-base text-white">Priority Tasks</h3>
+						<button
+							@click="showAddTodo = true"
+							class="w-8 h-8 rounded-lg bg-primary text-black flex items-center justify-center"
+						>
+							<span class="material-symbols-outlined text-base font-bold">add</span>
+						</button>
+					</div>
+					<div class="space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar pr-1">
+						<div v-if="sortedOpenTodos.length === 0" class="text-center py-6">
+							<p class="text-xs text-white/30">No tasks remaining</p>
+						</div>
+						<div
+							v-for="todo in sortedOpenTodos"
+							:key="todo.id"
+							@click="toggleTodo(todo.id, todo.status)"
+							class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 cursor-pointer hover:bg-white/[0.05] transition-colors"
+						>
+							<div class="w-4 h-4 rounded border border-white/20"></div>
+							<div class="flex-1 min-w-0">
+								<p class="text-xs text-white truncate">{{ todo.description }}</p>
+							</div>
+							<span
+								class="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded"
+								:class="{
+									'bg-red-500/15 text-red-400': todo.priority === 'High',
+									'bg-amber-500/15 text-amber-400': todo.priority === 'Medium',
+									'bg-blue-500/15 text-blue-400': todo.priority === 'Low'
+								}"
+							>{{ todo.priority }}</span>
+						</div>
+					</div>
+				</div>
+
+				<!-- Activity -->
+				<div class="glass-card rounded-2xl p-5 border border-white/5">
+					<h3 class="font-bold text-base text-white mb-4">Activity Stream</h3>
+					<div class="space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar pr-1">
+						<div v-if="recentActivity.length === 0" class="text-center py-6">
+							<p class="text-xs text-white/30">No recent activity</p>
+						</div>
+						<div
+							v-for="log in recentActivity"
+							:key="log.name"
+							class="flex items-center gap-3 p-2 rounded-lg bg-white/[0.02]"
+						>
+							<div class="w-8 h-8 rounded-full flex items-center justify-center"
+								:class="getLogStyle(log.log_type).bg">
+								<span class="material-symbols-outlined text-sm"
+									:class="getLogStyle(log.log_type).text">
+									{{ getLogStyle(log.log_type).icon }}
+								</span>
+							</div>
+							<div class="flex-1 min-w-0">
+								<p class="text-[10px] font-bold text-white">{{ getLogStyle(log.log_type).label }}</p>
+								<p class="text-[9px] text-white/40">{{ formatDateTime(log.time) }}</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Desktop Layout (xl and above) - CSS Grid -->
+		<div class="hidden xl:block h-full overflow-y-auto custom-scrollbar p-4">
+			<div class="grid grid-cols-12 gap-6 h-full auto-rows-min max-w-[1600px] mx-auto">
+				<!-- Left Column: Timer & Bottom Widgets (col-span-8) -->
+				<div class="col-span-8 flex flex-col gap-6">
+					<!-- Timer Section -->
+					<div class="glass-card rounded-[2.5rem] border border-white/5 relative bg-gradient-to-b from-white/5 to-transparent overflow-hidden">
+						<!-- Background decorative elements -->
+						<div class="absolute top-0 left-0 w-full h-full diamond-pattern opacity-10 pointer-events-none rounded-[2.5rem] overflow-hidden"></div>
+						<div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(252,211,77,0.05)_0%,_transparent_50%)] pointer-events-none rounded-[2.5rem]"></div>
+						<div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none rounded-[2.5rem]"></div>
+
+						<div class="relative z-10 flex flex-col items-center justify-center py-8">
+							<!-- Outer Bezel -->
+							<div class="w-[340px] h-[340px] xl:w-[380px] xl:h-[380px] rounded-full metallic-bezel border-[4px] border-[#222] flex items-center justify-center relative p-1 shadow-[0_0_80px_rgba(0,0,0,0.6)]">
+								<!-- Glowing Border Ring -->
+								<div class="absolute inset-0 rounded-full border border-primary/10 shadow-[0_0_40px_rgba(252,211,77,0.05)]"></div>
+								<!-- Inner Bezel Detail -->
+								<div class="w-full h-full rounded-full border-[10px] border-[#0a0c1a] shadow-inner flex items-center justify-center relative bg-[#05070a]">
+									<!-- Digital Face -->
+									<div class="w-full h-full rounded-full flex flex-col items-center justify-center relative overflow-hidden bg-[radial-gradient(circle_at_center,_#121520_0%,_#05070a_70%)]">
+										<div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 24px 24px;"></div>
+										<div class="absolute top-[22%] text-[9px] text-white/20 tracking-[0.5em] font-bold uppercase font-display">{{ shiftLabel }}</div>
+										<!-- Huge Timer -->
+										<div class="text-[3.5rem] xl:text-[4.5rem] leading-none font-mono font-bold tracking-tighter mt-2 transition-colors duration-500 z-10 drop-shadow-2xl tabular-nums" :class="getTimerColor">
+											{{ displayTime }}
+										</div>
+										<!-- Active Indicators -->
+										<div class="absolute bottom-[22%] flex gap-2.5" v-if="attendance.isCheckedIn">
+											<span class="w-2 h-2 rounded-full shadow-[0_0_10px_currentColor] bg-primary"></span>
+											<span class="w-2 h-2 rounded-full opacity-20 bg-primary"></span>
+											<span class="w-2 h-2 rounded-full opacity-10 bg-primary"></span>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<!-- Buttons -->
+							<div class="pb-6 pt-8 flex gap-4 w-full max-w-sm z-10 px-4">
+								<button
+									@click="handleClockIn"
+									:disabled="attendance.isCheckedIn || attendance.loading"
+									class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-colors relative font-bold tracking-widest text-xs uppercase"
+									:class="[
+										!attendance.isCheckedIn
+											? 'bg-primary text-black hover:bg-yellow-400 shadow-[0_0_30px_rgba(252,211,77,0.2)]'
+											: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
+									]"
+								>
+									<span v-if="attendance.loading" class="text-sm">...</span>
+									<span v-else>Clock In</span>
+								</button>
+								<button
+									v-if="attendance.isCheckedIn"
+									@click="handleBreak"
+									:disabled="attendance.loading"
+									class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-colors relative font-bold tracking-widest text-xs uppercase"
+									:class="isOnBreak ? 'bg-primary text-black' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 shadow-lg'"
+								>
+									<span v-if="attendance.loading" class="text-sm">...</span>
+									<span v-else>{{ isOnBreak ? 'End Break' : 'Start Break' }}</span>
+								</button>
+								<button
+									@click="handleClockOut"
+									:disabled="!attendance.isCheckedIn || attendance.loading"
+									class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-colors relative font-bold tracking-widest text-xs uppercase"
+									:class="[
+										attendance.isCheckedIn
+											? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.15)]'
+											: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
+									]"
+								>
+									<span v-if="attendance.loading" class="text-sm">...</span>
+									<span v-else>Clock Out</span>
+								</button>
+							</div>
+						</div>
+					</div>
+
+					<!-- Bottom Row: Profile, Manager, Payroll (grid-cols-3) -->
+					<div class="grid grid-cols-3 gap-4">
+						<!-- Profile -->
+						<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors">
+							<div class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
+								<span class="material-symbols-outlined text-5xl">badge</span>
+							</div>
+							<div>
+								<p class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2">My Profile</p>
+								<div class="flex items-center gap-3 mt-1">
+									<div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary/80 to-amber-600 flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-primary/10 shrink-0">
+										{{ userInitials }}
+									</div>
+									<div class="min-w-0">
+										<p class="text-xs font-bold text-white leading-tight truncate">{{ employeeName }}</p>
+										<p class="text-[9px] text-primary mt-1 truncate">{{ employeeDesignation }}</p>
+									</div>
+								</div>
+							</div>
+							<button class="mt-3 py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold text-white/70 border border-white/5 flex items-center gap-2 w-full justify-center transition-all">
+								<span class="material-symbols-outlined text-[14px]">account_box</span>
+								Employee Settings
+							</button>
+						</div>
+
+						<!-- Reporting Manager -->
+						<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors">
+							<div class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
+								<span class="material-symbols-outlined text-5xl">supervisor_account</span>
+							</div>
+							<div>
+								<p class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2">Direct Manager</p>
+								<div class="flex items-center gap-3 mt-1">
+									<div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold text-xs ring-1 ring-blue-500/20 shrink-0 uppercase">
+										{{ managerInitials }}
+									</div>
+									<div class="min-w-0">
+										<p class="text-xs font-bold text-white truncate">{{ managerName }}</p>
+										<p class="text-[9px] text-white/40 truncate mt-1">Supervisory Role</p>
+									</div>
+								</div>
+							</div>
+							<button class="mt-3 py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold text-white/50 border border-white/5 transition-all w-full">
+								View Management
+							</button>
+						</div>
+
+						<!-- Payslip -->
+						<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors">
+							<div class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
+								<span class="material-symbols-outlined text-5xl">payments</span>
+							</div>
+							<div>
+								<p class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2">My Payroll</p>
+								<p class="text-sm font-bold text-white truncate">{{ payslipMonth }}</p>
+								<div v-if="payslipStatus" class="flex items-center gap-1.5 mt-2">
+									<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+									<span class="text-[9px] text-emerald-400/80 font-bold uppercase tracking-wider">{{ payslipStatus }}</span>
+								</div>
+								<p v-else class="text-[9px] text-white/30 mt-2 italic">Processing...</p>
+							</div>
+							<router-link to="/payroll" class="block mt-3 shrink-0">
+								<button class="w-full py-2 px-3 bg-primary/5 hover:bg-primary/10 rounded-lg text-[9px] font-bold text-primary/80 border border-primary/10 flex items-center justify-center gap-2 transition-all">
+									<span class="material-symbols-outlined text-[14px]">receipt_long</span>
+									Salary History
+								</button>
+							</router-link>
+						</div>
+					</div>
+				</div>
+
+				<!-- Right Column: Activity & Tasks (col-span-4) -->
+				<div class="col-span-4 flex flex-col gap-6">
 					<!-- Tasks -->
-					<div class="glass-card rounded-2xl p-5 border border-white/5 flex-1">
+					<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex-1">
 						<div class="flex items-center justify-between mb-4">
 							<h3 class="font-bold text-base text-white">Priority Tasks</h3>
-							<button
-								@click="showAddTodo = true"
-								class="w-8 h-8 rounded-lg bg-primary text-black flex items-center justify-center"
-							>
+							<button @click="showAddTodo = true" class="w-8 h-8 rounded-lg bg-primary text-black flex items-center justify-center">
 								<span class="material-symbols-outlined text-base font-bold">add</span>
 							</button>
 						</div>
-						<div class="space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar pr-1">
+						<div class="space-y-2 max-h-[250px] overflow-y-auto custom-scrollbar pr-1">
 							<div v-if="sortedOpenTodos.length === 0" class="text-center py-6">
 								<p class="text-xs text-white/30">No tasks remaining</p>
 							</div>
@@ -292,10 +525,10 @@
 						</div>
 					</div>
 
-					<!-- Activity -->
-					<div class="glass-card rounded-2xl p-5 border border-white/5 flex-1">
+					<!-- Activity Stream -->
+					<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex-1">
 						<h3 class="font-bold text-base text-white mb-4">Activity Stream</h3>
-						<div class="space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar pr-1">
+						<div class="space-y-2 max-h-[250px] overflow-y-auto custom-scrollbar pr-1">
 							<div v-if="recentActivity.length === 0" class="text-center py-6">
 								<p class="text-xs text-white/30">No recent activity</p>
 							</div>
@@ -304,10 +537,8 @@
 								:key="log.name"
 								class="flex items-center gap-3 p-2 rounded-lg bg-white/[0.02]"
 							>
-								<div class="w-8 h-8 rounded-full flex items-center justify-center"
-									:class="getLogStyle(log.log_type).bg">
-									<span class="material-symbols-outlined text-sm"
-										:class="getLogStyle(log.log_type).text">
+								<div class="w-8 h-8 rounded-full flex items-center justify-center" :class="getLogStyle(log.log_type).bg">
+									<span class="material-symbols-outlined text-sm" :class="getLogStyle(log.log_type).text">
 										{{ getLogStyle(log.log_type).icon }}
 									</span>
 								</div>
@@ -322,8 +553,8 @@
 			</div>
 		</div>
 
-		<!-- Desktop Layout (lg and above) - Original Splitpanes -->
-		<div class="hidden lg:block max-w-7xl mx-auto h-[calc(100vh-8rem)] splitpanes-dashboard">
+		<!-- Legacy Splitpanes Desktop (kept for reference, hidden) -->
+		<div class="hidden">
 			<splitpanes class="default-theme" @resize="onMainResize">
 				<!-- Left Column: Clock & Bottom Widgets -->
 				<pane :size="66" min-size="40" class="pr-2 bg-transparent overflow-hidden">
@@ -421,23 +652,34 @@
 												: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
 										]"
 									>
-										<span v-if="attendance.loading" class="animate-spin text-sm"
+										<span v-if="attendance.loading" class="text-sm"
 											>rotate_right</span
 										>
 										<span v-else>Clock In</span>
 									</button>
 
 									<button
+										v-if="attendance.isCheckedIn"
+										@click="handleBreak"
+										:disabled="attendance.loading"
+										class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-xs uppercase bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:border-white/20 shadow-lg"
+									>
+										<span v-if="attendance.loading" class="text-sm"
+											>rotate_right</span
+										>
+										<span v-else>Break</span>
+									</button>
+									<button
 										@click="handleClockOut"
 										:disabled="!attendance.isCheckedIn || attendance.loading"
 										class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-xs uppercase"
 										:class="[
 											attendance.isCheckedIn
-												? 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:border-red-500/50 hover:text-red-400 shadow-lg'
+												? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.15)]'
 												: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
 										]"
 									>
-										<span v-if="attendance.loading" class="animate-spin text-sm"
+										<span v-if="attendance.loading" class="text-sm"
 											>rotate_right</span
 										>
 										<span v-else>Clock Out</span>
@@ -834,7 +1076,42 @@ const showAddTodo = ref(false);
 const newTodoText = ref("");
 const newTodoPriority = ref("Medium");
 const displayTime = ref("00:00:00");
+const isOnBreak = ref(false);
+const accumulatedSeconds = ref(0);
 let timerInterval = null;
+
+// State Persistence
+function saveTimerState() {
+	const state = {
+		isCheckedIn: attendance.isCheckedIn,
+		isOnBreak: isOnBreak.value,
+		accumulatedSeconds: accumulatedSeconds.value,
+		lastUpdate: Date.now()
+	};
+	localStorage.setItem('employee_timer_state', JSON.stringify(state));
+}
+
+function loadTimerState() {
+	const saved = localStorage.getItem('employee_timer_state');
+	if (saved) {
+		const state = JSON.parse(saved);
+		// Basic validation
+		if (state.isCheckedIn !== attendance.isCheckedIn) {
+			localStorage.removeItem('employee_timer_state');
+			return;
+		}
+		
+		isOnBreak.value = state.isOnBreak;
+		accumulatedSeconds.value = state.accumulatedSeconds;
+		
+		if (attendance.isCheckedIn && !isOnBreak.value) {
+			// Add elapsed time since last update
+			const elapsed = Math.floor((Date.now() - state.lastUpdate) / 1000);
+			accumulatedSeconds.value += elapsed;
+		}
+		updateDisplayTime(accumulatedSeconds.value);
+	}
+}
 
 // Priority order for sorting
 const priorityOrder = { High: 1, Medium: 2, Low: 3 };
@@ -991,59 +1268,76 @@ function getLogStyle(logType) {
 async function handleClockIn() {
 	const employeeId = employeeStore.employee?.name;
 	if (!employeeId) return;
+	
+	// Optimistic UI update
+	if (!attendance.todayStatus) attendance.todayStatus = {};
+	attendance.todayStatus.checked_in = true;
+	accumulatedSeconds.value = 0;
+	isOnBreak.value = false;
+	startTimer();
+	saveTimerState();
+
 	try {
-		let latitude = null;
-		let longitude = null;
-		if (navigator.geolocation) {
-			try {
-				const position = await new Promise((resolve, reject) => {
-					navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
-				});
-				latitude = position.coords.latitude;
-				longitude = position.coords.longitude;
-			} catch (e) {
-				console.log("Location not available");
-			}
-		}
-		await attendance.clockIn(employeeId, latitude, longitude);
-		startTimer();
+		// Location access removed per task requirement
+		await attendance.clockIn(employeeId, null, null);
 	} catch (error) {
 		console.error("Clock in failed:", error);
+		// Revert optimistic update
+		attendance.todayStatus.checked_in = false;
+		stopTimer();
+		localStorage.removeItem('employee_timer_state');
 	}
 }
 
 async function handleClockOut() {
 	const employeeId = employeeStore.employee?.name;
 	if (!employeeId) return;
+
+	// Optimistic UI update
+	if (attendance.todayStatus) {
+		attendance.todayStatus.checked_in = false;
+	}
+	stopTimer();
+	localStorage.removeItem('employee_timer_state');
+
 	try {
-		let latitude = null;
-		let longitude = null;
-		if (navigator.geolocation) {
-			try {
-				const position = await new Promise((resolve, reject) => {
-					navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
-				});
-				latitude = position.coords.latitude;
-				longitude = position.coords.longitude;
-			} catch (e) {
-				console.log("Location not available");
-			}
-		}
-		await attendance.clockOut(employeeId, latitude, longitude);
-		stopTimer();
+		// Location access removed per task requirement
+		await attendance.clockOut(employeeId, null, null, "End of Shift");
 	} catch (error) {
 		console.error("Clock out failed:", error);
+		// Revert optimistic update
+		if (attendance.todayStatus) {
+			attendance.todayStatus.checked_in = true;
+		}
+		startTimer();
 	}
+}
+
+async function handleBreak() {
+	isOnBreak.value = !isOnBreak.value;
+	
+	if (isOnBreak.value) {
+		stopTimer();
+	} else {
+		startTimer();
+	}
+	saveTimerState();
 }
 
 // Timer functions
 function startTimer() {
 	if (timerInterval) clearInterval(timerInterval);
-	let seconds = Math.floor((attendance.totalHoursToday || 0) * 3600);
-	updateDisplayTime(seconds);
+	
+	// Initial value from store if no accumulated seconds yet
+	if (accumulatedSeconds.value === 0) {
+		accumulatedSeconds.value = Math.floor((attendance.totalHoursToday || 0) * 3600);
+	}
+	
+	updateDisplayTime(accumulatedSeconds.value);
 	timerInterval = setInterval(() => {
-		seconds++;
-		updateDisplayTime(seconds);
+		accumulatedSeconds.value++;
+		updateDisplayTime(accumulatedSeconds.value);
+		saveTimerState();
 	}, 1000);
 }
 
@@ -1107,11 +1401,15 @@ onMounted(async () => {
 	await employeeStore.init();
 	const employeeId = employeeStore.employee?.name;
 	if (employeeId) {
-		attendance.init(employeeId);
+		await attendance.init(employeeId);
 		tasksStore.init();
 		payrollStore.init();
 	}
-	if (attendance.isCheckedIn) {
+	
+	// Load saved state before starting timer
+	loadTimerState();
+	
+	if (attendance.isCheckedIn && !isOnBreak.value) {
 		startTimer();
 	}
 });
