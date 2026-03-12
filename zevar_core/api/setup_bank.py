@@ -1,10 +1,11 @@
 import frappe
 from frappe import _
 
+
 def run():
     company = "Zevar Jewelers"
     parent_account = "Bank Accounts - ZJ" # Group account
-    
+
     # 1. Create Bank Account if missing
     bank_account_name = "Chase Bank - ZJ"
     if not frappe.db.exists("Account", bank_account_name):
@@ -19,14 +20,14 @@ def run():
         print(f"Account {bank_account_name} created.")
     else:
         print(f"Account {bank_account_name} already exists.")
-    
+
     # 2. Update Mode of Payment Account
     bank_modes = ["Credit Card", "Debit Card", "Wire Transfer", "Zelle", "Check"]
     for mode in bank_modes:
         if frappe.db.exists("Mode of Payment", mode):
             # Check if entry exists for this company
-            mop_acc = frappe.db.get_value("Mode of Payment Account", 
-                                          {"parent": mode, "company": company}, 
+            mop_acc = frappe.db.get_value("Mode of Payment Account",
+                                          {"parent": mode, "company": company},
                                           "name")
             if mop_acc:
                 frappe.db.set_value("Mode of Payment Account", mop_acc, "default_account", bank_account_name)
@@ -39,7 +40,7 @@ def run():
                 })
                 doc.save()
                 print(f"Added Mode of Payment {mode} for company {company} with account {bank_account_name}")
-    
+
     # 3. Update POS Profile
     profile_name = "POS - New York - ZJ"
     if frappe.db.exists("POS Profile", profile_name):
@@ -49,7 +50,7 @@ def run():
                 p.default_account = bank_account_name
                 print(f"Updated POS Profile {profile_name} payment mode {p.mode_of_payment} to use {bank_account_name}")
         profile.save()
-    
+
     frappe.db.commit()
     print("Done.")
 

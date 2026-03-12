@@ -330,10 +330,9 @@
                                 class="w-full text-left px-4 py-2.5 text-white/70 hover:text-white hover:bg-white/5 transition-colors flex items-center justify-between"
                             >
                                 <div class="flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-[18px]"
-                                        >dark_mode</span
-                                    Dark Mode
-                                </div>
+                                        <span class="material-symbols-outlined text-[18px]">dark_mode</span>
+                                        Dark Mode
+                                    </div>
                                 <!-- Simple toggle visualization -->
                                 <div
                                     class="w-8 h-4 bg-portal-primary/30 rounded-full relative flex items-center"

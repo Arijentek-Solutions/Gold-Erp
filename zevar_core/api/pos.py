@@ -194,7 +194,7 @@ def create_pos_invoice(
 			# Use first item from cart as new_item_code if not provided
 			if not ti.get("new_item_code") and items_list:
 				trade_in_item["new_item_code"] = items_list[0].get("item_code")
-			
+
 			# Map description to original_item_code if it's a valid item code, though it's optional now
 			if ti.get("original_item_code"):
 				trade_in_item["original_item_code"] = ti.get("original_item_code")

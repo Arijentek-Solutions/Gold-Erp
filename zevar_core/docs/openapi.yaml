@@ -1,0 +1,770 @@
+openapi: 3.0.3
+info:
+  title: Zevar Core POS API
+  description: |
+    Complete API documentation for Zevar POS System.
+
+    ## Authentication
+    All API calls require Frappe session authentication. Include the session cookie or use API keys.
+
+    ## Base URL
+    ```
+    https://your-domain.com/api/method/zevar_core.api.{module}.{function}
+    ```
+
+    ## Error Handling
+    All errors follow Frappe's standard error format with `exc_type` and `exc_message`.
+
+  version: 1.0.0
+  contact:
+    name: Zevar Core Support
+    email: support@zevar.com
+
+servers:
+  - url: /api/method/zevar_core.api
+    description: Frappe API Server
+
+tags:
+  - name: POS Profile
+    description: POS profile management
+  - name: POS Session
+    description: Opening/closing cash register
+  - name: Sales History
+    description: Transaction history and reports
+  - name: Quick Layaway
+    description: Fast layaway creation
+  - name: Permissions
+    description: Role-based access control
+  - name: Audit Log
+    description: Security audit logging
+  - name: Returns
+    description: Return and void processing
+  - name: Export
+    description: Data export functionality
+
+paths:
+  # ==================== POS Profile ====================
+  /pos_profile.get_pos_profiles:
+    get:
+      tags: [POS Profile]
+      summary: Get all POS profiles
+      description: Returns list of all available POS profiles
+      responses:
+        '200':
+          description: List of POS profiles
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  profiles:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/POSProfile'
+                  count:
+                    type: integer
+                    example: 3
+
+  /pos_profile.get_active_profile:
+    get:
+      tags: [POS Profile]
+      summary: Get active POS profile
+      description: Returns the currently active POS profile for the user
+      responses:
+        '200':
+          description: Active profile details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active_profile:
+                    $ref: '#/components/schemas/POSProfile'
+                  store_location:
+                    $ref: '#/components/schemas/StoreLocation'
+
+  /pos_profile.set_active_profile:
+    post:
+      tags: [POS Profile]
+      summary: Set active POS profile
+      description: Set the active POS profile for the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [profile_name]
+              properties:
+                profile_name:
+                  type: string
+                  description: Name of the POS profile to activate
+      responses:
+        '200':
+          description: Profile activated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessResponse'
+
+  # ==================== POS Session ====================
+  /pos_session.open_pos_session:
+    post:
+      tags: [POS Session]
+      summary: Open POS session
+      description: Start a new cash register session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [pos_profile, opening_balance]
+              properties:
+                pos_profile:
+                  type: string
+                  description: POS profile name
+                opening_balance:
+                  type: number
+                  description: Starting cash amount
+                  example: 200.00
+                cash_breakdown:
+                  type: string
+                  description: JSON string with denomination breakdown
+                notes:
+                  type: string
+                  description: Opening notes
+      responses:
+        '200':
+          description: Session opened successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  session_name:
+                    type: string
+                  status:
+                    type: string
+                  opening_balance:
+                    type: number
+
+  /pos_session.close_pos_session:
+    post:
+      tags: [POS Session]
+      summary: Close POS session
+      description: Close cash register with reconciliation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [session_name, closing_balance]
+              properties:
+                session_name:
+                  type: string
+                closing_balance:
+                  type: number
+                  example: 1500.00
+                cash_breakdown:
+                  type: string
+                notes:
+                  type: string
+      responses:
+        '200':
+          description: Session closed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  closing_name:
+                    type: string
+                  opening_balance:
+                    type: number
+                  total_sales:
+                    type: number
+                  expected_balance:
+                    type: number
+                  closing_balance:
+                    type: number
+                  variance:
+                    type: number
+
+  /pos_session.get_session_status:
+    get:
+      tags: [POS Session]
+      summary: Get session status
+      description: Get current POS session status for logged-in user
+      responses:
+        '200':
+          description: Session status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  has_active_session:
+                    type: boolean
+                  session:
+                    $ref: '#/components/schemas/POSSession'
+
+  # ==================== Sales History ====================
+  /sales_history.get_sales_history:
+    get:
+      tags: [Sales History]
+      summary: Get sales history
+      description: Get paginated list of sales with filters
+      parameters:
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: customer
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [Paid, Unpaid, Overdue, Cancelled]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: Sales history list
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sales:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SalesInvoice'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  /sales_history.get_sales_summary:
+    get:
+      tags: [Sales History]
+      summary: Get sales summary
+      description: Get summary statistics for a period
+      parameters:
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: Sales summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary:
+                    type: object
+                    properties:
+                      transaction_count:
+                        type: integer
+                      total_sales:
+                        type: number
+                      outstanding_amount:
+                        type: number
+                      average_sale:
+                        type: number
+                      unique_customers:
+                        type: integer
+                  payment_breakdown:
+                    type: array
+                  hourly_breakdown:
+                    type: array
+
+  /sales_history.get_transaction_details:
+    get:
+      tags: [Sales History]
+      summary: Get transaction details
+      parameters:
+        - name: invoice_name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Transaction details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransactionDetails'
+
+  # ==================== Quick Layaway ====================
+  /quick_layaway.get_layaway_preview:
+    post:
+      tags: [Quick Layaway]
+      summary: Preview layaway plan
+      description: Calculate payment schedule before creating layaway
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [items, customer]
+              properties:
+                items:
+                  type: string
+                  description: JSON array of items
+                customer:
+                  type: string
+                down_payment_percent:
+                  type: number
+                  default: 20
+                term_months:
+                  type: integer
+                  enum: [3, 6, 9, 12]
+                  default: 3
+                discount_amount:
+                  type: number
+                  default: 0
+      responses:
+        '200':
+          description: Layaway preview
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  preview:
+                    $ref: '#/components/schemas/LayawayPreview'
+                  payment_schedule:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/PaymentSchedule'
+
+  /quick_layaway.create_quick_layaway:
+    post:
+      tags: [Quick Layaway]
+      summary: Create layaway contract
+      description: Create a new layaway contract
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateLayawayRequest'
+      responses:
+        '200':
+          description: Layaway created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  contract_name:
+                    type: string
+                  status:
+                    type: string
+                  total_amount:
+                    type: number
+
+  # ==================== Permissions ====================
+  /permissions.check_permission:
+    get:
+      tags: [Permissions]
+      summary: Check user permission
+      parameters:
+        - name: action
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [pos_access, create_invoice, apply_discount, void_invoice, process_return]
+      responses:
+        '200':
+          description: Permission status
+          content:
+            application/json:
+              schema:
+                type: boolean
+
+  /permissions.get_user_permissions:
+    get:
+      tags: [Permissions]
+      summary: Get all user permissions
+      description: Returns all POS permissions for current user
+      responses:
+        '200':
+          description: User permissions
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: boolean
+
+  # ==================== Audit Log ====================
+  /audit_log.get_audit_logs:
+    get:
+      tags: [Audit Log]
+      summary: Get audit logs
+      parameters:
+        - name: from_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: to_date
+          in: query
+          schema:
+            type: string
+            format: date
+        - name: category
+          in: query
+          schema:
+            type: string
+            enum: [Sales, Payment, Discount, Session, Security, Layaway]
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [Info, Warning]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+      responses:
+        '200':
+          description: Audit logs
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  logs:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AuditLog'
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+
+  # ==================== Returns ====================
+  /returns.get_returnable_items:
+    get:
+      tags: [Returns]
+      summary: Get returnable items
+      parameters:
+        - name: invoice_name
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Returnable items
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  invoice_name:
+                    type: string
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ReturnableItem'
+
+  /returns.create_return_invoice:
+    post:
+      tags: [Returns]
+      summary: Create return invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [original_invoice, items, reason]
+              properties:
+                original_invoice:
+                  type: string
+                items:
+                  type: string
+                  description: JSON array of items to return
+                reason:
+                  type: string
+                return_type:
+                  type: string
+                  enum: [refund, store_credit, exchange]
+                  default: refund
+      responses:
+        '200':
+          description: Return created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReturnResponse'
+
+components:
+  schemas:
+    POSProfile:
+      type: object
+      properties:
+        name:
+          type: string
+        company:
+          type: string
+        warehouse:
+          type: string
+        currency:
+          type: string
+          default: USD
+        selling_price_list:
+          type: string
+
+    StoreLocation:
+      type: object
+      properties:
+        name:
+          type: string
+        store_name:
+          type: string
+        default_warehouse:
+          type: string
+        tax_template:
+          type: string
+        county_tax_rate:
+          type: number
+
+    POSSession:
+      type: object
+      properties:
+        name:
+          type: string
+        pos_profile:
+          type: string
+        opening_date:
+          type: string
+          format: date
+        opening_time:
+          type: string
+        opening_balance:
+          type: number
+        status:
+          type: string
+        docstatus:
+          type: integer
+        duration_hours:
+          type: number
+        sales_count:
+          type: integer
+        sales_total:
+          type: number
+
+    SalesInvoice:
+      type: object
+      properties:
+        name:
+          type: string
+        customer:
+          type: string
+        posting_date:
+          type: string
+          format: date
+        grand_total:
+          type: number
+        status:
+          type: string
+        item_count:
+          type: integer
+
+    TransactionDetails:
+      type: object
+      properties:
+        invoice:
+          type: object
+          properties:
+            name:
+              type: string
+            customer:
+              type: string
+            grand_total:
+              type: number
+            status:
+              type: string
+        items:
+          type: array
+          items:
+            type: object
+        payments:
+          type: array
+          items:
+            type: object
+        salespersons:
+          type: array
+          items:
+            type: object
+
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+        page_size:
+          type: integer
+        total_count:
+          type: integer
+        total_pages:
+          type: integer
+
+    LayawayPreview:
+      type: object
+      properties:
+        customer:
+          type: string
+        subtotal:
+          type: number
+        discount:
+          type: number
+        total:
+          type: number
+        down_payment_percent:
+          type: number
+        down_payment:
+          type: number
+        balance:
+          type: number
+        term_months:
+          type: integer
+        monthly_payment:
+          type: number
+
+    PaymentSchedule:
+      type: object
+      properties:
+        installment:
+          type: integer
+        due_date:
+          type: string
+          format: date
+        amount:
+          type: number
+        status:
+          type: string
+          enum: [Pending, Paid, Overdue]
+
+    CreateLayawayRequest:
+      type: object
+      required: [items, customer]
+      properties:
+        items:
+          type: string
+          description: JSON array of items
+        customer:
+          type: string
+        down_payment_percent:
+          type: number
+          default: 20
+        term_months:
+          type: integer
+          default: 3
+        initial_payment:
+          type: number
+        initial_payment_mode:
+          type: string
+        warehouse:
+          type: string
+        notes:
+          type: string
+
+    AuditLog:
+      type: object
+      properties:
+        name:
+          type: string
+        user:
+          type: string
+        event_type:
+          type: string
+        category:
+          type: string
+        severity:
+          type: string
+        details:
+          type: object
+        timestamp:
+          type: string
+          format: date-time
+        ip_address:
+          type: string
+
+    ReturnableItem:
+      type: object
+      properties:
+        item_code:
+          type: string
+        item_name:
+          type: string
+        qty:
+          type: number
+        returned_qty:
+          type: number
+        returnable_qty:
+          type: number
+        rate:
+          type: number
+        amount:
+          type: number
+
+    ReturnResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        return_invoice:
+          type: string
+        grand_total:
+          type: number
+        return_type:
+          type: string
+        message:
+          type: string
+
+    SuccessResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+          example: true
+        message:
+          type: string

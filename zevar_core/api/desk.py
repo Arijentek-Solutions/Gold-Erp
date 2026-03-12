@@ -24,6 +24,10 @@ def boot_session(bootinfo: dict[str, Any]) -> None:
 		if title in ["POS", "Zevar POS"] or name in ["POS", "zevar_pos"]:
 			app["app_logo_url"] = "/assets/zevar_core/images/pos_logo.svg"
 
+		# Override Catalogues logo
+		if title in ["Zevar Catalogues", "Catalogues"] or name in ["zevar_catalogues", "catalogues"]:
+			app["app_logo_url"] = "/assets/zevar_core/images/pos_logo.svg"
+
 		# Override Employee Portal logo
-		if title == "Employee Portal" or name == "employee_portal" or title.startswith("Employee P"):
+		if title == "Employee Portal" or name in ["employee_portal", "zevar_employee_portal"] or title.startswith("Employee P"):
 			app["app_logo_url"] = "/assets/zevar_core/images/employee_portal_logo.svg"

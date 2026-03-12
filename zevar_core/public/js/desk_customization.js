@@ -9,11 +9,20 @@ const update_icons = () => {
 		"Catalogues": "/assets/zevar_core/images/pos_logo.svg",
 	};
 
+	// App name mappings (for frappe.boot.app_data)
+	const appNameMap = {
+		zevar_pos: "/assets/zevar_core/images/pos_logo.svg",
+		zevar_catalogues: "/assets/zevar_core/images/pos_logo.svg",
+		zevar_employee_portal: "/assets/zevar_core/images/employee_portal_logo.svg",
+	};
+
 	// Strategy 1: Modify in-memory data
 	if (frappe.boot && frappe.boot.app_data) {
 		frappe.boot.app_data.forEach((app) => {
-			if (overrides[app.app_title] || overrides[app.app_name]) {
-				app.app_logo_url = overrides[app.app_title] || overrides[app.app_name];
+			// Check title in overrides, then name in overrides, then name in appNameMap
+			const iconUrl = overrides[app.app_title] || overrides[app.app_name] || appNameMap[app.app_name];
+			if (iconUrl) {
+				app.app_logo_url = iconUrl;
 			}
 		});
 	}

@@ -18,7 +18,13 @@ add_to_apps_screen = [
 		"name": "zevar_catalogues",
 		"logo": "/assets/zevar_core/images/pos_logo.svg",
 		"title": "Zevar Catalogues",
-		"route": "/pos/catalogues",
+		"route": "/catalogues",
+	},
+	{
+		"name": "zevar_employee_portal",
+		"logo": "/assets/zevar_core/images/employee_portal_logo.svg",
+		"title": "Employee Portal",
+		"route": "/employee-portal",
 	}
 ]
 
