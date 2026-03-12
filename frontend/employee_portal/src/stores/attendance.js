@@ -38,6 +38,18 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		auto: false,
 	});
 
+	// Break start (creates an OUT record with break note)
+	const breakStartResource = createResource({
+		url: "zevar_core.api.attendance.clock_out",
+		auto: false,
+	});
+
+	// Break end (creates an IN record with break note)
+	const breakEndResource = createResource({
+		url: "zevar_core.api.attendance.clock_in",
+		auto: false,
+	});
+
 	// History
 	const historyResource = createResource({
 		url: "zevar_core.api.attendance.get_attendance_history",
@@ -123,6 +135,36 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		}
 	}
 
+	async function startBreak() {
+		loading.value = true;
+		try {
+			const result = await breakStartResource.fetch({
+				notes: "Break Start",
+			});
+			if (result.status) {
+				todayStatus.value = result.status;
+			}
+			return result;
+		} finally {
+			loading.value = false;
+		}
+	}
+
+	async function endBreak() {
+		loading.value = true;
+		try {
+			const result = await breakEndResource.fetch({
+				notes: "Break End",
+			});
+			if (result.status) {
+				todayStatus.value = result.status;
+			}
+			return result;
+		} finally {
+			loading.value = false;
+		}
+	}
+
 	return {
 		todayStatus,
 		roster,
@@ -137,6 +179,8 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		fetchHistory,
 		clockIn,
 		clockOut,
+		startBreak,
+		endBreak,
 		init,
 	};
 });

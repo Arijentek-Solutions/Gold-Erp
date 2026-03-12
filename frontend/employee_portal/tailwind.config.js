@@ -13,7 +13,7 @@ module.exports = {
 		},
 		extend: {
 			colors: {
-				primary: "#FCD34D", // Lighter Gold
+				primary: "var(--primary-color, #FCD34D)", // Dynamic Primary
 				"background-light": "#f8f8f5",
 				"background-dark": "#05070a",
 				"card-bg": "rgba(15, 20, 40, 0.45)",

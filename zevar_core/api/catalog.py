@@ -17,7 +17,7 @@ def _sanitize_search(term):
 	return re.sub(r'[%_\\;\'"]', "", str(term).strip())[:100]
 
 
-@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
+@frappe.whitelist()
 @rate_limit(limit=100, seconds=60)
 def get_pos_items(
 	start: int = 0,
@@ -183,7 +183,7 @@ def get_pos_items(
 	return pos_items[:page_length]
 
 
-@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
+@frappe.whitelist()
 @rate_limit(limit=100, seconds=60)
 def get_catalog_filters() -> dict:
 	"""Return available filter options for catalog UI."""
@@ -243,7 +243,7 @@ def get_catalog_filters() -> dict:
 	return filters
 
 
-@frappe.whitelist(allow_guest=True)  # nosemgrep: frappe-semgrep-rules.rules.security.guest-whitelisted-method
+@frappe.whitelist()
 @rate_limit(limit=100, seconds=60)
 def get_item_details(item_code: str) -> dict:
 	"""Fetch full item details including gemstones and all product attributes."""

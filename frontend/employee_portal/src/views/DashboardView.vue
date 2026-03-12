@@ -3,7 +3,7 @@
 		<!-- Mobile Layout (md and below) -->
 		<div class="md:hidden h-full overflow-y-auto custom-scrollbar p-3 flex flex-col gap-3">
 			<!-- Mobile Clock Section -->
-			<div class="glass-card rounded-2xl p-4 border border-white/5">
+			<div class="premium-card">
 				<div class="flex flex-col items-center py-4">
 					<!-- Mini Clock -->
 					<div class="w-48 h-48 rounded-full metallic-bezel border-[3px] border-[#222] flex items-center justify-center p-1 shadow-[0_0_40px_rgba(0,0,0,0.4)]">
@@ -23,42 +23,39 @@
 					</div>
 
 					<!-- Mobile Clock Buttons -->
-					<div class="flex gap-3 mt-4 w-full px-2">
+					<div class="grid grid-cols-2 gap-2 mt-4 w-full px-2">
 						<button
-							@click="handleClockIn"
+							@click="handleClockIn()"
 							:disabled="attendance.isCheckedIn || attendance.loading"
-							class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
+							class="h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-colors shadow-lg"
 							:class="[
 								!attendance.isCheckedIn
-									? 'bg-primary text-black hover:bg-yellow-400'
-									: 'bg-white/5 text-white/20 cursor-not-allowed',
+									? 'bg-primary text-black hover:bg-yellow-400 shadow-primary/20'
+									: 'bg-white/5 border border-white/10 text-white/20 cursor-not-allowed',
 							]"
 						>
-							<span v-if="attendance.loading" class="text-sm">...</span>
-							<span v-else>Clock In</span>
+							Clock In
 						</button>
 						<button
-							v-if="attendance.isCheckedIn"
-							@click="handleBreak"
-							:disabled="attendance.loading"
-							class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
-							:class="isOnBreak ? 'bg-primary text-black' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10'"
-						>
-							<span v-if="attendance.loading" class="text-sm">...</span>
-							<span v-else>{{ isOnBreak ? 'End Break' : 'Start Break' }}</span>
-						</button>
-						<button
-							@click="handleClockOut"
+							@click="handleClockOut()"
 							:disabled="!attendance.isCheckedIn || attendance.loading"
-							class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
+							class="h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-colors shadow-lg"
 							:class="[
 								attendance.isCheckedIn
-									? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30'
-									: 'bg-white/5 text-white/20 cursor-not-allowed',
+									? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-red-500/10'
+									: 'bg-white/5 border border-white/10 text-white/20 cursor-not-allowed',
 							]"
 						>
+							Clock Out
+						</button>
+						<button
+							@click="handleBreak"
+							:disabled="!attendance.isCheckedIn || attendance.loading"
+							class="col-span-2 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-colors"
+							:class="isOnBreak ? 'bg-primary text-black shadow-primary/20' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 disabled:opacity-30'"
+						>
 							<span v-if="attendance.loading" class="text-sm">...</span>
-							<span v-else>Clock Out</span>
+							<span v-else>{{ isOnBreak ? 'End Break' : 'Break' }}</span>
 						</button>
 					</div>
 				</div>
@@ -66,8 +63,8 @@
 
 			<!-- Mobile Profile Cards -->
 			<div class="grid grid-cols-2 gap-2">
-				<div class="glass-card rounded-xl p-3 border border-white/5">
-					<p class="text-[8px] text-white/30 uppercase tracking-widest mb-1">Profile</p>
+				<div class="premium-card !p-3">
+					<p class="status-label !mb-1">Profile</p>
 					<div class="flex items-center gap-2">
 						<div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary/80 to-amber-600 flex items-center justify-center text-black font-bold text-xs">
 							{{ userInitials }}
@@ -78,8 +75,8 @@
 						</div>
 					</div>
 				</div>
-				<div class="glass-card rounded-xl p-3 border border-white/5">
-					<p class="text-[8px] text-white/30 uppercase tracking-widest mb-1">Manager</p>
+				<div class="premium-card !p-3">
+					<p class="status-label !mb-1">Manager</p>
 					<div class="flex items-center gap-2">
 						<div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold text-[10px] uppercase">
 							{{ managerInitials }}
@@ -91,24 +88,24 @@
 
 			<!-- Mobile Quick Stats -->
 			<div class="grid grid-cols-3 gap-2">
-				<div class="glass-card rounded-xl p-3 border border-white/5 text-center">
-					<p class="text-lg font-bold font-mono text-white">{{ totalHoursMobile }}</p>
-					<p class="text-[8px] text-white/30 uppercase">Hours</p>
+				<div class="premium-card !p-3 flex flex-col items-center">
+					<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">{{ totalHoursMobile }}</p>
+					<p class="status-label !mb-0 text-[8px]">Hours</p>
 				</div>
-				<div class="glass-card rounded-xl p-3 border border-white/5 text-center">
-					<p class="text-lg font-bold font-mono text-emerald-400">{{ tasksStore.openTodos.length }}</p>
-					<p class="text-[8px] text-white/30 uppercase">Tasks</p>
+				<div class="premium-card !p-3 flex flex-col items-center">
+					<p class="text-lg font-bold font-mono text-emerald-600 dark:text-emerald-400">{{ tasksStore.openTodos.length }}</p>
+					<p class="status-label !mb-0 text-[8px]">Tasks</p>
 				</div>
-				<div class="glass-card rounded-xl p-3 border border-white/5 text-center">
+				<div class="premium-card !p-3 flex flex-col items-center">
 					<p class="text-lg font-bold font-mono text-primary">{{ payslipStatus || '—' }}</p>
-					<p class="text-[8px] text-white/30 uppercase">Payroll</p>
+					<p class="status-label !mb-0 text-[8px]">Payroll</p>
 				</div>
 			</div>
 
 			<!-- Mobile Tasks -->
-			<div class="glass-card rounded-2xl p-4 border border-white/5">
+			<div class="premium-card">
 				<div class="flex items-center justify-between mb-3">
-					<h3 class="font-bold text-sm text-white">Priority Tasks</h3>
+					<h3 class="premium-title !text-sm">Priority Tasks</h3>
 					<button
 						@click="showAddTodo = true"
 						class="w-7 h-7 rounded-lg bg-primary text-black flex items-center justify-center"
@@ -143,8 +140,8 @@
 			</div>
 
 			<!-- Mobile Activity -->
-			<div class="glass-card rounded-2xl p-4 border border-white/5">
-				<h3 class="font-bold text-sm text-white mb-3">Recent Activity</h3>
+			<div class="premium-card">
+				<h3 class="premium-title !text-sm mb-3">Recent Activity</h3>
 				<div class="space-y-2">
 					<div v-if="recentActivity.length === 0" class="text-center py-4">
 						<p class="text-xs text-white/30">No activity</p>
@@ -176,7 +173,7 @@
 				<!-- Timer spans 2 columns -->
 				<div class="col-span-2">
 					<!-- Clock Section -->
-					<div class="glass-card rounded-2xl p-6 border border-white/5">
+					<div class="premium-card">
 						<div class="flex flex-col items-center py-2">
 							<div class="w-56 h-56 rounded-full metallic-bezel border-[3px] border-[#222] flex items-center justify-center p-1 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
 								<div class="w-full h-full rounded-full border-[8px] border-[#0a0c1a] flex items-center justify-center bg-[#05070a]">
@@ -190,42 +187,39 @@
 									</div>
 								</div>
 							</div>
-							<div class="flex gap-3 mt-4 w-full max-w-xs">
+							<div class="grid grid-cols-2 gap-2 mt-4 w-full max-w-xs">
 								<button
-									@click="handleClockIn"
+									@click="handleClockIn()"
 									:disabled="attendance.isCheckedIn || attendance.loading"
-									class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
+									class="h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-all shadow-lg"
 									:class="[
 										!attendance.isCheckedIn
-											? 'bg-primary text-black hover:bg-yellow-400 shadow-[0_0_20px_rgba(252,211,77,0.2)]'
-											: 'bg-white/5 text-white/20 cursor-not-allowed',
+											? 'bg-primary text-black hover:bg-yellow-400 shadow-primary/20'
+											: 'bg-white/5 border border-white/10 text-white/20 cursor-not-allowed',
 									]"
 								>
-									<span v-if="attendance.loading" class="text-sm">...</span>
-									<span v-else>Clock In</span>
+									Clock In
 								</button>
 								<button
-									v-if="attendance.isCheckedIn"
-									@click="handleBreak"
-									:disabled="attendance.loading"
-									class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
-									:class="isOnBreak ? 'bg-primary text-black' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10'"
-								>
-									<span v-if="attendance.loading" class="text-sm">...</span>
-									<span v-else>{{ isOnBreak ? 'End Break' : 'Start Break' }}</span>
-								</button>
-								<button
-									@click="handleClockOut"
+									@click="handleClockOut()"
 									:disabled="!attendance.isCheckedIn || attendance.loading"
-									class="flex-1 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-xs uppercase transition-colors"
+									class="h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-all shadow-lg"
 									:class="[
 										attendance.isCheckedIn
-											? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.15)]'
-											: 'bg-white/5 text-white/20 cursor-not-allowed',
+											? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-red-500/10'
+											: 'bg-white/5 border border-white/10 text-white/20 cursor-not-allowed',
 									]"
 								>
+									Clock Out
+								</button>
+								<button
+									@click="handleBreak"
+									:disabled="!attendance.isCheckedIn || attendance.loading"
+									class="col-span-2 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-colors"
+									:class="isOnBreak ? 'bg-primary text-black shadow-primary/20' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 disabled:opacity-30'"
+								>
 									<span v-if="attendance.loading" class="text-sm">...</span>
-									<span v-else>Clock Out</span>
+									<span v-else>{{ isOnBreak ? 'End Break' : 'Break' }}</span>
 								</button>
 							</div>
 						</div>
@@ -233,8 +227,8 @@
 
 					<!-- Profile Cards -->
 					<div class="grid grid-cols-2 gap-3">
-						<div class="glass-card rounded-xl p-4 border border-white/5">
-							<p class="text-[8px] text-white/30 uppercase tracking-widest mb-2">Profile</p>
+						<div class="premium-card !p-4">
+							<p class="status-label !mb-2">Profile</p>
 							<div class="flex items-center gap-2">
 								<div class="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-amber-600 flex items-center justify-center text-black font-bold text-xs">
 									{{ userInitials }}
@@ -245,8 +239,8 @@
 								</div>
 							</div>
 						</div>
-						<div class="glass-card rounded-xl p-4 border border-white/5">
-							<p class="text-[8px] text-white/30 uppercase tracking-widest mb-2">Manager</p>
+						<div class="premium-card !p-4">
+							<p class="status-label !mb-2">Manager</p>
 							<div class="flex items-center gap-2">
 								<div class="w-9 h-9 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold text-[10px] uppercase">
 									{{ managerInitials }}
@@ -257,10 +251,10 @@
 					</div>
 
 					<!-- Payroll Card -->
-					<div class="glass-card rounded-xl p-4 border border-white/5">
+					<div class="premium-card !p-4">
 						<div class="flex items-center justify-between">
 							<div>
-								<p class="text-[8px] text-white/30 uppercase tracking-widest mb-1">Payroll</p>
+								<p class="status-label !mb-1">Payroll</p>
 								<p class="text-sm font-bold text-white">{{ payslipMonth }}</p>
 								<span v-if="payslipStatus" class="text-[9px] text-emerald-400 font-bold uppercase">{{ payslipStatus }}</span>
 							</div>
@@ -274,9 +268,9 @@
 				</div>
 
 				<!-- Activity & Tasks Row (2 columns) -->
-				<div class="glass-card rounded-2xl p-5 border border-white/5">
+				<div class="premium-card">
 					<div class="flex items-center justify-between mb-4">
-						<h3 class="font-bold text-base text-white">Priority Tasks</h3>
+						<h3 class="premium-title !text-base">Priority Tasks</h3>
 						<button
 							@click="showAddTodo = true"
 							class="w-8 h-8 rounded-lg bg-primary text-black flex items-center justify-center"
@@ -311,8 +305,8 @@
 				</div>
 
 				<!-- Activity -->
-				<div class="glass-card rounded-2xl p-5 border border-white/5">
-					<h3 class="font-bold text-base text-white mb-4">Activity Stream</h3>
+				<div class="premium-card">
+					<h3 class="premium-title !text-base mb-4">Activity Stream</h3>
 					<div class="space-y-2 max-h-[200px] overflow-y-auto custom-scrollbar pr-1">
 						<div v-if="recentActivity.length === 0" class="text-center py-6">
 							<p class="text-xs text-white/30">No recent activity</p>
@@ -337,650 +331,177 @@
 					</div>
 				</div>
 			</div>
-		</div>
-
-		<!-- Desktop Layout (xl and above) - CSS Grid -->
-		<div class="hidden xl:block h-full overflow-y-auto custom-scrollbar p-4">
-			<div class="grid grid-cols-12 gap-6 h-full auto-rows-min max-w-[1600px] mx-auto">
-				<!-- Left Column: Timer & Bottom Widgets (col-span-8) -->
-				<div class="col-span-8 flex flex-col gap-6">
-					<!-- Timer Section -->
-					<div class="glass-card rounded-[2.5rem] border border-white/5 relative bg-gradient-to-b from-white/5 to-transparent overflow-hidden">
-						<!-- Background decorative elements -->
-						<div class="absolute top-0 left-0 w-full h-full diamond-pattern opacity-10 pointer-events-none rounded-[2.5rem] overflow-hidden"></div>
-						<div class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(252,211,77,0.05)_0%,_transparent_50%)] pointer-events-none rounded-[2.5rem]"></div>
-						<div class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none rounded-[2.5rem]"></div>
-
-						<div class="relative z-10 flex flex-col items-center justify-center py-8">
-							<!-- Outer Bezel -->
-							<div class="w-[340px] h-[340px] xl:w-[380px] xl:h-[380px] rounded-full metallic-bezel border-[4px] border-[#222] flex items-center justify-center relative p-1 shadow-[0_0_80px_rgba(0,0,0,0.6)]">
-								<!-- Glowing Border Ring -->
-								<div class="absolute inset-0 rounded-full border border-primary/10 shadow-[0_0_40px_rgba(252,211,77,0.05)]"></div>
-								<!-- Inner Bezel Detail -->
-								<div class="w-full h-full rounded-full border-[10px] border-[#0a0c1a] shadow-inner flex items-center justify-center relative bg-[#05070a]">
-									<!-- Digital Face -->
-									<div class="w-full h-full rounded-full flex flex-col items-center justify-center relative overflow-hidden bg-[radial-gradient(circle_at_center,_#121520_0%,_#05070a_70%)]">
-										<div class="absolute inset-0 opacity-5" style="background-image: radial-gradient(#fff 1px, transparent 1px); background-size: 24px 24px;"></div>
-										<div class="absolute top-[22%] text-[9px] text-white/20 tracking-[0.5em] font-bold uppercase font-display">{{ shiftLabel }}</div>
-										<!-- Huge Timer -->
-										<div class="text-[3.5rem] xl:text-[4.5rem] leading-none font-mono font-bold tracking-tighter mt-2 transition-colors duration-500 z-10 drop-shadow-2xl tabular-nums" :class="getTimerColor">
-											{{ displayTime }}
-										</div>
-										<!-- Active Indicators -->
-										<div class="absolute bottom-[22%] flex gap-2.5" v-if="attendance.isCheckedIn">
-											<span class="w-2 h-2 rounded-full shadow-[0_0_10px_currentColor] bg-primary"></span>
-											<span class="w-2 h-2 rounded-full opacity-20 bg-primary"></span>
-											<span class="w-2 h-2 rounded-full opacity-10 bg-primary"></span>
-										</div>
-									</div>
-								</div>
-							</div>
-
-							<!-- Buttons -->
-							<div class="pb-6 pt-8 flex gap-4 w-full max-w-sm z-10 px-4">
-								<button
-									@click="handleClockIn"
-									:disabled="attendance.isCheckedIn || attendance.loading"
-									class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-colors relative font-bold tracking-widest text-xs uppercase"
-									:class="[
-										!attendance.isCheckedIn
-											? 'bg-primary text-black hover:bg-yellow-400 shadow-[0_0_30px_rgba(252,211,77,0.2)]'
-											: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
-									]"
-								>
-									<span v-if="attendance.loading" class="text-sm">...</span>
-									<span v-else>Clock In</span>
-								</button>
-								<button
-									v-if="attendance.isCheckedIn"
-									@click="handleBreak"
-									:disabled="attendance.loading"
-									class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-colors relative font-bold tracking-widest text-xs uppercase"
-									:class="isOnBreak ? 'bg-primary text-black' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 shadow-lg'"
-								>
-									<span v-if="attendance.loading" class="text-sm">...</span>
-									<span v-else>{{ isOnBreak ? 'End Break' : 'Start Break' }}</span>
-								</button>
-								<button
-									@click="handleClockOut"
-									:disabled="!attendance.isCheckedIn || attendance.loading"
-									class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-colors relative font-bold tracking-widest text-xs uppercase"
-									:class="[
-										attendance.isCheckedIn
-											? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.15)]'
-											: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
-									]"
-								>
-									<span v-if="attendance.loading" class="text-sm">...</span>
-									<span v-else>Clock Out</span>
-								</button>
-							</div>
-						</div>
-					</div>
-
-					<!-- Bottom Row: Profile, Manager, Payroll (grid-cols-3) -->
-					<div class="grid grid-cols-3 gap-4">
-						<!-- Profile -->
-						<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors">
-							<div class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
-								<span class="material-symbols-outlined text-5xl">badge</span>
-							</div>
-							<div>
-								<p class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2">My Profile</p>
-								<div class="flex items-center gap-3 mt-1">
-									<div class="w-10 h-10 rounded-full bg-gradient-to-br from-primary/80 to-amber-600 flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-primary/10 shrink-0">
-										{{ userInitials }}
-									</div>
-									<div class="min-w-0">
-										<p class="text-xs font-bold text-white leading-tight truncate">{{ employeeName }}</p>
-										<p class="text-[9px] text-primary mt-1 truncate">{{ employeeDesignation }}</p>
-									</div>
-								</div>
-							</div>
-							<button class="mt-3 py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold text-white/70 border border-white/5 flex items-center gap-2 w-full justify-center transition-all">
-								<span class="material-symbols-outlined text-[14px]">account_box</span>
-								Employee Settings
-							</button>
-						</div>
-
-						<!-- Reporting Manager -->
-						<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors">
-							<div class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
-								<span class="material-symbols-outlined text-5xl">supervisor_account</span>
-							</div>
-							<div>
-								<p class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2">Direct Manager</p>
-								<div class="flex items-center gap-3 mt-1">
-									<div class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold text-xs ring-1 ring-blue-500/20 shrink-0 uppercase">
-										{{ managerInitials }}
-									</div>
-									<div class="min-w-0">
-										<p class="text-xs font-bold text-white truncate">{{ managerName }}</p>
-										<p class="text-[9px] text-white/40 truncate mt-1">Supervisory Role</p>
-									</div>
-								</div>
-							</div>
-							<button class="mt-3 py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold text-white/50 border border-white/5 transition-all w-full">
-								View Management
-							</button>
-						</div>
-
-						<!-- Payslip -->
-						<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors">
-							<div class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
-								<span class="material-symbols-outlined text-5xl">payments</span>
-							</div>
-							<div>
-								<p class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2">My Payroll</p>
-								<p class="text-sm font-bold text-white truncate">{{ payslipMonth }}</p>
-								<div v-if="payslipStatus" class="flex items-center gap-1.5 mt-2">
-									<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-									<span class="text-[9px] text-emerald-400/80 font-bold uppercase tracking-wider">{{ payslipStatus }}</span>
-								</div>
-								<p v-else class="text-[9px] text-white/30 mt-2 italic">Processing...</p>
-							</div>
-							<router-link to="/payroll" class="block mt-3 shrink-0">
-								<button class="w-full py-2 px-3 bg-primary/5 hover:bg-primary/10 rounded-lg text-[9px] font-bold text-primary/80 border border-primary/10 flex items-center justify-center gap-2 transition-all">
-									<span class="material-symbols-outlined text-[14px]">receipt_long</span>
-									Salary History
-								</button>
-							</router-link>
-						</div>
-					</div>
-				</div>
-
-				<!-- Right Column: Activity & Tasks (col-span-4) -->
-				<div class="col-span-4 flex flex-col gap-6">
-					<!-- Tasks -->
-					<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex-1">
-						<div class="flex items-center justify-between mb-4">
-							<h3 class="font-bold text-base text-white">Priority Tasks</h3>
-							<button @click="showAddTodo = true" class="w-8 h-8 rounded-lg bg-primary text-black flex items-center justify-center">
-								<span class="material-symbols-outlined text-base font-bold">add</span>
-							</button>
-						</div>
-						<div class="space-y-2 max-h-[250px] overflow-y-auto custom-scrollbar pr-1">
-							<div v-if="sortedOpenTodos.length === 0" class="text-center py-6">
-								<p class="text-xs text-white/30">No tasks remaining</p>
-							</div>
-							<div
-								v-for="todo in sortedOpenTodos"
-								:key="todo.id"
-								@click="toggleTodo(todo.id, todo.status)"
-								class="flex items-center gap-3 p-3 rounded-xl bg-white/[0.03] border border-white/5 cursor-pointer hover:bg-white/[0.05] transition-colors"
-							>
-								<div class="w-4 h-4 rounded border border-white/20"></div>
-								<div class="flex-1 min-w-0">
-									<p class="text-xs text-white truncate">{{ todo.description }}</p>
-								</div>
-								<span
-									class="text-[8px] font-bold uppercase px-1.5 py-0.5 rounded"
-									:class="{
-										'bg-red-500/15 text-red-400': todo.priority === 'High',
-										'bg-amber-500/15 text-amber-400': todo.priority === 'Medium',
-										'bg-blue-500/15 text-blue-400': todo.priority === 'Low'
-									}"
-								>{{ todo.priority }}</span>
-							</div>
-						</div>
-					</div>
-
-					<!-- Activity Stream -->
-					<div class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex-1">
-						<h3 class="font-bold text-base text-white mb-4">Activity Stream</h3>
-						<div class="space-y-2 max-h-[250px] overflow-y-auto custom-scrollbar pr-1">
-							<div v-if="recentActivity.length === 0" class="text-center py-6">
-								<p class="text-xs text-white/30">No recent activity</p>
-							</div>
-							<div
-								v-for="log in recentActivity"
-								:key="log.name"
-								class="flex items-center gap-3 p-2 rounded-lg bg-white/[0.02]"
-							>
-								<div class="w-8 h-8 rounded-full flex items-center justify-center" :class="getLogStyle(log.log_type).bg">
-									<span class="material-symbols-outlined text-sm" :class="getLogStyle(log.log_type).text">
-										{{ getLogStyle(log.log_type).icon }}
-									</span>
-								</div>
-								<div class="flex-1 min-w-0">
-									<p class="text-[10px] font-bold text-white">{{ getLogStyle(log.log_type).label }}</p>
-									<p class="text-[9px] text-white/40">{{ formatDateTime(log.time) }}</p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<!-- Legacy Splitpanes Desktop (kept for reference, hidden) -->
-		<div class="hidden">
-			<splitpanes class="default-theme" @resize="onMainResize">
-				<!-- Left Column: Clock & Bottom Widgets -->
-				<pane :size="66" min-size="40" class="pr-2 bg-transparent overflow-hidden">
-					<splitpanes horizontal class="default-theme" @resize="onLeftResize">
+		</div>		<!-- Desktop Layout (xl and above) - Interactive Splitpanes -->
+		<div class="hidden xl:block h-full overflow-hidden p-4">
+			<splitpanes class="splitpanes-dashboard" @resize="onMainResize">
+				<!-- Left Column: Clock & People -->
+				<pane :size="paneSizes.main[0]" min-size="25" class="pr-2 bg-transparent overflow-hidden">
+					<splitpanes horizontal class="splitpanes-dashboard" @resize="onLeftResize">
 						<!-- Clock Section -->
-						<pane :size="75" class="pb-2 bg-transparent overflow-hidden">
-							<div
-								class="flex-1 flex flex-col items-center justify-center py-2 glass-card rounded-[2.5rem] border border-white/5 relative bg-gradient-to-b from-white/5 to-transparent overflow-hidden h-full"
-							>
-								<!-- Background decorative elements -->
-								<div
-									class="absolute top-0 left-0 w-full h-full diamond-pattern opacity-10 pointer-events-none rounded-[2.5rem] overflow-hidden"
-								></div>
-								<div
-									class="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,_rgba(252,211,77,0.05)_0%,_transparent_50%)] pointer-events-none rounded-[2.5rem]"
-								></div>
-								<div
-									class="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/20 pointer-events-none rounded-[2.5rem]"
-								></div>
-
-								<div
-									class="relative group z-10 scale-[0.85] lg:scale-100 flex-1 flex flex-col justify-center w-full items-center"
-								>
-									<!-- Outer Bezel -->
-									<div
-										class="w-[340px] h-[340px] lg:w-[380px] lg:h-[380px] rounded-full metallic-bezel border-[4px] border-[#222] flex items-center justify-center relative p-1 shadow-[0_0_80px_rgba(0,0,0,0.6)]"
-									>
-										<!-- Glowing Border Ring -->
-										<div
-											class="absolute inset-0 rounded-full border border-primary/10 shadow-[0_0_40px_rgba(252,211,77,0.05)]"
-										></div>
-
-										<!-- Inner Bezel Detail -->
-										<div
-											class="w-full h-full rounded-full border-[10px] border-[#0a0c1a] shadow-inner flex items-center justify-center relative bg-[#05070a]"
-										>
-											<!-- Digital Face -->
-											<div
-												class="w-full h-full rounded-full flex flex-col items-center justify-center relative overflow-hidden bg-[radial-gradient(circle_at_center,_#121520_0%,_#05070a_70%)]"
-											>
-												<!-- Subtle grid/texture on face -->
-												<div
-													class="absolute inset-0 opacity-5"
-													style="
-														background-image: radial-gradient(
-															#fff 1px,
-															transparent 1px
-														);
-														background-size: 24px 24px;
-													"
-												></div>
-												<div
-													class="absolute top-[22%] text-[9px] text-white/20 tracking-[0.5em] font-bold uppercase font-display"
-												>
-													{{ shiftLabel }}
-												</div>
-
-												<!-- Huge Timer -->
-												<div
-													class="text-[3.5rem] lg:text-[4.5rem] leading-none font-mono font-bold tracking-tighter mt-2 transition-colors duration-500 z-10 drop-shadow-2xl tabular-nums"
-													:class="getTimerColor"
-												>
+						<pane :size="paneSizes.left[0]" class="pb-2 bg-transparent overflow-hidden">
+							<div class="flex-1 flex flex-col items-center justify-center py-2 premium-card relative bg-gradient-to-b from-white/5 to-transparent h-full">
+								<div class="absolute top-0 left-0 w-full h-full diamond-pattern opacity-10 pointer-events-none overflow-hidden"></div>
+								<div class="relative group z-10 scale-[0.8] lg:scale-90 flex-1 flex flex-col justify-center w-full items-center">
+									<div class="w-[300px] h-[300px] lg:w-[340px] lg:h-[340px] rounded-full metallic-bezel border-[4px] border-[#222] flex items-center justify-center relative p-1 shadow-[0_0_80px_rgba(0,0,0,0.6)]">
+										<div class="w-full h-full rounded-full border-[10px] border-[#0a0c1a] shadow-inner flex items-center justify-center relative bg-[#05070a]">
+											<div class="w-full h-full rounded-full flex flex-col items-center justify-center relative overflow-hidden bg-[radial-gradient(circle_at_center,_#121520_0%,_#05070a_70%)]">
+												<div class="absolute top-[22%] text-[8px] text-white/20 tracking-[0.5em] font-bold uppercase font-display">{{ shiftLabel }}</div>
+												<div class="text-[3rem] lg:text-[4rem] leading-none font-mono font-bold tracking-tighter mt-2 transition-colors duration-500 z-10 drop-shadow-2xl tabular-nums" :class="getTimerColor">
 													{{ displayTime }}
 												</div>
-
-												<!-- Active Indicators -->
-												<div
-													class="absolute bottom-[22%] flex gap-2.5"
-													v-if="attendance.isCheckedIn"
-												>
-													<span
-														class="w-2 h-2 rounded-full animate-pulse shadow-[0_0_10px_currentColor] bg-primary"
-													></span>
-													<span
-														class="w-2 h-2 rounded-full opacity-20 bg-primary"
-													></span>
-													<span
-														class="w-2 h-2 rounded-full opacity-10 bg-primary"
-													></span>
+												<div class="absolute bottom-[22%] flex gap-2" v-if="attendance.isCheckedIn">
+													<span class="w-1.5 h-1.5 rounded-full animate-pulse bg-primary"></span>
+													<span class="w-1.5 h-1.5 rounded-full opacity-20 bg-primary"></span>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-
-								<!-- Buttons -->
-								<div class="pb-8 flex gap-4 w-full max-w-sm z-10 px-4">
-									<button
-										@click="handleClockIn"
-										:disabled="attendance.isCheckedIn || attendance.loading"
-										class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-xs uppercase"
-										:class="[
-											!attendance.isCheckedIn
-												? 'bg-primary text-black hover:bg-yellow-400 hover:scale-[1.02] shadow-[0_0_30px_rgba(252,211,77,0.2)]'
-												: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
-										]"
-									>
-										<span v-if="attendance.loading" class="text-sm"
-											>rotate_right</span
-										>
-										<span v-else>Clock In</span>
+								<div class="pb-6 grid grid-cols-2 gap-2 w-full max-w-xs z-10 px-4">
+									<button @click="handleClockIn()" :disabled="attendance.isCheckedIn || attendance.loading" class="h-11 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-[10px] uppercase shadow-lg" :class="[!attendance.isCheckedIn ? 'bg-primary text-black hover:bg-yellow-400 shadow-primary/20' : 'bg-white/5 border border-white/10 text-white/20 cursor-not-allowed']">
+										Clock In
 									</button>
-
-									<button
-										v-if="attendance.isCheckedIn"
-										@click="handleBreak"
-										:disabled="attendance.loading"
-										class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-xs uppercase bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 hover:border-white/20 shadow-lg"
-									>
-										<span v-if="attendance.loading" class="text-sm"
-											>rotate_right</span
-										>
-										<span v-else>Break</span>
+									<button @click="handleClockOut()" :disabled="!attendance.isCheckedIn || attendance.loading" class="h-11 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-[10px] uppercase shadow-lg" :class="[attendance.isCheckedIn ? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-red-500/10' : 'bg-white/5 border border-white/10 text-white/20 cursor-not-allowed']">
+										Clock Out
 									</button>
-									<button
-										@click="handleClockOut"
-										:disabled="!attendance.isCheckedIn || attendance.loading"
-										class="flex-1 h-12 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-xs uppercase"
-										:class="[
-											attendance.isCheckedIn
-												? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.15)]'
-												: 'bg-white/5 border border-white/5 text-white/10 cursor-not-allowed',
-										]"
-									>
-										<span v-if="attendance.loading" class="text-sm"
-											>rotate_right</span
-										>
-										<span v-else>Clock Out</span>
+									<button @click="handleBreak" :disabled="!attendance.isCheckedIn || attendance.loading" class="col-span-2 h-11 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-[10px] uppercase shadow-lg" :class="[isOnBreak ? 'bg-primary text-black hover:bg-yellow-400 shadow-primary/20' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 disabled:opacity-30']">
+										{{ isOnBreak ? 'End Break' : 'Break' }}
 									</button>
 								</div>
 							</div>
 						</pane>
-
-						<!-- Bottom Info Row -->
-						<pane :size="25" min-size="15" class="pt-2 bg-transparent overflow-hidden">
-							<splitpanes class="default-theme">
-								<!-- Profile -->
-								<pane :size="33.3" class="pr-2 bg-transparent overflow-hidden">
-									<div
-										class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors h-full"
-									>
-										<div
-											class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"
-										>
-											<span class="material-symbols-outlined text-5xl"
-												>badge</span
-											>
+						<!-- People Section -->
+						<pane :size="paneSizes.left[1]" class="pt-2 bg-transparent overflow-hidden">
+							<div class="grid grid-cols-2 gap-2 h-full">
+								<div class="premium-card !p-4 flex flex-col justify-between">
+									<p class="status-label">My Profile</p>
+									<div class="flex items-center gap-3">
+										<div class="w-8 h-8 rounded-full bg-gradient-to-br from-primary/80 to-amber-600 flex items-center justify-center text-black font-bold text-[10px] shadow-lg">
+											{{ userInitials }}
 										</div>
-										<div>
-											<p
-												class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2"
-											>
-												My Profile
-											</p>
-											<div class="flex items-center gap-3 mt-1">
-												<div
-													class="w-10 h-10 rounded-full bg-gradient-to-br from-primary/80 to-amber-600 flex items-center justify-center text-black font-bold text-sm shadow-lg shadow-primary/10 shrink-0"
-												>
-													{{ userInitials }}
-												</div>
-												<div class="min-w-0">
-													<p
-														class="text-xs font-bold text-white leading-tight truncate"
-													>
-														{{ employeeName }}
-													</p>
-													<p class="text-[9px] text-primary mt-1 truncate">
-														{{ employeeDesignation }}
-													</p>
-												</div>
-											</div>
-										</div>
-										<button
-											class="mt-3 py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold text-white/70 border border-white/5 flex items-center gap-2 w-full justify-center transition-all"
-										>
-											<span class="material-symbols-outlined text-[14px]"
-												>account_box</span
-											>
-											Employee Settings
-										</button>
+										<p class="text-[10px] font-bold text-gray-900 dark:text-white truncate">{{ employeeName }}</p>
 									</div>
-								</pane>
-
-								<!-- Reporting Manager -->
-								<pane :size="33.4" class="px-2 bg-transparent overflow-hidden">
-									<div
-										class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors h-full"
-									>
-										<div
-											class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"
-										>
-											<span class="material-symbols-outlined text-5xl"
-												>supervisor_account</span
-											>
+								</div>
+								<div class="premium-card !p-4 flex flex-col justify-between">
+									<p class="status-label">Manager</p>
+									<div class="flex items-center gap-3">
+										<div class="w-8 h-8 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold text-[10px] uppercase border border-blue-500/20">
+											{{ managerInitials }}
 										</div>
-										<div>
-											<p
-												class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2"
-											>
-												Direct Manager
-											</p>
-											<div class="flex items-center gap-3 mt-1">
-												<div
-													class="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-400 font-bold text-xs ring-1 ring-blue-500/20 shrink-0 uppercase"
-												>
-													{{ managerInitials }}
-												</div>
-												<div class="min-w-0">
-													<p class="text-xs font-bold text-white truncate">
-														{{ managerName }}
-													</p>
-													<p class="text-[9px] text-white/40 truncate mt-1">
-														Supervisory Role
-													</p>
-												</div>
-											</div>
-										</div>
-										<button
-											class="mt-3 py-2 px-3 bg-white/5 hover:bg-white/10 rounded-lg text-[9px] font-bold text-white/50 border border-white/5 transition-all w-full"
-										>
-											View Management
-										</button>
+										<p class="text-[10px] font-bold text-gray-900 dark:text-white truncate">{{ managerName }}</p>
 									</div>
-								</pane>
-
-								<!-- Payslip -->
-								<pane :size="33.3" class="pl-2 bg-transparent overflow-hidden">
-									<div
-										class="glass-card rounded-[1.5rem] p-5 border border-white/5 flex flex-col justify-between relative overflow-hidden group hover:border-white/10 transition-colors h-full"
-									>
-										<div
-											class="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity"
-										>
-											<span class="material-symbols-outlined text-5xl"
-												>payments</span
-											>
-										</div>
-										<div>
-											<p
-												class="text-[9px] text-white/30 font-bold uppercase tracking-widest mb-2"
-											>
-												My Payroll
-											</p>
-											<p class="text-sm font-bold text-white truncate">
-												{{ payslipMonth }}
-											</p>
-											<div
-												v-if="payslipStatus"
-												class="flex items-center gap-1.5 mt-2"
-											>
-												<span
-													class="w-1.5 h-1.5 rounded-full bg-emerald-400"
-												></span>
-												<span
-													class="text-[9px] text-emerald-400/80 font-bold uppercase tracking-wider"
-													>{{ payslipStatus }}</span
-												>
-											</div>
-											<p v-else class="text-[9px] text-white/30 mt-2 italic">
-												Processing...
-											</p>
-										</div>
-										<router-link to="/payroll" class="block mt-3 shrink-0">
-											<button
-												class="w-full py-2 px-3 bg-primary/5 hover:bg-primary/10 rounded-lg text-[9px] font-bold text-primary/80 border border-primary/10 flex items-center justify-center gap-2 transition-all"
-											>
-												<span class="material-symbols-outlined text-[14px]"
-													>receipt_long</span
-												>
-												Salary History
-											</button>
-										</router-link>
-									</div>
-								</pane>
-							</splitpanes>
+								</div>
+							</div>
 						</pane>
 					</splitpanes>
 				</pane>
 
-				<!-- Right Column: Activity / Todos -->
-				<pane :size="34" min-size="20" class="pl-2 bg-transparent overflow-hidden">
-					<splitpanes horizontal class="default-theme" @resize="onRightResize">
-						<!-- Activity -->
-						<pane :size="50" class="pb-2 bg-transparent overflow-hidden">
-							<div
-								class="glass-card rounded-[2.5rem] p-7 h-full border border-white/5 flex flex-col bg-white/[0.02]"
-							>
+				<!-- Center Column: Roster & Payroll -->
+				<pane :size="paneSizes.main[1]" min-size="30" class="px-2 bg-transparent overflow-hidden">
+					<splitpanes horizontal class="splitpanes-dashboard" @resize="onCenterResize">
+						<!-- Upcoming Roster -->
+						<pane :size="paneSizes.center[0]" class="pb-2 bg-transparent overflow-hidden">
+							<div class="premium-card !p-7 h-full flex flex-col">
 								<div class="flex items-center justify-between mb-6">
 									<div>
-										<h3 class="font-bold text-lg text-white font-display">
-											Activity Stream
-										</h3>
-										<p
-											class="text-[9px] text-white/20 uppercase tracking-widest mt-1"
-										>
-											Real-time alerts
-										</p>
+										<h3 class="premium-title !text-lg">Upcoming Roster</h3>
+										<p class="premium-subtitle !text-[9px] uppercase tracking-widest mt-1">Next 5 Shifts</p>
 									</div>
-									<div
-										class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center"
-									>
-										<span class="material-symbols-outlined text-white/30 text-base"
-											>notifications</span
-										>
+									<div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+										<span class="material-symbols-outlined text-gray-400 dark:text-white/30 text-base">calendar_view_week</span>
 									</div>
 								</div>
-								<div class="flex-1 overflow-y-auto custom-scrollbar space-y-5 pr-2">
-									<div
-										v-if="recentActivity.length === 0"
-										class="text-center text-white/20 py-12"
-									>
-										<span class="material-symbols-outlined text-4xl mb-3 opacity-20"
-											>history</span
-										>
-										<p class="text-xs">Initial scan complete. No logs found.</p>
-									</div>
-									<div
-										v-for="log in recentActivity"
-										:key="log.id"
-										class="flex gap-4 relative group"
-									>
-										<div
-											class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 border bg-black/40 backdrop-blur-md transition-all group-hover:border-primary/30"
-											:class="getActivityIconClass(log.type)"
-										>
-											<span class="material-symbols-outlined text-lg">{{
-												log.icon
-											}}</span>
+								<div class="space-y-2 flex-1 overflow-y-auto custom-scrollbar pr-2">
+									<div v-for="roster in upcomingRoster" :key="roster.date" class="bg-white/5 p-3 rounded-xl border border-white/5 flex items-center justify-between group hover:bg-white/[0.03] transition-all">
+										<div class="flex items-center gap-4">
+											<div class="text-center min-w-[36px]">
+												<p class="text-[9px] uppercase font-black text-white/30">{{ roster.dayShort }}</p>
+												<p class="text-base font-bold text-white font-mono">{{ roster.dayNum }}</p>
+											</div>
+											<div class="h-8 w-px bg-white/5"></div>
+											<div>
+												<p class="text-[11px] font-bold text-white/90">{{ roster.shift_name }}</p>
+												<p class="text-[9px] text-white/30 font-mono">{{ roster.shift_time }}</p>
+											</div>
 										</div>
-										<div class="min-w-0">
-											<p
-												class="text-[11px] font-bold text-white transition-colors group-hover:text-primary leading-tight"
-											>
-												{{ log.title }}
-											</p>
-											<p
-												class="text-[9px] text-white/30 mt-1 font-mono uppercase"
-											>
-												{{ log.time }}
-											</p>
+										<div class="text-right">
+											<span class="text-[8px] font-black px-2 py-0.5 rounded bg-primary/10 text-primary uppercase tracking-widest">
+												{{ roster.hours }}H
+											</span>
 										</div>
 									</div>
 								</div>
 							</div>
 						</pane>
+						<pane :size="paneSizes.center[1]" class="pt-2 bg-transparent overflow-hidden">
+							<div class="premium-card !p-6 h-full flex flex-col justify-between">
+								<div class="flex items-center justify-between">
+									<div>
+										<p class="status-label">My Payroll</p>
+										<p class="text-base font-bold text-gray-900 dark:text-white">{{ payslipMonth }}</p>
+										<div v-if="payslipStatus" class="flex items-center gap-1.5 mt-2">
+											<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.4)]"></span>
+											<span class="text-[9px] text-emerald-400 font-bold uppercase tracking-wider">{{ payslipStatus }}</span>
+										</div>
+									</div>
+									<router-link to="/payroll">
+										<button class="w-10 h-10 rounded-xl bg-white/5 hover:bg-white/10 flex items-center justify-center transition-all border border-white/5">
+											<span class="material-symbols-outlined text-gray-400 dark:text-white/40 text-lg">receipt_long</span>
+										</button>
+									</router-link>
+								</div>
+								<button class="mt-4 py-2.5 bg-primary/5 hover:bg-primary/10 rounded-xl text-[10px] font-bold text-primary border border-primary/10 transition-all">
+									Download Statement
+								</button>
+							</div>
+						</pane>
+					</splitpanes>
+				</pane>
 
-						<!-- Todos -->
-						<pane :size="50" class="pt-2 bg-transparent overflow-hidden">
-							<div
-								class="glass-card rounded-[2.5rem] p-7 h-full border border-white/5 flex flex-col bg-white/[0.02]"
-							>
+				<!-- Right Column: Activity / Tasks -->
+				<pane :size="paneSizes.main[2]" min-size="20" class="pl-2 bg-transparent overflow-hidden">
+					<splitpanes horizontal class="splitpanes-dashboard" @resize="onRightResize">
+						<!-- Activity -->
+						<pane :size="paneSizes.right[0]" class="pb-2 bg-transparent overflow-hidden">
+							<div class="premium-card !p-7 h-full flex flex-col">
 								<div class="flex items-center justify-between mb-6">
 									<div>
-										<h3 class="font-bold text-lg text-white font-display">
-											Priority Tasks
-										</h3>
-										<p
-											class="text-[9px] text-white/20 uppercase tracking-widest mt-1"
-										>
-											Personal Board
-										</p>
+										<h3 class="premium-title !text-lg">Activity Stream</h3>
+										<p class="premium-subtitle !text-[9px] uppercase tracking-widest mt-1">Recent Logs</p>
 									</div>
-									<button
-										@click="showAddTodo = true"
-										class="w-8 h-8 rounded-xl bg-primary text-black hover:bg-yellow-400 flex items-center justify-center transition-all shadow-lg shadow-primary/10"
-									>
-										<span class="material-symbols-outlined text-lg font-bold"
-											>add</span
-										>
+									<div class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
+										<span class="material-symbols-outlined text-gray-400 dark:text-white/30 text-base">notifications</span>
+									</div>
+								</div>
+								<div class="flex-1 overflow-y-auto custom-scrollbar space-y-4 pr-2">
+									<div v-for="log in recentActivity" :key="log.id" class="flex items-center gap-3 group">
+										<div class="w-8 h-8 rounded-lg flex items-center justify-center shrink-0 border bg-black/20 border-white/5 transition-all group-hover:border-primary/30" :class="getActivityIconClass(log.type)">
+											<span class="material-symbols-outlined text-base">{{ log.icon }}</span>
+										</div>
+										<div class="min-w-0">
+											<p class="text-[10px] font-bold text-gray-900 dark:text-white/90 group-hover:text-primary transition-colors truncate">{{ log.title }}</p>
+											<p class="text-[8px] text-white/30 font-mono">{{ log.time }}</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</pane>
+						<!-- Tasks -->
+						<pane :size="paneSizes.right[1]" class="pt-2 bg-transparent overflow-hidden">
+							<div class="premium-card !p-7 h-full flex flex-col">
+								<div class="flex items-center justify-between mb-6">
+									<div>
+										<h3 class="premium-title !text-lg">Priority Tasks</h3>
+										<p class="premium-subtitle !text-[9px] uppercase tracking-widest mt-1">Todo List</p>
+									</div>
+									<button @click="showAddTodo = true" class="w-8 h-8 rounded-xl bg-primary text-black hover:bg-yellow-400 flex items-center justify-center transition-all shadow-lg shadow-primary/20">
+										<span class="material-symbols-outlined text-lg font-bold">add</span>
 									</button>
 								</div>
 								<div class="flex-1 overflow-y-auto custom-scrollbar space-y-3 pr-2">
-									<div
-										v-if="sortedOpenTodos.length === 0"
-										class="text-center text-white/20 py-12"
-									>
-										<div
-											class="w-14 h-14 rounded-full border border-white/5 flex items-center justify-center mx-auto mb-4 bg-white/5"
-										>
-											<span class="material-symbols-outlined text-2xl opacity-30"
-												>check_circle</span
-											>
-										</div>
-										<p class="text-xs">Zero tasks remaining for today</p>
-									</div>
-									<div
-										v-for="todo in sortedOpenTodos"
-										:key="todo.id"
-										@click="toggleTodo(todo.id, todo.status)"
-										class="group flex items-center gap-4 p-4 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] transition-all border border-white/5 cursor-pointer"
-									>
-										<div
-											class="w-5 h-5 rounded-md border-2 border-white/10 flex items-center justify-center group-hover:border-primary transition-all bg-black/20"
-										>
-											<span
-												class="material-symbols-outlined text-[14px] text-transparent group-hover:text-primary"
-												>done</span
-											>
-										</div>
-										<div class="flex-1 min-w-0">
-											<p
-												class="text-xs font-bold text-white group-hover:text-primary/90 transition-colors truncate"
-											>
-												{{ todo.description }}
-											</p>
-											<div class="flex items-center gap-3 mt-1.5">
-												<span
-													class="text-[9px] text-white/30 flex items-center gap-1 font-mono uppercase"
-												>
-													<span class="material-symbols-outlined text-[10px]"
-														>calendar_today</span
-													>
-													{{ formatDate(todo.date) }}
-												</span>
-												<span
-													class="text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded"
-													:class="{
-														'bg-red-500/15 text-red-400': todo.priority === 'High',
-														'bg-amber-500/15 text-amber-400': todo.priority === 'Medium',
-														'bg-blue-500/15 text-blue-400': todo.priority === 'Low'
-													}"
-												>
-													{{ todo.priority }}
-												</span>
-											</div>
-										</div>
+									<div v-for="todo in sortedOpenTodos" :key="todo.id" @click="toggleTodo(todo.id, todo.status)" class="group flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] hover:bg-white/[0.05] transition-all border border-white/5 cursor-pointer">
+										<div class="w-4 h-4 rounded border border-white/10 group-hover:border-primary transition-all"></div>
+										<p class="text-[10px] font-bold text-gray-900 dark:text-white group-hover:text-primary/90 transition-colors truncate">{{ todo.description }}</p>
 									</div>
 								</div>
 							</div>
@@ -1128,15 +649,47 @@ const totalHoursMobile = computed(() => {
 	return (attendance.totalHoursToday || 0).toFixed(1);
 });
 
-// Splitpanes resize sync (optional cross resize support)
+// Splitpanes resize sync and persistence
+const paneSizes = ref({
+	main: [35, 35, 30],
+	left: [70, 30],
+	center: [60, 40],
+	right: [50, 50],
+});
+
+function saveLayout() {
+	localStorage.setItem("dashboard_layout", JSON.stringify(paneSizes.value));
+}
+
+function loadLayout() {
+	const saved = localStorage.getItem("dashboard_layout");
+	if (saved) {
+		try {
+			const parsed = JSON.parse(saved);
+			if (parsed.main && parsed.left && parsed.right) {
+				paneSizes.value = parsed;
+			}
+		} catch (e) {
+			console.error("Failed to load layout:", e);
+		}
+	}
+}
+
 function onMainResize(panes) {
-	// console.log('Main Resize', panes)
+	paneSizes.value.main = panes.map((p) => p.size);
+	saveLayout();
 }
 function onLeftResize(panes) {
-	// console.log('Left Column Resize', panes)
+	paneSizes.value.left = panes.map((p) => p.size);
+	saveLayout();
+}
+function onCenterResize(panes) {
+	paneSizes.value.center = panes.map((p) => p.size);
+	saveLayout();
 }
 function onRightResize(panes) {
-	// console.log('Right Column Resize', panes)
+	paneSizes.value.right = panes.map((p) => p.size);
+	saveLayout();
 }
 
 // Computed from employee store
@@ -1215,6 +768,29 @@ const getDotColor = computed(() => {
 	const target = attendance.workingHoursTarget || 8;
 	const worked = attendance.totalHoursToday || 0;
 	return worked >= target ? "bg-green-500" : "bg-amber-500";
+});
+
+const upcomingRoster = computed(() => {
+	const days = [];
+	const today = new Date();
+	const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	const dayNamesOrder = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+	for (let i = 0; i < 5; i++) {
+		const d = new Date();
+		d.setDate(today.getDate() + i);
+		days.push({
+			date: d.toISOString().split("T")[0],
+			dayName: d.toLocaleDateString("en-US", { weekday: "short" }),
+			dayShort: d.toLocaleDateString("en-US", { weekday: "short" }).toUpperCase(),
+			dayNum: d.getDate(),
+			month: monthNames[d.getMonth()],
+			shift_name: attendance.roster?.shift_name || "General Shift",
+			shift_time: `${attendance.roster?.start_time?.substring(0, 5) || "09:00"} - ${attendance.roster?.end_time?.substring(0, 5) || "17:00"}`,
+			hours: attendance.workingHoursTarget || 8,
+		});
+	}
+	return days;
 });
 
 // Recent activity from check-in history
@@ -1314,12 +890,29 @@ async function handleClockOut() {
 }
 
 async function handleBreak() {
+	const wasOnBreak = isOnBreak.value;
 	isOnBreak.value = !isOnBreak.value;
 	
 	if (isOnBreak.value) {
+		// Starting break: pause timer, create OUT checkin
 		stopTimer();
+		try {
+			await attendance.startBreak();
+		} catch (error) {
+			console.error("Start break failed:", error);
+			isOnBreak.value = false;
+			startTimer();
+		}
 	} else {
+		// Ending break: resume timer, create IN checkin
 		startTimer();
+		try {
+			await attendance.endBreak();
+		} catch (error) {
+			console.error("End break failed:", error);
+			isOnBreak.value = true;
+			stopTimer();
+		}
 	}
 	saveTimerState();
 }
@@ -1406,8 +999,9 @@ onMounted(async () => {
 		payrollStore.init();
 	}
 	
-	// Load saved state before starting timer
+	// Load saved state and layout before starting timer
 	loadTimerState();
+	loadLayout();
 	
 	if (attendance.isCheckedIn && !isOnBreak.value) {
 		startTimer();

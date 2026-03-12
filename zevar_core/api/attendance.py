@@ -205,30 +205,35 @@ def clock_in(latitude: float | None = None, longitude: float | None = None, note
 			frappe.throw(_("Already checked in today. Please check out first."))
 
 	# Create check-in record
-	checkin = frappe.get_doc(
-		{
-			"doctype": "Employee Checkin",
-			"employee": employee_id,
-			"log_type": "IN",
-			"time": now_datetime(),
-			"device_id": "HRMS Portal",
-			"latitude": latitude,
-			"longitude": longitude,
-			"note": notes,
+	try:
+		checkin = frappe.get_doc(
+			{
+				"doctype": "Employee Checkin",
+				"employee": employee_id,
+				"log_type": "IN",
+				"time": now_datetime(),
+				"device_id": "HRMS Portal",
+				"latitude": latitude,
+				"longitude": longitude,
+				"note": notes,
+			}
+		)
+		checkin.insert()
+
+		# Get updated status (skip roster for speed)
+		status = get_today_checkin_status(employee_id, skip_roster=True)
+
+		return {
+			"success": True,
+			"checkin_id": checkin.name,
+			"time": str(checkin.time),
+			"message": _("Checked in successfully at {0}").format(checkin.time.strftime("%H:%M")),
+			"status": status,
 		}
-	)
-	checkin.insert()
-
-	# Get updated status (skip roster for speed)
-	status = get_today_checkin_status(employee_id, skip_roster=True)
-
-	return {
-		"success": True,
-		"checkin_id": checkin.name,
-		"time": str(checkin.time),
-		"message": _("Checked in successfully at {0}").format(checkin.time.strftime("%H:%M")),
-		"status": status,
-	}
+	except Exception as e:
+		frappe.db.rollback()
+		frappe.log_error("HRMS Clock-in Failed", frappe.get_traceback())
+		frappe.throw(_("Failed to clock in: {0}").format(str(e)))
 
 
 @frappe.whitelist()
@@ -261,35 +266,122 @@ def clock_out(latitude: float | None = None, longitude: float | None = None, not
 	if not last_log or last_log.log_type == "OUT":
 		frappe.throw(_("No active check-in found. Please check in first."))
 
-	# Create check-out record
-	checkout = frappe.get_doc(
-		{
-			"doctype": "Employee Checkin",
-			"employee": employee_id,
-			"log_type": "OUT",
-			"time": now_datetime(),
-			"device_id": "HRMS Portal",
-			"latitude": latitude,
-			"longitude": longitude,
-			"note": notes,
+	try:
+		# Create check-out record
+		checkout = frappe.get_doc(
+			{
+				"doctype": "Employee Checkin",
+				"employee": employee_id,
+				"log_type": "OUT",
+				"time": now_datetime(),
+				"device_id": "HRMS Portal",
+				"latitude": latitude,
+				"longitude": longitude,
+				"note": notes,
+			}
+		)
+		checkout.insert()
+
+		# Calculate hours for this session
+		hours_worked = time_diff_in_hours(checkout.time, last_log.time)
+
+		# Get updated status (skip roster for speed)
+		status = get_today_checkin_status(employee_id, skip_roster=True)
+
+		# Auto-generate Attendance record if this is a final clock-out (not a break)
+		is_break = notes and "Break" in notes
+		if not is_break:
+			_process_auto_attendance(employee_id)
+
+		return {
+			"success": True,
+			"checkout_id": checkout.name,
+			"time": str(checkout.time),
+			"hours_this_session": round(hours_worked, 2),
+			"message": _("Checked out successfully. Hours this session: {0}").format(round(hours_worked, 2)),
+			"status": status,
 		}
+	except Exception as e:
+		frappe.db.rollback()
+		frappe.log_error("HRMS Clock-out Failed", frappe.get_traceback())
+		frappe.throw(_("Failed to clock out: {0}").format(str(e)))
+
+
+def _process_auto_attendance(employee_id):
+	"""
+	Process today's check-in logs and create/update an Attendance record.
+
+	Calculates total working hours from all IN/OUT pairs, then creates
+	a standard Attendance record with status Present or Half Day based
+	on the employee's shift configuration.
+	"""
+	today = getdate()
+
+	# Check if attendance already exists for today
+	existing = frappe.db.get_value(
+		"Attendance",
+		{"employee": employee_id, "attendance_date": today, "docstatus": ("!=", 2)},
+		"name",
 	)
-	checkout.insert()
+	if existing:
+		return  # Don't duplicate
 
-	# Calculate hours for this session
-	hours_worked = time_diff_in_hours(checkout.time, last_log.time)
+	# Get all today's logs
+	logs = frappe.get_all(
+		"Employee Checkin",
+		filters={"employee": employee_id, "time": [">=", today]},
+		fields=["log_type", "time"],
+		order_by="time asc",
+	)
 
-	# Get updated status (skip roster for speed)
-	status = get_today_checkin_status(employee_id, skip_roster=True)
+	if not logs:
+		return
 
-	return {
-		"success": True,
-		"checkout_id": checkout.name,
-		"time": str(checkout.time),
-		"hours_this_session": round(hours_worked, 2),
-		"message": _("Checked out successfully. Hours this session: {0}").format(round(hours_worked, 2)),
-		"status": status,
-	}
+	# Calculate total hours from all IN/OUT pairs
+	total_hours = 0
+	check_in_time = None
+	for log in logs:
+		if log.log_type == "IN":
+			check_in_time = log.time
+		elif log.log_type == "OUT" and check_in_time:
+			total_hours += time_diff_in_hours(log.time, check_in_time)
+			check_in_time = None
+
+	if total_hours <= 0:
+		return
+
+	# Get roster to determine target hours and shift type
+	roster = get_employee_roster(employee_id)
+	target_hours = roster.get("working_hours", 8)
+	shift_type = roster.get("shift_type")
+
+	# Determine attendance status
+	if total_hours >= target_hours:
+		status = "Present"
+	elif total_hours >= target_hours / 2:
+		status = "Half Day"
+	else:
+		status = "Present"  # Still mark present even if short
+
+	try:
+		attendance_doc = frappe.get_doc(
+			{
+				"doctype": "Attendance",
+				"employee": employee_id,
+				"attendance_date": today,
+				"status": status,
+				"working_hours": round(total_hours, 2),
+			}
+		)
+		if shift_type:
+			attendance_doc.shift = shift_type
+
+		attendance_doc.insert(ignore_permissions=True)
+		attendance_doc.submit()
+		frappe.db.commit()
+	except Exception:
+		# Non-critical: log but don't break the clock-out flow
+		frappe.log_error("Auto-Attendance Creation Failed", frappe.get_traceback())
 
 
 @frappe.whitelist()

@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="bg-white dark:bg-[#15171e] rounded-lg border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition-all cursor-pointer flex flex-col h-full group relative overflow-hidden"
+		class="premium-card !p-0 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col h-full group relative overflow-hidden h-full"
 	>
 		<div class="aspect-square bg-gray-100 dark:bg-gray-800 relative">
 			<img
@@ -12,7 +12,7 @@
 			/>
 			<div
 				v-else
-				class="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-700"
+				class="w-full h-full flex items-center justify-center text-gray-300 dark:text-gray-600"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -47,9 +47,9 @@
 		</div>
 
 		<div class="p-3 flex-1 flex flex-col">
-			<div class="flex items-start justify-between mb-1.5">
+			<div class="flex items-start justify-between mb-2">
 				<h3
-					class="font-medium text-gray-900 dark:text-white line-clamp-2 text-xs leading-snug min-h-[2rem]"
+					class="font-bold text-gray-900 dark:text-white line-clamp-2 text-xs leading-snug min-h-[2.25rem]"
 				>
 					{{ item.item_name }}
 				</h3>
@@ -71,22 +71,22 @@
 			<!-- Weight Breakdown -->
 			<div
 				v-if="item.net_weight > 0 || item.gross_weight > 0"
-				class="hidden lg:block text-[9px] text-gray-500 dark:text-gray-400 mb-2 space-y-0.5 bg-gray-50 dark:bg-white/5 p-1.5 rounded"
+				class="hidden lg:block text-[9px] text-gray-500 dark:text-white/40 mb-3 space-y-0.5 bg-gray-50 dark:bg-white/5 p-2 rounded-xl border border-gray-100 dark:border-white/5"
 			>
 				<div v-if="item.gross_weight > 0" class="flex justify-between">
-					<span>Gross:</span> <span>{{ item.gross_weight }}g</span>
+					<span>Gross:</span> <span class="font-bold text-gray-700 dark:text-white/80">{{ item.gross_weight }}g</span>
 				</div>
 				<div
 					v-if="item.stone_weight > 0"
-					class="flex justify-between text-red-400 dark:text-red-400/80"
+					class="flex justify-between text-red-500/80"
 				>
-					<span>Stone:</span> <span>-{{ item.stone_weight }}g</span>
+					<span>Stone:</span> <span class="font-bold">-{{ item.stone_weight }}g</span>
 				</div>
 				<div
 					v-if="item.net_weight > 0"
-					class="flex justify-between font-bold text-gray-700 dark:text-gray-300 border-t border-gray-200 dark:border-white/10 pt-0.5 mt-0.5"
+					class="flex justify-between font-bold text-gray-900 dark:text-white border-t border-gray-100 dark:border-white/10 pt-1 mt-1"
 				>
-					<span>Net:</span> <span>{{ item.net_weight }}g</span>
+					<span>Net Weight:</span> <span>{{ item.net_weight }}g</span>
 				</div>
 			</div>
 
@@ -102,7 +102,7 @@
 
 				<button
 					@click.stop="quickAdd"
-					class="bg-gray-900 dark:bg-white text-white dark:text-black p-1.5 rounded-lg hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors shadow-sm active:scale-95"
+					class="bg-gray-900 dark:bg-primary text-white dark:text-black w-8 h-8 rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-md"
 					title="Add to Cart"
 				>
 					<svg

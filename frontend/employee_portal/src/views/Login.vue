@@ -21,7 +21,7 @@
 			</div>
 
 			<!-- Login Form -->
-			<div class="glass-card rounded-2xl p-8">
+			<div class="premium-card !p-8">
 				<h2 class="text-xl font-bold text-white mb-1">Welcome back</h2>
 				<p class="text-sm text-white/40 mb-6">Sign in with your Frappe credentials</p>
 

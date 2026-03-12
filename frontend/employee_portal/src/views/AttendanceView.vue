@@ -1,8 +1,8 @@
 <template>
-	<div class="flex flex-col gap-4 h-full overflow-hidden">
+	<div class="flex flex-col gap-6 h-full overflow-hidden">
 		<!-- Clock In/Out Section with Live Timer -->
 		<div class="shrink-0">
-			<div class="glass-card rounded-xl p-4 sm:p-6 border border-white/5">
+			<div class="premium-card !p-4 sm:!p-6">
 				<div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
 					<!-- Live Timer Display -->
 					<div class="flex-shrink-0 text-center">
@@ -49,15 +49,52 @@
 						</p>
 
 						<!-- Today's Summary -->
-						<div v-if="totalHoursToday > 0" class="mt-4 flex items-center justify-center sm:justify-start gap-4 text-[10px] sm:text-xs">
+						<div v-if="totalHoursToday > 0" class="mt-4 flex items-center justify-center sm:justify-start gap-4">
 							<div>
-								<p class="text-white/30">Today</p>
-								<p class="font-mono font-bold text-white">{{ totalHoursToday.toFixed(2) }} hrs</p>
+								<p class="status-label !mb-0 text-[10px]">Today</p>
+								<p class="font-mono font-bold text-gray-900 dark:text-white text-sm">{{ totalHoursToday.toFixed(2) }} hrs</p>
 							</div>
 							<div v-if="overtimeHours > 0">
-								<p class="text-white/30">Overtime</p>
-								<p class="font-mono font-bold text-emerald-400">+{{ overtimeHours.toFixed(2) }} hrs</p>
+								<p class="status-label !mb-0 text-[10px] text-emerald-600 dark:text-emerald-400">Overtime</p>
+								<p class="font-mono font-bold text-emerald-600 dark:text-emerald-400 text-sm">+{{ overtimeHours.toFixed(2) }} hrs</p>
 							</div>
+						</div>
+
+						<!-- Quick Actions -->
+						<div class="mt-6 grid grid-cols-2 gap-2 w-full max-w-sm">
+							<button
+								@click="handleClockIn"
+								:disabled="isCheckedIn || attendanceStore.loading"
+								class="h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-all shadow-lg"
+								:class="[
+									!isCheckedIn
+										? 'bg-primary text-black hover:bg-yellow-400 shadow-primary/20'
+										: 'bg-white/5 border border-white/10 text-white/20 cursor-not-allowed dark:disabled:text-white/10',
+								]"
+							>
+								Clock In
+							</button>
+							<button
+								@click="handleClockOut"
+								:disabled="!isCheckedIn || attendanceStore.loading"
+								class="h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-all shadow-lg"
+								:class="[
+									isCheckedIn
+										? 'bg-red-500/20 border border-red-500/30 text-red-500 hover:bg-red-500/30 shadow-red-500/10'
+										: 'bg-white/5 border border-white/10 text-white/20 cursor-not-allowed dark:disabled:text-white/10',
+								]"
+							>
+								Clock Out
+							</button>
+							<button
+								@click="handleBreak"
+								:disabled="!isCheckedIn || attendanceStore.loading"
+								class="col-span-2 h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-colors"
+								:class="isOnBreak ? 'bg-primary text-black shadow-primary/20' : 'bg-white/5 border border-white/10 text-white/80 hover:bg-white/10 disabled:opacity-30 dark:disabled:text-white/10'"
+							>
+								<span v-if="attendanceStore.loading" class="text-sm">...</span>
+								<span v-else>{{ isOnBreak ? 'End Break' : 'Break' }}</span>
+							</button>
 						</div>
 					</div>
 
@@ -79,17 +116,17 @@
 
 		<!-- Header Stats -->
 		<div class="grid grid-cols-3 gap-2 sm:gap-4 shrink-0">
-			<div class="glass-card p-3 sm:p-4 rounded-xl">
-				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">This Month</p>
-				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ totalHours.toFixed(1) }}<span class="text-xs sm:text-sm text-white/40 ml-1">hrs</span></p>
+			<div class="premium-card !p-3 sm:!p-4">
+				<p class="status-label !mb-1">This Month</p>
+				<p class="text-lg sm:text-2xl font-bold text-gray-900 dark:text-white font-mono">{{ totalHours.toFixed(1) }}<span class="text-xs sm:text-sm text-gray-400 dark:text-white/40 ml-1">hrs</span></p>
 			</div>
-			<div class="glass-card p-3 sm:p-4 rounded-xl">
-				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">On-Time</p>
-				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ onTimeRate }}<span class="text-xs sm:text-sm text-white/40 ml-1">%</span></p>
+			<div class="premium-card !p-3 sm:!p-4">
+				<p class="status-label !mb-1">On-Time</p>
+				<p class="text-lg sm:text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">{{ onTimeRate }}<span class="text-xs sm:text-sm text-gray-400 dark:text-white/40 ml-1">%</span></p>
 			</div>
-			<div class="glass-card p-3 sm:p-4 rounded-xl">
-				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Avg Shift</p>
-				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ averageShiftHours }}<span class="text-xs sm:text-sm text-white/40 ml-1">hrs</span></p>
+			<div class="premium-card !p-3 sm:!p-4">
+				<p class="status-label !mb-1">Avg Shift</p>
+				<p class="text-lg sm:text-2xl font-bold text-primary font-mono">{{ averageShiftHours }}<span class="text-xs sm:text-sm text-gray-400 dark:text-white/40 ml-1">hrs</span></p>
 			</div>
 		</div>
 
@@ -99,8 +136,8 @@
 			<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 				<div class="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
 					<div>
-						<h2 class="text-base sm:text-xl font-bold text-white">Daily Attendance</h2>
-						<p class="text-[10px] sm:text-xs text-white/40">Your clock in/out history</p>
+						<h2 class="premium-title !text-xl">Daily Attendance</h2>
+						<p class="premium-subtitle !text-xs">Your clock in/out history</p>
 					</div>
 					<button
 						@click="loadMoreHistory"
@@ -111,7 +148,7 @@
 				</div>
 
 				<!-- Table Header - Hidden on mobile -->
-				<div class="hidden sm:grid glass-card rounded-t-xl px-3 sm:px-4 py-2 sm:py-3 grid-cols-5 gap-2 sm:gap-4 text-[9px] sm:text-[10px] uppercase tracking-widest text-white/40 font-bold border-b border-white/5">
+				<div class="hidden sm:grid premium-card !p-0 !rounded-b-none px-3 sm:px-4 py-2 sm:py-3 grid-cols-5 gap-2 sm:gap-4 text-[9px] sm:text-[10px] uppercase tracking-widest text-gray-500 dark:text-white/40 font-bold border-b border-gray-100 dark:border-white/5">
 					<div>Date</div>
 					<div>Clock In</div>
 					<div>Clock Out</div>
@@ -121,9 +158,9 @@
 
 				<!-- Daily Records -->
 				<div class="flex-1 overflow-y-auto custom-scrollbar">
-					<div v-if="dailyRecords.length === 0" class="text-center py-12">
-						<span class="material-symbols-outlined text-4xl text-white/20 mb-3">event_busy</span>
-						<p class="text-white/40 text-sm">No attendance records found</p>
+					<div v-if="dailyRecords.length === 0" class="premium-card !p-12 text-center">
+						<span class="material-symbols-outlined text-4xl text-gray-400 dark:text-white/20 mb-3">event_busy</span>
+						<p class="premium-subtitle">No attendance records found</p>
 					</div>
 
 					<!-- Mobile Card View -->
@@ -131,16 +168,16 @@
 						<div
 							v-for="record in dailyRecords"
 							:key="record.date"
-							class="glass-card rounded-xl p-3 border border-white/5"
+							class="premium-card !p-3 sm:!p-4 border border-gray-100 dark:border-white/5 shadow-sm sm:shadow-none"
 						>
 							<div class="flex items-center justify-between mb-2">
 								<div>
-									<p class="text-sm font-bold text-white">{{ formatDate(record.date) }}</p>
-									<p class="text-[10px] text-white/30">{{ formatDay(record.date) }}</p>
+									<p class="text-sm font-bold text-gray-900 dark:text-white">{{ formatDate(record.date) }}</p>
+									<p class="status-label !mb-0 !text-[10px]">{{ formatDay(record.date) }}</p>
 								</div>
 								<span
 									v-if="record.status === 'present'"
-									class="text-[9px] px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-400 font-bold uppercase"
+									class="text-[9px] px-2 py-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 font-bold uppercase"
 								>Present</span>
 								<span
 									v-else-if="record.status === 'late'"
@@ -201,10 +238,10 @@
 								<p v-else class="text-xs sm:text-sm text-white/20">-</p>
 							</div>
 							<div>
-								<p v-if="record.totalHours" class="text-xs sm:text-sm font-mono" :class="record.totalHours >= workingHoursTarget ? 'text-emerald-400 font-bold' : 'text-white'">
+								<p v-if="record.totalHours" class="text-xs sm:text-sm font-mono text-gray-900 dark:text-white" :class="record.totalHours >= workingHoursTarget ? '!text-emerald-600 dark:!text-emerald-400 font-bold' : ''">
 									{{ record.totalHours.toFixed(2) }}
 								</p>
-								<p v-else class="text-xs sm:text-sm text-white/20">-</p>
+								<p v-else class="text-xs sm:text-sm text-gray-400 dark:text-white/20">-</p>
 							</div>
 							<div>
 								<span
@@ -238,91 +275,12 @@
 				</div>
 			</div>
 
-			<!-- Mini Calendar - Hidden on mobile, shows below on tablet -->
+			<!-- Mini Calendar -->
 			<div class="hidden lg:block w-72 shrink-0">
-				<div class="glass-card rounded-xl p-4 border border-white/5">
-					<!-- Calendar Header -->
-					<div class="flex items-center justify-between mb-4">
-						<h3 class="text-sm font-bold text-white">{{ currentMonthYear }}</h3>
-						<div class="flex gap-1">
-							<button
-								@click="previousMonth"
-								class="p-1 rounded hover:bg-white/5 text-white/40 hover:text-white transition-colors"
-							>
-								<span class="material-symbols-outlined text-lg">chevron_left</span>
-							</button>
-							<button
-								@click="nextMonth"
-								class="p-1 rounded hover:bg-white/5 text-white/40 hover:text-white transition-colors"
-							>
-								<span class="material-symbols-outlined text-lg">chevron_right</span>
-							</button>
-						</div>
-					</div>
-
-					<!-- Day Headers -->
-					<div class="grid grid-cols-7 gap-1 mb-2">
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">M</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">T</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">W</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">T</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">F</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">S</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">S</div>
-					</div>
-
-					<!-- Calendar Grid -->
-					<div class="grid grid-cols-7 gap-1">
-						<!-- Empty cells for days before month start -->
-						<div v-for="i in firstDayOfMonth" :key="'empty-' + i" class="aspect-square"></div>
-
-						<!-- Days -->
-						<button
-							v-for="day in calendarDays"
-							:key="day.date"
-							class="aspect-square rounded-md flex items-center justify-center text-xs relative transition-all"
-							:class="[
-								day.isToday
-									? 'bg-primary/20 text-primary font-bold'
-									: day.status === 'complete'
-									? 'text-emerald-400'
-									: day.status === 'present'
-									? 'text-emerald-400'
-									: day.status === 'absent'
-									? 'text-red-400'
-									: day.status === 'weekend'
-									? 'text-white/20'
-									: 'text-white/50 hover:bg-white/5'
-							]"
-						>
-							{{ day.day }}
-							<span
-								v-if="(day.status === 'present' || day.status === 'complete') && !day.isToday"
-								class="absolute bottom-0.5 w-1 h-1 rounded-full bg-emerald-400"
-							></span>
-							<span
-								v-if="day.status === 'absent'"
-								class="absolute bottom-0.5 w-1 h-1 rounded-full bg-red-400"
-							></span>
-						</button>
-					</div>
-
-					<!-- Legend -->
-					<div class="mt-4 pt-3 border-t border-white/5 flex flex-wrap gap-3 text-[9px]">
-						<div class="flex items-center gap-1">
-							<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-							<span class="text-white/40">Complete</span>
-						</div>
-						<div class="flex items-center gap-1">
-							<span class="w-2 h-2 rounded-full bg-red-400"></span>
-							<span class="text-white/40">Absent</span>
-						</div>
-						<div class="flex items-center gap-1">
-							<span class="w-2 h-2 rounded-full bg-primary"></span>
-							<span class="text-white/40">Today</span>
-						</div>
-					</div>
-				</div>
+				<StandardCalendar 
+					v-model="currentDate" 
+					:events="attendanceEvents"
+				/>
 			</div>
 		</div>
 	</div>
@@ -332,6 +290,7 @@
 import { ref, computed, onMounted, onUnmounted, watch } from "vue";
 import { useEmployeeStore } from "@/stores/employee";
 import { useAttendanceStore } from "@/stores/attendance";
+import StandardCalendar from "@/components/StandardCalendar.vue";
 
 const employeeStore = useEmployeeStore();
 const attendanceStore = useAttendanceStore();
@@ -339,6 +298,7 @@ const attendanceStore = useAttendanceStore();
 const currentDate = ref(new Date());
 const historyDays = ref(30);
 const liveTimer = ref(0);
+const isOnBreak = ref(false);
 let timerInterval = null;
 
 // Computed from store
@@ -377,50 +337,11 @@ const timerTextClass = computed(() => {
 	return shiftComplete.value ? 'text-emerald-400' : 'text-amber-400';
 });
 
-// Current month display
-const currentMonthYear = computed(() => {
-	return currentDate.value.toLocaleDateString("en-US", { month: "short", year: "numeric" });
-});
-
-// Get first day of month (0 = Sunday, 1 = Monday, etc.)
-const firstDayOfMonth = computed(() => {
-	const firstDay = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), 1);
-	const day = firstDay.getDay();
-	return day === 0 ? 6 : day - 1;
-});
-
-// Get days in month
-const daysInMonth = computed(() => {
-	return new Date(
-		currentDate.value.getFullYear(),
-		currentDate.value.getMonth() + 1,
-		0
-	).getDate();
-});
-
-// Calendar days
-const calendarDays = computed(() => {
-	const today = new Date();
-	const days = [];
-
-	for (let i = 1; i <= daysInMonth.value; i++) {
-		const dayDate = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), i);
-		const isToday =
-			dayDate.getDate() === today.getDate() &&
-			dayDate.getMonth() === today.getMonth() &&
-			dayDate.getFullYear() === today.getFullYear();
-
-		const status = getDayStatus(dayDate);
-
-		days.push({
-			day: i,
-			date: dayDate.toISOString().split("T")[0],
-			isToday,
-			status,
-		});
-	}
-
-	return days;
+// Attendance events for calendar dots
+const attendanceEvents = computed(() => {
+	return (attendanceStore.history || [])
+		.filter(log => log.log_type === 'IN')
+		.map(log => log.time.split('T')[0]);
 });
 
 // Daily records from history
@@ -524,41 +445,6 @@ const averageShiftHours = computed(() => {
 });
 
 // Methods
-function getDayStatus(date) {
-	const dayOfWeek = date.getDay();
-	if (dayOfWeek === 0 || dayOfWeek === 6) {
-		return "weekend";
-	}
-
-	const dateStr = date.toISOString().split("T")[0];
-	const logs = attendanceStore.history.filter((log) => log.time && log.time.startsWith(dateStr));
-
-	if (logs.length > 0) {
-		// Check if complete
-		const inLogs = logs.filter(l => l.log_type === 'IN');
-		const outLogs = logs.filter(l => l.log_type === 'OUT');
-		if (inLogs.length > 0 && outLogs.length > 0) {
-			const inTime = new Date(inLogs[0].time);
-			const outTime = new Date(outLogs[outLogs.length - 1].time);
-			const hours = (outTime - inTime) / (1000 * 60 * 60);
-			if (hours >= workingHoursTarget.value) {
-				return 'complete';
-			}
-		}
-		return "present";
-	}
-
-	const today = new Date();
-	today.setHours(0, 0, 0, 0);
-	const compareDate = new Date(date);
-	compareDate.setHours(0, 0, 0, 0);
-	if (compareDate > today) {
-		return "";
-	}
-
-	return "absent";
-}
-
 function formatDate(dateStr) {
 	if (!dateStr) return "";
 	const date = new Date(dateStr);
@@ -577,22 +463,6 @@ function formatTime(timeStr) {
 	return date.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true });
 }
 
-function previousMonth() {
-	currentDate.value = new Date(
-		currentDate.value.getFullYear(),
-		currentDate.value.getMonth() - 1,
-		1
-	);
-}
-
-function nextMonth() {
-	currentDate.value = new Date(
-		currentDate.value.getFullYear(),
-		currentDate.value.getMonth() + 1,
-		1
-	);
-}
-
 async function loadMoreHistory() {
 	historyDays.value += 30;
 	const employeeId = employeeStore.employee?.name;
@@ -601,39 +471,47 @@ async function loadMoreHistory() {
 	}
 }
 
-async function handleClockAction() {
+async function handleBreak() {
+	isOnBreak.value = !isOnBreak.value;
+	try {
+		if (isOnBreak.value) {
+			await attendanceStore.startBreak();
+			stopLiveTimer();
+		} else {
+			await attendanceStore.endBreak();
+			startLiveTimer();
+		}
+	} catch (error) {
+		console.error('Break action failed:', error);
+		isOnBreak.value = !isOnBreak.value;
+	}
+}
+
+async function handleClockIn() {
 	const employeeId = employeeStore.employee?.name;
 	if (!employeeId) return;
 
 	try {
-		// Get GPS location non-blocking (don't wait)
-		let latitude = null;
-		let longitude = null;
-
-		// Try to get cached position quickly, but don't block on it
-		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(
-				() => {
-					// Got location, but clock action already started
-					// Could send update separately if needed
-				},
-				() => {},
-				{ timeout: 1000, enableHighAccuracy: false, maximumAge: 60000 }
-			);
-		}
-
-		if (isCheckedIn.value) {
-			await attendanceStore.clockOut(employeeId, latitude, longitude);
-			stopLiveTimer();
-		} else {
-			await attendanceStore.clockIn(employeeId, latitude, longitude);
-			startLiveTimer();
-		}
-
-		// Refresh history in background (don't await)
+		await attendanceStore.clockIn(employeeId, null, null);
+		startLiveTimer();
+		// Refresh history in background
 		attendanceStore.fetchHistory(employeeId, historyDays.value);
 	} catch (error) {
-		console.error('Clock action failed:', error);
+		console.error('Clock in failed:', error);
+	}
+}
+
+async function handleClockOut() {
+	const employeeId = employeeStore.employee?.name;
+	if (!employeeId) return;
+
+	try {
+		await attendanceStore.clockOut(employeeId, null, null);
+		stopLiveTimer();
+		// Refresh history in background
+		attendanceStore.fetchHistory(employeeId, historyDays.value);
+	} catch (error) {
+		console.error('Clock out failed:', error);
 	}
 }
 

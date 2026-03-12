@@ -1,34 +1,37 @@
 <template>
 	<div
-		class="flex h-screen w-screen bg-[#F8F9FA] dark:bg-[#1e1e24] font-sans overflow-hidden transition-colors duration-300"
+		class="flex h-screen w-screen bg-[#F8F9FA] dark:bg-[#1e1e24] overflow-hidden transition-colors duration-300"
+        style="font-family: 'Inter', sans-serif;"
 	>
 		<aside
-			class="hidden lg:flex w-72 bg-[#1a1c23] dark:bg-[#15161a] border-r border-white/5 flex-col shadow-2xl z-30 relative transition-all duration-300"
+			class="hidden lg:flex bg-[#1a1c23] dark:bg-[#15161a] border-r border-white/5 flex-col shadow-2xl z-30 relative transition-all duration-300"
+            :class="[ui.sidebarCollapsed ? 'w-20' : 'w-72']"
 		>
 			<div
-				class="h-24 flex items-center justify-center lg:justify-start lg:px-8 border-b border-white/5"
+				class="h-20 flex items-center border-b border-white/5 transition-all duration-300"
+				:class="ui.sidebarCollapsed ? 'justify-center' : 'px-6 gap-4'"
 			>
-				<div class="flex items-center gap-4 group cursor-default">
+				<!-- Toggle Button (Desktop) -->
+				<button
+					@click="ui.sidebarCollapsed = !ui.sidebarCollapsed"
+					class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-gray-400 hover:text-white shrink-0"
+				>
+					<span class="material-symbols-outlined text-[20px]">{{ ui.sidebarCollapsed ? 'menu' : 'menu_open' }}</span>
+				</button>
+
+				<!-- Brand -->
+				<div class="flex items-center gap-3 overflow-hidden" v-show="!ui.sidebarCollapsed">
 					<img
 						src="/logo.svg"
-						alt="Zevar POS"
-						class="w-12 h-12 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] transform group-hover:scale-105 transition-transform duration-500"
+						alt="Zevar"
+						class="w-8 h-8 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] shrink-0"
 					/>
-					<div class="hidden lg:flex flex-col justify-center">
-						<h1
-							class="text-white font-serif font-bold text-2xl leading-none tracking-wide"
-						>
-							ZEVAR
-						</h1>
-						<div class="flex justify-between w-full mt-1 px-0.5">
-							<span
-								class="text-[9px] text-gray-400 uppercase font-medium tracking-[0.38em]"
-								>Jewelers</span
-							>
-						</div>
-					</div>
+					<h1 class="text-white font-serif font-bold text-xl tracking-tight" style="font-family: 'Cinzel', serif;">ZEVAR</h1>
 				</div>
 			</div>
+			
+			<!-- Secondary Toggle for collapsed state at the bottom maybe? Or just keep it at top -->
+
 
 			<div class="flex-1 flex flex-col overflow-hidden">
 				<nav class="p-4 space-y-2 flex-1 overflow-y-auto custom-scrollbar">
@@ -41,7 +44,7 @@
 								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
 					>
-						<div class="relative z-10 flex items-center gap-4">
+						<div class="relative z-10 flex items-center gap-4" :class="{ 'justify-center': ui.sidebarCollapsed }">
 							<svg
 								class="w-5 h-5 transition-colors"
 								fill="none"
@@ -55,7 +58,7 @@
 									d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
 								></path>
 							</svg>
-							<span class="hidden lg:block font-medium tracking-wide text-sm"
+							<span v-show="!ui.sidebarCollapsed" class="font-medium tracking-wide text-sm"
 								>POS Terminal</span
 							>
 						</div>
@@ -219,6 +222,19 @@
 			<header
 				class="h-16 sm:h-20 bg-white dark:bg-[#15161a] border-b border-gray-200 dark:border-gray-800 flex items-center justify-between px-3 sm:px-6 z-20 sticky top-0 shadow-sm transition-colors duration-300 flex-shrink-0"
 			>
+				<!-- Header Content -->
+				<div class="flex items-center gap-4">
+					<!-- Mobile Drawer Toggle -->
+					<button
+						@click="isMobileDrawerOpen = true"
+						class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+					>
+						<svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+						</svg>
+					</button>
+				</div>
+
 				<!-- Mobile Left Header (Hamburger + Logo + Location) - Hidden on LG+ -->
 				<div class="flex lg:hidden items-center gap-2 sm:gap-3">
 					<button
@@ -491,7 +507,7 @@
 													d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
 												></path>
 											</svg>
-											Dark Mode
+											{{ ui.isDark ? 'Light Mode' : 'Dark Mode' }}
 										</div>
 										<div
 											class="w-8 h-4 bg-gray-200 dark:bg-[#C9A962] rounded-full relative transition-colors duration-300 flex items-center"

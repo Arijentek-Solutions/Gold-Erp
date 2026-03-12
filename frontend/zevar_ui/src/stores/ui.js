@@ -14,6 +14,7 @@ export const useUIStore = defineStore('ui', () => {
 
 	const searchQuery = ref('')
 	const activeFilters = ref({})
+	const sidebarCollapsed = ref(false)
 
 	// Check localStorage or system preference on load
 	const isDark = ref(localStorage.getItem('theme') === 'dark')
@@ -56,6 +57,7 @@ export const useUIStore = defineStore('ui', () => {
 	return {
 		searchQuery,
 		activeFilters,
+		sidebarCollapsed,
 		isDark,
 		toggleTheme,
 		setFilter,

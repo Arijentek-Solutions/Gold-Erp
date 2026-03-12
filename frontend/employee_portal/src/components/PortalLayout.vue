@@ -1,6 +1,7 @@
 <template>
 	<div
-		class="h-[100dvh] w-full flex overflow-hidden bg-[#0b0f19] font-display text-white selection:bg-primary/30 relative"
+		class="h-[100dvh] w-full flex overflow-hidden bg-white dark:bg-[#0b0f19] font-display text-white selection:bg-primary/30 relative transition-colors duration-700"
+		:style="{ '--primary-color': routeColor }"
 	>
 		<!-- Ambient Glows -->
 		<div
@@ -17,35 +18,39 @@
 			@click="mobileMenuOpen = false"
 		></div>
 
-		<!-- Mobile Hamburger Button -->
-		<button
-			@click="mobileMenuOpen = !mobileMenuOpen"
-			class="fixed top-4 left-4 z-50 lg:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center"
-		>
-			<span class="material-symbols-outlined text-white">{{
-				mobileMenuOpen ? 'close' : 'menu'
-			}}</span>
-		</button>
-
 		<!-- Sidebar -->
 		<aside
-			class="shrink-0 flex flex-col bg-[#0a0c1a] border-r border-white/5 z-20 transition-all duration-300 fixed lg:relative h-full"
+			class="shrink-0 flex flex-col sidebar-standard z-20 transition-all duration-300 fixed lg:relative h-full"
 			:class="[
 				sidebarCollapsed ? 'lg:w-20 lg:items-center' : 'lg:w-64',
 				mobileMenuOpen ? 'w-64 translate-x-0' : '-translate-x-full lg:translate-x-0'
 			]"
 		>
-			<!-- Header -->
-			<div class="p-6" :class="sidebarCollapsed ? 'lg:px-3' : ''">
-				<div
-					class="flex items-center gap-3 bg-[#111420] p-2 rounded-lg border border-white/5"
-					:class="sidebarCollapsed ? 'lg:justify-center' : ''"
+			<!-- Branding & Toggle -->
+			<div class="h-20 flex items-center px-6 gap-4 border-b border-white/5" :class="sidebarCollapsed ? 'lg:px-4 justify-center' : ''">
+				<!-- Desktop Toggle -->
+				<button
+					v-show="!sidebarCollapsed"
+					@click="sidebarCollapsed = !sidebarCollapsed"
+					class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-gray-400 hover:text-white"
 				>
+					<span class="material-symbols-outlined text-[20px]">menu_open</span>
+				</button>
+				
+				<!-- Logo -->
+				<div class="flex items-center gap-2 overflow-hidden transition-all duration-300" :class="sidebarCollapsed ? 'w-8' : 'w-auto'">
 					<img :src="logoUrl" alt="Zevar" class="w-8 h-8 rounded shrink-0" />
-					<span v-show="!sidebarCollapsed" class="font-bold text-white tracking-wide"
-						>Zevar</span
-					>
+					<span v-show="!sidebarCollapsed" class="font-bold text-gray-900 dark:text-white tracking-wide text-sm whitespace-nowrap">Zevar</span>
 				</div>
+
+				<!-- Secondary toggle for collapsed state -->
+				<button
+					v-show="sidebarCollapsed"
+					@click="sidebarCollapsed = !sidebarCollapsed"
+					class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-gray-400 hover:text-white"
+				>
+					<span class="material-symbols-outlined text-[20px] rotate-180">menu_open</span>
+				</button>
 			</div>
 
 			<!-- Nav Items -->
@@ -58,8 +63,8 @@
 					class="flex items-center rounded-xl transition-all group"
 					:class="[
 						route.path === item.to
-							? 'bg-[#111822] text-primary shadow-sm'
-							: 'text-gray-400 hover:text-white hover:bg-white/5',
+							? 'bg-primary/10 text-primary shadow-sm'
+							: 'text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5',
 						sidebarCollapsed
 							? 'lg:justify-center lg:px-2 lg:py-3'
 							: 'justify-between px-4 py-3',
@@ -100,31 +105,28 @@
 				</a>
 			</nav>
 
-			<!-- Collapse Toggle (Desktop Only) -->
-			<div class="p-4 hidden lg:block">
-				<button
-					@click="sidebarCollapsed = !sidebarCollapsed"
-					class="w-full py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-white/10 transition-colors flex items-center justify-center gap-2 border border-white/5"
-				>
-					<span
-						class="material-symbols-outlined text-[20px] transition-transform duration-300"
-						:class="sidebarCollapsed ? 'rotate-180' : ''"
-						>chevron_left</span
-					>
-					<span v-show="!sidebarCollapsed" class="text-xs font-bold">Collapse</span>
-				</button>
-			</div>
 		</aside>
 
 		<!-- Main Content -->
-		<main class="flex-1 flex flex-col h-full overflow-hidden bg-[#0b0f19]">
+		<main class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-white dark:bg-[#0b0f19]">
 			<!-- Header -->
 			<header
-				class="flex items-center justify-end px-4 md:px-8 py-4 border-b border-white/5 shrink-0"
+				class="flex items-center px-4 md:px-8 py-4 border-b border-white/5 shrink-0"
 			>
-				<!-- Mobile spacer for hamburger -->
-				<div class="w-10 lg:hidden"></div>
-				<div class="relative ml-auto">
+				<!-- Left Side: Header Actions -->
+				<div class="flex items-center gap-4">
+					<!-- Mobile Hamburger (inline in header, only for mobile) -->
+					<button
+						@click="mobileMenuOpen = !mobileMenuOpen"
+						class="lg:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+					>
+						<span class="material-symbols-outlined text-[20px]">{{
+							mobileMenuOpen ? 'close' : 'menu'
+						}}</span>
+					</button>
+				</div>
+
+				<div class="relative ml-auto flex items-center gap-4">
 					<!-- Overlay for clicking outside -->
 					<div
 						v-if="userMenuOpen"
@@ -142,11 +144,11 @@
 						>
 							{{ userInitials }}
 						</div>
-						<span class="text-xs md:text-sm font-semibold text-white hidden sm:block">{{
+						<span class="text-xs md:text-sm font-semibold text-gray-900 dark:text-white hidden sm:block">{{
 							auth.user?.full_name || "User"
 						}}</span>
 						<span
-							class="material-symbols-outlined text-white/50 text-sm ml-1 transition-transform"
+							class="material-symbols-outlined text-gray-400 dark:text-white/50 text-sm ml-1 transition-transform"
 							:class="{ 'rotate-180': userMenuOpen }"
 							>expand_more</span
 						>
@@ -155,10 +157,10 @@
 					<!-- Dropdown Menu -->
 					<div
 						v-show="userMenuOpen"
-						class="absolute right-0 top-full mt-2 w-56 bg-[#111420] border border-white/10 rounded-xl shadow-2xl py-2 z-50 flex flex-col font-medium text-sm"
+						class="absolute right-0 top-full mt-2 w-56 bg-white dark:bg-[#111420] border border-gray-200 dark:border-white/10 rounded-xl shadow-2xl py-2 z-50 flex flex-col font-medium text-sm"
 					>
-						<div class="px-4 py-3 border-b border-white/5 mb-1">
-							<p class="text-white font-bold">
+						<div class="px-4 py-3 border-b border-gray-100 dark:border-white/5 mb-1">
+							<p class="text-gray-900 dark:text-white font-bold">
 								{{ auth.user?.full_name || "User" }}
 							</p>
 							<p class="text-xs text-gray-500 mt-0.5">
@@ -171,7 +173,7 @@
 								showComingSoon = true;
 								userMenuOpen = false;
 							"
-							class="w-full text-left px-4 py-2.5 text-gray-400 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-3"
+							class="w-full text-left px-4 py-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-3"
 						>
 							<span class="material-symbols-outlined text-[18px]">person</span>
 							Employee Detail
@@ -179,13 +181,13 @@
 
 						<button
 							@click="toggleDarkMode"
-							class="w-full text-left px-4 py-2.5 text-gray-400 hover:text-white hover:bg-white/5 transition-colors flex items-center justify-between"
+							class="w-full text-left px-4 py-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center justify-between"
 						>
 							<div class="flex items-center gap-3">
-								<span class="material-symbols-outlined text-[18px]"
-									>dark_mode</span
-								>
-								Dark Mode
+								<span class="material-symbols-outlined text-[18px]">{{
+									isDark ? "light_mode" : "dark_mode"
+								}}</span>
+								{{ isDark ? "Light Mode" : "Dark Mode" }}
 							</div>
 							<div
 								class="w-8 h-4 bg-primary/30 rounded-full relative flex items-center transition-colors"
@@ -202,13 +204,13 @@
 								showComingSoon = true;
 								userMenuOpen = false;
 							"
-							class="w-full text-left px-4 py-2.5 text-gray-400 hover:text-white hover:bg-white/5 transition-colors flex items-center gap-3"
+							class="w-full text-left px-4 py-2.5 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-3"
 						>
 							<span class="material-symbols-outlined text-[18px]">lock</span>
 							Change Password
 						</button>
 
-						<div class="h-px w-full bg-white/5 my-1"></div>
+						<div class="h-px w-full bg-gray-100 dark:bg-white/5 my-1"></div>
 
 						<button
 							@click="auth.logout()"
@@ -222,7 +224,7 @@
 			</header>
 
 			<!-- Page Content Container -->
-			<div class="flex-1 overflow-y-auto p-4 md:p-6 custom-scrollbar relative">
+			<div class="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 custom-scrollbar relative">
 				<slot />
 			</div>
 		</main>
@@ -289,8 +291,24 @@ const navItems = [
 	{ to: "/leave", icon: "beach_access", label: "Leave" },
 	{ to: "/expense", icon: "attach_money", label: "Expense" },
 	{ to: "/payroll", icon: "account_balance_wallet", label: "Payroll" },
+	{ to: "/team", icon: "groups", label: "Team" },
 	{ to: "/issues", icon: "support_agent", label: "Issues" },
 ];
+
+const routeColor = computed(() => {
+	const colors = {
+		"/": "#FCD34D", // Gold
+		"/tasks": "#60A5FA", // Sky
+		"/attendance": "#34D399", // Emerald
+		"/roster": "#A78BFA", // Violet
+		"/leave": "#F87171", // Coral
+		"/expense": "#FB923C", // Amber
+		"/payroll": "#818CF8", // Indigo
+		"/team": "#2DD4BF", // Teal
+		"/issues": "#F472B6", // Pink
+	};
+	return colors[route.path] || "#FCD34D";
+});
 
 const userInitials = computed(() => {
 	const name = auth.user?.full_name || "User";

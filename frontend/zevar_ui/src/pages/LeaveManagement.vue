@@ -2,17 +2,17 @@
 	<PortalLayout>
 		<div class="px-10 pb-10 flex flex-col items-center font-portal">
 			<div
-				class="w-full max-w-6xl glass-card rounded-2xl p-6 md:p-8 relative overflow-hidden mt-4"
+				class="w-full max-w-6xl premium-card mt-4"
 			>
 				<!-- Welcome Section -->
 				<div
 					class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8"
 				>
 					<div>
-						<h1 class="text-4xl md:text-5xl font-800 tracking-tight mb-2">
+						<h1 class="premium-title !text-4xl md:!text-5xl mb-2">
 							Where to next, Alex?
 						</h1>
-						<p class="text-white/50 text-lg">
+						<p class="premium-subtitle text-lg">
 							You've got 14 days of fun waiting for you.
 						</p>
 					</div>
@@ -28,7 +28,7 @@
 					<!-- Calendar Section -->
 					<div class="lg:col-span-7">
 						<div class="flex items-center justify-between mb-8 px-4">
-							<h3 class="text-xl font-bold text-white">February 2024</h3>
+							<h3 class="premium-title !text-xl">February 2024</h3>
 							<div class="flex gap-4">
 								<button
 									class="p-2 rounded-full hover:bg-white/5 transition-colors"
@@ -84,27 +84,27 @@
 						<!-- Stats -->
 						<div class="grid grid-cols-2 gap-4">
 							<div
-								class="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-[#7f13ec]/30 transition-colors"
+								class="premium-card !p-6 border border-gray-100 dark:border-white/10 hover:border-portal-primary/30 transition-colors"
 							>
 								<span
-									class="text-white/40 text-xs font-bold uppercase mb-2 block tracking-widest"
+									class="status-label !mb-2"
 									>Vacation Left</span
 								>
 								<div class="flex items-end gap-1">
-									<span class="text-3xl font-800">12</span>
-									<span class="text-white/40 text-sm mb-1">days</span>
+									<span class="text-3xl font-800 text-gray-900 dark:text-white">12</span>
+									<span class="text-gray-400 dark:text-white/40 text-sm mb-1">days</span>
 								</div>
 							</div>
 							<div
-								class="bg-white/5 rounded-xl p-6 border border-white/10 hover:border-portal-accent-peach/30 transition-colors"
+								class="premium-card !p-6 border border-gray-100 dark:border-white/10 hover:border-portal-accent-peach/30 transition-colors"
 							>
 								<span
-									class="text-white/40 text-xs font-bold uppercase mb-2 block tracking-widest"
+									class="status-label !mb-2"
 									>Sick Leave</span
 								>
 								<div class="flex items-end gap-1">
-									<span class="text-3xl font-800">05</span>
-									<span class="text-white/40 text-sm mb-1">days</span>
+									<span class="text-3xl font-800 text-gray-900 dark:text-white">05</span>
+									<span class="text-gray-400 dark:text-white/40 text-sm mb-1">days</span>
 								</div>
 							</div>
 						</div>

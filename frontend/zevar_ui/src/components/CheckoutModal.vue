@@ -243,15 +243,23 @@
 									:key="idx"
 									class="flex items-center gap-2"
 								>
-									<input
+									<select
 										v-model="sp.employee"
-										type="text"
-										placeholder="Employee ID"
 										class="flex-1 px-3 py-2 bg-white dark:bg-[#0F1115] border border-gray-200 dark:border-white/10 rounded-lg text-sm"
-									/>
+									>
+										<option value="" disabled>Select Associate</option>
+										<option
+											v-for="emp in salesAssociates.data"
+											:key="emp.name"
+											:value="emp.name"
+										>
+											{{ emp.employee_name }} ({{ emp.designation || 'Sales' }})
+										</option>
+									</select>
 									<div class="flex items-center gap-1">
 										<input
 											v-model.number="sp.split"
+											@input="cart.recalculateSalespersonSplit(idx)"
 											type="number"
 											min="0"
 											max="100"
@@ -433,15 +441,17 @@
 							<div
 								class="flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-white/10 mt-2"
 							>
-								<span class="text-gray-500">Remaining</span>
+								<span class="text-gray-500">{{ remainingAmount < 0 ? 'Change Due' : 'Remaining' }}</span>
 								<span
 									:class="
 										remainingAmount === 0
 											? 'text-green-500 font-bold'
-											: 'text-red-500 font-bold'
+											: remainingAmount < 0
+												? 'text-orange-500 font-bold'
+												: 'text-red-500 font-bold'
 									"
 								>
-									{{ formatCurrency(remainingAmount) }}
+									{{ remainingAmount < 0 ? formatCurrency(Math.abs(remainingAmount)) : formatCurrency(remainingAmount) }}
 								</span>
 							</div>
 						</div>
@@ -898,6 +908,13 @@ const taxExempt = ref(false)
 const selectedPayments = ref([]) // [{mode: 'Cash', amount: 100}, ...]
 const showSalespersons = ref(false)
 
+// Sales associates (employees) resource
+const salesAssociates = createResource({
+	url: 'zevar_core.api.sales_associates.get_sales_associates',
+	initialData: [],
+	auto: true,
+})
+
 // Layaway state
 const layawayDuration = ref(6)
 const layawayDeposit = ref(null)
@@ -909,14 +926,14 @@ const salespersonSplitTotal = computed(() => {
 
 // Layaway computeds
 const minimumDeposit = computed(() => {
-	return cart.subtotal * 0.1
+	return Number((cart.subtotal * 0.1).toFixed(2))
 })
 
 const layawayMonthlyPayment = computed(() => {
 	const remaining = cart.subtotal - (layawayDeposit.value || 0)
 	const months = (layawayDuration.value || 6) - 1
 	if (remaining <= 0 || months <= 0) return 0
-	return remaining / months
+	return Number((remaining / months).toFixed(2))
 })
 
 const layawayTargetDate = computed(() => {
@@ -963,13 +980,13 @@ const giftCardLoading = ref(false)
 const grandTotalWithTaxExempt = computed(() => {
 	const base = taxExempt.value ? cart.subtotal : cart.subtotal + cart.tax
 	const total = base - tradeInTotal.value
-	return Math.max(0, total)
+	return Number(Math.max(0, total).toFixed(2))
 })
 
 // Computed: Remaining amount for split payments
 const remainingAmount = computed(() => {
-	const totalPaid = selectedPayments.value.reduce((sum, p) => sum + (p.amount || 0), 0)
-	return grandTotalWithTaxExempt.value - totalPaid
+	const totalPaid = selectedPayments.value.reduce((sum, p) => sum + Number(p.amount || 0), 0)
+	return Number((grandTotalWithTaxExempt.value - totalPaid).toFixed(2))
 })
 
 // Computed: Can submit the payment
@@ -1008,11 +1025,24 @@ function togglePaymentMode(mode) {
 
 // Recalculate split when user edits an amount
 function recalculateSplit(changedMode) {
+	const changedPayment = selectedPayments.value.find((p) => p.mode === changedMode)
+	if (changedPayment) {
+		changedPayment.amount = Number(Number(changedPayment.amount || 0).toFixed(2))
+	}
+
 	// For Gift Card, cap amount at available balance
 	if (changedMode === 'Gift Card' && giftCardInfo.value?.valid) {
-		const gcPayment = selectedPayments.value.find((p) => p.mode === 'Gift Card')
-		if (gcPayment && gcPayment.amount > giftCardInfo.value.balance) {
-			gcPayment.amount = giftCardInfo.value.balance
+		if (changedPayment && changedPayment.amount > giftCardInfo.value.balance) {
+			changedPayment.amount = Number(Number(giftCardInfo.value.balance).toFixed(2))
+		}
+	}
+
+	// Auto balance if exactly 2 payment methods are selected
+	if (selectedPayments.value.length === 2 && changedPayment) {
+		const otherPayment = selectedPayments.value.find((p) => p.mode !== changedMode)
+		if (otherPayment) {
+			const remaining = grandTotalWithTaxExempt.value - changedPayment.amount
+			otherPayment.amount = Number(remaining.toFixed(2))
 		}
 	}
 }

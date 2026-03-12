@@ -1,193 +1,197 @@
 <template>
-	<div class="flex flex-col gap-8">
-		<div class="flex items-center justify-between">
-			<div>
-				<h2 class="text-3xl font-bold font-display text-white mb-2">Issues & Support</h2>
-				<p class="text-white/40">Report attendance issues or get help from HR</p>
-			</div>
-			<button
-				@click="showIssueModal = true"
-				class="bg-primary text-background-dark px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-yellow-400 transition-colors shadow-lg shadow-primary/20"
-			>
-				<span class="material-symbols-outlined">report</span>
-				Report Issue
-			</button>
-		</div>
-
-		<!-- Stats Cards -->
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-			<div class="glass-card p-6 rounded-2xl">
-				<div class="flex items-center gap-3 mb-4">
-					<div
-						class="w-10 h-10 rounded-full bg-blue-400/10 flex items-center justify-center"
-					>
-						<span class="material-symbols-outlined text-blue-400">inbox</span>
-					</div>
-					<span class="text-xs font-bold uppercase text-white/60 tracking-wider"
-						>Total Tickets</span
-					>
+	<div class="h-full flex flex-col gap-8 overflow-hidden">
+		<div class="shrink-0">
+			<div class="flex items-center justify-between">
+				<div>
+					<h2 class="premium-title">Issues & Support</h2>
+					<p class="premium-subtitle">Report attendance issues or get help from HR</p>
 				</div>
-				<span class="text-4xl font-bold font-mono text-white">{{
-					issuesStore.ticketStats.total
-				}}</span>
-			</div>
-
-			<div class="glass-card p-6 rounded-2xl">
-				<div class="flex items-center gap-3 mb-4">
-					<div
-						class="w-10 h-10 rounded-full bg-amber-400/10 flex items-center justify-center"
-					>
-						<span class="material-symbols-outlined text-amber-400">pending</span>
-					</div>
-					<span class="text-xs font-bold uppercase text-white/60 tracking-wider"
-						>Open</span
-					>
-				</div>
-				<span class="text-4xl font-bold font-mono text-white">{{
-					issuesStore.ticketStats.open
-				}}</span>
-			</div>
-
-			<div class="glass-card p-6 rounded-2xl">
-				<div class="flex items-center gap-3 mb-4">
-					<div
-						class="w-10 h-10 rounded-full bg-emerald-glow/10 flex items-center justify-center"
-					>
-						<span class="material-symbols-outlined text-emerald-glow"
-							>check_circle</span
-						>
-					</div>
-					<span class="text-xs font-bold uppercase text-white/60 tracking-wider"
-						>Resolved</span
-					>
-				</div>
-				<span class="text-4xl font-bold font-mono text-white">{{
-					issuesStore.ticketStats.closed
-				}}</span>
-			</div>
-		</div>
-
-		<!-- Tickets Table -->
-		<div class="glass-card rounded-2xl border border-white/5 overflow-hidden">
-			<div class="p-6 border-b border-white/5 flex items-center justify-between">
-				<h3 class="font-bold text-lg text-white">My Tickets</h3>
-				<div class="flex gap-2">
-					<button
-						@click="filterTickets = 'all'"
-						class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition"
-						:class="
-							filterTickets === 'all'
-								? 'bg-white/10 text-white'
-								: 'text-white/40 hover:text-white hover:bg-white/5'
-						"
-					>
-						All
-					</button>
-					<button
-						@click="filterTickets = 'open'"
-						class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition"
-						:class="
-							filterTickets === 'open'
-								? 'bg-white/10 text-white'
-								: 'text-white/40 hover:text-white hover:bg-white/5'
-						"
-					>
-						Open
-					</button>
-					<button
-						@click="filterTickets = 'resolved'"
-						class="px-4 py-2 rounded-lg text-xs font-bold uppercase transition"
-						:class="
-							filterTickets === 'resolved'
-								? 'bg-white/10 text-white'
-								: 'text-white/40 hover:text-white hover:bg-white/5'
-						"
-					>
-						Resolved
-					</button>
-				</div>
-			</div>
-
-			<div v-if="issuesStore.loading" class="p-8 text-center">
-				<p class="text-white/40">Loading tickets...</p>
-			</div>
-
-			<div v-else-if="filteredTickets.length === 0" class="p-8 text-center">
-				<div
-					class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4"
+				<button
+					@click="showIssueModal = true"
+					class="bg-primary text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-yellow-400 transition-all shadow-lg shadow-primary/20"
 				>
-					<span class="material-symbols-outlined text-3xl text-white/20"
-						>support_agent</span
-					>
+					<span class="material-symbols-outlined">report</span>
+					Report Issue
+				</button>
+			</div>
+		</div>
+
+		<div class="flex-1 overflow-y-auto custom-scrollbar space-y-8 pr-2">
+			<!-- Stats Cards -->
+			<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+				<div class="premium-card !p-6">
+					<div class="flex items-center gap-3 mb-4">
+						<div
+							class="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center border border-blue-500/20"
+						>
+							<span class="material-symbols-outlined text-blue-500">inbox</span>
+						</div>
+						<span class="status-label !mb-0"
+							>Total Tickets</span
+						>
+					</div>
+					<span class="text-4xl font-bold font-mono text-gray-900 dark:text-white">{{
+						issuesStore.ticketStats.total
+					}}</span>
 				</div>
-				<h3 class="text-lg font-bold text-white mb-2">No Tickets Found</h3>
-				<p class="text-white/40 text-sm">
-					{{
-						filterTickets === "all"
-							? "You haven't created any tickets yet."
-							: `No ${filterTickets} tickets.`
-					}}
-				</p>
+
+				<div class="premium-card !p-6">
+					<div class="flex items-center gap-3 mb-4">
+						<div
+							class="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20"
+						>
+							<span class="material-symbols-outlined text-amber-500">pending</span>
+						</div>
+						<span class="status-label !mb-0"
+							>Open</span
+						>
+					</div>
+					<span class="text-4xl font-bold font-mono text-gray-900 dark:text-white">{{
+						issuesStore.ticketStats.open
+					}}</span>
+				</div>
+
+				<div class="premium-card !p-6">
+					<div class="flex items-center gap-3 mb-4">
+						<div
+							class="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20"
+						>
+							<span class="material-symbols-outlined text-emerald-500"
+								>check_circle</span
+							>
+						</div>
+						<span class="status-label !mb-0"
+							>Resolved</span
+						>
+					</div>
+					<span class="text-4xl font-bold font-mono text-gray-900 dark:text-white">{{
+						issuesStore.ticketStats.closed
+					}}</span>
+				</div>
 			</div>
 
-			<div v-else class="overflow-x-auto">
-				<table class="w-full text-left">
-					<thead
-						class="bg-white/5 text-xs text-white/40 uppercase font-bold tracking-wider"
-					>
-						<tr>
-							<th class="px-6 py-4">Subject</th>
-							<th class="px-6 py-4">Type</th>
-							<th class="px-6 py-4">Priority</th>
-							<th class="px-6 py-4">Created</th>
-							<th class="px-6 py-4 text-right">Status</th>
-						</tr>
-					</thead>
-					<tbody class="divide-y divide-white/5">
-						<tr
-							v-for="ticket in filteredTickets"
-							:key="ticket.name"
-							class="group hover:bg-white/5 transition-colors cursor-pointer"
-							@click="viewTicket(ticket)"
+			<!-- Tickets Table -->
+			<div class="premium-card !p-0 overflow-hidden">
+				<div class="p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+					<h3 class="premium-title !text-lg">My Tickets</h3>
+					<div class="flex gap-2">
+						<button
+							@click="filterTickets = 'all'"
+							class="px-4 py-2 rounded-xl text-xs font-bold uppercase transition"
+							:class="
+								filterTickets === 'all'
+									? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white'
+									: 'text-gray-400 dark:text-white/40 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
+							"
 						>
-							<td class="px-6 py-4">
-								<div class="flex items-center gap-3">
+							All
+						</button>
+						<button
+							@click="filterTickets = 'open'"
+							class="px-4 py-2 rounded-xl text-xs font-bold uppercase transition"
+							:class="
+								filterTickets === 'open'
+									? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white'
+									: 'text-gray-400 dark:text-white/40 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
+							"
+						>
+							Open
+						</button>
+						<button
+							@click="filterTickets = 'resolved'"
+							class="px-4 py-2 rounded-xl text-xs font-bold uppercase transition"
+							:class="
+								filterTickets === 'resolved'
+									? 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white'
+									: 'text-gray-400 dark:text-white/40 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
+							"
+						>
+							Resolved
+						</button>
+					</div>
+				</div>
+
+				<div v-if="issuesStore.loading" class="p-8 text-center">
+					<p class="text-white/40">Loading tickets...</p>
+				</div>
+
+				<div v-else-if="filteredTickets.length === 0" class="p-8 text-center">
+					<div
+						class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-4"
+					>
+						<span class="material-symbols-outlined text-3xl text-white/20"
+							>support_agent</span
+						>
+					</div>
+					<h3 class="text-lg font-bold text-white mb-2">No Tickets Found</h3>
+					<p class="text-white/40 text-sm">
+						{{
+							filterTickets === "all"
+								? "You haven't created any tickets yet."
+								: `No ${filterTickets} tickets.`
+						}}
+					</p>
+				</div>
+
+				<div v-else class="overflow-x-auto">
+					<table class="w-full text-left">
+						<thead
+							class="bg-gray-50/50 dark:bg-white/5 text-[10px] text-gray-500 dark:text-white/40 uppercase font-bold tracking-wider"
+						>
+							<tr>
+								<th class="px-6 py-4">Subject</th>
+								<th class="px-6 py-4">Type</th>
+								<th class="px-6 py-4">Priority</th>
+								<th class="px-6 py-4">Created</th>
+								<th class="px-6 py-4 text-right">Status</th>
+							</tr>
+						</thead>
+						<tbody class="divide-y divide-white/5">
+							<tr
+								v-for="ticket in filteredTickets"
+								:key="ticket.name"
+								class="group hover:bg-white/5 transition-colors cursor-pointer"
+								@click="viewTicket(ticket)"
+							>
+								<td class="px-6 py-4">
+									<div class="flex items-center gap-3">
+										<span
+											class="w-2 h-2 rounded-full"
+											:class="getStatusDotColor(ticket.status)"
+										></span>
+										<span class="font-bold text-white">{{ ticket.subject }}</span>
+									</div>
+								</td>
+								<td class="px-6 py-4">
+									<span class="text-white/60 text-sm">{{
+										ticket.ticket_type || "General"
+									}}</span>
+								</td>
+								<td class="px-6 py-4">
 									<span
-										class="w-2 h-2 rounded-full"
-										:class="getStatusDotColor(ticket.status)"
-									></span>
-									<span class="font-bold text-white">{{ ticket.subject }}</span>
-								</div>
-							</td>
-							<td class="px-6 py-4">
-								<span class="text-white/60 text-sm">{{
-									ticket.ticket_type || "General"
-								}}</span>
-							</td>
-							<td class="px-6 py-4">
-								<span
-									class="text-[10px] font-bold px-2 py-1 rounded-md uppercase"
-									:class="getPriorityClass(ticket.priority)"
-								>
-									{{ ticket.priority }}
-								</span>
-							</td>
-							<td class="px-6 py-4">
-								<span class="text-white/40 text-sm">{{
-									formatDate(ticket.creation)
-								}}</span>
-							</td>
-							<td class="px-6 py-4 text-right">
-								<span
-									class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase"
-									:class="getStatusStyle(ticket.status)"
-								>
-									{{ ticket.status }}
-								</span>
-							</td>
-						</tr>
-					</tbody>
-				</table>
+										class="text-[10px] font-bold px-2 py-1 rounded-md uppercase"
+										:class="getPriorityClass(ticket.priority)"
+									>
+										{{ ticket.priority }}
+									</span>
+								</td>
+								<td class="px-6 py-4">
+									<span class="text-white/40 text-sm">{{
+										formatDate(ticket.creation)
+									}}</span>
+								</td>
+								<td class="px-6 py-4 text-right">
+									<span
+										class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold uppercase"
+										:class="getStatusStyle(ticket.status)"
+									>
+										{{ ticket.status }}
+									</span>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 

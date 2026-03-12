@@ -25,24 +25,24 @@
                     ></path>
                 </svg>
             </div>
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white">Select Store Location</h3>
-            <p class="text-sm text-gray-500">
+            <h3 class="premium-title !text-xl mb-2">Select Store Location</h3>
+            <p class="premium-subtitle">
                 Choose a location from the top menu to view inventory.
             </p>
         </div>
 
         <div v-else class="h-full flex flex-col min-h-0">
-            <div class="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6 flex-shrink-0">
+            <div class="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-8 flex-shrink-0">
                 <h2
-                    class="text-base sm:text-xl font-serif font-bold text-gray-900 dark:text-white transition-colors"
+                    class="premium-title !text-xl sm:!text-2xl"
                 >
                     Collection
                 </h2>
 
                 <span
-                    class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400 bg-white dark:bg-gray-800 px-2 sm:px-3 py-1 rounded-full shadow-sm border border-gray-100 dark:border-gray-700 transition-colors"
+                    class="status-label !mb-0 !bg-gray-100 dark:!bg-white/5 !text-gray-600 dark:!text-white/60 !px-4 !py-1 !rounded-full !border !border-gray-200 dark:!border-white/10"
                 >
-                    {{ catalog.length }} Items
+                    {{ catalog.length }} Pieces
                 </span>
             </div>
 
@@ -56,9 +56,9 @@
 
                 <div
                     v-else-if="catalog.length === 0"
-                    class="py-20 text-center bg-white dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700"
+                    class="py-20 text-center premium-card !bg-transparent !border-dashed !border-gray-200 dark:!border-white/10"
                 >
-                    <p class="text-gray-500">No pieces found matching your criteria.</p>
+                    <p class="premium-subtitle">No pieces found matching your criteria.</p>
                 </div>
 
                 <div v-else class="smart-grid">
