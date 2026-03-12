@@ -38,20 +38,20 @@ export function useKeyboardShortcuts(customShortcuts = [], options = {}) {
 
 	// Handler map
 	const handlers = {
-		'help': () => showShortcutList(),
-		'search': () => focusSearch(),
+		help: () => showShortcutList(),
+		search: () => focusSearch(),
 		'new-sale': () => router.push('/'),
-		'cart': () => toggleCart(),
-		'refresh': () => window.location.reload(),
-		'customer': () => focusCustomer(),
-		'discount': () => applyDiscount(),
-		'hold': () => holdOrder(),
-		'void': () => voidOrder(),
-		'settings': () => openSettings(),
-		'close': () => closeModal(),
-		'save': () => saveCurrent(),
-		'print': () => printCurrent(),
-		'new': () => createNew(),
+		cart: () => toggleCart(),
+		refresh: () => window.location.reload(),
+		customer: () => focusCustomer(),
+		discount: () => applyDiscount(),
+		hold: () => holdOrder(),
+		void: () => voidOrder(),
+		settings: () => openSettings(),
+		close: () => closeModal(),
+		save: () => saveCurrent(),
+		print: () => printCurrent(),
+		new: () => createNew(),
 	}
 
 	function showShortcutList() {
@@ -124,7 +124,7 @@ export function useKeyboardShortcuts(customShortcuts = [], options = {}) {
 		// Check for matching shortcut
 		for (const shortcut of allShortcuts) {
 			const keyMatch = event.key === shortcut.key
-			const ctrlMatch = shortcut.ctrl ? (event.ctrlKey || event.metaKey) : true
+			const ctrlMatch = shortcut.ctrl ? event.ctrlKey || event.metaKey : true
 
 			if (keyMatch && ctrlMatch) {
 				event.preventDefault()
