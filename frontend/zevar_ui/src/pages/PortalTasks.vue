@@ -5,8 +5,8 @@
 			<section class="mt-4">
 				<div class="flex flex-wrap items-end justify-between gap-6">
 					<div>
-						<h1 class="text-4xl font-800 tracking-tight mb-2">My Tasks</h1>
-						<p class="text-white/50 text-lg">
+						<h1 class="premium-title !text-4xl mb-2">My Tasks</h1>
+						<p class="premium-subtitle text-lg">
 							You have
 							<span class="text-portal-primary font-bold">4 tasks</span> assigned for
 							today.
@@ -26,7 +26,7 @@
 				<!-- Assigned / To Do -->
 				<div class="flex flex-col gap-6">
 					<div class="flex items-center justify-between border-b border-white/10 pb-4">
-						<h3 class="text-xl font-bold flex items-center gap-2">
+						<h3 class="premium-title !text-xl flex items-center gap-2">
 							<span class="size-2 rounded-full bg-portal-primary"></span>
 							Assigned
 						</h3>
@@ -40,7 +40,7 @@
 						<div
 							v-for="task in assignedTasks"
 							:key="task.id"
-							class="glass-card hover:bg-white/5 p-6 rounded-2xl group cursor-pointer transition-all border border-white/5 hover:border-portal-primary/30"
+							class="premium-card !p-6 !rounded-2xl group cursor-pointer transition-all border border-white/5 hover:border-portal-primary/30"
 						>
 							<div class="flex justify-between items-start mb-4">
 								<span
@@ -93,7 +93,7 @@
 				<!-- In Progress -->
 				<div class="flex flex-col gap-6">
 					<div class="flex items-center justify-between border-b border-white/10 pb-4">
-						<h3 class="text-xl font-bold flex items-center gap-2">
+						<h3 class="premium-title !text-xl flex items-center gap-2">
 							<span class="size-2 rounded-full bg-portal-accent-indigo"></span>
 							In Progress
 						</h3>
@@ -138,7 +138,7 @@
 				<!-- Completed -->
 				<div class="flex flex-col gap-6">
 					<div class="flex items-center justify-between border-b border-white/10 pb-4">
-						<h3 class="text-xl font-bold flex items-center gap-2">
+						<h3 class="premium-title !text-xl flex items-center gap-2">
 							<span class="size-2 rounded-full bg-portal-accent-teal"></span>
 							Completed
 						</h3>

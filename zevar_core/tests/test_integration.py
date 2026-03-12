@@ -221,7 +221,7 @@ class TestLayawayWorkflow(FrappeTestCase):
 
 	def test_layaway_preview(self):
 		"""Test layaway preview calculation."""
-		from zevar_core.api.quick_layaway import get_layaway_preview
+		from zevar_core.api.layaway import get_layaway_preview
 
 		result = get_layaway_preview(
 			items=json.dumps([{
@@ -247,7 +247,7 @@ class TestLayawayWorkflow(FrappeTestCase):
 
 	def test_create_layaway(self):
 		"""Test creating a layaway contract."""
-		from zevar_core.api.quick_layaway import create_quick_layaway
+		from zevar_core.api.layaway import create_quick_layaway
 
 		result = create_quick_layaway(
 			items=json.dumps([{

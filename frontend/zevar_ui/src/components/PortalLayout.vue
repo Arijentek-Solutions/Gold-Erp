@@ -8,23 +8,39 @@
             :class="sidebarCollapsed ? 'items-center' : ''"
         >
             <div
-                class="flex items-center gap-3 mb-10"
+                class="flex items-center gap-4 mb-10 h-12"
                 :class="sidebarCollapsed ? 'px-0 justify-center' : 'px-4'"
             >
-                <div
-                    class="size-12 rounded-2xl bg-gradient-to-br from-portal-primary to-portal-accent-indigo flex items-center justify-center shadow-lg shadow-portal-primary/20 shrink-0"
+                <!-- Toggle Button (Desktop) -->
+                <button
+                    v-show="!sidebarCollapsed"
+                    @click="sidebarCollapsed = !sidebarCollapsed"
+                    class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-gray-400 hover:text-white"
                 >
-                    <span class="material-symbols-outlined text-white text-3xl"
-                        >rocket_launch</span
+                    <span class="material-symbols-outlined text-[20px]">menu_open</span>
+                </button>
+
+                <div class="flex items-center gap-3 overflow-hidden" v-show="!sidebarCollapsed">
+                    <div
+                        class="size-10 rounded-xl bg-gradient-to-br from-portal-primary to-portal-accent-indigo flex items-center justify-center shadow-lg shadow-portal-primary/20 shrink-0"
                     >
+                        <span class="material-symbols-outlined text-white text-2xl"
+                            >rocket_launch</span
+                        >
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight">Zevar</h1>
+                    </div>
                 </div>
-                <div v-show="!sidebarCollapsed">
-                    <h1 class="text-xl font-bold tracking-tight">Zevar</h1>
-                    <p
-                        class="text-xs text-white/50 font-medium uppercase tracking-widest whitespace-nowrap"
+
+                <!-- Collapsed View (Only Toggle) -->
+                <div v-show="sidebarCollapsed" class="w-full flex justify-center">
+                    <button
+                        @click="sidebarCollapsed = !sidebarCollapsed"
+                        class="hidden lg:flex items-center justify-center w-10 h-10 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-gray-400 hover:text-white shrink-0"
                     >
-                        Employee Portal
-                    </p>
+                        <span class="material-symbols-outlined text-[20px] rotate-180">menu_open</span>
+                    </button>
                 </div>
             </div>
             <nav class="flex-1 flex flex-col gap-2">

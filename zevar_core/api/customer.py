@@ -4,9 +4,11 @@ Customer API - Customer search and details
 
 import frappe
 from frappe import _
+from frappe.rate_limiter import rate_limit
 
 
 @frappe.whitelist()
+@rate_limit(limit=100, seconds=60)
 def search_customers(query: str):
 	"""
 	Search customers by name, phone, or email.
@@ -17,6 +19,8 @@ def search_customers(query: str):
 	Returns:
 	    List of matching customers
 	"""
+	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
+
 	if not query or len(query) < 2:
 		return []
 
@@ -50,6 +54,7 @@ def search_customers(query: str):
 
 
 @frappe.whitelist()
+@rate_limit(limit=100, seconds=60)
 def get_customer_details(customer_name: str):
 	"""
 	Fetch full customer details including preferences.
@@ -60,6 +65,8 @@ def get_customer_details(customer_name: str):
 	Returns:
 	    Customer details dictionary
 	"""
+	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
+
 	customer = frappe.get_doc("Customer", customer_name)
 
 	# Get recent purchase history
@@ -91,7 +98,8 @@ def get_customer_details(customer_name: str):
 	}
 
 
-@frappe.whitelist()
+@frappe.whitelist(methods=["POST"])
+@rate_limit(limit=30, seconds=60)
 def quick_create_customer(
 	customer_name: str,
 	customer_type: str = "Individual",

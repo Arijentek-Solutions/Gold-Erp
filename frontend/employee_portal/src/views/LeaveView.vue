@@ -2,26 +2,26 @@
 	<div class="flex flex-col gap-4 h-full overflow-hidden">
 		<!-- Header Stats -->
 		<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 shrink-0">
-			<div class="glass-card p-3 sm:p-4 rounded-xl">
-				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Annual Leave</p>
-				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ getLeaveBalance('Annual Leave') }}<span class="text-xs sm:text-sm text-white/40 ml-1">days</span></p>
+			<div class="premium-card !p-4">
+				<p class="status-label">Annual Leave</p>
+				<p class="text-lg sm:text-2xl font-bold font-mono text-gray-900 dark:text-white">{{ getLeaveBalance('Annual Leave') }}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1">days</span></p>
 			</div>
-			<div class="glass-card p-3 sm:p-4 rounded-xl">
-				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Sick Leave</p>
-				<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ getLeaveBalance('Sick Leave') }}<span class="text-xs sm:text-sm text-white/40 ml-1">days</span></p>
+			<div class="premium-card !p-4">
+				<p class="status-label">Sick Leave</p>
+				<p class="text-lg sm:text-2xl font-bold font-mono text-gray-900 dark:text-white">{{ getLeaveBalance('Sick Leave') }}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1">days</span></p>
 			</div>
-			<div class="glass-card p-3 sm:p-4 rounded-xl">
-				<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Pending</p>
-				<p class="text-lg sm:text-2xl font-bold text-amber-400 font-mono">{{ pendingCount }}<span class="text-xs sm:text-sm text-white/40 ml-1">req</span></p>
+			<div class="premium-card !p-4">
+				<p class="status-label">Pending</p>
+				<p class="text-lg sm:text-2xl font-bold text-amber-500 dark:text-amber-400 font-mono">{{ pendingCount }}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1">req</span></p>
 			</div>
-			<div class="glass-card p-3 sm:p-4 rounded-xl flex items-center justify-between">
+			<div class="premium-card !p-4 flex items-center justify-between">
 				<div>
-					<p class="text-[9px] sm:text-[10px] text-white/40 uppercase tracking-widest mb-1">Total Used</p>
-					<p class="text-lg sm:text-2xl font-bold text-white font-mono">{{ totalUsedDays }}<span class="text-xs sm:text-sm text-white/40 ml-1">days</span></p>
+					<p class="status-label">Total Used</p>
+					<p class="text-lg sm:text-2xl font-bold font-mono text-gray-900 dark:text-white">{{ totalUsedDays }}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1">days</span></p>
 				</div>
 				<button
 					@click="showLeaveModal = true"
-					class="bg-primary text-black px-3 sm:px-4 py-2 rounded-lg text-[10px] sm:text-xs font-bold hover:bg-yellow-400 transition-colors"
+					class="bg-primary text-black px-3 sm:px-4 py-2 rounded-xl text-[10px] sm:text-xs font-bold hover:bg-yellow-400 transition-all shadow-lg shadow-primary/20"
 				>
 					+ Request
 				</button>
@@ -34,8 +34,8 @@
 			<div class="flex-1 flex flex-col min-w-0 overflow-hidden">
 				<div class="flex items-center justify-between mb-3 sm:mb-4 shrink-0">
 					<div>
-						<h2 class="text-base sm:text-xl font-bold text-white">Leave Applications</h2>
-						<p class="text-[10px] sm:text-xs text-white/40">Your time off requests</p>
+						<h2 class="premium-title !text-xl">Leave Applications</h2>
+						<p class="premium-subtitle">Your time off requests</p>
 					</div>
 					<div class="flex gap-1 sm:gap-2">
 						<button
@@ -63,7 +63,7 @@
 				</div>
 
 				<!-- Table Header - Hidden on mobile -->
-				<div class="hidden sm:grid glass-card rounded-t-xl px-3 sm:px-4 py-2 sm:py-3 grid-cols-5 gap-2 sm:gap-4 text-[9px] sm:text-[10px] uppercase tracking-widest text-white/40 font-bold border-b border-white/5">
+				<div class="hidden sm:grid premium-card !p-3 !rounded-t-xl grid-cols-5 gap-2 sm:gap-4 text-[9px] sm:text-[10px] uppercase tracking-widest text-white/40 font-bold border-b border-white/5">
 					<div>Leave Type</div>
 					<div>Date Range</div>
 					<div>Duration</div>
@@ -83,7 +83,7 @@
 						<div
 							v-for="app in filteredApplications"
 							:key="app.name"
-							class="glass-card rounded-xl p-3 border border-white/5"
+							class="premium-card !p-3 !rounded-xl border border-white/5"
 						>
 							<div class="flex items-center justify-between mb-2">
 								<p class="text-sm font-bold text-white">{{ app.leave_type }}</p>
@@ -138,84 +138,17 @@
 
 			<!-- Mini Calendar - Hidden on mobile -->
 			<div class="hidden lg:block w-72 shrink-0">
-				<div class="glass-card rounded-xl p-4 border border-white/5">
-					<!-- Calendar Header -->
-					<div class="flex items-center justify-between mb-4">
-						<h3 class="text-sm font-bold text-white">{{ currentMonthYear }}</h3>
-						<div class="flex gap-1">
-							<button
-								@click="previousMonth"
-								class="p-1 rounded hover:bg-white/5 text-white/40 hover:text-white transition-colors"
-							>
-								<span class="material-symbols-outlined text-lg">chevron_left</span>
-							</button>
-							<button
-								@click="nextMonth"
-								class="p-1 rounded hover:bg-white/5 text-white/40 hover:text-white transition-colors"
-							>
-								<span class="material-symbols-outlined text-lg">chevron_right</span>
-							</button>
-						</div>
-					</div>
-
-					<!-- Day Headers -->
-					<div class="grid grid-cols-7 gap-1 mb-2">
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">M</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">T</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">W</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">T</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">F</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">S</div>
-						<div class="text-[9px] text-center text-white/30 font-bold uppercase">S</div>
-					</div>
-
-					<!-- Calendar Grid -->
-					<div class="grid grid-cols-7 gap-1">
-						<!-- Empty cells for days before month start -->
-						<div v-for="i in firstDayOfMonth" :key="'empty-' + i" class="aspect-square"></div>
-
-						<!-- Days -->
-						<div
-							v-for="day in calendarDays"
-							:key="day.date"
-							class="aspect-square rounded-md flex items-center justify-center text-xs relative transition-all"
-							:class="[
-								day.isToday
-									? 'bg-primary/20 text-primary font-bold'
-									: day.hasLeave
-									? 'bg-emerald-500/15 text-emerald-400'
-									: day.hasPending
-									? 'bg-amber-500/15 text-amber-400'
-									: day.isWeekend
-									? 'text-white/20'
-									: 'text-white/50'
-							]"
-						>
-							{{ day.day }}
-						</div>
-					</div>
-
-					<!-- Legend -->
-					<div class="mt-4 pt-3 border-t border-white/5 flex flex-wrap gap-3 text-[9px]">
-						<div class="flex items-center gap-1">
-							<span class="w-2 h-2 rounded-full bg-emerald-400"></span>
-							<span class="text-white/40">Approved</span>
-						</div>
-						<div class="flex items-center gap-1">
-							<span class="w-2 h-2 rounded-full bg-amber-400"></span>
-							<span class="text-white/40">Pending</span>
-						</div>
-						<div class="flex items-center gap-1">
-							<span class="w-2 h-2 rounded-full bg-primary"></span>
-							<span class="text-white/40">Today</span>
-						</div>
-					</div>
+				<div class="premium-card !p-4">
+					<StandardCalendar 
+						v-model="currentDate"
+						:events="allEventDates"
+					/>
 				</div>
 
 				<!-- Quick Info -->
-				<div class="glass-card rounded-xl p-4 mt-4 border border-white/5">
-					<h4 class="text-xs font-bold text-white/60 uppercase tracking-widest mb-3">Leave Policy</h4>
-					<div class="space-y-2 text-[11px] text-white/40">
+				<div class="premium-card !p-4 mt-4">
+					<h4 class="status-label !mb-3">Leave Policy</h4>
+					<div class="space-y-2 text-[11px] text-gray-500 dark:text-white/40">
 						<p>• Submit requests 3 days in advance</p>
 						<p>• Annual leave: 21 days/year</p>
 						<p>• Sick leave: 10 days/year</p>
@@ -311,6 +244,7 @@
 import { ref, computed, onMounted } from "vue";
 import { useLeaveStore } from "@/stores/leave";
 import { useEmployeeStore } from "@/stores/employee";
+import StandardCalendar from "@/components/StandardCalendar.vue";
 
 const leaveStore = useLeaveStore();
 const employeeStore = useEmployeeStore();
@@ -345,6 +279,18 @@ const daysInMonth = computed(() => {
 		currentDate.value.getMonth() + 1,
 		0
 	).getDate();
+});
+
+const allEventDates = computed(() => {
+	const dates = [];
+	leaveStore.leaveApplications.forEach(app => {
+		const start = new Date(app.from_date);
+		const end = new Date(app.to_date || app.from_date);
+		for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+			dates.push(new Date(d));
+		}
+	});
+	return dates;
 });
 
 // Get leave dates for calendar

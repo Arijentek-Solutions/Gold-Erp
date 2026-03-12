@@ -249,6 +249,7 @@ def create_pos_invoice(
 		}
 
 	except Exception as e:
+		frappe.db.rollback()
 		frappe.log_error("POS Invoice Creation Failed", frappe.get_traceback())
 		if isinstance(e, frappe.ValidationError):
 			raise

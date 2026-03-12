@@ -128,96 +128,101 @@ def create_return_invoice(
 	if original.docstatus != 1:
 		frappe.throw(_("Only submitted invoices can be returned."))
 
-	# Create return invoice (Sales Invoice with negative quantities)
-	return_invoice = frappe.copy_doc(original)
+	try:
+		# Create return invoice (Sales Invoice with negative quantities)
+		return_invoice = frappe.copy_doc(original)
 
-	return_invoice.is_return = 1
-	return_invoice.return_against = original_invoice
-	return_invoice.custom_return_against = original_invoice
-	return_invoice.custom_return_reason = reason
-	return_invoice.custom_return_type = return_type
-	return_invoice.set_posting_time = 1
-	return_invoice.posting_date = getdate()
-	return_invoice.posting_time = now_datetime().strftime("%H:%M:%S")
+		return_invoice.is_return = 1
+		return_invoice.return_against = original_invoice
+		return_invoice.custom_return_against = original_invoice
+		return_invoice.custom_return_reason = reason
+		return_invoice.custom_return_type = return_type
+		return_invoice.set_posting_time = 1
+		return_invoice.posting_date = getdate()
+		return_invoice.posting_time = now_datetime().strftime("%H:%M:%S")
 
-	# Clear items and add return items
-	return_invoice.items = []
+		# Clear items and add return items
+		return_invoice.items = []
 
-	for return_item in items_list:
-		# Find original item
-		original_item = next(
-			(i for i in original.items if i.item_code == return_item.get("item_code")), None
-		)
+		for return_item in items_list:
+			# Find original item
+			original_item = next(
+				(i for i in original.items if i.item_code == return_item.get("item_code")), None
+			)
 
-		if not original_item:
-			frappe.throw(_("Item {0} not found in original invoice.").format(return_item.get("item_code")))
+			if not original_item:
+				frappe.throw(_("Item {0} not found in original invoice.").format(return_item.get("item_code")))
 
-		return_qty = flt(return_item.get("qty", 0))
-		if return_qty <= 0:
-			continue
+			return_qty = flt(return_item.get("qty", 0))
+			if return_qty <= 0:
+				continue
 
-		# Add with negative quantity
-		return_invoice.append(
-			"items",
-			{
-				"item_code": original_item.item_code,
-				"item_name": original_item.item_name,
-				"qty": -return_qty,  # Negative for return
-				"rate": flt(return_item.get("rate", original_item.rate)),
-				"warehouse": original_item.warehouse,
-				"allow_zero_valuation_rate": 1,
+			# Add with negative quantity
+			return_invoice.append(
+				"items",
+				{
+					"item_code": original_item.item_code,
+					"item_name": original_item.item_name,
+					"qty": -return_qty,  # Negative for return
+					"rate": flt(return_item.get("rate", original_item.rate)),
+					"warehouse": original_item.warehouse,
+					"allow_zero_valuation_rate": 1,
+				},
+			)
+
+		# Clear payments and add refund payment
+		return_invoice.payments = []
+
+		if return_type == "refund":
+			if not refund_mode:
+				refund_mode = "Cash"
+
+			# Calculate refund amount
+			refund_amount = sum(
+				flt(item.get("qty", 0)) * flt(item.get("rate", 0)) for item in items_list
+			)
+
+			return_invoice.append(
+				"payments",
+				{
+					"mode_of_payment": refund_mode,
+					"amount": -refund_amount,  # Negative for refund
+				},
+			)
+
+		# Clear custom fields that shouldn't be copied
+		return_invoice.custom_salesperson_1 = original.custom_salesperson_1
+		return_invoice.custom_salesperson_2 = original.custom_salesperson_2
+
+		return_invoice.insert(ignore_permissions=True)
+		return_invoice.submit()
+
+		# Log the return
+		from zevar_core.api.audit_log import log_event
+
+		log_event(
+			event_type="invoice_returned",
+			details={
+				"original_invoice": original_invoice,
+				"return_invoice": return_invoice.name,
+				"return_type": return_type,
+				"reason": reason,
+				"items": items_list,
 			},
+			reference_document=return_invoice.name,
 		)
 
-	# Clear payments and add refund payment
-	return_invoice.payments = []
-
-	if return_type == "refund":
-		if not refund_mode:
-			refund_mode = "Cash"
-
-		# Calculate refund amount
-		refund_amount = sum(
-			flt(item.get("qty", 0)) * flt(item.get("rate", 0)) for item in items_list
-		)
-
-		return_invoice.append(
-			"payments",
-			{
-				"mode_of_payment": refund_mode,
-				"amount": -refund_amount,  # Negative for refund
-			},
-		)
-
-	# Clear custom fields that shouldn't be copied
-	return_invoice.custom_salesperson_1 = original.custom_salesperson_1
-	return_invoice.custom_salesperson_2 = original.custom_salesperson_2
-
-	return_invoice.insert(ignore_permissions=True)
-	return_invoice.submit()
-
-	# Log the return
-	from zevar_core.api.audit_log import log_event
-
-	log_event(
-		event_type="invoice_returned",
-		details={
-			"original_invoice": original_invoice,
+		return {
+			"success": True,
 			"return_invoice": return_invoice.name,
+			"grand_total": flt(return_invoice.grand_total),
 			"return_type": return_type,
-			"reason": reason,
-			"items": items_list,
-		},
-		reference_document=return_invoice.name,
-	)
-
-	return {
-		"success": True,
-		"return_invoice": return_invoice.name,
-		"grand_total": flt(return_invoice.grand_total),
-		"return_type": return_type,
-		"message": _("Return invoice {0} created successfully.").format(return_invoice.name),
-	}
+			"message": _("Return invoice {0} created successfully.").format(return_invoice.name),
+		}
+	except Exception as e:
+		frappe.db.rollback()
+		frappe.log_error("Return Invoice Creation Failed", frappe.get_traceback())
+		frappe.throw(_("Failed to create return invoice: {0}").format(str(e)))
 
 
 @frappe.whitelist(methods=["POST"])
@@ -257,32 +262,37 @@ def void_invoice(invoice_name: str, reason: str, manager_pin: str) -> dict:
 	if returns > 0:
 		frappe.throw(_("This invoice has returns and cannot be voided."))
 
-	# Add comment before cancelling
-	invoice.add_comment("Comment", f"Voided by {manager['user']}. Reason: {reason}")
+	try:
+		# Add comment before cancelling
+		invoice.add_comment("Comment", f"Voided by {manager['user']}. Reason: {reason}")
 
-	# Cancel the invoice
-	invoice.cancel()
+		# Cancel the invoice
+		invoice.cancel()
 
-	# Log the void
-	from zevar_core.api.audit_log import log_event
+		# Log the void
+		from zevar_core.api.audit_log import log_event
 
-	log_event(
-		event_type="invoice_voided",
-		details={
-			"invoice": invoice_name,
-			"reason": reason,
+		log_event(
+			event_type="invoice_voided",
+			details={
+				"invoice": invoice_name,
+				"reason": reason,
+				"voided_by": manager["user"],
+			},
+			reference_document=invoice_name,
+		)
+
+		return {
+			"success": True,
+			"invoice_name": invoice_name,
+			"status": "Cancelled",
 			"voided_by": manager["user"],
-		},
-		reference_document=invoice_name,
-	)
-
-	return {
-		"success": True,
-		"invoice_name": invoice_name,
-		"status": "Cancelled",
-		"voided_by": manager["user"],
-		"message": _("Invoice {0} has been voided.").format(invoice_name),
-	}
+			"message": _("Invoice {0} has been voided.").format(invoice_name),
+		}
+	except Exception as e:
+		frappe.db.rollback()
+		frappe.log_error("Invoice Void Failed", frappe.get_traceback())
+		frappe.throw(_("Failed to void invoice: {0}").format(str(e)))
 
 
 @frappe.whitelist()

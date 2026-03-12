@@ -187,8 +187,9 @@ def create_layaway(
 			"message": "Layaway created successfully",
 		}
 	except Exception as e:
+		frappe.db.rollback()
 		frappe.log_error("Layaway Creation Failed", frappe.get_traceback())
-		raise frappe.ValidationError(f"Failed to create layaway: {e!s}")
+		frappe.throw(_("Failed to create layaway: {0}").format(str(e)))
 
 
 @frappe.whitelist(methods=["POST"])
@@ -242,8 +243,9 @@ def process_layaway_payment(layaway_id: str, payment_amount: float, mode_of_paym
 			"message": "Payment processed successfully",
 		}
 	except Exception as e:
+		frappe.db.rollback()
 		frappe.log_error("Layaway Payment Failed", frappe.get_traceback())
-		raise frappe.ValidationError(f"Failed to process layaway payment: {e!s}")
+		frappe.throw(_("Failed to process layaway payment: {0}").format(str(e)))
 
 
 @frappe.whitelist(methods=["POST"])
@@ -284,5 +286,6 @@ def cancel_layaway(layaway_id: str) -> dict:
 			"message": f"Layaway cancelled. Store Credit {gc.name} generated.",
 		}
 	except Exception as e:
+		frappe.db.rollback()
 		frappe.log_error("Layaway Cancellation Failed", frappe.get_traceback())
-		raise frappe.ValidationError(f"Failed to cancel layaway: {e!s}")
+		frappe.throw(_("Failed to cancel layaway: {0}").format(str(e)))

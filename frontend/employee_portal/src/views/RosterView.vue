@@ -3,8 +3,8 @@
 		<!-- Header -->
 		<div class="flex items-center justify-between shrink-0">
 			<div>
-				<h1 class="text-xl sm:text-2xl font-bold text-white">My Roster</h1>
-				<p class="text-xs sm:text-sm text-white/40">Your weekly work schedule</p>
+				<h1 class="premium-title">My Roster</h1>
+				<p class="premium-subtitle">Your weekly work schedule</p>
 			</div>
 			<div class="flex items-center gap-2">
 				<button
@@ -29,17 +29,17 @@
 		</div>
 
 		<!-- Week Range Display -->
-		<div class="glass-card rounded-xl p-4 border border-white/5 shrink-0">
+		<div class="premium-card !p-4 shrink-0">
 			<div class="flex items-center justify-between">
 				<div>
-					<p class="text-sm font-bold text-white">{{ weekRangeDisplay }}</p>
-					<p class="text-[10px] text-white/40 mt-0.5">
+					<p class="text-sm font-bold text-gray-900 dark:text-white">{{ weekRangeDisplay }}</p>
+					<p class="premium-subtitle !text-[10px] mt-0.5">
 						{{ roster?.employment_type || 'Full-time' }} Employee - {{ roster?.working_hours || 8 }} hrs/day
 					</p>
 				</div>
 				<div class="text-right">
-					<p class="text-[10px] text-white/30 uppercase tracking-widest">Weekly Target</p>
-					<p class="text-lg font-bold font-mono text-white">{{ weeklyTargetHours }} hrs</p>
+					<p class="status-label !mb-1">Weekly Target</p>
+					<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">{{ weeklyTargetHours }} hrs</p>
 				</div>
 			</div>
 		</div>
@@ -68,26 +68,26 @@
 					<div
 						v-for="day in weeklySchedule"
 						:key="day.date"
-						class="glass-card rounded-xl p-2 sm:p-3 border transition-all"
+						class="premium-card !p-2 sm:p-3 transition-all"
 						:class="[
 							day.isToday
-								? 'border-primary/50 bg-primary/5'
+								? 'border-primary/50 bg-primary/5 shadow-lg shadow-primary/10'
 								: day.status === 'off'
-								? 'border-white/5 bg-white/[0.02]'
-								: 'border-white/10 hover:border-white/20',
+								? 'opacity-80'
+								: 'hover:border-primary/20',
 						]"
 					>
 						<!-- Date Header -->
 						<div class="flex items-center justify-between mb-2">
 							<div>
-								<p class="text-xs sm:text-sm font-bold" :class="day.isToday ? 'text-primary' : 'text-white'">
+								<p class="text-xs sm:text-sm font-bold" :class="day.isToday ? 'text-primary' : 'text-gray-900 dark:text-white'">
 									{{ day.day_num }}
 								</p>
-								<p class="text-[8px] sm:text-[10px] text-white/30">{{ day.day_short }}</p>
+								<p class="text-[8px] sm:text-[10px] text-gray-400 dark:text-white/30">{{ day.day_short }}</p>
 							</div>
 							<span
 								v-if="day.isToday"
-								class="text-[8px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary font-bold uppercase"
+								class="text-[8px] px-1.5 py-0.5 rounded-full bg-primary/20 text-primary font-bold uppercase tracking-tighter"
 							>
 								Today
 							</span>
@@ -155,23 +155,23 @@
 				</div>
 
 				<!-- Weekly Summary -->
-				<div class="mt-4 glass-card rounded-xl p-4 border border-white/5">
-					<h3 class="text-sm font-bold text-white mb-3">Weekly Summary</h3>
+				<div class="mt-4 premium-card !p-4">
+					<h3 class="premium-title !text-sm mb-3">Weekly Summary</h3>
 					<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
 						<div>
-							<p class="text-[9px] text-white/30 uppercase tracking-widest mb-1">Working Days</p>
-							<p class="text-lg font-bold font-mono text-white">{{ summary?.total_working_days || 0 }}</p>
+							<p class="status-label !mb-1">Working Days</p>
+							<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">{{ summary?.total_working_days || 0 }}</p>
 						</div>
 						<div>
-							<p class="text-[9px] text-white/30 uppercase tracking-widest mb-1">Completed</p>
-							<p class="text-lg font-bold font-mono text-emerald-400">{{ summary?.completed_days || 0 }}</p>
+							<p class="status-label !mb-1">Completed</p>
+							<p class="text-lg font-bold font-mono text-emerald-500">{{ summary?.completed_days || 0 }}</p>
 						</div>
 						<div>
-							<p class="text-[9px] text-white/30 uppercase tracking-widest mb-1">Hours Worked</p>
-							<p class="text-lg font-bold font-mono text-white">{{ summary?.total_hours?.toFixed(1) || 0 }}</p>
+							<p class="status-label !mb-1">Hours Worked</p>
+							<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">{{ summary?.total_hours?.toFixed(1) || 0 }}</p>
 						</div>
 						<div>
-							<p class="text-[9px] text-white/30 uppercase tracking-widest mb-1">Target Hours</p>
+							<p class="status-label !mb-1">Target Hours</p>
 							<p class="text-lg font-bold font-mono text-primary">{{ summary?.target_hours || 0 }}</p>
 						</div>
 					</div>

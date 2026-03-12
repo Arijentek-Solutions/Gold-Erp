@@ -56,22 +56,24 @@ export const useCartStore = defineStore('cart', () => {
 	})
 
 	const subtotal = computed(() => {
-		return items.value.reduce((sum, item) => {
+		const sum = items.value.reduce((s, item) => {
 			const qty = item.qty || 1
 			const price = item.amount || 0
-			return sum + price * qty
+			return s + price * qty
 		}, 0)
+		return Number(sum.toFixed(2))
 	})
 
-	const tax = computed(() => subtotal.value * (taxRate.value / 100))
+	const tax = computed(() => Number((subtotal.value * (taxRate.value / 100)).toFixed(2)))
 
 	const tradeInCredit = computed(() => {
-		return tradeIns.value.reduce((sum, ti) => sum + (ti.trade_in_value || 0), 0)
+		const sum = tradeIns.value.reduce((s, ti) => s + (ti.trade_in_value || 0), 0)
+		return Number(sum.toFixed(2))
 	})
 
 	const grandTotal = computed(() => {
 		const total = subtotal.value + tax.value - tradeInCredit.value
-		return Math.max(0, total)
+		return Number(Math.max(0, total).toFixed(2))
 	})
 
 	// ==========================================================================
@@ -116,10 +118,23 @@ export const useCartStore = defineStore('cart', () => {
 		customer.value = null
 	}
 
-	// Salesperson management
 	function addSalesperson(employee, split) {
 		if (salespersons.value.length >= 4) return
 		salespersons.value.push({ employee, split: split })
+	}
+
+	function recalculateSalespersonSplit(changedIndex) {
+		const changed = salespersons.value[changedIndex]
+		if (changed) {
+			changed.split = Number(Number(changed.split || 0).toFixed(2))
+		}
+		
+		if (salespersons.value.length === 2 && changed) {
+			const otherIndex = changedIndex === 0 ? 1 : 0
+			const other = salespersons.value[otherIndex]
+			const newSplit = 100 - changed.split
+			other.split = Number(newSplit.toFixed(2))
+		}
 	}
 
 	function removeSalesperson(index) {
@@ -307,6 +322,7 @@ export const useCartStore = defineStore('cart', () => {
 		clearCustomer,
 		salespersons,
 		addSalesperson,
+		recalculateSalespersonSplit,
 		removeSalesperson,
 		clearSalespersons,
 		tradeIns,

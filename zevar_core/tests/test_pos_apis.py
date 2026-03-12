@@ -242,7 +242,7 @@ class TestQuickLayawayAPI(FrappeTestCase):
 
 	def test_get_layaway_preview(self):
 		"""Test layaway preview calculation"""
-		from zevar_core.api.quick_layaway import get_layaway_preview
+		from zevar_core.api.layaway import get_layaway_preview
 
 		items = [{"item_code": "TEST-001", "qty": 1, "rate": 1000}]
 
@@ -261,7 +261,7 @@ class TestQuickLayawayAPI(FrappeTestCase):
 
 	def test_valid_terms(self):
 		"""Test that only valid terms are accepted"""
-		from zevar_core.api.quick_layaway import get_layaway_preview
+		from zevar_core.api.layaway import get_layaway_preview
 
 		items = [{"item_code": "TEST-001", "qty": 1, "rate": 1000}]
 
