@@ -1,12 +1,14 @@
 import { defineStore } from "pinia";
 import { createResource } from "frappe-ui";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 
 export const useAttendanceStore = defineStore("attendance", () => {
 	const todayStatus = ref(null);
 	const roster = ref(null);
 	const history = ref([]);
 	const loading = ref(false);
+	const workedSecondsToday = ref(0);
+	let timerInterval = null;
 
 	// Today's check-in status
 	const todayStatusResource = createResource({
@@ -64,27 +66,97 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		return todayStatus.value?.checked_in || false;
 	});
 
+	const isOnBreak = computed(() => {
+		return todayStatus.value?.is_on_break || false;
+	});
+
+	const totalSecondsToday = computed(() => {
+		if (typeof todayStatus.value?.total_seconds_today === "number") {
+			return todayStatus.value.total_seconds_today;
+		}
+		return Math.round((todayStatus.value?.total_hours_today || 0) * 3600);
+	});
+
 	const totalHoursToday = computed(() => {
-		return todayStatus.value?.total_hours_today || 0;
+		return Number((workedSecondsToday.value / 3600).toFixed(2));
 	});
 
 	const overtimeHours = computed(() => {
-		return todayStatus.value?.overtime_hours || 0;
+		const overtime = workedSecondsToday.value / 3600 - workingHoursTarget.value;
+		return Number(Math.max(0, overtime).toFixed(2));
 	});
 
 	const workingHoursTarget = computed(() => {
-		return roster.value?.working_hours || 8;
+		return roster.value?.working_hours || todayStatus.value?.working_hours_target || 8;
 	});
+
+	const shiftComplete = computed(() => {
+		return workedSecondsToday.value >= workingHoursTarget.value * 3600 && workedSecondsToday.value > 0;
+	});
+
+	const canManageBreak = computed(() => {
+		return isCheckedIn.value || isOnBreak.value;
+	});
+
+	const timerLabel = computed(() => {
+		if (isOnBreak.value) return "Break Paused";
+		if (isCheckedIn.value) return "Shift Time";
+		if (workedSecondsToday.value > 0) return "Today's Total";
+		return "Not Clocked In";
+	});
+
+	const formattedWorkedTime = computed(() => {
+		const totalSeconds = Math.floor(workedSecondsToday.value);
+		const hours = Math.floor(totalSeconds / 3600);
+		const minutes = Math.floor((totalSeconds % 3600) / 60);
+		const seconds = totalSeconds % 60;
+		return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
+			.toString()
+			.padStart(2, "0")}`;
+	});
+
+	function getErrorMessage(error) {
+		if (!error) return "";
+		if (typeof error === "string") return error;
+		if (Array.isArray(error.messages)) return error.messages.join(" ");
+		if (typeof error.messages === "string") return error.messages;
+		return error.message || String(error);
+	}
+
+	function clearTimerTicker() {
+		if (timerInterval) {
+			clearInterval(timerInterval);
+			timerInterval = null;
+		}
+	}
+
+	function startTimerTicker() {
+		clearTimerTicker();
+		timerInterval = setInterval(() => {
+			workedSecondsToday.value += 1;
+		}, 1000);
+	}
+
+	function syncTimerFromStatus() {
+		workedSecondsToday.value = totalSecondsToday.value;
+		if (isCheckedIn.value && !isOnBreak.value) {
+			startTimerTicker();
+			return;
+		}
+		clearTimerTicker();
+	}
 
 	// Actions
 	async function fetchTodayStatus(employeeId) {
 		if (!employeeId) return;
-		await todayStatusResource.fetch({ employee_id: employeeId });
+		const result = await todayStatusResource.fetch({ employee_id: employeeId });
+		syncTimerFromStatus();
+		return result;
 	}
 
 	async function fetchRoster(employeeId) {
 		if (!employeeId) return;
-		await rosterResource.fetch({ employee_id: employeeId });
+		return rosterResource.fetch({ employee_id: employeeId });
 	}
 
 	async function fetchHistory(employeeId, days = 30) {
@@ -92,7 +164,8 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		await historyResource.fetch({ employee_id: employeeId, days });
 	}
 
-	async function clockIn(_employeeId, latitude = null, longitude = null, notes = null) {
+	async function clockIn(employeeId, latitude = null, longitude = null, notes = null) {
+		if (loading.value) return { success: false, status: todayStatus.value };
 		loading.value = true;
 		try {
 			const result = await clockInResource.fetch({
@@ -100,17 +173,25 @@ export const useAttendanceStore = defineStore("attendance", () => {
 				longitude,
 				notes,
 			});
-			// Use status from response instead of fetching again
 			if (result.status) {
 				todayStatus.value = result.status;
+				syncTimerFromStatus();
 			}
 			return result;
+		} catch (error) {
+			const message = getErrorMessage(error);
+			if (employeeId && message.includes("Already checked in")) {
+				await fetchTodayStatus(employeeId);
+				return { success: true, status: todayStatus.value, recovered: true };
+			}
+			throw error;
 		} finally {
 			loading.value = false;
 		}
 	}
 
-	async function clockOut(_employeeId, latitude = null, longitude = null, notes = null) {
+	async function clockOut(employeeId, latitude = null, longitude = null, notes = null) {
+		if (loading.value) return { success: false, status: todayStatus.value };
 		loading.value = true;
 		try {
 			const result = await clockOutResource.fetch({
@@ -118,24 +199,31 @@ export const useAttendanceStore = defineStore("attendance", () => {
 				longitude,
 				notes,
 			});
-			// Use status from response instead of fetching again
 			if (result.status) {
 				todayStatus.value = result.status;
+				syncTimerFromStatus();
 			}
 			return result;
+		} catch (error) {
+			const message = getErrorMessage(error);
+			if (employeeId && (message.includes("No active check-in found") || message.includes("Already checked out"))) {
+				await fetchTodayStatus(employeeId);
+				return { success: true, status: todayStatus.value, recovered: true };
+			}
+			throw error;
 		} finally {
 			loading.value = false;
 		}
 	}
 
-	function init(employeeId) {
+	async function init(employeeId) {
 		if (employeeId) {
-			fetchTodayStatus(employeeId);
-			fetchRoster(employeeId);
+			await Promise.all([fetchTodayStatus(employeeId), fetchRoster(employeeId)]);
 		}
 	}
 
 	async function startBreak() {
+		if (loading.value) return { success: false, status: todayStatus.value };
 		loading.value = true;
 		try {
 			const result = await breakStartResource.fetch({
@@ -143,6 +231,7 @@ export const useAttendanceStore = defineStore("attendance", () => {
 			});
 			if (result.status) {
 				todayStatus.value = result.status;
+				syncTimerFromStatus();
 			}
 			return result;
 		} finally {
@@ -151,6 +240,7 @@ export const useAttendanceStore = defineStore("attendance", () => {
 	}
 
 	async function endBreak() {
+		if (loading.value) return { success: false, status: todayStatus.value };
 		loading.value = true;
 		try {
 			const result = await breakEndResource.fetch({
@@ -158,6 +248,7 @@ export const useAttendanceStore = defineStore("attendance", () => {
 			});
 			if (result.status) {
 				todayStatus.value = result.status;
+				syncTimerFromStatus();
 			}
 			return result;
 		} finally {
@@ -165,15 +256,26 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		}
 	}
 
+	watch([isCheckedIn, isOnBreak, totalSecondsToday], () => {
+		syncTimerFromStatus();
+	});
+
 	return {
 		todayStatus,
 		roster,
 		history,
 		loading,
+		workedSecondsToday,
 		isCheckedIn,
+		isOnBreak,
 		totalHoursToday,
+		totalSecondsToday,
 		overtimeHours,
 		workingHoursTarget,
+		shiftComplete,
+		canManageBreak,
+		timerLabel,
+		formattedWorkedTime,
 		fetchTodayStatus,
 		fetchRoster,
 		fetchHistory,

@@ -253,7 +253,9 @@
 											:key="emp.name"
 											:value="emp.name"
 										>
-											{{ emp.employee_name }} ({{ emp.designation || 'Sales' }})
+											{{ emp.employee_name }} ({{
+												emp.designation || 'Sales'
+											}})
 										</option>
 									</select>
 									<div class="flex items-center gap-1">
@@ -441,17 +443,23 @@
 							<div
 								class="flex justify-between text-sm pt-2 border-t border-gray-200 dark:border-white/10 mt-2"
 							>
-								<span class="text-gray-500">{{ remainingAmount < 0 ? 'Change Due' : 'Remaining' }}</span>
+								<span class="text-gray-500">{{
+									remainingAmount < 0 ? 'Change Due' : 'Remaining'
+								}}</span>
 								<span
 									:class="
 										remainingAmount === 0
 											? 'text-green-500 font-bold'
 											: remainingAmount < 0
-												? 'text-orange-500 font-bold'
-												: 'text-red-500 font-bold'
+											? 'text-orange-500 font-bold'
+											: 'text-red-500 font-bold'
 									"
 								>
-									{{ remainingAmount < 0 ? formatCurrency(Math.abs(remainingAmount)) : formatCurrency(remainingAmount) }}
+									{{
+										remainingAmount < 0
+											? formatCurrency(Math.abs(remainingAmount))
+											: formatCurrency(remainingAmount)
+									}}
 								</span>
 							</div>
 						</div>
@@ -1124,11 +1132,32 @@ async function handlePayment() {
 	} catch (e) {
 		// Extract meaningful error from Frappe's response structure
 		let errorMsg = ''
-		if (e?.exc_type && e?.message) {
+		if (e?.exc_type === 'ValidationError' && e?.message) {
 			errorMsg = e.message
+		} else if (e?.exception?.message) {
+			errorMsg = e.exception.message
 		} else if (e?._server_messages) {
 			try {
 				const msgs = JSON.parse(e._server_messages)
+				errorMsg = msgs
+					.map((m) => {
+						try {
+							const parsed = JSON.parse(m)
+							return parsed.message || parsed.error || m
+						} catch {
+							return m
+						}
+					})
+					.filter(Boolean)
+					.join('\n')
+			} catch {
+				errorMsg = String(e._server_messages)
+			}
+		} else if (e?.response?.data?.message) {
+			errorMsg = e.response.data.message
+		} else if (e?.response?.data?._server_messages) {
+			try {
+				const msgs = JSON.parse(e.response.data._server_messages)
 				errorMsg = msgs
 					.map((m) => {
 						try {
@@ -1139,13 +1168,19 @@ async function handlePayment() {
 					})
 					.join('\n')
 			} catch {
-				errorMsg = String(e._server_messages)
+				errorMsg = String(e.response.data._server_messages)
 			}
 		} else {
-			errorMsg = e?.message || String(e)
+			errorMsg = e?.message || e?.error_message || String(e)
 		}
+
 		// Strip HTML tags for clean display
 		errorMsg = errorMsg.replace(/<[^>]+>/g, '')
+
+		// Clean up common error message patterns
+		if (errorMsg.includes('ValidationError') && errorMsg.length < 50) {
+			errorMsg = 'Validation error: Please check the form data and try again.'
+		}
 
 		// Detect trade-in 2x rule failure → prompt for manager override
 		if (errorMsg.includes('Manager Override') && cart.tradeIns.length > 0) {

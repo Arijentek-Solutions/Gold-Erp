@@ -77,7 +77,9 @@ def create_employees():
 		full_name = f"{emp_data['first_name']} {emp_data['last_name']}"
 
 		# Check if employee already exists by name
-		existing = frappe.db.exists("Employee", {"first_name": emp_data["first_name"], "last_name": emp_data["last_name"]})
+		existing = frappe.db.exists(
+			"Employee", {"first_name": emp_data["first_name"], "last_name": emp_data["last_name"]}
+		)
 		if existing:
 			skipped.append(full_name)
 			print(f"Skipped: {full_name} (already exists with ID: {existing})")
@@ -102,9 +104,9 @@ def create_employees():
 		except Exception as e:
 			print(f"Error creating {full_name}: {e}")
 
-	frappe.db.commit()
+	frappe.db.commit() # nosemgrep (manual commit for fixtures)
 
-	print(f"\nSummary:")
+	print("\nSummary:")
 	print(f"  Created: {len(created)} employees")
 	print(f"  Skipped: {len(skipped)} employees")
 

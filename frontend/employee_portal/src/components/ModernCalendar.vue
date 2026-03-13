@@ -1,5 +1,7 @@
 <template>
-	<div class="glass-card rounded-xl p-4 border border-black/5 dark:border-white/5 bg-transparent">
+	<div
+		class="glass-card rounded-xl p-4 border border-black/5 dark:border-white/5 bg-transparent"
+	>
 		<!-- Calendar Header -->
 		<div class="flex items-center justify-between mb-4">
 			<h3 class="text-sm font-bold text-gray-900 dark:text-white">{{ currentMonthYear }}</h3>
@@ -10,7 +12,9 @@
 					class="p-1 rounded hover:bg-black/5 dark:hover:bg-white/5 text-gray-400 dark:text-white/40 hover:text-gray-900 dark:hover:text-white transition-colors"
 					title="Previous Year"
 				>
-					<span class="material-symbols-outlined text-base">keyboard_double_arrow_left</span>
+					<span class="material-symbols-outlined text-base"
+						>keyboard_double_arrow_left</span
+					>
 				</button>
 				<!-- Previous Month -->
 				<button
@@ -42,14 +46,20 @@
 					class="p-1 rounded hover:bg-black/5 dark:hover:bg-white/5 text-gray-400 dark:text-white/40 hover:text-gray-900 dark:hover:text-white transition-colors"
 					title="Next Year"
 				>
-					<span class="material-symbols-outlined text-base">keyboard_double_arrow_right</span>
+					<span class="material-symbols-outlined text-base"
+						>keyboard_double_arrow_right</span
+					>
 				</button>
 			</div>
 		</div>
 
 		<!-- Day Headers -->
 		<div class="grid grid-cols-7 gap-1 mb-2">
-			<div v-for="day in weekDayHeaders" :key="day" class="text-[9px] text-center text-gray-400 dark:text-white/30 font-bold uppercase">
+			<div
+				v-for="day in weekDayHeaders"
+				:key="day"
+				class="text-[9px] text-center text-gray-400 dark:text-white/30 font-bold uppercase"
+			>
 				{{ day }}
 			</div>
 		</div>
@@ -89,7 +99,10 @@
 		</div>
 
 		<!-- Legend -->
-		<div v-if="showDefaultLegend" class="mt-4 pt-3 border-t border-black/5 dark:border-white/5 flex flex-wrap gap-x-3 gap-y-2 text-[9px]">
+		<div
+			v-if="showDefaultLegend"
+			class="mt-4 pt-3 border-t border-black/5 dark:border-white/5 flex flex-wrap gap-x-3 gap-y-2 text-[9px]"
+		>
 			<div v-if="showLegend.complete" class="flex items-center gap-1.5">
 				<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
 				<span class="text-gray-500 dark:text-white/40 font-medium">Complete</span>
@@ -108,7 +121,6 @@
 			</div>
 		</div>
 	</div>
-
 </template>
 
 <script setup>
@@ -148,7 +160,7 @@ const props = defineProps({
 	// Weekday headers
 	weekdayHeaders: {
 		type: Array,
-		default: () => ['M', 'T', 'W', 'T', 'F', 'S', 'S'],
+		default: () => ["M", "T", "W", "T", "F", "S", "S"],
 	},
 	// Start weekday (0 = Sunday, 1 = Monday)
 	startWeekday: {
@@ -157,16 +169,19 @@ const props = defineProps({
 	},
 });
 
-const emit = defineEmits(['day-click', 'month-change', 'year-change', 'today']);
+const emit = defineEmits(["day-click", "month-change", "year-change", "today"]);
 
 const currentDate = ref(new Date(props.initialDate));
 
 // Watch for external initialDate changes
-watch(() => props.initialDate, (newDate) => {
-	if (newDate) {
-		currentDate.value = new Date(newDate);
+watch(
+	() => props.initialDate,
+	(newDate) => {
+		if (newDate) {
+			currentDate.value = new Date(newDate);
+		}
 	}
-});
+);
 
 // Week day headers
 const weekDayHeaders = computed(() => props.weekdayHeaders);
@@ -199,7 +214,7 @@ const daysInMonth = computed(() => {
 // Build a map of date strings to day data for quick lookup
 const daysDataMap = computed(() => {
 	const map = new Map();
-	props.daysData.forEach(day => {
+	props.daysData.forEach((day) => {
 		if (day.date) {
 			map.set(day.date, day);
 		}
@@ -231,7 +246,7 @@ const calendarDays = computed(() => {
 			date: dateStr,
 			isToday,
 			isWeekend,
-			status: dayData.status || '',
+			status: dayData.status || "",
 			hasLeave: dayData.hasLeave || false,
 			hasPending: dayData.hasPending || false,
 			...dayData,
@@ -251,19 +266,21 @@ function getDayClasses(day) {
 	const classes = [];
 
 	if (day.isToday) {
-		classes.push('bg-primary/20 text-primary font-bold border border-primary/20 shadow-[0_0_10px_rgba(244,192,37,0.1)]');
-	} else if (day.status === 'leave' || day.hasLeave) {
-		classes.push('bg-blue-500/10 text-blue-600 dark:text-blue-400');
-	} else if (day.status === 'pending' || day.hasPending) {
-		classes.push('bg-amber-500/10 text-amber-600 dark:text-amber-400');
-	} else if (day.status === 'complete' || day.status === 'present') {
-		classes.push('text-emerald-600 dark:text-emerald-400');
-	} else if (day.status === 'absent') {
-		classes.push('text-rose-600 dark:text-rose-400');
-	} else if (day.status === 'weekend' || day.isWeekend) {
-		classes.push('text-gray-300 dark:text-white/10');
+		classes.push(
+			"bg-primary/20 text-primary font-bold border border-primary/20 shadow-[0_0_10px_rgba(244,192,37,0.1)]"
+		);
+	} else if (day.status === "leave" || day.hasLeave) {
+		classes.push("bg-blue-500/10 text-blue-600 dark:text-blue-400");
+	} else if (day.status === "pending" || day.hasPending) {
+		classes.push("bg-amber-500/10 text-amber-600 dark:text-amber-400");
+	} else if (day.status === "complete" || day.status === "present") {
+		classes.push("text-emerald-600 dark:text-emerald-400");
+	} else if (day.status === "absent") {
+		classes.push("text-rose-600 dark:text-rose-400");
+	} else if (day.status === "weekend" || day.isWeekend) {
+		classes.push("text-gray-300 dark:text-white/10");
 	} else {
-		classes.push('text-gray-600 dark:text-white/50 hover:bg-black/5 dark:hover:bg-white/5');
+		classes.push("text-gray-600 dark:text-white/50 hover:bg-black/5 dark:hover:bg-white/5");
 	}
 
 	return classes;
@@ -271,7 +288,7 @@ function getDayClasses(day) {
 
 // Handle day click
 function handleDayClick(day) {
-	emit('day-click', day);
+	emit("day-click", day);
 }
 
 // Navigation methods
@@ -281,7 +298,7 @@ function previousMonth() {
 		currentDate.value.getMonth() - 1,
 		1
 	);
-	emit('month-change', { date: currentDate.value, direction: 'prev' });
+	emit("month-change", { date: currentDate.value, direction: "prev" });
 }
 
 function nextMonth() {
@@ -290,7 +307,7 @@ function nextMonth() {
 		currentDate.value.getMonth() + 1,
 		1
 	);
-	emit('month-change', { date: currentDate.value, direction: 'next' });
+	emit("month-change", { date: currentDate.value, direction: "next" });
 }
 
 function previousYear() {
@@ -299,7 +316,7 @@ function previousYear() {
 		currentDate.value.getMonth(),
 		1
 	);
-	emit('year-change', { date: currentDate.value, direction: 'prev' });
+	emit("year-change", { date: currentDate.value, direction: "prev" });
 }
 
 function nextYear() {
@@ -308,12 +325,12 @@ function nextYear() {
 		currentDate.value.getMonth(),
 		1
 	);
-	emit('year-change', { date: currentDate.value, direction: 'next' });
+	emit("year-change", { date: currentDate.value, direction: "next" });
 }
 
 function goToToday() {
 	currentDate.value = new Date();
-	emit('today', { date: currentDate.value });
+	emit("today", { date: currentDate.value });
 }
 
 // Expose methods for parent components

@@ -1,11 +1,7 @@
 <template>
 	<div class="pos-profile-selector">
 		<!-- Profile Button -->
-		<button
-			class="profile-btn"
-			@click="toggleDropdown"
-			:disabled="loading"
-		>
+		<button class="profile-btn" @click="toggleDropdown" :disabled="loading">
 			<span class="profile-icon">🏪</span>
 			<span class="profile-name">{{ profileStore.profileName }}</span>
 			<span class="dropdown-arrow" :class="{ open: showDropdown }">▼</span>
@@ -20,9 +16,7 @@
 				</button>
 			</div>
 
-			<div v-if="loading" class="dropdown-loading">
-				Loading profiles...
-			</div>
+			<div v-if="loading" class="dropdown-loading">Loading profiles...</div>
 
 			<div v-else-if="error" class="dropdown-error">
 				{{ error }}

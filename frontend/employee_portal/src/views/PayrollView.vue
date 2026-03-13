@@ -10,7 +10,7 @@
 					<select
 						v-model="selectedYear"
 						@change="changeYear"
-						class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
+						class="premium-select bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-white text-sm focus:outline-none focus:border-primary/50"
 					>
 						<option v-for="year in availableYears" :key="year" :value="year">
 							{{ year }}
@@ -30,16 +30,16 @@
 						>
 							<span class="material-symbols-outlined text-primary">payments</span>
 						</div>
-						<span class="status-label !mb-0"
-							>Net Pay YTD</span
-						>
+						<span class="status-label !mb-0">Net Pay YTD</span>
 					</div>
 					<div class="flex items-baseline gap-2">
 						<span class="text-4xl font-bold font-mono text-gray-900 dark:text-white">{{
 							formatCurrency(payrollStore.totalYTD)
 						}}</span>
 					</div>
-					<p class="premium-subtitle !text-[10px] mt-2">Total net pay for {{ selectedYear }}</p>
+					<p class="premium-subtitle !text-[10px] mt-2">
+						Total net pay for {{ selectedYear }}
+					</p>
 				</div>
 
 				<div class="premium-card !p-6">
@@ -51,16 +51,16 @@
 								>trending_up</span
 							>
 						</div>
-						<span class="status-label !mb-0"
-							>Gross Earnings</span
-						>
+						<span class="status-label !mb-0">Gross Earnings</span>
 					</div>
 					<div class="flex items-baseline gap-2">
 						<span class="text-4xl font-bold font-mono text-gray-900 dark:text-white">{{
 							formatCurrency(payrollStore.totalEarningsYTD)
 						}}</span>
 					</div>
-					<p class="premium-subtitle !text-[10px] mt-2">Total earnings before deductions</p>
+					<p class="premium-subtitle !text-[10px] mt-2">
+						Total earnings before deductions
+					</p>
 				</div>
 
 				<div class="premium-card !p-6">
@@ -68,18 +68,20 @@
 						<div
 							class="w-10 h-10 rounded-xl bg-red-400/10 flex items-center justify-center border border-red-400/20"
 						>
-							<span class="material-symbols-outlined text-red-400">trending_down</span>
+							<span class="material-symbols-outlined text-red-400"
+								>trending_down</span
+							>
 						</div>
-						<span class="status-label !mb-0"
-							>Deductions</span
-						>
+						<span class="status-label !mb-0">Deductions</span>
 					</div>
 					<div class="flex items-baseline gap-2">
 						<span class="text-4xl font-bold font-mono text-gray-900 dark:text-white">{{
 							formatCurrency(payrollStore.totalDeductionsYTD)
 						}}</span>
 					</div>
-					<p class="premium-subtitle !text-[10px] mt-2">Total deductions for {{ selectedYear }}</p>
+					<p class="premium-subtitle !text-[10px] mt-2">
+						Total deductions for {{ selectedYear }}
+					</p>
 				</div>
 			</div>
 
@@ -138,9 +140,10 @@
 									</p>
 								</td>
 								<td class="px-6 py-4">
-									<span class="font-bold text-emerald-600 dark:text-emerald-400 font-mono">{{
-										formatCurrency(slip.gross_pay)
-									}}</span>
+									<span
+										class="font-bold text-emerald-600 dark:text-emerald-400 font-mono"
+										>{{ formatCurrency(slip.gross_pay) }}</span
+									>
 								</td>
 								<td class="px-6 py-4">
 									<span class="text-red-500 dark:text-red-400 font-mono">{{
@@ -170,10 +173,7 @@
 			</div>
 
 			<!-- Latest Slip Breakdown -->
-			<div
-				v-if="payrollStore.latestSalarySlip"
-				class="premium-card !p-0 overflow-hidden"
-			>
+			<div v-if="payrollStore.latestSalarySlip" class="premium-card !p-0 overflow-hidden">
 				<div class="p-6 border-b border-gray-100 dark:border-white/5">
 					<h3 class="premium-title !text-lg">Latest Slip Breakdown</h3>
 					<p class="premium-subtitle !text-xs mt-1">
@@ -226,7 +226,9 @@
 								:key="deduction.component"
 								class="flex justify-between items-center"
 							>
-								<span class="text-white/70 text-sm">{{ deduction.component }}</span>
+								<span class="text-white/70 text-sm">{{
+									deduction.component
+								}}</span>
 								<span class="text-white font-mono text-sm">{{
 									formatCurrency(deduction.amount)
 								}}</span>

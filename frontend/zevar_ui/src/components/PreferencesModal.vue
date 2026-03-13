@@ -14,10 +14,16 @@
 					<div class="setting-item">
 						<div class="setting-info">
 							<span class="setting-label">Auto-print Receipt</span>
-							<span class="setting-desc">Automatically print receipt after each sale</span>
+							<span class="setting-desc"
+								>Automatically print receipt after each sale</span
+							>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="prefs.auto_print_receipt" @change="savePrefs" />
+							<input
+								type="checkbox"
+								v-model="prefs.auto_print_receipt"
+								@change="savePrefs"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -28,7 +34,11 @@
 							<span class="setting-desc">Send receipt to customer email</span>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="prefs.auto_email_receipt" @change="savePrefs" />
+							<input
+								type="checkbox"
+								v-model="prefs.auto_email_receipt"
+								@change="savePrefs"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -36,10 +46,16 @@
 					<div class="setting-item">
 						<div class="setting-info">
 							<span class="setting-label">Ask for Customer</span>
-							<span class="setting-desc">Prompt to select customer before checkout</span>
+							<span class="setting-desc"
+								>Prompt to select customer before checkout</span
+							>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="prefs.ask_for_customer" @change="savePrefs" />
+							<input
+								type="checkbox"
+								v-model="prefs.ask_for_customer"
+								@change="savePrefs"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -50,7 +66,11 @@
 							<span class="setting-desc">Require confirmation before voiding</span>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="prefs.confirm_void" @change="savePrefs" />
+							<input
+								type="checkbox"
+								v-model="prefs.confirm_void"
+								@change="savePrefs"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -77,7 +97,11 @@
 							<span class="setting-desc">Display tax details on receipt</span>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="prefs.show_tax_breakdown" @change="savePrefs" />
+							<input
+								type="checkbox"
+								v-model="prefs.show_tax_breakdown"
+								@change="savePrefs"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -88,7 +112,11 @@
 							<span class="setting-desc">Include item descriptions on receipt</span>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="prefs.print_item_details" @change="savePrefs" />
+							<input
+								type="checkbox"
+								v-model="prefs.print_item_details"
+								@change="savePrefs"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -156,12 +184,8 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn btn-secondary" @click="resetPrefs">
-					Reset to Defaults
-				</button>
-				<button class="btn btn-primary" @click="close">
-					Done
-				</button>
+				<button class="btn btn-secondary" @click="resetPrefs">Reset to Defaults</button>
+				<button class="btn btn-primary" @click="close">Done</button>
 			</div>
 		</div>
 	</div>
@@ -171,7 +195,7 @@
 import { ref, onMounted, watch } from 'vue'
 
 const props = defineProps({
-	show: { type: Boolean, default: false }
+	show: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['close'])
@@ -187,7 +211,7 @@ const defaultPrefs = {
 	receipt_footer: 'Thank you for shopping with us!',
 	default_payment_method: 'Cash',
 	rounding: '0.01',
-	quick_amounts: [5, 10, 20, 50, 100]
+	quick_amounts: [5, 10, 20, 50, 100],
 }
 
 const prefs = ref({ ...defaultPrefs })
@@ -231,9 +255,12 @@ function close() {
 	emit('close')
 }
 
-watch(() => props.show, (val) => {
-	if (val) loadPrefs()
-})
+watch(
+	() => props.show,
+	(val) => {
+		if (val) loadPrefs()
+	}
+)
 
 onMounted(loadPrefs)
 </script>
@@ -345,7 +372,7 @@ onMounted(loadPrefs)
 
 .toggle-slider::before {
 	position: absolute;
-	content: "";
+	content: '';
 	height: 18px;
 	width: 18px;
 	left: 3px;

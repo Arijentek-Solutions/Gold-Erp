@@ -25,9 +25,13 @@ class TestPOSSessionWorkflow(FrappeTestCase):
 	def setUp(self):
 		"""Set up test data."""
 		self.test_user = "test@example.com"
-		self.test_customer = frappe.get_value("Customer", {"customer_name": "Test Customer"}) or self.create_test_customer()
+		self.test_customer = (
+			frappe.get_value("Customer", {"customer_name": "Test Customer"}) or self.create_test_customer()
+		)
 		self.test_item = frappe.get_value("Item", {"item_code": "TEST-ITEM-001"}) or self.create_test_item()
-		self.test_pos_profile = frappe.get_value("POS Profile", {"name": "Test POS"}) or self.create_test_pos_profile()
+		self.test_pos_profile = (
+			frappe.get_value("POS Profile", {"name": "Test POS"}) or self.create_test_pos_profile()
+		)
 
 	def create_test_customer(self):
 		"""Create a test customer."""
@@ -69,15 +73,8 @@ class TestPOSSessionWorkflow(FrappeTestCase):
 		result = open_pos_session(
 			pos_profile=self.test_pos_profile,
 			opening_balance=200.00,
-			cash_breakdown=json.dumps({
-				"100": 2,
-				"50": 0,
-				"20": 0,
-				"10": 0,
-				"5": 0,
-				"1": 0
-			}),
-			notes="Test session opening"
+			cash_breakdown=json.dumps({"100": 2, "50": 0, "20": 0, "10": 0, "5": 0, "1": 0}),
+			notes="Test session opening",
 		)
 
 		self.assertTrue(result.get("success"))
@@ -90,9 +87,7 @@ class TestPOSSessionWorkflow(FrappeTestCase):
 
 		# 4. Close session
 		close_result = close_pos_session(
-			session_name=session_name,
-			closing_balance=200.00,
-			notes="Test session closing"
+			session_name=session_name, closing_balance=200.00, notes="Test session closing"
 		)
 
 		self.assertTrue(close_result.get("success"))
@@ -107,17 +102,12 @@ class TestPOSSessionWorkflow(FrappeTestCase):
 		from zevar_core.api.pos_session import close_pos_session, open_pos_session
 
 		# Open session
-		result = open_pos_session(
-			pos_profile=self.test_pos_profile,
-			opening_balance=100.00
-		)
+		result = open_pos_session(pos_profile=self.test_pos_profile, opening_balance=100.00)
 		session_name = result.get("session_name")
 
 		# Close with variance (different amount)
 		close_result = close_pos_session(
-			session_name=session_name,
-			closing_balance=95.00,
-			notes="Short by $5"
+			session_name=session_name, closing_balance=95.00, notes="Short by $5"
 		)
 
 		# Should have variance of -5
@@ -165,15 +155,15 @@ class TestCompleteSaleWorkflow(FrappeTestCase):
 		# Create invoice
 		result = create_pos_invoice(
 			customer=self.customer,
-			items=json.dumps([{
-				"item_code": self.item,
-				"qty": 1,
-				"rate": 100.00
-			}]),
-			payments=json.dumps([{
-				"mode_of_payment": "Cash",
-				"amount": 110.00  # Including tax
-			}])
+			items=json.dumps([{"item_code": self.item, "qty": 1, "rate": 100.00}]),
+			payments=json.dumps(
+				[
+					{
+						"mode_of_payment": "Cash",
+						"amount": 110.00,  # Including tax
+					}
+				]
+			),
 		)
 
 		self.assertTrue(result.get("success"))
@@ -224,14 +214,10 @@ class TestLayawayWorkflow(FrappeTestCase):
 		from zevar_core.api.layaway import get_layaway_preview
 
 		result = get_layaway_preview(
-			items=json.dumps([{
-				"item_code": self.item,
-				"qty": 1,
-				"rate": 1000.00
-			}]),
+			items=json.dumps([{"item_code": self.item, "qty": 1, "rate": 1000.00}]),
 			customer=self.customer,
 			down_payment_percent=20,
-			term_months=3
+			term_months=3,
 		)
 
 		self.assertIsNotNone(result.get("preview"))
@@ -250,16 +236,12 @@ class TestLayawayWorkflow(FrappeTestCase):
 		from zevar_core.api.layaway import create_quick_layaway
 
 		result = create_quick_layaway(
-			items=json.dumps([{
-				"item_code": self.item,
-				"qty": 1,
-				"rate": 1000.00
-			}]),
+			items=json.dumps([{"item_code": self.item, "qty": 1, "rate": 1000.00}]),
 			customer=self.customer,
 			down_payment_percent=20,
 			term_months=3,
 			initial_payment=200.00,
-			initial_payment_mode="Cash"
+			initial_payment_mode="Cash",
 		)
 
 		self.assertTrue(result.get("success"))
@@ -308,15 +290,8 @@ class TestReturnWorkflow(FrappeTestCase):
 		# First create an invoice
 		invoice_result = create_pos_invoice(
 			customer=self.customer,
-			items=json.dumps([{
-				"item_code": self.item,
-				"qty": 2,
-				"rate": 100.00
-			}]),
-			payments=json.dumps([{
-				"mode_of_payment": "Cash",
-				"amount": 220.00
-			}])
+			items=json.dumps([{"item_code": self.item, "qty": 2, "rate": 100.00}]),
+			payments=json.dumps([{"mode_of_payment": "Cash", "amount": 220.00}]),
 		)
 
 		invoice_name = invoice_result.get("invoice_name")
@@ -338,15 +313,8 @@ class TestReturnWorkflow(FrappeTestCase):
 		# Create original invoice
 		invoice_result = create_pos_invoice(
 			customer=self.customer,
-			items=json.dumps([{
-				"item_code": self.item,
-				"qty": 2,
-				"rate": 100.00
-			}]),
-			payments=json.dumps([{
-				"mode_of_payment": "Cash",
-				"amount": 220.00
-			}])
+			items=json.dumps([{"item_code": self.item, "qty": 2, "rate": 100.00}]),
+			payments=json.dumps([{"mode_of_payment": "Cash", "amount": 220.00}]),
 		)
 
 		invoice_name = invoice_result.get("invoice_name")
@@ -354,13 +322,9 @@ class TestReturnWorkflow(FrappeTestCase):
 		# Create return for 1 item
 		return_result = create_return_invoice(
 			original_invoice=invoice_name,
-			items=json.dumps([{
-				"item_code": self.item,
-				"qty": 1,
-				"rate": 100.00
-			}]),
+			items=json.dumps([{"item_code": self.item, "qty": 1, "rate": 100.00}]),
 			reason="Customer changed mind",
-			return_type="refund"
+			return_type="refund",
 		)
 
 		self.assertTrue(return_result.get("success"))
@@ -403,20 +367,12 @@ class TestAuditLogWorkflow(FrappeTestCase):
 		# Log an event
 		log_event(
 			event_type="invoice_created",
-			details={
-				"invoice_name": "TEST-INV-001",
-				"customer": "Test Customer",
-				"amount": 100.00
-			},
-			reference_document="TEST-INV-001"
+			details={"invoice_name": "TEST-INV-001", "customer": "Test Customer", "amount": 100.00},
+			reference_document="TEST-INV-001",
 		)
 
 		# Retrieve logs
-		result = get_audit_logs(
-			event_type="invoice_created",
-			page=1,
-			page_size=10
-		)
+		result = get_audit_logs(event_type="invoice_created", page=1, page_size=10)
 
 		self.assertIn("logs", result)
 		self.assertIn("pagination", result)
@@ -470,12 +426,7 @@ class TestSalesHistoryWorkflow(FrappeTestCase):
 		"""Test retrieving sales history."""
 		from zevar_core.api.sales_history import get_sales_history
 
-		result = get_sales_history(
-			from_date=add_days(today(), -30),
-			to_date=today(),
-			page=1,
-			page_size=20
-		)
+		result = get_sales_history(from_date=add_days(today(), -30), to_date=today(), page=1, page_size=20)
 
 		self.assertIn("sales", result)
 		self.assertIn("pagination", result)
@@ -484,10 +435,7 @@ class TestSalesHistoryWorkflow(FrappeTestCase):
 		"""Test getting sales summary."""
 		from zevar_core.api.sales_history import get_sales_summary
 
-		summary = get_sales_summary(
-			from_date=add_days(today(), -30),
-			to_date=today()
-		)
+		summary = get_sales_summary(from_date=add_days(today(), -30), to_date=today())
 
 		self.assertIn("summary", summary)
 		self.assertIn("transaction_count", summary["summary"])

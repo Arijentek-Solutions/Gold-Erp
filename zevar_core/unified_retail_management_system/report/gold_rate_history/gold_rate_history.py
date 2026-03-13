@@ -165,15 +165,9 @@ def get_chart_data(filters=None):
 
 	datasets = []
 	for key, values in grouped.items():
-		datasets.append({
-			"name": key,
-			"values": values["rates"]
-		})
+		datasets.append({"name": key, "values": values["rates"]})
 
 	return {
-		"data": {
-			"labels": next(iter(grouped.values()))["dates"] if grouped else [],
-			"datasets": datasets
-		},
-		"type": "line"
+		"data": {"labels": next(iter(grouped.values()))["dates"] if grouped else [], "datasets": datasets},
+		"type": "line",
 	}

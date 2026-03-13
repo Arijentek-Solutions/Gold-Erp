@@ -128,7 +128,7 @@ export const useCartStore = defineStore('cart', () => {
 		if (changed) {
 			changed.split = Number(Number(changed.split || 0).toFixed(2))
 		}
-		
+
 		if (salespersons.value.length === 2 && changed) {
 			const otherIndex = changedIndex === 0 ? 1 : 0
 			const other = salespersons.value[otherIndex]
@@ -223,7 +223,10 @@ export const useCartStore = defineStore('cart', () => {
 			amount: p.amount,
 		}))
 
-		const customerName = customerType.value === 'Walkin' ? 'Walk-In Customer' : (customer.value?.name || 'Walk-In Customer')
+		const customerName =
+			customerType.value === 'Walkin'
+				? 'Walk-In Customer'
+				: customer.value?.name || 'Walk-In Customer'
 
 		const params = {
 			items: JSON.stringify(itemsPayload),
@@ -283,7 +286,10 @@ export const useCartStore = defineStore('cart', () => {
 			rate: i.amount || 0,
 		}))
 
-		const customerName = customerType.value === 'Walkin' ? 'Walk-In Customer' : (customer.value?.name || 'Walk-In Customer')
+		const customerName =
+			customerType.value === 'Walkin'
+				? 'Walk-In Customer'
+				: customer.value?.name || 'Walk-In Customer'
 
 		const r = await createResource({
 			url: 'zevar_core.api.layaway.create_layaway',

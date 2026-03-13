@@ -108,9 +108,17 @@ def check_discount_permission(discount_percent: float) -> dict:
 		if discount_percent <= limit:
 			return {"allowed": True, "needs_override": False}
 		else:
-			return {"allowed": False, "needs_override": True, "message": _("Discount exceeds {0}% limit. Manager override required.").format(limit)}
+			return {
+				"allowed": False,
+				"needs_override": True,
+				"message": _("Discount exceeds {0}% limit. Manager override required.").format(limit),
+			}
 
-	return {"allowed": False, "needs_override": True, "message": _("You don't have permission to apply discounts.")}
+	return {
+		"allowed": False,
+		"needs_override": True,
+		"message": _("You don't have permission to apply discounts."),
+	}
 
 
 @frappe.whitelist(methods=["POST"])
@@ -283,7 +291,7 @@ def set_manager_pin(pin: str) -> dict:
 		"pos_manager_pin_hash",
 		hashed_pin,
 	)
-	frappe.db.commit()
+	frappe.db.commit() # nosemgrep (manual commit for permission sync)
 
 	return {"success": True, "message": _("Manager PIN updated successfully.")}
 
@@ -299,7 +307,9 @@ def get_pos_roles() -> list:
 	return ["Sales User", "Sales Manager", "System Manager", "POS User", "Cashier"]
 
 
-def log_audit_event(action: str, details: dict, reference_document: str | None = None, reference_type: str | None = None):
+def log_audit_event(
+	action: str, details: dict, reference_document: str | None = None, reference_type: str | None = None
+):
 	"""
 	Log an audit event for security tracking.
 

@@ -151,7 +151,9 @@ def create_return_invoice(
 			)
 
 			if not original_item:
-				frappe.throw(_("Item {0} not found in original invoice.").format(return_item.get("item_code")))
+				frappe.throw(
+					_("Item {0} not found in original invoice.").format(return_item.get("item_code"))
+				)
 
 			return_qty = flt(return_item.get("qty", 0))
 			if return_qty <= 0:
@@ -178,9 +180,7 @@ def create_return_invoice(
 				refund_mode = "Cash"
 
 			# Calculate refund amount
-			refund_amount = sum(
-				flt(item.get("qty", 0)) * flt(item.get("rate", 0)) for item in items_list
-			)
+			refund_amount = sum(flt(item.get("qty", 0)) * flt(item.get("rate", 0)) for item in items_list)
 
 			return_invoice.append(
 				"payments",

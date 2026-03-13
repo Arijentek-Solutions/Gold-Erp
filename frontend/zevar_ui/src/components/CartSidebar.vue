@@ -79,25 +79,40 @@
 					class="p-4 border-b border-gray-100 dark:border-white/5 bg-white dark:bg-[#1a1c23] flex-shrink-0 z-10"
 				>
 					<div class="mb-3">
-						<label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">Customer <span class="text-red-500">*</span></label>
+						<label
+							class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2"
+							>Customer <span class="text-red-500">*</span></label
+						>
 						<div class="flex bg-gray-100 dark:bg-[#0F1115] p-1 rounded-lg">
-							<button 
+							<button
 								class="flex-1 text-xs font-medium py-1.5 rounded-md transition-colors"
-								:class="cart.customerType === 'Individual' ? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white' : 'text-gray-500'"
+								:class="
+									cart.customerType === 'Individual'
+										? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white'
+										: 'text-gray-500'
+								"
 								@click="cart.customerType = 'Individual'; cart.clearCustomer()"
 							>
 								Individual
 							</button>
-							<button 
+							<button
 								class="flex-1 text-xs font-medium py-1.5 rounded-md transition-colors"
-								:class="cart.customerType === 'Company' ? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white' : 'text-gray-500'"
+								:class="
+									cart.customerType === 'Company'
+										? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white'
+										: 'text-gray-500'
+								"
 								@click="cart.customerType = 'Company'; cart.clearCustomer()"
 							>
 								Company
 							</button>
-							<button 
+							<button
 								class="flex-1 text-xs font-medium py-1.5 rounded-md transition-colors"
-								:class="cart.customerType === 'Walkin' ? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white' : 'text-gray-500'"
+								:class="
+									cart.customerType === 'Walkin'
+										? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white'
+										: 'text-gray-500'
+								"
 								@click="cart.customerType = 'Walkin'; cart.clearCustomer()"
 							>
 								Walk-In
@@ -343,7 +358,11 @@
 					@click="showCheckout = true"
 					:disabled="!isCheckoutReady"
 					class="w-full py-3 rounded-lg font-bold shadow-lg transition-all flex items-center justify-center gap-2"
-					:class="isCheckoutReady ? 'bg-gray-900 dark:bg-[#D4AF37] text-white dark:text-black hover:bg-gray-800 dark:hover:bg-[#b5952f] active:scale-95' : 'bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-gray-600 cursor-not-allowed'"
+					:class="
+						isCheckoutReady
+							? 'bg-gray-900 dark:bg-[#D4AF37] text-white dark:text-black hover:bg-gray-800 dark:hover:bg-[#b5952f] active:scale-95'
+							: 'bg-gray-200 dark:bg-white/10 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+					"
 				>
 					{{ checkoutButtonText }}
 				</button>

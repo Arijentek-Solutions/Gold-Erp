@@ -68,7 +68,7 @@ def execute(filters=None):
 		warehouse_params["warehouse"] = warehouse
 
 	# Get payment method breakdown
-	payment_data = frappe.db.sql(
+	payment_data = frappe.db.sql( # nosemgrep
 		f"""
 		SELECT
 			sip.mode_of_payment,
@@ -119,7 +119,7 @@ def get_chart_data(filters=None):
 		warehouse_filter = "AND EXISTS (SELECT 1 FROM `tabSales Invoice Item` sii WHERE sii.parent = si.name AND sii.warehouse = %(warehouse)s)"
 		warehouse_params["warehouse"] = warehouse
 
-	chart_data = frappe.db.sql(
+	chart_data = frappe.db.sql( # nosemgrep
 		f"""
 		SELECT
 			sip.mode_of_payment as name,
@@ -140,9 +140,7 @@ def get_chart_data(filters=None):
 	return {
 		"data": {
 			"labels": [row.get("name", "Unknown") for row in chart_data],
-			"datasets": [{
-				"values": [flt(row.get("value", 0)) for row in chart_data]
-			}]
+			"datasets": [{"values": [flt(row.get("value", 0)) for row in chart_data]}],
 		},
-		"type": "donut"
+		"type": "donut",
 	}

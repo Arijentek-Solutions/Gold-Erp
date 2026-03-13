@@ -62,6 +62,12 @@ export const useTasksStore = defineStore("tasks", () => {
 		auto: false,
 	});
 
+	// Update Gameplan task status
+	const updateTaskStatusResource = createResource({
+		url: "zevar_core.api.tasks.update_task_status",
+		auto: false,
+	});
+
 	// Computed
 	const pendingTasks = computed(() => {
 		return tasks.value.filter((t) => t.status !== "Done" && t.status !== "Canceled");
@@ -113,9 +119,35 @@ export const useTasksStore = defineStore("tasks", () => {
 		await fetchTodos();
 	}
 
+	// Optimistic delete - removes from UI immediately
 	async function deleteTodoItem(todoId) {
-		await deleteTodoResource.fetch({ todo_id: todoId });
-		await fetchTodos();
+		const previousTodos = [...todos.value];
+		todos.value = todos.value.filter((t) => t.id !== todoId);
+
+		try {
+			await deleteTodoResource.fetch({ todo_id: todoId });
+		} catch (error) {
+			todos.value = previousTodos;
+			throw error;
+		}
+	}
+
+	// Optimistic task status update for drag and drop
+	async function updateTaskStatus(taskId, newStatus) {
+		const previousTasks = [...tasks.value];
+		const taskIndex = tasks.value.findIndex((t) => t.id === taskId);
+		if (taskIndex !== -1) {
+			tasks.value[taskIndex] = { ...tasks.value[taskIndex], status: newStatus };
+		}
+
+		try {
+			await updateTaskStatusResource.fetch({ task_id: taskId, status: newStatus });
+			// Refresh tasks from server to ensure sync
+			await fetchTasks();
+		} catch (error) {
+			tasks.value = previousTasks;
+			throw error;
+		}
 	}
 
 	function init() {
@@ -140,6 +172,7 @@ export const useTasksStore = defineStore("tasks", () => {
 		createTodo,
 		toggleTodo,
 		deleteTodoItem,
+		updateTaskStatus,
 		init,
 	};
 });

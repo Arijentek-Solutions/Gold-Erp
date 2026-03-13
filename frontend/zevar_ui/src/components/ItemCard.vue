@@ -1,6 +1,7 @@
 <template>
 	<div
-		class="premium-card !p-0 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col h-full group relative overflow-hidden h-full"
+		class="premium-card !p-0 shadow-sm hover:shadow-xl transition-all cursor-pointer flex flex-col h-full group relative overflow-hidden"
+		@click="emit('open-details', item.item_code)"
 	>
 		<div class="aspect-square bg-gray-100 dark:bg-gray-800 relative">
 			<img
@@ -74,12 +75,12 @@
 				class="hidden lg:block text-[9px] text-gray-500 dark:text-white/40 mb-3 space-y-0.5 bg-gray-50 dark:bg-white/5 p-2 rounded-xl border border-gray-100 dark:border-white/5"
 			>
 				<div v-if="item.gross_weight > 0" class="flex justify-between">
-					<span>Gross:</span> <span class="font-bold text-gray-700 dark:text-white/80">{{ item.gross_weight }}g</span>
+					<span>Gross:</span>
+					<span class="font-bold text-gray-700 dark:text-white/80"
+						>{{ item.gross_weight }}g</span
+					>
 				</div>
-				<div
-					v-if="item.stone_weight > 0"
-					class="flex justify-between text-red-500/80"
-				>
+				<div v-if="item.stone_weight > 0" class="flex justify-between text-red-500/80">
 					<span>Stone:</span> <span class="font-bold">-{{ item.stone_weight }}g</span>
 				</div>
 				<div
@@ -102,7 +103,7 @@
 
 				<button
 					@click.stop="quickAdd"
-					class="bg-gray-900 dark:bg-primary text-white dark:text-black w-8 h-8 rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-md"
+					class="bg-gray-900 dark:bg-[#D4AF37] text-white dark:text-black w-8 h-8 rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all shadow-md"
 					title="Add to Cart"
 				>
 					<svg
@@ -126,8 +127,6 @@
 </template>
 
 <script setup>
-import { useCartStore } from '@/stores/cart.js'
-
 const props = defineProps({
 	item: {
 		type: Object,
@@ -136,10 +135,10 @@ const props = defineProps({
 	},
 })
 
-const cart = useCartStore()
+const emit = defineEmits(['quick-add', 'open-details'])
 
 function quickAdd() {
-	cart.addItem(props.item)
+	emit('quick-add', props.item)
 }
 
 function formatCurrency(value) {

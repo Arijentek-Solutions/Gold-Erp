@@ -32,14 +32,19 @@
 		<div class="premium-card !p-4 shrink-0">
 			<div class="flex items-center justify-between">
 				<div>
-					<p class="text-sm font-bold text-gray-900 dark:text-white">{{ weekRangeDisplay }}</p>
+					<p class="text-sm font-bold text-gray-900 dark:text-white">
+						{{ weekRangeDisplay }}
+					</p>
 					<p class="premium-subtitle !text-[10px] mt-0.5">
-						{{ roster?.employment_type || 'Full-time' }} Employee - {{ roster?.working_hours || 8 }} hrs/day
+						{{ roster?.employment_type || "Full-time" }} Employee -
+						{{ roster?.working_hours || 8 }} hrs/day
 					</p>
 				</div>
 				<div class="text-right">
 					<p class="status-label !mb-1">Weekly Target</p>
-					<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">{{ weeklyTargetHours }} hrs</p>
+					<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">
+						{{ weeklyTargetHours }} hrs
+					</p>
 				</div>
 			</div>
 		</div>
@@ -48,15 +53,21 @@
 		<div class="flex-1 overflow-hidden">
 			<div v-if="loading" class="h-full flex items-center justify-center">
 				<div class="text-center">
-					<div class="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent mx-auto mb-3"></div>
+					<div
+						class="animate-spin rounded-full h-8 w-8 border-2 border-primary border-t-transparent mx-auto mb-3"
+					></div>
 					<p class="text-white/40 text-sm">Loading schedule...</p>
 				</div>
 			</div>
 
 			<div v-else class="h-full overflow-y-auto custom-scrollbar">
 				<!-- Day Headers -->
-				<div class="grid grid-cols-7 gap-1 sm:gap-2 mb-2 sticky top-0 bg-[#1a1c23] py-2 z-10">
-					<div v-for="day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']" :key="day"
+				<div
+					class="grid grid-cols-7 gap-1 sm:gap-2 mb-2 sticky top-0 bg-[#1a1c23] py-2 z-10"
+				>
+					<div
+						v-for="day in ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']"
+						:key="day"
 						class="text-center text-[9px] sm:text-[10px] text-white/40 uppercase font-bold tracking-widest"
 					>
 						{{ day }}
@@ -80,10 +91,21 @@
 						<!-- Date Header -->
 						<div class="flex items-center justify-between mb-2">
 							<div>
-								<p class="text-xs sm:text-sm font-bold" :class="day.isToday ? 'text-primary' : 'text-gray-900 dark:text-white'">
+								<p
+									class="text-xs sm:text-sm font-bold"
+									:class="
+										day.isToday
+											? 'text-primary'
+											: 'text-gray-900 dark:text-white'
+									"
+								>
 									{{ day.day_num }}
 								</p>
-								<p class="text-[8px] sm:text-[10px] text-gray-400 dark:text-white/30">{{ day.day_short }}</p>
+								<p
+									class="text-[8px] sm:text-[10px] text-gray-400 dark:text-white/30"
+								>
+									{{ day.day_short }}
+								</p>
 							</div>
 							<span
 								v-if="day.isToday"
@@ -96,11 +118,21 @@
 						<!-- Shift Info -->
 						<div v-if="day.shift && day.status !== 'off'" class="space-y-1.5">
 							<div class="flex items-center gap-1">
-								<span class="material-symbols-outlined text-[12px] text-white/30">schedule</span>
+								<span class="material-symbols-outlined text-[12px] text-white/30"
+									>schedule</span
+								>
 								<p class="text-[10px] sm:text-xs text-white/60">
-									{{ day.shift.start_time ? formatTime(day.shift.start_time) : '09:00' }}
+									{{
+										day.shift.start_time
+											? formatTime(day.shift.start_time)
+											: "09:00"
+									}}
 									-
-									{{ day.shift.end_time ? formatTime(day.shift.end_time) : '17:00' }}
+									{{
+										day.shift.end_time
+											? formatTime(day.shift.end_time)
+											: "17:00"
+									}}
 								</p>
 							</div>
 
@@ -108,27 +140,65 @@
 							<div class="h-1.5 bg-white/5 rounded-full overflow-hidden">
 								<div
 									class="h-full rounded-full transition-all"
-									:class="day.total_hours >= day.shift.working_hours ? 'bg-emerald-500' : 'bg-amber-500'"
-									:style="{ width: `${Math.min((day.total_hours / day.shift.working_hours) * 100, 100)}%` }"
+									:class="
+										day.total_hours >= day.shift.working_hours
+											? 'bg-emerald-500'
+											: 'bg-amber-500'
+									"
+									:style="{
+										width: `${Math.min(
+											(day.total_hours / day.shift.working_hours) * 100,
+											100
+										)}%`,
+									}"
 								></div>
 							</div>
 
-							<div class="flex items-center justify-between text-[9px] sm:text-[10px]">
-								<span class="text-white/40">{{ day.total_hours.toFixed(1) }} hrs</span>
-								<span class="font-bold" :class="day.total_hours >= day.shift.working_hours ? 'text-emerald-400' : 'text-white/60'">
+							<div
+								class="flex items-center justify-between text-[9px] sm:text-[10px]"
+							>
+								<span class="text-white/40"
+									>{{ day.total_hours.toFixed(1) }} hrs</span
+								>
+								<span
+									class="font-bold"
+									:class="
+										day.total_hours >= day.shift.working_hours
+											? 'text-emerald-400'
+											: 'text-white/60'
+									"
+								>
 									{{ day.shift.working_hours }}h target
 								</span>
 							</div>
 
 							<!-- Check-ins -->
-							<div v-if="day.checkins.length > 0" class="pt-1.5 border-t border-white/5 mt-1.5">
-								<div v-for="(checkin, idx) in day.checkins.slice(0, 2)" :key="idx" class="flex items-center gap-1 text-[9px]">
-									<span :class="checkin.log_type === 'IN' ? 'text-emerald-400' : 'text-blue-400'">
-										{{ checkin.log_type === 'IN' ? '→' : '←' }}
+							<div
+								v-if="day.checkins.length > 0"
+								class="pt-1.5 border-t border-white/5 mt-1.5"
+							>
+								<div
+									v-for="(checkin, idx) in day.checkins.slice(0, 2)"
+									:key="idx"
+									class="flex items-center gap-1 text-[9px]"
+								>
+									<span
+										:class="
+											checkin.log_type === 'IN'
+												? 'text-emerald-400'
+												: 'text-blue-400'
+										"
+									>
+										{{ checkin.log_type === "IN" ? "→" : "←" }}
 									</span>
-									<span class="text-white/50">{{ formatTime(checkin.time) }}</span>
+									<span class="text-white/50">{{
+										formatTime(checkin.time)
+									}}</span>
 								</div>
-								<p v-if="day.checkins.length > 2" class="text-[8px] text-white/30 mt-0.5">
+								<p
+									v-if="day.checkins.length > 2"
+									class="text-[8px] text-white/30 mt-0.5"
+								>
 									+{{ day.checkins.length - 2 }} more
 								</p>
 							</div>
@@ -136,19 +206,25 @@
 
 						<!-- Day Off -->
 						<div v-else-if="day.status === 'off'" class="text-center py-4">
-							<span class="material-symbols-outlined text-xl text-white/10">weekend</span>
+							<span class="material-symbols-outlined text-xl text-white/10"
+								>weekend</span
+							>
 							<p class="text-[9px] text-white/20 mt-1">Day Off</p>
 						</div>
 
 						<!-- Past Day with no data -->
 						<div v-else-if="day.is_past" class="text-center py-4">
-							<span class="material-symbols-outlined text-xl text-red-400/30">event_busy</span>
+							<span class="material-symbols-outlined text-xl text-red-400/30"
+								>event_busy</span
+							>
 							<p class="text-[9px] text-red-400/40 mt-1">Absent</p>
 						</div>
 
 						<!-- Future day -->
 						<div v-else class="text-center py-4">
-							<span class="material-symbols-outlined text-xl text-white/10">event</span>
+							<span class="material-symbols-outlined text-xl text-white/10"
+								>event</span
+							>
 							<p class="text-[9px] text-white/20 mt-1">Scheduled</p>
 						</div>
 					</div>
@@ -160,19 +236,27 @@
 					<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
 						<div>
 							<p class="status-label !mb-1">Working Days</p>
-							<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">{{ summary?.total_working_days || 0 }}</p>
+							<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">
+								{{ summary?.total_working_days || 0 }}
+							</p>
 						</div>
 						<div>
 							<p class="status-label !mb-1">Completed</p>
-							<p class="text-lg font-bold font-mono text-emerald-500">{{ summary?.completed_days || 0 }}</p>
+							<p class="text-lg font-bold font-mono text-emerald-500">
+								{{ summary?.completed_days || 0 }}
+							</p>
 						</div>
 						<div>
 							<p class="status-label !mb-1">Hours Worked</p>
-							<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">{{ summary?.total_hours?.toFixed(1) || 0 }}</p>
+							<p class="text-lg font-bold font-mono text-gray-900 dark:text-white">
+								{{ summary?.total_hours?.toFixed(1) || 0 }}
+							</p>
 						</div>
 						<div>
 							<p class="status-label !mb-1">Target Hours</p>
-							<p class="text-lg font-bold font-mono text-primary">{{ summary?.target_hours || 0 }}</p>
+							<p class="text-lg font-bold font-mono text-primary">
+								{{ summary?.target_hours || 0 }}
+							</p>
 						</div>
 					</div>
 
@@ -185,7 +269,9 @@
 						<div class="h-2 bg-white/5 rounded-full overflow-hidden">
 							<div
 								class="h-full rounded-full transition-all"
-								:class="weeklyProgressPercent >= 100 ? 'bg-emerald-500' : 'bg-primary'"
+								:class="
+									weeklyProgressPercent >= 100 ? 'bg-emerald-500' : 'bg-primary'
+								"
 								:style="{ width: `${Math.min(weeklyProgressPercent, 100)}%` }"
 							></div>
 						</div>
@@ -231,7 +317,11 @@ const weekRangeDisplay = computed(() => {
 	end.setDate(end.getDate() + 6);
 
 	const startStr = start.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-	const endStr = end.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+	const endStr = end.toLocaleDateString("en-US", {
+		month: "short",
+		day: "numeric",
+		year: "numeric",
+	});
 
 	return `${startStr} - ${endStr}`;
 });
@@ -303,11 +393,15 @@ function goToToday() {
 }
 
 // Watch for employee changes
-watch(() => employeeStore.employee, (emp) => {
-	if (emp?.name) {
-		fetchWeeklyRoster();
-	}
-}, { immediate: false });
+watch(
+	() => employeeStore.employee,
+	(emp) => {
+		if (emp?.name) {
+			fetchWeeklyRoster();
+		}
+	},
+	{ immediate: false }
+);
 
 // Initialize
 onMounted(async () => {

@@ -26,9 +26,7 @@
 						>
 							<span class="material-symbols-outlined text-blue-500">inbox</span>
 						</div>
-						<span class="status-label !mb-0"
-							>Total Tickets</span
-						>
+						<span class="status-label !mb-0">Total Tickets</span>
 					</div>
 					<span class="text-4xl font-bold font-mono text-gray-900 dark:text-white">{{
 						issuesStore.ticketStats.total
@@ -42,9 +40,7 @@
 						>
 							<span class="material-symbols-outlined text-amber-500">pending</span>
 						</div>
-						<span class="status-label !mb-0"
-							>Open</span
-						>
+						<span class="status-label !mb-0">Open</span>
 					</div>
 					<span class="text-4xl font-bold font-mono text-gray-900 dark:text-white">{{
 						issuesStore.ticketStats.open
@@ -60,9 +56,7 @@
 								>check_circle</span
 							>
 						</div>
-						<span class="status-label !mb-0"
-							>Resolved</span
-						>
+						<span class="status-label !mb-0">Resolved</span>
 					</div>
 					<span class="text-4xl font-bold font-mono text-gray-900 dark:text-white">{{
 						issuesStore.ticketStats.closed
@@ -72,7 +66,9 @@
 
 			<!-- Tickets Table -->
 			<div class="premium-card !p-0 overflow-hidden">
-				<div class="p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+				<div
+					class="p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between"
+				>
 					<h3 class="premium-title !text-lg">My Tickets</h3>
 					<div class="flex gap-2">
 						<button
@@ -159,7 +155,9 @@
 											class="w-2 h-2 rounded-full"
 											:class="getStatusDotColor(ticket.status)"
 										></span>
-										<span class="font-bold text-white">{{ ticket.subject }}</span>
+										<span class="font-bold text-white">{{
+											ticket.subject
+										}}</span>
 									</div>
 								</td>
 								<td class="px-6 py-4">

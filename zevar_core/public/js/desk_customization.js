@@ -6,7 +6,7 @@ const update_icons = () => {
 		"Employee Portal": "/assets/zevar_core/images/employee_portal_logo.svg",
 		"Zevar POS": "/assets/zevar_core/images/pos_logo.svg",
 		"Zevar Catalogues": "/assets/zevar_core/images/pos_logo.svg",
-		"Catalogues": "/assets/zevar_core/images/pos_logo.svg",
+		Catalogues: "/assets/zevar_core/images/pos_logo.svg",
 	};
 
 	// App name mappings (for frappe.boot.app_data)
@@ -20,7 +20,8 @@ const update_icons = () => {
 	if (frappe.boot && frappe.boot.app_data) {
 		frappe.boot.app_data.forEach((app) => {
 			// Check title in overrides, then name in overrides, then name in appNameMap
-			const iconUrl = overrides[app.app_title] || overrides[app.app_name] || appNameMap[app.app_name];
+			const iconUrl =
+				overrides[app.app_title] || overrides[app.app_name] || appNameMap[app.app_name];
 			if (iconUrl) {
 				app.app_logo_url = iconUrl;
 			}

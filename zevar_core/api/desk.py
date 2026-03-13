@@ -29,5 +29,9 @@ def boot_session(bootinfo: dict[str, Any]) -> None:
 			app["app_logo_url"] = "/assets/zevar_core/images/pos_logo.svg"
 
 		# Override Employee Portal logo
-		if title == "Employee Portal" or name in ["employee_portal", "zevar_employee_portal"] or title.startswith("Employee P"):
+		if (
+			title == "Employee Portal"
+			or name in ["employee_portal", "zevar_employee_portal"]
+			or title.startswith("Employee P")
+		):
 			app["app_logo_url"] = "/assets/zevar_core/images/employee_portal_logo.svg"

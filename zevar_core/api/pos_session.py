@@ -59,7 +59,7 @@ def get_session_status() -> dict:
 		AND docstatus = 1
 		AND is_pos = 1
 		""",
-		(user, period_start.date() if hasattr(period_start, 'date') else period_start),
+		(user, period_start.date() if hasattr(period_start, "date") else period_start),
 		as_dict=True,
 	)
 
@@ -70,11 +70,7 @@ def get_session_status() -> dict:
 		sales_total = flt(sales_data[0].get("total", 0))
 
 	# Get opening time
-	opening_time = frappe.db.get_value(
-		"POS Opening Entry",
-		session_name,
-		"period_start_date"
-	)
+	opening_time = frappe.db.get_value("POS Opening Entry", session_name, "period_start_date")
 
 	# Get warehouse from POS Profile
 	warehouse = frappe.db.get_value("POS Profile", pos_profile, "warehouse")
@@ -86,8 +82,12 @@ def get_session_status() -> dict:
 			"pos_profile": pos_profile,
 			"company": company,
 			"warehouse": warehouse,
-			"opening_date": period_start.date() if hasattr(period_start, 'date') else str(period_start).split()[0],
-			"opening_time": str(opening_time.time()) if opening_time and hasattr(opening_time, 'time') else "",
+			"opening_date": period_start.date()
+			if hasattr(period_start, "date")
+			else str(period_start).split()[0],
+			"opening_time": str(opening_time.time())
+			if opening_time and hasattr(opening_time, "time")
+			else "",
 			"opening_balance": flt(opening_amount),
 			"sales_count": sales_count,
 			"sales_total": flt(sales_total),
@@ -263,7 +263,12 @@ def close_pos_session(
 		AND docstatus = 1
 		AND is_pos = 1
 		""",
-		(user, session.period_start_date.date() if hasattr(session.period_start_date, 'date') else session.period_start_date),
+		(
+			user,
+			session.period_start_date.date()
+			if hasattr(session.period_start_date, "date")
+			else session.period_start_date,
+		),
 		as_dict=True,
 	)
 
@@ -367,7 +372,12 @@ def get_session_sales(session_name: str) -> dict:
 		"Sales Invoice",
 		filters={
 			"owner": session.user,
-			"posting_date": [">=", session.period_start_date.date() if hasattr(session.period_start_date, 'date') else session.period_start_date],
+			"posting_date": [
+				">=",
+				session.period_start_date.date()
+				if hasattr(session.period_start_date, "date")
+				else session.period_start_date,
+			],
 			"docstatus": 1,
 			"is_pos": 1,
 		},

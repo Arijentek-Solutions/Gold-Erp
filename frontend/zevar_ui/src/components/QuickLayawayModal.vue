@@ -13,11 +13,20 @@
 					<div class="customer-selector">
 						<select v-model="form.customer" required :disabled="loading">
 							<option value="">Select customer...</option>
-							<option v-for="customer in customers" :key="customer.name" :value="customer.name">
+							<option
+								v-for="customer in customers"
+								:key="customer.name"
+								:value="customer.name"
+							>
 								{{ customer.customer_name }}
 							</option>
 						</select>
-						<button type="button" class="btn-icon" @click="searchCustomers" :disabled="loading">
+						<button
+							type="button"
+							class="btn-icon"
+							@click="searchCustomers"
+							:disabled="loading"
+						>
 							🔍
 						</button>
 					</div>
@@ -30,7 +39,9 @@
 						<div v-for="item in cartItems" :key="item.item_code" class="item-row">
 							<span class="item-name">{{ item.item_name || item.item_code }}</span>
 							<span class="item-qty">×{{ item.qty }}</span>
-							<span class="item-price">${{ formatAmount(item.rate * item.qty) }}</span>
+							<span class="item-price"
+								>${{ formatAmount(item.rate * item.qty) }}</span
+							>
 						</div>
 						<div class="items-total">
 							<span>Total:</span>
@@ -52,7 +63,9 @@
 							:disabled="loading"
 						>
 							<span class="term-duration">{{ term }} months</span>
-							<span class="term-payment">${{ formatAmount(calculateMonthlyPayment(term)) }}/mo</span>
+							<span class="term-payment"
+								>${{ formatAmount(calculateMonthlyPayment(term)) }}/mo</span
+							>
 						</button>
 					</div>
 				</div>
@@ -69,8 +82,10 @@
 							@click="form.down_payment_percent = percent"
 							:disabled="loading"
 						>
-							{{ percent }}%<br>
-							<span class="dp-amount">${{ formatAmount(cartTotal * percent / 100) }}</span>
+							{{ percent }}%<br />
+							<span class="dp-amount"
+								>${{ formatAmount((cartTotal * percent) / 100) }}</span
+							>
 						</button>
 					</div>
 				</div>
@@ -83,7 +98,11 @@
 						<span>Due Date</span>
 						<span>Amount</span>
 					</div>
-					<div v-for="payment in preview.payment_schedule" :key="payment.installment" class="schedule-row">
+					<div
+						v-for="payment in preview.payment_schedule"
+						:key="payment.installment"
+						class="schedule-row"
+					>
 						<span>#{{ payment.installment }}</span>
 						<span>{{ formatDate(payment.due_date) }}</span>
 						<span>${{ formatAmount(payment.amount) }}</span>
@@ -109,7 +128,10 @@
 							:disabled="loading"
 						/>
 					</div>
-					<select v-model="form.initial_payment_mode" :disabled="loading || !form.initial_payment">
+					<select
+						v-model="form.initial_payment_mode"
+						:disabled="loading || !form.initial_payment"
+					>
 						<option value="Cash">Cash</option>
 						<option value="Credit Card">Credit Card</option>
 						<option value="Debit Card">Debit Card</option>
@@ -122,7 +144,11 @@
 				<button class="btn btn-secondary" @click="close" :disabled="loading">
 					Cancel
 				</button>
-				<button class="btn btn-primary" @click="submitLayaway" :disabled="loading || !form.customer">
+				<button
+					class="btn btn-primary"
+					@click="submitLayaway"
+					:disabled="loading || !form.customer"
+				>
 					<span v-if="loading">Creating...</span>
 					<span v-else>Create Layaway</span>
 				</button>
@@ -164,7 +190,7 @@ const props = defineProps({
 	show: { type: Boolean, default: false },
 	cartItems: { type: Array, default: () => [] },
 	cartTotal: { type: Number, default: 0 },
-	warehouse: { type: String, default: '' }
+	warehouse: { type: String, default: '' },
 })
 
 const emit = defineEmits(['close', 'created'])
@@ -181,7 +207,7 @@ const form = ref({
 	down_payment_percent: 20,
 	initial_payment: 0,
 	initial_payment_mode: 'Cash',
-	notes: ''
+	notes: '',
 })
 
 const validTerms = [3, 6, 9, 12]
@@ -190,27 +216,29 @@ const downPaymentOptions = [10, 20, 30, 50]
 // Resources
 const customersResource = createResource({
 	url: 'zevar_core.api.customer.search_customers',
-	auto: false
+	auto: false,
 })
 
 const previewResource = createResource({
 	url: 'zevar_core.api.quick_layaway.get_layaway_preview',
-	auto: false
+	auto: false,
 })
 
 const createResource2 = createResource({
 	url: 'zevar_core.api.quick_layaway.create_quick_layaway',
-	auto: false
+	auto: false,
 })
 
 // Computed
-const cartItemsJson = computed(() => JSON.stringify(
-	props.cartItems.map(item => ({
-		item_code: item.item_code,
-		qty: item.qty || 1,
-		rate: item.rate || item.price || 0
-	}))
-))
+const cartItemsJson = computed(() =>
+	JSON.stringify(
+		props.cartItems.map((item) => ({
+			item_code: item.item_code,
+			qty: item.qty || 1,
+			rate: item.rate || item.price || 0,
+		}))
+	)
+)
 
 // Methods
 function formatAmount(amount) {
@@ -225,7 +253,7 @@ function formatDate(dateStr) {
 }
 
 function calculateMonthlyPayment(term) {
-	const downPayment = props.cartTotal * form.value.down_payment_percent / 100
+	const downPayment = (props.cartTotal * form.value.down_payment_percent) / 100
 	const balance = props.cartTotal - downPayment
 	return balance / term
 }
@@ -252,7 +280,7 @@ async function fetchPreview() {
 			items: cartItemsJson.value,
 			customer: form.value.customer || 'Walk-In Customer',
 			down_payment_percent: form.value.down_payment_percent,
-			term_months: form.value.term_months
+			term_months: form.value.term_months,
 		})
 		preview.value = result
 	} catch (error) {
@@ -271,7 +299,7 @@ async function submitLayaway() {
 			initial_payment: form.value.initial_payment,
 			initial_payment_mode: form.value.initial_payment_mode,
 			warehouse: props.warehouse,
-			notes: form.value.notes
+			notes: form.value.notes,
 		})
 
 		if (result.success) {
@@ -295,23 +323,29 @@ function close() {
 		down_payment_percent: 20,
 		initial_payment: 0,
 		initial_payment_mode: 'Cash',
-		notes: ''
+		notes: '',
 	}
 	preview.value = null
 	successResult.value = null
 }
 
 // Watchers
-watch(() => props.show, (newVal) => {
-	if (newVal) {
-		searchCustomers()
+watch(
+	() => props.show,
+	(newVal) => {
+		if (newVal) {
+			searchCustomers()
+			fetchPreview()
+		}
+	}
+)
+
+watch(
+	() => form.value.down_payment_percent,
+	() => {
 		fetchPreview()
 	}
-})
-
-watch(() => form.value.down_payment_percent, () => {
-	fetchPreview()
-})
+)
 
 onMounted(() => {
 	if (props.show) {

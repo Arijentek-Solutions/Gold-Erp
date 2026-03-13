@@ -201,7 +201,7 @@ def update_todo_status(todo_id: str, status: str = "Closed"):
 	Returns:
 	    Dict with success status
 	"""
-	todo = frappe.get_doc("TODO", todo_id)
+	todo = frappe.get_doc("ToDo", todo_id)
 
 	# Verify ownership
 	if todo.allocated_to != frappe.session.user:
@@ -224,7 +224,7 @@ def delete_todo(todo_id: str):
 	Returns:
 	    Dict with success status
 	"""
-	todo = frappe.get_doc("TODO", todo_id)
+	todo = frappe.get_doc("ToDo", todo_id)
 
 	# Verify ownership
 	if todo.allocated_to != frappe.session.user:

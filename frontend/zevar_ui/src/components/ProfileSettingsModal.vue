@@ -28,7 +28,11 @@
 							<span class="setting-desc">Use dark theme throughout the app</span>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="settings.dark_mode" @change="saveSettings" />
+							<input
+								type="checkbox"
+								v-model="settings.dark_mode"
+								@change="saveSettings"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -39,7 +43,11 @@
 							<span class="setting-desc">Reduce spacing in lists and cards</span>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="settings.compact_view" @change="saveSettings" />
+							<input
+								type="checkbox"
+								v-model="settings.compact_view"
+								@change="saveSettings"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -66,7 +74,11 @@
 							<span class="setting-desc">Play sound on order completion</span>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="settings.sound_alerts" @change="saveSettings" />
+							<input
+								type="checkbox"
+								v-model="settings.sound_alerts"
+								@change="saveSettings"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -77,7 +89,11 @@
 							<span class="setting-desc">Alert when items are low in stock</span>
 						</div>
 						<label class="toggle">
-							<input type="checkbox" v-model="settings.low_stock_alerts" @change="saveSettings" />
+							<input
+								type="checkbox"
+								v-model="settings.low_stock_alerts"
+								@change="saveSettings"
+							/>
 							<span class="toggle-slider"></span>
 						</label>
 					</div>
@@ -112,12 +128,8 @@
 			</div>
 
 			<div class="modal-footer">
-				<button class="btn btn-secondary" @click="resetSettings">
-					Reset to Defaults
-				</button>
-				<button class="btn btn-primary" @click="close">
-					Done
-				</button>
+				<button class="btn btn-secondary" @click="resetSettings">Reset to Defaults</button>
+				<button class="btn btn-primary" @click="close">Done</button>
 			</div>
 		</div>
 	</div>
@@ -128,7 +140,7 @@ import { ref, computed, onMounted, watch } from 'vue'
 
 const props = defineProps({
 	show: { type: Boolean, default: false },
-	user: { type: Object, default: null }
+	user: { type: Object, default: null },
 })
 
 const emit = defineEmits(['close'])
@@ -140,14 +152,19 @@ const defaultSettings = {
 	sound_alerts: true,
 	low_stock_alerts: true,
 	language: 'en',
-	timezone: 'America/New_York'
+	timezone: 'America/New_York',
 }
 
 const settings = ref({ ...defaultSettings })
 
 const userInitials = computed(() => {
 	const name = props.user?.full_name || props.user?.email || 'U'
-	return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+	return name
+		.split(' ')
+		.map((n) => n[0])
+		.join('')
+		.toUpperCase()
+		.slice(0, 2)
 })
 
 function saveSettings() {
@@ -174,9 +191,12 @@ function close() {
 	emit('close')
 }
 
-watch(() => props.show, (val) => {
-	if (val) loadSettings()
-})
+watch(
+	() => props.show,
+	(val) => {
+		if (val) loadSettings()
+	}
+)
 
 onMounted(loadSettings)
 </script>
@@ -322,7 +342,7 @@ onMounted(loadSettings)
 
 .toggle-slider::before {
 	position: absolute;
-	content: "";
+	content: '';
 	height: 18px;
 	width: 18px;
 	left: 3px;

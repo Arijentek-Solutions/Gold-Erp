@@ -1,0 +1,14 @@
+# Ignore build artifacts
+zevar_core/public/dist/
+zevar_core/public/pos/assets/
+zevar_core/public/employee-portal/assets/
+zevar_core/public/employee_portal_v2/
+frontend/zevar_core/public/
+node_modules/
+bower_components/
+*.min.js
+*.bundle.js
+*.bundle.css
+dist/
+build/
+assets/

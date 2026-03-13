@@ -1,6 +1,6 @@
 <template>
 	<div
-		class="h-[100dvh] w-full flex overflow-hidden bg-white dark:bg-[#0b0f19] font-display text-white selection:bg-primary/30 relative transition-colors duration-700"
+		class="h-[100dvh] w-full flex overflow-hidden bg-white dark:bg-[#0b0f19] font-display text-gray-900 dark:text-white selection:bg-primary/30 relative transition-colors duration-700"
 		:style="{ '--primary-color': routeColor }"
 	>
 		<!-- Ambient Glows -->
@@ -23,33 +23,34 @@
 			class="shrink-0 flex flex-col sidebar-standard z-20 transition-all duration-300 fixed lg:relative h-full"
 			:class="[
 				sidebarCollapsed ? 'lg:w-20 lg:items-center' : 'lg:w-64',
-				mobileMenuOpen ? 'w-64 translate-x-0' : '-translate-x-full lg:translate-x-0'
+				mobileMenuOpen ? 'w-64 translate-x-0' : '-translate-x-full lg:translate-x-0',
 			]"
 		>
 			<!-- Branding & Toggle -->
-			<div class="h-20 flex items-center px-6 gap-4 border-b border-white/5" :class="sidebarCollapsed ? 'lg:px-4 justify-center' : ''">
-				<!-- Desktop Toggle -->
-				<button
-					v-show="!sidebarCollapsed"
-					@click="sidebarCollapsed = !sidebarCollapsed"
-					class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-gray-400 hover:text-white"
+			<div
+				class="h-20 flex items-center px-6 gap-4 border-b border-black/5 dark:border-white/5"
+				:class="sidebarCollapsed ? 'lg:px-4 justify-center' : 'justify-between'"
+			>
+				<div
+					v-if="!sidebarCollapsed"
+					class="flex items-center gap-2 overflow-hidden transition-all duration-300"
 				>
-					<span class="material-symbols-outlined text-[20px]">menu_open</span>
-				</button>
-				
-				<!-- Logo -->
-				<div class="flex items-center gap-2 overflow-hidden transition-all duration-300" :class="sidebarCollapsed ? 'w-8' : 'w-auto'">
 					<img :src="logoUrl" alt="Zevar" class="w-8 h-8 rounded shrink-0" />
-					<span v-show="!sidebarCollapsed" class="font-bold text-gray-900 dark:text-white tracking-wide text-sm whitespace-nowrap">Zevar</span>
+					<span class="font-bold text-gray-900 dark:text-white tracking-wide text-sm whitespace-nowrap"
+						>Zevar</span
+					>
 				</div>
 
-				<!-- Secondary toggle for collapsed state -->
 				<button
-					v-show="sidebarCollapsed"
 					@click="sidebarCollapsed = !sidebarCollapsed"
-					class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-gray-400 hover:text-white"
+					class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/10 transition-all text-gray-500 hover:text-gray-900 dark:text-white/60 dark:hover:text-white"
+					:aria-label="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
 				>
-					<span class="material-symbols-outlined text-[20px] rotate-180">menu_open</span>
+					<span
+						class="material-symbols-outlined text-[20px] transition-transform"
+						:class="sidebarCollapsed ? 'rotate-180' : ''"
+						>menu_open</span
+					>
 				</button>
 			</div>
 
@@ -64,7 +65,7 @@
 					:class="[
 						route.path === item.to
 							? 'bg-primary/10 text-primary shadow-sm'
-							: 'text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5',
+							: 'text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5',
 						sidebarCollapsed
 							? 'lg:justify-center lg:px-2 lg:py-3'
 							: 'justify-between px-4 py-3',
@@ -89,9 +90,11 @@
 				<a
 					href="/app"
 					target="_blank"
-					class="flex items-center rounded-xl transition-all group text-gray-400 hover:text-white hover:bg-white/5 mt-4"
+					class="flex items-center rounded-xl transition-all group text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/5 mt-4"
 					:class="
-						sidebarCollapsed ? 'lg:justify-center lg:px-2 lg:py-3' : 'justify-between px-4 py-3'
+						sidebarCollapsed
+							? 'lg:justify-center lg:px-2 lg:py-3'
+							: 'justify-between px-4 py-3'
 					"
 				>
 					<div class="flex items-center gap-3">
@@ -104,24 +107,25 @@
 					</div>
 				</a>
 			</nav>
-
 		</aside>
 
 		<!-- Main Content -->
-		<main class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-white dark:bg-[#0b0f19]">
+		<main
+			class="flex-1 flex flex-col h-full min-w-0 overflow-hidden bg-white dark:bg-[#0b0f19]"
+		>
 			<!-- Header -->
 			<header
-				class="flex items-center px-4 md:px-8 py-4 border-b border-white/5 shrink-0"
+				class="flex items-center px-4 md:px-8 py-4 border-b border-black/5 dark:border-white/5 shrink-0"
 			>
 				<!-- Left Side: Header Actions -->
 				<div class="flex items-center gap-4">
 					<!-- Mobile Hamburger (inline in header, only for mobile) -->
 					<button
 						@click="mobileMenuOpen = !mobileMenuOpen"
-						class="lg:hidden w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-all"
+						class="lg:hidden w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-500 dark:text-white/60 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-all"
 					>
 						<span class="material-symbols-outlined text-[20px]">{{
-							mobileMenuOpen ? 'close' : 'menu'
+							mobileMenuOpen ? "close" : "menu"
 						}}</span>
 					</button>
 				</div>
@@ -136,7 +140,7 @@
 
 					<!-- Profile Button -->
 					<button
-						class="relative z-50 flex items-center gap-2 md:gap-3 bg-white/5 hover:bg-white/10 pl-2 pr-3 md:pr-4 py-1.5 rounded-full border border-white/10 transition-colors"
+						class="relative z-50 flex items-center gap-2 md:gap-3 bg-gray-50 dark:bg-white/5 hover:bg-black/5 dark:hover:bg-white/10 pl-2 pr-3 md:pr-4 py-1.5 rounded-full border border-gray-200 dark:border-white/10 transition-colors"
 						@click="userMenuOpen = !userMenuOpen"
 					>
 						<div
@@ -144,9 +148,10 @@
 						>
 							{{ userInitials }}
 						</div>
-						<span class="text-xs md:text-sm font-semibold text-gray-900 dark:text-white hidden sm:block">{{
-							auth.user?.full_name || "User"
-						}}</span>
+						<span
+							class="text-xs md:text-sm font-semibold text-gray-900 dark:text-white hidden sm:block"
+							>{{ auth.user?.full_name || "User" }}</span
+						>
 						<span
 							class="material-symbols-outlined text-gray-400 dark:text-white/50 text-sm ml-1 transition-transform"
 							:class="{ 'rotate-180': userMenuOpen }"
@@ -224,7 +229,9 @@
 			</header>
 
 			<!-- Page Content Container -->
-			<div class="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 custom-scrollbar relative">
+			<div
+				class="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 custom-scrollbar relative"
+			>
 				<slot />
 			</div>
 		</main>
@@ -232,30 +239,30 @@
 		<!-- Coming Soon Modal for generic actions mapped to buttons temporarily -->
 		<Teleport to="body">
 			<Transition name="fade">
-				<div
-					v-if="showComingSoon"
-					class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"
+					<div
+						v-if="showComingSoon"
+						class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"
 					@click.self="showComingSoon = false"
 				>
 					<div class="absolute inset-0 bg-black/60"></div>
 					<div
-						class="relative bg-[#15161a] rounded-3xl p-8 w-full max-w-sm border border-white/10 shadow-2xl text-center transform transition-all"
+						class="relative bg-white dark:bg-[#15161a] rounded-3xl p-8 w-full max-w-sm border border-gray-200 dark:border-white/10 shadow-2xl text-center transform transition-all"
 					>
 						<div
 							class="w-16 h-16 mx-auto bg-primary/10 rounded-full flex items-center justify-center text-primary mb-4 border border-primary/20"
 						>
 							<span class="material-symbols-outlined text-3xl">build</span>
 						</div>
-						<h3 class="font-display font-bold text-white text-xl mb-2">
+						<h3 class="font-display font-bold text-gray-900 dark:text-white text-xl mb-2">
 							Feature Incoming
 						</h3>
-						<p class="text-sm text-white/50 mb-6 font-medium">
+						<p class="text-sm text-gray-500 dark:text-white/50 mb-6 font-medium">
 							This module is currently being built and will unlock shortly.
 						</p>
 
 						<button
 							@click="showComingSoon = false"
-							class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-xl text-white text-sm font-bold transition-all"
+							class="w-full py-3 bg-gray-50 dark:bg-white/5 hover:bg-black/5 dark:hover:bg-white/10 border border-gray-200 dark:border-white/5 rounded-xl text-gray-900 dark:text-white text-sm font-bold transition-all"
 						>
 							Understood
 						</button>

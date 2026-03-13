@@ -25,7 +25,7 @@ add_to_apps_screen = [
 		"logo": "/assets/zevar_core/images/employee_portal_logo.svg",
 		"title": "Employee Portal",
 		"route": "/employee-portal",
-	}
+	},
 ]
 
 boot_session = "zevar_core.api.desk.boot_session"

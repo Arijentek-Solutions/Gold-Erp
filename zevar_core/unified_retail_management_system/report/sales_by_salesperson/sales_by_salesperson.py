@@ -126,7 +126,5 @@ def get_chart_data(filters=None):
 
 	return {
 		"labels": [row.get("name") for row in chart_data],
-		"datasets": [{
-			"values": [flt(row.get("value", 0)) for row in chart_data]
-		}]
+		"datasets": [{"values": [flt(row.get("value", 0)) for row in chart_data]}],
 	}

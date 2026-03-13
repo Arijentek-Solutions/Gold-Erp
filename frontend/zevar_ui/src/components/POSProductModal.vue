@@ -7,7 +7,7 @@
 			></div>
 
 			<div
-				class="relative bg-white dark:bg-[#1a1c23] rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] border border-transparent dark:border-white/10 transition-all"
+				class="relative bg-white dark:bg-[#1a1c23] rounded-lg shadow-2xl w-full max-w-4xl overflow-hidden flex flex-col md:flex-row max-h-[90vh] border border-transparent dark:border-white/10 transition-all"
 			>
 				<button
 					@click="close"
@@ -90,7 +90,7 @@
 						</div>
 
 						<div
-							class="bg-gray-50 dark:bg-[#15171e] rounded-xl p-5 mb-6 text-sm border border-gray-100 dark:border-white/5"
+							class="bg-gray-50 dark:bg-[#15171e] rounded-lg p-5 mb-6 text-sm border border-gray-100 dark:border-white/5"
 						>
 							<div
 								class="flex justify-between mb-2 text-gray-600 dark:text-gray-400"
@@ -215,7 +215,7 @@
 
 						<button
 							@click="addToCart"
-							class="w-full bg-gray-900 text-white dark:bg-[#D4AF37] dark:text-black py-4 rounded-xl font-bold text-lg hover:bg-gray-800 dark:hover:bg-[#b5952f] transition-all shadow-lg hover:shadow-xl transform active:scale-95 flex items-center justify-center gap-2"
+							class="w-full bg-gray-900 text-white dark:bg-[#D4AF37] dark:text-black py-4 rounded-lg font-bold text-lg hover:bg-gray-800 dark:hover:bg-[#b5952f] transition-all shadow-lg hover:shadow-xl transform active:scale-95 flex items-center justify-center gap-2"
 						>
 							<svg
 								class="w-5 h-5"

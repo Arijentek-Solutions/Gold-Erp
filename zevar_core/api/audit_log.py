@@ -18,24 +18,20 @@ AUDIT_EVENTS = {
 	"invoice_cancelled": {"category": "Sales", "severity": "Warning"},
 	"invoice_voided": {"category": "Sales", "severity": "Warning"},
 	"invoice_returned": {"category": "Sales", "severity": "Warning"},
-
 	# Payment events
 	"payment_received": {"category": "Payment", "severity": "Info"},
 	"payment_refunded": {"category": "Payment", "severity": "Warning"},
 	"split_payment_processed": {"category": "Payment", "severity": "Info"},
 	"gift_card_used": {"category": "Payment", "severity": "Info"},
 	"trade_in_processed": {"category": "Payment", "severity": "Info"},
-
 	# Discount events
 	"discount_applied": {"category": "Discount", "severity": "Info"},
 	"large_discount_applied": {"category": "Discount", "severity": "Warning"},
 	"discount_override_approved": {"category": "Discount", "severity": "Warning"},
-
 	# Session events
 	"session_opened": {"category": "Session", "severity": "Info"},
 	"session_closed": {"category": "Session", "severity": "Info"},
 	"cash_variance_detected": {"category": "Session", "severity": "Warning"},
-
 	# Security events
 	"login_success": {"category": "Security", "severity": "Info"},
 	"login_failed": {"category": "Security", "severity": "Warning"},
@@ -43,17 +39,14 @@ AUDIT_EVENTS = {
 	"manager_override_approved": {"category": "Security", "severity": "Warning"},
 	"manager_override_rejected": {"category": "Security", "severity": "Warning"},
 	"permission_denied": {"category": "Security", "severity": "Warning"},
-
 	# Layaway events
 	"layaway_created": {"category": "Layaway", "severity": "Info"},
 	"layaway_payment": {"category": "Layaway", "severity": "Info"},
 	"layaway_cancelled": {"category": "Layaway", "severity": "Warning"},
 	"layaway_completed": {"category": "Layaway", "severity": "Info"},
-
 	# Customer events
 	"customer_created": {"category": "Customer", "severity": "Info"},
 	"customer_updated": {"category": "Customer", "severity": "Info"},
-
 	# Inventory events
 	"stock_adjusted": {"category": "Inventory", "severity": "Warning"},
 	"low_stock_alert": {"category": "Inventory", "severity": "Warning"},
@@ -116,7 +109,7 @@ def log_event(
 
 	# Commit immediately for security events
 	if event_config["severity"] == "Warning":
-		frappe.db.commit()
+		frappe.db.commit() # nosemgrep (needed for immediate security event logging)
 
 
 @frappe.whitelist()
@@ -277,9 +270,7 @@ def get_audit_summary(from_date: str | None = None, to_date: str | None = None) 
 	)
 
 	# Get total
-	total_count = frappe.db.count(
-		"POS Audit Log", {"timestamp": ["between", [from_date, to_date]]}
-	)
+	total_count = frappe.db.count("POS Audit Log", {"timestamp": ["between", [from_date, to_date]]})
 
 	# Get warning count
 	warning_count = frappe.db.count(
@@ -353,37 +344,41 @@ def generate_csv_export(logs: list) -> str:
 	writer = csv.writer(output)
 
 	# Header
-	writer.writerow([
-		"Timestamp",
-		"User",
-		"Event Type",
-		"Category",
-		"Severity",
-		"Reference Document",
-		"Reference Type",
-		"IP Address",
-		"Details",
-	])
+	writer.writerow(
+		[
+			"Timestamp",
+			"User",
+			"Event Type",
+			"Category",
+			"Severity",
+			"Reference Document",
+			"Reference Type",
+			"IP Address",
+			"Details",
+		]
+	)
 
 	# Data
 	for log in logs:
-		writer.writerow([
-			str(log.get("timestamp", "")),
-			log.get("user", ""),
-			log.get("event_type", ""),
-			log.get("category", ""),
-			log.get("severity", ""),
-			log.get("reference_document", ""),
-			log.get("reference_type", ""),
-			log.get("ip_address", ""),
-			log.get("details", ""),
-		])
+		writer.writerow(
+			[
+				str(log.get("timestamp", "")),
+				log.get("user", ""),
+				log.get("event_type", ""),
+				log.get("category", ""),
+				log.get("severity", ""),
+				log.get("reference_document", ""),
+				log.get("reference_type", ""),
+				log.get("ip_address", ""),
+				log.get("details", ""),
+			]
+		)
 
 	# Save file
 	file_name = f"audit_log_export_{frappe.utils.now_datetime().strftime('%Y%m%d_%H%M%S')}.csv"
 	file_path = frappe.get_site_path("public", "files", file_name)
 
-	with open(file_path, "w") as f:
+	with open(file_path, "w") as f: # nosemgrep (safe site-internal file export)
 		f.write(output.getvalue())
 
 	return f"/files/{file_name}"

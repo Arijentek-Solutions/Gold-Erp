@@ -105,17 +105,14 @@ def get_sales_history(
 	# Enrich sales data
 	for sale in sales:
 		# Get item count
-		item_count = frappe.db.count(
-			"Sales Invoice Item",
-			filters={"parent": sale.name}
-		)
+		item_count = frappe.db.count("Sales Invoice Item", filters={"parent": sale.name})
 		sale["item_count"] = item_count
 
 		# Get customer name if not present
 		if not sale.get("customer_name"):
-			sale["customer_name"] = frappe.db.get_value(
-				"Customer", sale.customer, "customer_name"
-			) or sale.customer
+			sale["customer_name"] = (
+				frappe.db.get_value("Customer", sale.customer, "customer_name") or sale.customer
+			)
 
 	return {
 		"sales": sales,
@@ -225,24 +222,28 @@ def get_transaction_details(invoice_name: str) -> dict:
 	# Get items
 	items = []
 	for item in invoice.items:
-		items.append({
-			"item_code": item.item_code,
-			"item_name": item.item_name,
-			"qty": flt(item.qty),
-			"rate": flt(item.rate),
-			"amount": flt(item.amount),
-			"warehouse": item.warehouse,
-		})
+		items.append(
+			{
+				"item_code": item.item_code,
+				"item_name": item.item_name,
+				"qty": flt(item.qty),
+				"rate": flt(item.rate),
+				"amount": flt(item.amount),
+				"warehouse": item.warehouse,
+			}
+		)
 
 	# Get payments
 	payments = []
 	if hasattr(invoice, "payments") and invoice.payments:
 		for payment in invoice.payments:
-			payments.append({
-				"mode_of_payment": payment.mode_of_payment,
-				"amount": flt(payment.amount),
-				"reference_no": payment.reference_no or "",
-			})
+			payments.append(
+				{
+					"mode_of_payment": payment.mode_of_payment,
+					"amount": flt(payment.amount),
+					"reference_no": payment.reference_no or "",
+				}
+			)
 
 	# Get salespersons if custom fields exist
 	salespersons = []
@@ -252,10 +253,12 @@ def get_transaction_details(invoice_name: str) -> dict:
 		if hasattr(invoice, sp_field):
 			sp = getattr(invoice, sp_field)
 			if sp:
-				salespersons.append({
-					"employee": sp,
-					"split": flt(getattr(invoice, split_field, 0)),
-				})
+				salespersons.append(
+					{
+						"employee": sp,
+						"split": flt(getattr(invoice, split_field, 0)),
+					}
+				)
 
 	# Get totals
 	subtotal = sum(flt(item.amount) for item in invoice.items)
@@ -375,29 +378,33 @@ def export_sales_history(
 		writer = csv.writer(output)
 
 		# Header
-		writer.writerow([
-			"Invoice #",
-			"Date",
-			"Time",
-			"Customer",
-			"Items",
-			"Total",
-			"Status",
-			"Salesperson",
-		])
+		writer.writerow(
+			[
+				"Invoice #",
+				"Date",
+				"Time",
+				"Customer",
+				"Items",
+				"Total",
+				"Status",
+				"Salesperson",
+			]
+		)
 
 		# Data rows
 		for sale in sales:
-			writer.writerow([
-				sale.get("name", ""),
-				str(sale.get("posting_date", "")),
-				str(sale.get("posting_time", "")),
-				sale.get("customer_name", sale.get("customer", "")),
-				sale.get("item_count", 0),
-				flt(sale.get("grand_total", 0)),
-				sale.get("status", ""),
-				sale.get("owner", ""),
-			])
+			writer.writerow(
+				[
+					sale.get("name", ""),
+					str(sale.get("posting_date", "")),
+					str(sale.get("posting_time", "")),
+					sale.get("customer_name", sale.get("customer", "")),
+					sale.get("item_count", 0),
+					flt(sale.get("grand_total", 0)),
+					sale.get("status", ""),
+					sale.get("owner", ""),
+				]
+			)
 
 		return output.getvalue()
 

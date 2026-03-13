@@ -242,18 +242,36 @@ const metalPurityMap = {
 	Silver: ['925 Sterling', '999 Fine'],
 }
 
-// Local state for stock filter
-const currentStockFilter = ref('all')
 const lowStockCount = ref(0) // This would be fetched from API in production
 
 // Helpers
 const currentMetal = computed(() => ui.activeFilters.custom_metal_type || '')
 const currentGemstone = computed(() => ui.activeFilters.custom_gemstone || '')
+const currentStockFilter = computed(() => {
+	if (ui.activeFilters.out_of_stock_only) {
+		return 'out-of-stock'
+	}
+
+	if (ui.activeFilters.in_stock_only) {
+		return 'in-stock'
+	}
+
+	return 'all'
+})
 const hasActiveFilters = computed(
-	() =>
-		Object.keys(ui.activeFilters).length > 0 ||
-		ui.searchQuery ||
-		currentStockFilter.value !== 'all'
+	() => {
+		const { in_stock_only, out_of_stock_only, ...otherFilters } = ui.activeFilters
+		const hasCustomFilters = Object.values(otherFilters).some((value) =>
+			Array.isArray(value) ? value.length > 0 : Boolean(value)
+		)
+
+		return (
+			hasCustomFilters ||
+			Boolean(ui.searchQuery) ||
+			!in_stock_only ||
+			Boolean(out_of_stock_only)
+		)
+	}
 )
 
 // Smart Purity Logic
@@ -266,7 +284,6 @@ const purityOptions = computed(() => {
 
 // Actions
 function updateStockFilter(status) {
-	currentStockFilter.value = status
 	if (status === 'in-stock') {
 		ui.setFilter('in_stock_only', true)
 		ui.setFilter('out_of_stock_only', false)
@@ -291,7 +308,6 @@ function updateGemstone(val) {
 }
 
 function handleReset() {
-	currentStockFilter.value = 'all'
 	ui.resetFilters()
 }
 </script>
