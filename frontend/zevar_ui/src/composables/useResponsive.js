@@ -12,6 +12,7 @@ const isTablet = ref(false)
 const isDesktop = ref(false)
 const isLargeDesktop = ref(false)
 const orientation = ref('portrait')
+const isTouchDevice = ref(false)
 
 // Breakpoint definitions
 const BREAKPOINTS = {
@@ -26,6 +27,9 @@ function useResponsive() {
 	function updateDimensions() {
 		windowWidth.value = window.innerWidth
 		windowHeight.value = window.innerHeight
+
+		// Update touch device detection
+		isTouchDevice.value = 'ontouchstart' in window || navigator.maxTouchPoints > 0
 
 		if (windowWidth.value < BREAKPOINTS.tablet) {
 			isMobile.value = true
@@ -60,11 +64,6 @@ function useResponsive() {
 		if (isTablet.value) return 2
 		if (isDesktop.value) return 3
 		return 4
-	})
-
-	// Touch device detection
-	const isTouchDevice = computed(() => {
-		return 'ontouchstart' in window || navigator.maxTouchPoints > 0
 	})
 
 	// Safe area insets (for notched devices)

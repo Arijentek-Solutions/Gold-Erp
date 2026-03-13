@@ -182,14 +182,16 @@ def get_payroll_summary(year: int | None = None):
 		summary["total_deductions"] += slip.total_deduction or 0
 		summary["total_net_pay"] += slip.net_pay or 0
 
-		summary["slips"].append({
-			"id": slip.name,
-			"start_date": str(slip.start_date),
-			"end_date": str(slip.end_date),
-			"gross_pay": slip.gross_pay,
-			"deductions": slip.total_deduction,
-			"net_pay": slip.net_pay,
-		})
+		summary["slips"].append(
+			{
+				"id": slip.name,
+				"start_date": str(slip.start_date),
+				"end_date": str(slip.end_date),
+				"gross_pay": slip.gross_pay,
+				"deductions": slip.total_deduction,
+				"net_pay": slip.net_pay,
+			}
+		)
 
 	return summary
 

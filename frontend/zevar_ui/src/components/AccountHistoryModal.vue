@@ -15,11 +15,15 @@
 							<span class="summary-label">Transactions</span>
 						</div>
 						<div class="summary-item">
-							<span class="summary-value">${{ formatAmount(summary.total_sales) }}</span>
+							<span class="summary-value"
+								>${{ formatAmount(summary.total_sales) }}</span
+							>
 							<span class="summary-label">Total Sales</span>
 						</div>
 						<div class="summary-item">
-							<span class="summary-value">${{ formatAmount(summary.average_sale) }}</span>
+							<span class="summary-value"
+								>${{ formatAmount(summary.average_sale) }}</span
+							>
 							<span class="summary-label">Avg Sale</span>
 						</div>
 					</div>
@@ -29,25 +33,40 @@
 				<div class="activity-section">
 					<h4>Recent Transactions</h4>
 					<div class="activity-list" v-if="transactions.length">
-						<div v-for="tx in transactions" :key="tx.name" class="activity-item" @click="viewTransaction(tx.name)">
+						<div
+							v-for="tx in transactions"
+							:key="tx.name"
+							class="activity-item"
+							@click="viewTransaction(tx.name)"
+						>
 							<div class="activity-icon" :class="tx.type">
-								{{ tx.type === 'sale' ? '💰' : tx.type === 'return' ? '↩️' : '📋' }}
+								{{
+									tx.type === 'sale' ? '💰' : tx.type === 'return' ? '↩️' : '📋'
+								}}
 							</div>
 							<div class="activity-content">
-								<div class="activity-title">{{ tx.customer || 'Walk-In Customer' }}</div>
+								<div class="activity-title">
+									{{ tx.customer || 'Walk-In Customer' }}
+								</div>
 								<div class="activity-meta">
 									<span>{{ tx.name }}</span>
 									<span>{{ formatTime(tx.posting_time) }}</span>
 								</div>
 							</div>
-							<div class="activity-amount" :class="{ positive: tx.type === 'sale', negative: tx.type === 'return' }">
-								{{ tx.type === 'return' ? '-' : '' }}${{ formatAmount(tx.grand_total) }}
+							<div
+								class="activity-amount"
+								:class="{
+									positive: tx.type === 'sale',
+									negative: tx.type === 'return',
+								}"
+							>
+								{{ tx.type === 'return' ? '-' : '' }}${{
+									formatAmount(tx.grand_total)
+								}}
 							</div>
 						</div>
 					</div>
-					<div v-else class="empty-state">
-						No recent transactions
-					</div>
+					<div v-else class="empty-state">No recent transactions</div>
 				</div>
 
 				<!-- Session Info -->
@@ -78,9 +97,7 @@
 				<router-link to="/history" class="btn btn-secondary" @click="close">
 					View Full History
 				</router-link>
-				<button class="btn btn-primary" @click="close">
-					Close
-				</button>
+				<button class="btn btn-primary" @click="close">Close</button>
 			</div>
 		</div>
 	</div>
@@ -91,7 +108,7 @@ import { ref, onMounted, watch } from 'vue'
 import { createResource } from 'frappe-ui'
 
 const props = defineProps({
-	show: { type: Boolean, default: false }
+	show: { type: Boolean, default: false },
 })
 
 const emit = defineEmits(['close'])
@@ -104,11 +121,11 @@ const historyResource = createResource({
 	url: 'zevar_core.api.sales_history.get_sales_history',
 	auto: false,
 	onSuccess(data) {
-		transactions.value = (data.sales || []).map(s => ({
+		transactions.value = (data.sales || []).map((s) => ({
 			...s,
-			type: s.status === 'Return' ? 'return' : 'sale'
+			type: s.status === 'Return' ? 'return' : 'sale',
 		}))
-	}
+	},
 })
 
 const summaryResource = createResource({
@@ -116,7 +133,7 @@ const summaryResource = createResource({
 	auto: false,
 	onSuccess(data) {
 		summary.value = data.summary
-	}
+	},
 })
 
 const sessionResource = createResource({
@@ -126,7 +143,7 @@ const sessionResource = createResource({
 		if (data.has_active_session) {
 			session.value = data.session
 		}
-	}
+	},
 })
 
 function formatAmount(amount) {
@@ -155,13 +172,16 @@ async function loadData() {
 	await Promise.all([
 		historyResource.submit({ page: 1, page_size: 10 }),
 		summaryResource.submit({}),
-		sessionResource.submit({})
+		sessionResource.submit({}),
 	])
 }
 
-watch(() => props.show, (val) => {
-	if (val) loadData()
-})
+watch(
+	() => props.show,
+	(val) => {
+		if (val) loadData()
+	}
+)
 
 onMounted(() => {
 	if (props.show) loadData()

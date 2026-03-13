@@ -1,37 +1,55 @@
 <template>
 	<div
 		class="flex h-screen w-screen bg-[#F8F9FA] dark:bg-[#1e1e24] overflow-hidden transition-colors duration-300"
-        style="font-family: 'Inter', sans-serif;"
+		style="font-family: 'Inter', sans-serif"
 	>
 		<aside
 			class="hidden lg:flex bg-[#1a1c23] dark:bg-[#15161a] border-r border-white/5 flex-col shadow-2xl z-30 relative transition-all duration-300"
-            :class="[ui.sidebarCollapsed ? 'w-20' : 'w-72']"
+			:class="[ui.sidebarCollapsed ? 'w-20' : 'w-72']"
 		>
 			<div
 				class="h-20 flex items-center border-b border-white/5 transition-all duration-300"
-				:class="ui.sidebarCollapsed ? 'justify-center' : 'px-6 gap-4'"
+				:class="ui.sidebarCollapsed ? 'px-4 justify-center' : 'px-6 justify-between'"
 			>
-				<!-- Toggle Button (Desktop) -->
-				<button
-					@click="ui.sidebarCollapsed = !ui.sidebarCollapsed"
-					class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-gray-400 hover:text-white shrink-0"
+				<div
+					v-if="!ui.sidebarCollapsed"
+					class="flex items-center gap-3 overflow-hidden"
 				>
-					<span class="material-symbols-outlined text-[20px]">{{ ui.sidebarCollapsed ? 'menu' : 'menu_open' }}</span>
-				</button>
-
-				<!-- Brand -->
-				<div class="flex items-center gap-3 overflow-hidden" v-show="!ui.sidebarCollapsed">
 					<img
 						src="/logo.svg"
 						alt="Zevar"
 						class="w-8 h-8 rounded-lg shadow-[0_0_15px_rgba(212,175,55,0.3)] shrink-0"
 					/>
-					<h1 class="text-white font-serif font-bold text-xl tracking-tight" style="font-family: 'Cinzel', serif;">ZEVAR</h1>
+					<h1
+						class="text-white font-serif font-bold text-xl tracking-tight"
+						style="font-family: 'Cinzel', serif"
+					>
+						ZEVAR
+					</h1>
 				</div>
-			</div>
-			
-			<!-- Secondary Toggle for collapsed state at the bottom maybe? Or just keep it at top -->
 
+				<button
+					@click="ui.sidebarCollapsed = !ui.sidebarCollapsed"
+					class="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-all text-gray-400 hover:text-white shrink-0"
+					:aria-label="ui.sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+				>
+					<svg
+						class="w-5 h-5 transition-transform duration-300"
+						:class="ui.sidebarCollapsed ? 'rotate-180' : ''"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+						aria-hidden="true"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="1.8"
+							d="M4 6h10M4 12h6M4 18h10M15 8l4 4-4 4"
+						></path>
+					</svg>
+				</button>
+			</div>
 
 			<div class="flex-1 flex flex-col overflow-hidden">
 				<nav class="p-4 space-y-2 flex-1 overflow-y-auto custom-scrollbar">
@@ -44,7 +62,10 @@
 								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
 					>
-						<div class="relative z-10 flex items-center gap-4" :class="{ 'justify-center': ui.sidebarCollapsed }">
+						<div
+							class="relative z-10 flex items-center gap-4"
+							:class="{ 'justify-center': ui.sidebarCollapsed }"
+						>
 							<svg
 								class="w-5 h-5 transition-colors"
 								fill="none"
@@ -58,7 +79,9 @@
 									d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
 								></path>
 							</svg>
-							<span v-show="!ui.sidebarCollapsed" class="font-medium tracking-wide text-sm"
+							<span
+								v-show="!ui.sidebarCollapsed"
+								class="font-medium tracking-wide text-sm"
 								>POS Terminal</span
 							>
 						</div>
@@ -73,7 +96,10 @@
 								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
 					>
-						<div class="relative z-10 flex items-center gap-4">
+						<div
+							class="relative z-10 flex items-center gap-4"
+							:class="{ 'justify-center': ui.sidebarCollapsed }"
+						>
 							<svg
 								class="w-5 h-5 transition-colors"
 								fill="none"
@@ -87,7 +113,9 @@
 									d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
 								></path>
 							</svg>
-							<span class="hidden lg:block font-medium tracking-wide text-sm"
+							<span
+								v-show="!ui.sidebarCollapsed"
+								class="font-medium tracking-wide text-sm"
 								>Sales History</span
 							>
 						</div>
@@ -103,7 +131,10 @@
 								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
 					>
-						<div class="relative z-10 flex items-center gap-4">
+						<div
+							class="relative z-10 flex items-center gap-4"
+							:class="{ 'justify-center': ui.sidebarCollapsed }"
+						>
 							<svg
 								class="w-5 h-5 transition-colors"
 								fill="none"
@@ -117,7 +148,9 @@
 									d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
 								></path>
 							</svg>
-							<span class="hidden lg:block font-medium tracking-wide text-sm"
+							<span
+								v-show="!ui.sidebarCollapsed"
+								class="font-medium tracking-wide text-sm"
 								>Catalogues</span
 							>
 						</div>
@@ -132,7 +165,10 @@
 								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
 					>
-						<div class="relative z-10 flex items-center gap-4">
+						<div
+							class="relative z-10 flex items-center gap-4"
+							:class="{ 'justify-center': ui.sidebarCollapsed }"
+						>
 							<svg
 								class="w-5 h-5"
 								fill="none"
@@ -152,7 +188,9 @@
 									d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
 								></path>
 							</svg>
-							<span class="hidden lg:block font-medium tracking-wide text-sm"
+							<span
+								v-show="!ui.sidebarCollapsed"
+								class="font-medium tracking-wide text-sm"
 								>Repairs</span
 							>
 						</div>
@@ -163,7 +201,10 @@
 						target="_blank"
 						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent"
 					>
-						<div class="relative z-10 flex items-center gap-4">
+						<div
+							class="relative z-10 flex items-center gap-4"
+							:class="{ 'justify-center': ui.sidebarCollapsed }"
+						>
 							<svg
 								class="w-5 h-5"
 								fill="none"
@@ -177,7 +218,9 @@
 									d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
 								></path>
 							</svg>
-							<span class="hidden lg:block font-medium tracking-wide text-sm"
+							<span
+								v-show="!ui.sidebarCollapsed"
+								class="font-medium tracking-wide text-sm"
 								>Support</span
 							>
 						</div>
@@ -188,7 +231,10 @@
 						target="_blank"
 						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent"
 					>
-						<div class="relative z-10 flex items-center gap-4">
+						<div
+							class="relative z-10 flex items-center gap-4"
+							:class="{ 'justify-center': ui.sidebarCollapsed }"
+						>
 							<svg
 								class="w-5 h-5 transition-colors"
 								fill="none"
@@ -202,15 +248,17 @@
 									d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
 								></path>
 							</svg>
-							<span class="hidden lg:block font-medium tracking-wide text-sm"
+							<span
+								v-show="!ui.sidebarCollapsed"
+								class="font-medium tracking-wide text-sm"
 								>Layaway Scheme</span
 							>
 						</div>
 					</a>
 
 					<div
-						v-if="$route.path === '/'"
-						class="mt-6 pt-6 border-t border-white/5 lg:block hidden"
+						v-if="$route.path === '/' && !ui.sidebarCollapsed"
+						class="mt-6 pt-6 border-t border-white/5"
 					>
 						<FilterSidebar />
 					</div>
@@ -229,8 +277,18 @@
 						@click="isMobileDrawerOpen = true"
 						class="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
 					>
-						<svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+						<svg
+							class="w-6 h-6 text-gray-600 dark:text-gray-300"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M4 6h16M4 12h16M4 18h16"
+							></path>
 						</svg>
 					</button>
 				</div>
@@ -241,8 +299,18 @@
 						@click="isMobileDrawerOpen = true"
 						class="p-1 sm:p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
 					>
-						<svg class="w-6 h-6 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+						<svg
+							class="w-6 h-6 text-gray-600 dark:text-gray-300"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M4 6h16M4 12h16M4 18h16"
+							></path>
 						</svg>
 					</button>
 					<img src="/logo.svg" alt="Zevar" class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg" />
@@ -254,10 +322,24 @@
 						>
 							<option value="null" disabled>Store...</option>
 							<option v-for="wh in warehouses.data" :key="wh.name" :value="wh.name">
-								{{ wh.name.replace('Zevar US Stores - ', '').replace(' - ZUS', '') }}
+								{{
+									wh.name.replace('Zevar US Stores - ', '').replace(' - ZUS', '')
+								}}
 							</option>
 						</select>
-						<svg class="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+						<svg
+							class="w-3 h-3 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M19 9l-7 7-7-7"
+							></path>
+						</svg>
 					</div>
 				</div>
 
@@ -584,17 +666,31 @@
 			</main>
 
 			<!-- Mobile Sticky Footer (Live Rates) - Hidden on LG+ -->
-			<div class="lg:hidden sticky bottom-0 z-20 bg-[#1a1c23] dark:bg-[#15161a] border-t border-white/5 py-1.5 px-3 flex items-center justify-between flex-shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+			<div
+				class="lg:hidden sticky bottom-0 z-20 bg-[#1a1c23] dark:bg-[#15161a] border-t border-white/5 py-1.5 px-3 flex items-center justify-between flex-shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]"
+			>
 				<div class="flex items-center gap-2 pr-2 border-r border-white/10 flex-shrink-0">
 					<span class="relative flex h-2 w-2">
-						<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-						<span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+						<span
+							class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"
+						></span>
+						<span
+							class="relative inline-flex rounded-full h-2 w-2 bg-green-600"
+						></span>
 					</span>
-					<span class="text-[9px] font-bold uppercase tracking-widest text-gray-400">Spot</span>
+					<span class="text-[9px] font-bold uppercase tracking-widest text-gray-400"
+						>Spot</span
+					>
 				</div>
 				<div class="flex items-center gap-4 overflow-x-auto hide-scrollbar pl-2 flex-1">
-					<div v-for="[key, rate] in sortedRates.slice(0, 3)" :key="key" class="flex flex-col flex-shrink-0 leading-tight">
-						<span class="text-[8px] text-gray-500 font-bold uppercase">{{ key.split('-')[0] }}</span>
+					<div
+						v-for="[key, rate] in sortedRates.slice(0, 3)"
+						:key="key"
+						class="flex flex-col flex-shrink-0 leading-tight"
+					>
+						<span class="text-[8px] text-gray-500 font-bold uppercase">{{
+							key.split('-')[0]
+						}}</span>
 						<span class="text-xs font-bold text-[#D4AF37]">${{ rate }}</span>
 					</div>
 				</div>
@@ -621,7 +717,12 @@
 				</div>
 				<button @click="isMobileDrawerOpen = false" class="text-gray-400 p-2">
 					<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M6 18L18 6M6 6l12 12"
+						></path>
 					</svg>
 				</button>
 			</div>
@@ -640,8 +741,18 @@
 					</select>
 				</div>
 				<div class="relative">
-					<svg class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+					<svg
+						class="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+						></path>
 					</svg>
 					<input
 						type="text"
@@ -653,26 +764,60 @@
 			</div>
 
 			<nav class="flex-1 overflow-y-auto p-4 space-y-2 custom-scrollbar">
-				<router-link @click="isMobileDrawerOpen = false" to="/" class="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-[#D4AF37]">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+				<router-link
+					@click="isMobileDrawerOpen = false"
+					to="/"
+					class="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-[#D4AF37]"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+						></path>
+					</svg>
 					<span>POS Terminal</span>
 				</router-link>
-				<router-link @click="isMobileDrawerOpen = false" to="/transactions" class="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-[#D4AF37]">
-					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+				<router-link
+					@click="isMobileDrawerOpen = false"
+					to="/transactions"
+					class="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-[#D4AF37]"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+						></path>
+					</svg>
 					<span>Sales History</span>
 				</router-link>
 				<!-- Add Live Rates Ticker Row for Mobile inside drawer (bottom) or above nav -->
 				<div class="mt-6 pt-6 border-t border-white/5 px-2">
 					<div class="flex items-center gap-2 mb-3">
 						<span class="relative flex h-2 w-2">
-							<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"></span>
-							<span class="relative inline-flex rounded-full h-2 w-2 bg-green-600"></span>
+							<span
+								class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75"
+							></span>
+							<span
+								class="relative inline-flex rounded-full h-2 w-2 bg-green-600"
+							></span>
 						</span>
-						<span class="text-[10px] font-bold uppercase tracking-widest text-gray-500">Live Spot Rates</span>
+						<span class="text-[10px] font-bold uppercase tracking-widest text-gray-500"
+							>Live Spot Rates</span
+						>
 					</div>
 					<div class="grid grid-cols-2 gap-2">
-						<div v-for="[key, rate] in sortedRates.slice(0, 4)" :key="key" class="bg-gray-800 p-2 rounded-lg text-center">
-							<div class="text-[9px] text-gray-400 uppercase font-bold">{{ key.split('-')[0] }}</div>
+						<div
+							v-for="[key, rate] in sortedRates.slice(0, 4)"
+							:key="key"
+							class="bg-gray-800 p-2 rounded-lg text-center"
+						>
+							<div class="text-[9px] text-gray-400 uppercase font-bold">
+								{{ key.split('-')[0] }}
+							</div>
 							<div class="text-sm font-bold text-[#D4AF37]">${{ rate }}</div>
 						</div>
 					</div>

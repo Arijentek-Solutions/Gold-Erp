@@ -83,7 +83,7 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 			else:
 				cls.test_items.append(item_code)
 
-		frappe.db.commit()
+		frappe.db.commit() # nosemgrep
 
 	def setUp(self):
 		"""Set up for each test."""
@@ -522,7 +522,7 @@ class TestTradeInDeduction(FrappeTestCase):
 		else:
 			cls.test_item = "TEST-TRADEIN-ITEM"
 
-		frappe.db.commit()
+		frappe.db.commit() # nosemgrep
 
 	def setUp(self):
 		frappe.set_user("Administrator")

@@ -11,19 +11,21 @@ import QuickLayawayModal from '../../src/components/QuickLayawayModal.vue'
 // Mock frappe-ui
 vi.mock('frappe-ui', () => ({
 	createResource: vi.fn(() => ({
-		fetch: vi.fn(() => Promise.resolve({
-			preview: {
-				total: 1000,
-				down_payment: 200,
-				balance: 800,
-				monthly_payment: 266.67
-			},
-			payment_schedule: [
-				{ installment: 1, due_date: '2026-04-11', amount: 266.67, status: 'Pending' },
-				{ installment: 2, due_date: '2026-05-11', amount: 266.67, status: 'Pending' },
-				{ installment: 3, due_date: '2026-06-11', amount: 266.66, status: 'Pending' },
-			]
-		})),
+		fetch: vi.fn(() =>
+			Promise.resolve({
+				preview: {
+					total: 1000,
+					down_payment: 200,
+					balance: 800,
+					monthly_payment: 266.67,
+				},
+				payment_schedule: [
+					{ installment: 1, due_date: '2026-04-11', amount: 266.67, status: 'Pending' },
+					{ installment: 2, due_date: '2026-05-11', amount: 266.67, status: 'Pending' },
+					{ installment: 3, due_date: '2026-06-11', amount: 266.66, status: 'Pending' },
+				],
+			})
+		),
 	})),
 }))
 
@@ -262,7 +264,7 @@ describe('QuickLayawayModal', () => {
 			})
 
 			const buttons = wrapper.findAll('button')
-			buttons.forEach(btn => {
+			buttons.forEach((btn) => {
 				expect(btn.attributes('disabled')).toBeDefined()
 			})
 		})

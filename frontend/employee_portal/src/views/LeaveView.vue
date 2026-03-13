@@ -4,20 +4,44 @@
 		<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4 shrink-0">
 			<div class="premium-card !p-4">
 				<p class="status-label">Annual Leave</p>
-				<p class="text-lg sm:text-2xl font-bold font-mono text-gray-900 dark:text-white">{{ getLeaveBalance('Annual Leave') }}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1">days</span></p>
+				<p class="text-lg sm:text-2xl font-bold font-mono text-gray-900 dark:text-white">
+					{{ getLeaveBalance("Annual Leave")
+					}}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1"
+						>days</span
+					>
+				</p>
 			</div>
 			<div class="premium-card !p-4">
 				<p class="status-label">Sick Leave</p>
-				<p class="text-lg sm:text-2xl font-bold font-mono text-gray-900 dark:text-white">{{ getLeaveBalance('Sick Leave') }}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1">days</span></p>
+				<p class="text-lg sm:text-2xl font-bold font-mono text-gray-900 dark:text-white">
+					{{ getLeaveBalance("Sick Leave")
+					}}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1"
+						>days</span
+					>
+				</p>
 			</div>
 			<div class="premium-card !p-4">
 				<p class="status-label">Pending</p>
-				<p class="text-lg sm:text-2xl font-bold text-amber-500 dark:text-amber-400 font-mono">{{ pendingCount }}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1">req</span></p>
+				<p
+					class="text-lg sm:text-2xl font-bold text-amber-500 dark:text-amber-400 font-mono"
+				>
+					{{ pendingCount
+					}}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1"
+						>req</span
+					>
+				</p>
 			</div>
 			<div class="premium-card !p-4 flex items-center justify-between">
 				<div>
 					<p class="status-label">Total Used</p>
-					<p class="text-lg sm:text-2xl font-bold font-mono text-gray-900 dark:text-white">{{ totalUsedDays }}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1">days</span></p>
+					<p
+						class="text-lg sm:text-2xl font-bold font-mono text-gray-900 dark:text-white"
+					>
+						{{ totalUsedDays
+						}}<span class="text-xs sm:text-sm text-gray-500 dark:text-white/40 ml-1"
+							>days</span
+						>
+					</p>
 				</div>
 				<button
 					@click="showLeaveModal = true"
@@ -41,21 +65,33 @@
 						<button
 							@click="filterHistory = 'all'"
 							class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[9px] sm:text-[10px] font-bold uppercase transition"
-							:class="filterHistory === 'all' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white'"
+							:class="
+								filterHistory === 'all'
+									? 'bg-white/10 text-white'
+									: 'text-white/40 hover:text-white'
+							"
 						>
 							All
 						</button>
 						<button
 							@click="filterHistory = 'pending'"
 							class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-[9px] sm:text-[10px] font-bold uppercase transition"
-							:class="filterHistory === 'pending' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white'"
+							:class="
+								filterHistory === 'pending'
+									? 'bg-white/10 text-white'
+									: 'text-white/40 hover:text-white'
+							"
 						>
 							Pending
 						</button>
 						<button
 							@click="filterHistory = 'approved'"
 							class="hidden sm:block px-3 py-1.5 rounded-lg text-[10px] font-bold uppercase transition"
-							:class="filterHistory === 'approved' ? 'bg-white/10 text-white' : 'text-white/40 hover:text-white'"
+							:class="
+								filterHistory === 'approved'
+									? 'bg-white/10 text-white'
+									: 'text-white/40 hover:text-white'
+							"
 						>
 							Approved
 						</button>
@@ -63,7 +99,9 @@
 				</div>
 
 				<!-- Table Header - Hidden on mobile -->
-				<div class="hidden sm:grid premium-card !p-3 !rounded-t-xl grid-cols-5 gap-2 sm:gap-4 text-[9px] sm:text-[10px] uppercase tracking-widest text-white/40 font-bold border-b border-white/5">
+				<div
+					class="hidden sm:grid premium-card !p-3 !rounded-t-xl grid-cols-5 gap-2 sm:gap-4 text-[9px] sm:text-[10px] uppercase tracking-widest text-white/40 font-bold border-b border-white/5"
+				>
 					<div>Leave Type</div>
 					<div>Date Range</div>
 					<div>Duration</div>
@@ -74,7 +112,9 @@
 				<!-- Leave Records -->
 				<div class="flex-1 overflow-y-auto custom-scrollbar">
 					<div v-if="filteredApplications.length === 0" class="text-center py-12">
-						<span class="material-symbols-outlined text-4xl text-white/20 mb-3">beach_access</span>
+						<span class="material-symbols-outlined text-4xl text-white/20 mb-3"
+							>beach_access</span
+						>
 						<p class="text-white/40 text-sm">No leave applications found</p>
 					</div>
 
@@ -90,13 +130,29 @@
 								<span
 									class="text-[9px] px-2 py-1 rounded-full font-bold uppercase"
 									:class="getStatusStyle(app.status)"
-								>{{ app.status }}</span>
+									>{{ app.status }}</span
+								>
 							</div>
 							<div class="flex items-center justify-between text-[10px]">
-								<span class="text-white/60">{{ formatDateShort(app.from_date) }}{{ app.to_date && app.from_date !== app.to_date ? ' - ' + formatDateShort(app.to_date) : '' }}</span>
-								<span class="text-white/40">{{ app.total_leave_days || 1 }} {{ (app.total_leave_days || 1) === 1 ? 'day' : 'days' }}</span>
+								<span class="text-white/60"
+									>{{ formatDateShort(app.from_date)
+									}}{{
+										app.to_date && app.from_date !== app.to_date
+											? " - " + formatDateShort(app.to_date)
+											: ""
+									}}</span
+								>
+								<span class="text-white/40"
+									>{{ app.total_leave_days || 1 }}
+									{{ (app.total_leave_days || 1) === 1 ? "day" : "days" }}</span
+								>
 							</div>
-							<p v-if="app.description" class="text-[10px] text-white/30 mt-2 truncate">{{ app.description }}</p>
+							<p
+								v-if="app.description"
+								class="text-[10px] text-white/30 mt-2 truncate"
+							>
+								{{ app.description }}
+							</p>
 						</div>
 					</div>
 
@@ -108,20 +164,35 @@
 							class="grid grid-cols-5 gap-2 sm:gap-4 px-3 sm:px-4 py-2 sm:py-3 border-b border-white/5 hover:bg-white/[0.02] transition-colors items-center"
 						>
 							<div>
-								<p class="text-xs sm:text-sm font-bold text-white">{{ app.leave_type }}</p>
+								<p class="text-xs sm:text-sm font-bold text-white">
+									{{ app.leave_type }}
+								</p>
 							</div>
 							<div>
-								<p class="text-xs sm:text-sm text-white">{{ formatDateShort(app.from_date) }}</p>
-								<p v-if="app.to_date && app.from_date !== app.to_date" class="text-[9px] sm:text-[10px] text-white/30">
+								<p class="text-xs sm:text-sm text-white">
+									{{ formatDateShort(app.from_date) }}
+								</p>
+								<p
+									v-if="app.to_date && app.from_date !== app.to_date"
+									class="text-[9px] sm:text-[10px] text-white/30"
+								>
 									to {{ formatDateShort(app.to_date) }}
 								</p>
 							</div>
 							<div>
-								<span class="text-xs sm:text-sm font-mono text-white">{{ app.total_leave_days || 1 }}</span>
-								<span class="text-[9px] sm:text-[10px] text-white/40 ml-1">{{ (app.total_leave_days || 1) === 1 ? 'day' : 'days' }}</span>
+								<span class="text-xs sm:text-sm font-mono text-white">{{
+									app.total_leave_days || 1
+								}}</span>
+								<span class="text-[9px] sm:text-[10px] text-white/40 ml-1">{{
+									(app.total_leave_days || 1) === 1 ? "day" : "days"
+								}}</span>
 							</div>
 							<div>
-								<p class="text-[10px] sm:text-xs text-white/50 truncate max-w-[100px] sm:max-w-[150px]">{{ app.description || 'No reason provided' }}</p>
+								<p
+									class="text-[10px] sm:text-xs text-white/50 truncate max-w-[100px] sm:max-w-[150px]"
+								>
+									{{ app.description || "No reason provided" }}
+								</p>
 							</div>
 							<div>
 								<span
@@ -139,10 +210,7 @@
 			<!-- Mini Calendar - Hidden on mobile -->
 			<div class="hidden lg:block w-72 shrink-0">
 				<div class="premium-card !p-4">
-					<StandardCalendar 
-						v-model="currentDate"
-						:events="allEventDates"
-					/>
+					<StandardCalendar v-model="currentDate" :events="allEventDates" />
 				</div>
 
 				<!-- Quick Info -->
@@ -173,7 +241,10 @@
 
 					<div class="space-y-4">
 						<div>
-							<label class="block text-[10px] text-white/40 uppercase tracking-widest mb-2">Leave Type</label>
+							<label
+								class="block text-[10px] text-white/40 uppercase tracking-widest mb-2"
+								>Leave Type</label
+							>
 							<select
 								v-model="newLeave.leave_type"
 								class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-primary/50"
@@ -191,7 +262,10 @@
 
 						<div class="grid grid-cols-2 gap-4">
 							<div>
-								<label class="block text-[10px] text-white/40 uppercase tracking-widest mb-2">From Date</label>
+								<label
+									class="block text-[10px] text-white/40 uppercase tracking-widest mb-2"
+									>From Date</label
+								>
 								<input
 									v-model="newLeave.from_date"
 									type="date"
@@ -199,7 +273,10 @@
 								/>
 							</div>
 							<div>
-								<label class="block text-[10px] text-white/40 uppercase tracking-widest mb-2">To Date</label>
+								<label
+									class="block text-[10px] text-white/40 uppercase tracking-widest mb-2"
+									>To Date</label
+								>
 								<input
 									v-model="newLeave.to_date"
 									type="date"
@@ -209,7 +286,10 @@
 						</div>
 
 						<div>
-							<label class="block text-[10px] text-white/40 uppercase tracking-widest mb-2">Reason</label>
+							<label
+								class="block text-[10px] text-white/40 uppercase tracking-widest mb-2"
+								>Reason</label
+							>
 							<textarea
 								v-model="newLeave.description"
 								rows="3"
@@ -283,7 +363,7 @@ const daysInMonth = computed(() => {
 
 const allEventDates = computed(() => {
 	const dates = [];
-	leaveStore.leaveApplications.forEach(app => {
+	leaveStore.leaveApplications.forEach((app) => {
 		const start = new Date(app.from_date);
 		const end = new Date(app.to_date || app.from_date);
 		for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
@@ -297,12 +377,12 @@ const allEventDates = computed(() => {
 const leaveDates = computed(() => {
 	const dates = new Set();
 	leaveStore.leaveApplications
-		.filter(app => app.status === 'Approved')
-		.forEach(app => {
+		.filter((app) => app.status === "Approved")
+		.forEach((app) => {
 			const start = new Date(app.from_date);
 			const end = new Date(app.to_date || app.from_date);
 			for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
-				dates.add(d.toISOString().split('T')[0]);
+				dates.add(d.toISOString().split("T")[0]);
 			}
 		});
 	return dates;
@@ -311,12 +391,12 @@ const leaveDates = computed(() => {
 const pendingDates = computed(() => {
 	const dates = new Set();
 	leaveStore.leaveApplications
-		.filter(app => app.status === 'Open' || app.status === 'Pending')
-		.forEach(app => {
+		.filter((app) => app.status === "Open" || app.status === "Pending")
+		.forEach((app) => {
 			const start = new Date(app.from_date);
 			const end = new Date(app.to_date || app.from_date);
 			for (let d = start; d <= end; d.setDate(d.getDate() + 1)) {
-				dates.add(d.toISOString().split('T')[0]);
+				dates.add(d.toISOString().split("T")[0]);
 			}
 		});
 	return dates;
@@ -329,7 +409,7 @@ const calendarDays = computed(() => {
 
 	for (let i = 1; i <= daysInMonth.value; i++) {
 		const dayDate = new Date(currentDate.value.getFullYear(), currentDate.value.getMonth(), i);
-		const dateStr = dayDate.toISOString().split('T')[0];
+		const dateStr = dayDate.toISOString().split("T")[0];
 		const isToday =
 			dayDate.getDate() === today.getDate() &&
 			dayDate.getMonth() === today.getMonth() &&
@@ -354,23 +434,23 @@ const calendarDays = computed(() => {
 // Stats
 const pendingCount = computed(() => {
 	return leaveStore.leaveApplications.filter(
-		app => app.status === 'Open' || app.status === 'Pending'
+		(app) => app.status === "Open" || app.status === "Pending"
 	).length;
 });
 
 const totalUsedDays = computed(() => {
 	return leaveStore.leaveApplications
-		.filter(app => app.status === 'Approved')
+		.filter((app) => app.status === "Approved")
 		.reduce((sum, app) => sum + (app.total_leave_days || 1), 0);
 });
 
 // Filtered applications
 const filteredApplications = computed(() => {
 	let apps = leaveStore.leaveApplications;
-	if (filterHistory.value === 'pending') {
-		apps = apps.filter(app => app.status === 'Open' || app.status === 'Pending');
-	} else if (filterHistory.value === 'approved') {
-		apps = apps.filter(app => app.status === 'Approved');
+	if (filterHistory.value === "pending") {
+		apps = apps.filter((app) => app.status === "Open" || app.status === "Pending");
+	} else if (filterHistory.value === "approved") {
+		apps = apps.filter((app) => app.status === "Approved");
 	}
 	return apps.sort((a, b) => new Date(b.from_date) - new Date(a.from_date));
 });
@@ -381,7 +461,7 @@ const canSubmitLeave = computed(() => {
 
 // Helper functions
 function getLeaveBalance(type) {
-	const balance = leaveStore.leaveBalances.find(b => b.leave_type === type);
+	const balance = leaveStore.leaveBalances.find((b) => b.leave_type === type);
 	return balance?.balance || 0;
 }
 

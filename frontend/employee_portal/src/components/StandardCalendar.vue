@@ -48,7 +48,7 @@
 						? 'bg-primary text-black font-bold shadow-lg shadow-primary/20 scale-110 z-10'
 						: isToday(d)
 						? 'bg-primary/10 text-primary font-bold'
-						: 'text-gray-600 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-white/5'
+						: 'text-gray-600 dark:text-white/60 hover:bg-gray-100 dark:hover:bg-white/5',
 				]"
 			>
 				{{ d }}
@@ -70,27 +70,29 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue';
+import { computed, ref } from "vue";
 
 const props = defineProps({
 	modelValue: {
 		type: [Date, String, null],
-		default: null
+		default: null,
 	},
 	events: {
 		type: Array, // Array of date strings 'YYYY-MM-DD'
-		default: () => []
-	}
+		default: () => [],
+	},
 });
 
-const emit = defineEmits(['update:modelValue', 'change']);
+const emit = defineEmits(["update:modelValue", "change"]);
 
 const now = new Date();
 const currentMonth = ref(now.getMonth());
 const currentYear = ref(now.getFullYear());
 
 const monthName = computed(() => {
-	return new Intl.DateTimeFormat('en-US', { month: 'long' }).format(new Date(currentYear.value, currentMonth.value));
+	return new Intl.DateTimeFormat("en-US", { month: "long" }).format(
+		new Date(currentYear.value, currentMonth.value)
+	);
 });
 
 const daysInMonth = computed(() => {
@@ -120,37 +122,44 @@ const nextMonth = () => {
 };
 
 const isToday = (day) => {
-	return day === now.getDate() && 
-		   currentMonth.value === now.getMonth() && 
-		   currentYear.value === now.getFullYear();
+	return (
+		day === now.getDate() &&
+		currentMonth.value === now.getMonth() &&
+		currentYear.value === now.getFullYear()
+	);
 };
 
 const isSelected = (day) => {
 	if (!props.modelValue) return false;
 	const d = new Date(props.modelValue);
-	return day === d.getDate() && 
-		   currentMonth.value === d.getMonth() && 
-		   currentYear.value === d.getFullYear();
+	return (
+		day === d.getDate() &&
+		currentMonth.value === d.getMonth() &&
+		currentYear.value === d.getFullYear()
+	);
 };
 
 const hasEvent = (day) => {
-	const dateStr = `${currentYear.value}-${String(currentMonth.value + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+	const dateStr = `${currentYear.value}-${String(currentMonth.value + 1).padStart(
+		2,
+		"0"
+	)}-${String(day).padStart(2, "0")}`;
 	return props.events.includes(dateStr);
 };
 
 const selectDate = (day) => {
 	const date = new Date(currentYear.value, currentMonth.value, day);
-	emit('update:modelValue', date);
-	emit('change', date);
+	emit("update:modelValue", date);
+	emit("change", date);
 };
 
 const selectedFormatted = computed(() => {
-	if (!props.modelValue) return 'No date selected';
-	return new Intl.DateTimeFormat('en-US', { 
-		weekday: 'long', 
-		year: 'numeric', 
-		month: 'long', 
-		day: 'numeric' 
+	if (!props.modelValue) return "No date selected";
+	return new Intl.DateTimeFormat("en-US", {
+		weekday: "long",
+		year: "numeric",
+		month: "long",
+		day: "numeric",
 	}).format(new Date(props.modelValue));
 });
 </script>

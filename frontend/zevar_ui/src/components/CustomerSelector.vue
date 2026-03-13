@@ -21,7 +21,14 @@
 				<div>
 					<div class="font-semibold text-gray-900 dark:text-white text-sm">
 						{{ customer.display_name || customer.customer_name || customer.name }}
-						<span v-if="customer.name && customer.name !== (customer.display_name || customer.customer_name)" class="text-xs text-gray-500 font-normal ml-1">({{ customer.name }})</span>
+						<span
+							v-if="
+								customer.name &&
+								customer.name !== (customer.display_name || customer.customer_name)
+							"
+							class="text-xs text-gray-500 font-normal ml-1"
+							>({{ customer.name }})</span
+						>
 					</div>
 					<div
 						v-if="customer.mobile_no || customer.email_id"
@@ -152,7 +159,11 @@
 								class="font-medium text-gray-900 dark:text-white text-sm truncate"
 							>
 								{{ result.display_name || result.customer_name }}
-								<span v-if="result.customer_name !== result.display_name" class="text-xs text-gray-500 font-normal ml-1">({{ result.customer_name }})</span>
+								<span
+									v-if="result.customer_name !== result.display_name"
+									class="text-xs text-gray-500 font-normal ml-1"
+									>({{ result.customer_name }})</span
+								>
 							</div>
 							<div class="text-xs text-gray-500 truncate">
 								{{
@@ -167,7 +178,10 @@
 					<!-- Create New Customer Option -->
 					<button
 						v-if="showCreateOption"
-						@click="showCreateModal = true; showDropdown = false"
+						@click="
+							showCreateModal = true;
+							showDropdown = false;
+						"
 						class="w-full px-4 py-3 text-left hover:bg-[#D4AF37]/10 flex items-center gap-3 border-t-2 border-gray-100 dark:border-white/10"
 					>
 						<div
@@ -275,7 +289,12 @@
 										<label
 											class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1 block"
 										>
-											{{ cart.customerType === 'Company' ? 'Company Name' : 'Full Name' }} <span class="text-red-500">*</span>
+											{{
+												cart.customerType === 'Company'
+													? 'Company Name'
+													: 'Full Name'
+											}}
+											<span class="text-red-500">*</span>
 										</label>
 										<input
 											v-model="newCustomer.name"
@@ -638,7 +657,10 @@
 							class="p-6 pt-4 border-t border-gray-100 dark:border-white/10 flex gap-3 flex-shrink-0"
 						>
 							<button
-								@click="showCreateModal = false; resetCreateForm()"
+								@click="
+										showCreateModal = false;
+										resetCreateForm();
+									"
 								class="flex-1 py-2.5 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 transition"
 							>
 								Cancel

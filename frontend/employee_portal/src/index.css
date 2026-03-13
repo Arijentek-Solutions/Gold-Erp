@@ -307,6 +307,88 @@ h6 {
     font-family: 'Cinzel', serif;
 }
 
+/* Premium Select Component */
+.premium-select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='rgba(255,255,255,0.4)'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1.25em;
+    padding-right: 2.5rem !important;
+}
+
+html:not(.dark) .premium-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='rgba(0,0,0,0.4)'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+}
+
+.premium-select:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+html:not(.dark) .premium-select:hover {
+    border-color: rgba(0, 0, 0, 0.15);
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+.premium-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary-color) 20%, transparent);
+}
+
+.premium-select option {
+    background-color: #111420;
+    color: white;
+}
+
+html:not(.dark) .premium-select {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+html:not(.dark) .premium-select option {
+    background-color: white;
+    color: #111827;
+}
+
+/* Forced Vibrancy & Theme Classes */
+.btn-vibrant-sky {
+    background-color: #0ea5e9 !important; /* Sky-500 */
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.05em !important;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4) !important;
+    border: none !important;
+    transition: all 0.2s ease;
+}
+
+.btn-vibrant-sky:hover:not(:disabled) {
+    background-color: #38bdf8 !important; /* Sky-400 */
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(14, 165, 233, 0.5) !important;
+}
+
+.btn-vibrant-sky:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed;
+}
+
+.text-vibrant-emerald {
+    color: #10b981 !important; /* Emerald-500 */
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.premium-input-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Attendance Table Enhancements */
+.attendance-header-shiny {
+    background: linear-gradient(to right, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+    border-bottom: 2px solid rgba(16, 185, 129, 0.3) !important;
+}
+
 /* Transitions */
 button,
 a {

@@ -29,11 +29,15 @@
 					</div>
 					<div class="summary-item">
 						<span class="label">Opening Balance</span>
-						<span class="value">${{ formatAmount(sessionStatus.session?.opening_balance) }}</span>
+						<span class="value"
+							>${{ formatAmount(sessionStatus.session?.opening_balance) }}</span
+						>
 					</div>
 					<div class="summary-item">
 						<span class="label">Total Sales</span>
-						<span class="value">${{ formatAmount(sessionStatus.session?.sales_total) }}</span>
+						<span class="value"
+							>${{ formatAmount(sessionStatus.session?.sales_total) }}</span
+						>
 					</div>
 					<div class="summary-item">
 						<span class="label">Sales Count</span>
@@ -73,7 +77,11 @@
 				<div class="form-group">
 					<label>Cash Breakdown (Optional)</label>
 					<div class="breakdown-grid">
-						<div v-for="denom in denominations" :key="denom.value" class="breakdown-item">
+						<div
+							v-for="denom in denominations"
+							:key="denom.value"
+							class="breakdown-item"
+						>
 							<label>${{ denom.value }}</label>
 							<input
 								type="number"
@@ -147,9 +155,7 @@
 						<strong>${{ formatAmount(Math.abs(closingResult.variance)) }}</strong>
 					</div>
 				</div>
-				<router-link to="/pos" class="btn btn-primary">
-					Done
-				</router-link>
+				<router-link to="/pos" class="btn btn-primary"> Done </router-link>
 			</div>
 		</div>
 	</div>
@@ -168,13 +174,20 @@ const calculatedTotal = ref(0)
 const form = ref({
 	closing_balance: 0,
 	cash_breakdown: {},
-	notes: ''
+	notes: '',
 })
 
 const denominations = [
-	{ value: 100 }, { value: 50 }, { value: 20 }, { value: 10 },
-	{ value: 5 }, { value: 1 }, { value: 0.25 }, { value: 0.10 },
-	{ value: 0.05 }, { value: 0.01 }
+	{ value: 100 },
+	{ value: 50 },
+	{ value: 20 },
+	{ value: 10 },
+	{ value: 5 },
+	{ value: 1 },
+	{ value: 0.25 },
+	{ value: 0.1 },
+	{ value: 0.05 },
+	{ value: 0.01 },
 ]
 
 // Computed
@@ -206,12 +219,12 @@ const sessionStatusResource = createResource({
 	auto: true,
 	onSuccess(data) {
 		sessionStatus.value = data
-	}
+	},
 })
 
 const closeSessionResource = createResource({
 	url: 'zevar_core.api.pos_session.close_pos_session',
-	auto: false
+	auto: false,
 })
 
 // Methods
@@ -251,9 +264,9 @@ async function submitClosing() {
 					mode_of_payment: 'Cash',
 					denomination: parseFloat(denom),
 					count: count,
-					amount: count * parseFloat(denom)
+					amount: count * parseFloat(denom),
 				})),
-			notes: form.value.notes
+			notes: form.value.notes,
 		})
 
 		if (result.success) {
@@ -269,7 +282,7 @@ async function submitClosing() {
 
 onMounted(() => {
 	// Initialize cash breakdown object
-	denominations.forEach(d => {
+	denominations.forEach((d) => {
 		if (form.value.cash_breakdown[d.value] === undefined) {
 			form.value.cash_breakdown[d.value] = 0
 		}
@@ -391,7 +404,7 @@ onMounted(() => {
 }
 
 .form-group select,
-.form-group input[type="number"],
+.form-group input[type='number'],
 .form-group textarea {
 	width: 100%;
 	padding: 12px 16px;
@@ -495,9 +508,15 @@ onMounted(() => {
 	color: white;
 }
 
-.variance-display.balanced .variance-amount { color: #22c55e; }
-.variance-display.excess .variance-amount { color: #3b82f6; }
-.variance-display.shortage .variance-amount { color: #ef4444; }
+.variance-display.balanced .variance-amount {
+	color: #22c55e;
+}
+.variance-display.excess .variance-amount {
+	color: #3b82f6;
+}
+.variance-display.shortage .variance-amount {
+	color: #ef4444;
+}
 
 .variance-status {
 	font-size: 14px;

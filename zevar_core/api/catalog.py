@@ -113,7 +113,7 @@ def get_pos_items(
 		"Item",
 		filters=query_filters,
 		fields=_get_item_fields(),
-		order_by="custom_is_featured desc, custom_is_trending desc, item_group asc",
+		order_by="custom_is_featured desc, custom_is_trending desc, custom_jewelry_type asc, item_name asc",
 		start=int(start),
 		page_length=fetch_length,
 		ignore_permissions=True,
@@ -177,8 +177,8 @@ def get_pos_items(
 
 		pos_items.append(_build_item_dict(item, qty, final_price))
 
-	# Sort: In-stock items first, then out-of-stock
-	pos_items.sort(key=lambda x: (x["stock_qty"] <= 0, -x["stock_qty"]))
+	# Keep the default catalog view sale-friendly: in-stock first, then featured groups.
+	pos_items.sort(key=_get_pos_sort_key)
 
 	return pos_items[:page_length]
 
@@ -382,3 +382,14 @@ def _build_item_dict(item, qty, final_price):
 		"is_featured": item.custom_is_featured,
 		"is_trending": item.custom_is_trending,
 	}
+
+
+def _get_pos_sort_key(item: dict) -> tuple:
+	"""Sort sellable items ahead of unavailable ones, then group by jewelry type and name."""
+	return (
+		item["stock_qty"] <= 0,
+		0 if item.get("is_featured") else 1,
+		0 if item.get("is_trending") else 1,
+		(item.get("jewelry_type") or item.get("item_group") or "").casefold(),
+		(item.get("item_name") or "").casefold(),
+	)

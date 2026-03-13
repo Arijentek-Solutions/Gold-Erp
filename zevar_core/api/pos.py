@@ -33,59 +33,93 @@ def create_pos_invoice(
 
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
 
-	if not warehouse:
-		frappe.throw(_("Warehouse is required to process POS transactions."), frappe.ValidationError)
-
 	items_list = frappe.parse_json(items) if isinstance(items, str) else items
 	payments_list = frappe.parse_json(payments) if isinstance(payments, str) else payments
 	trade_in_list = frappe.parse_json(trade_ins) if trade_ins else []
 
 	if not items_list:
-		frappe.throw(_("At least one item is required."))
+		frappe.throw(_("At least one item is required."), frappe.ValidationError)
 
 	# Debug logging
-	frappe.log_error("POS Invoice Debug Params", frappe.as_json({
-		"items": items,
-		"payments": payments,
-		"customer": customer,
-		"warehouse": warehouse,
-		"discount_amount": discount_amount,
-		"tax_exempt": tax_exempt,
-		"salespersons": salespersons,
-		"layaway_reference": layaway_reference,
-		"trade_ins": trade_ins,
-		"gift_card_number": gift_card_number
-	}))
+	frappe.log_error(
+		"POS Invoice Debug Params",
+		frappe.as_json(
+			{
+				"items": items,
+				"payments": payments,
+				"customer": customer,
+				"warehouse": warehouse,
+				"discount_amount": discount_amount,
+				"tax_exempt": tax_exempt,
+				"salespersons": salespersons,
+				"layaway_reference": layaway_reference,
+				"trade_ins": trade_ins,
+				"gift_card_number": gift_card_number,
+			}
+		),
+	)
 
 	if not payments_list:
-		frappe.throw(_("At least one payment mode is required."))
+		frappe.throw(_("At least one payment mode is required."), frappe.ValidationError)
 
+	# Validate all items before creating invoice
 	for item in items_list:
 		if not item.get("item_code"):
-			frappe.throw(_("Each item must have an item_code."))
+			frappe.throw(_("Each item must have an item_code."), frappe.ValidationError)
 		if flt(item.get("qty", 0)) <= 0:
-			frappe.throw(_("Item {0}: quantity must be greater than zero.").format(item.get("item_code")))
-		if flt(item.get("rate", 0)) <= 0:
-			frappe.throw(_("Item {0}: rate must be greater than zero.").format(item.get("item_code")))
+			frappe.throw(
+				_("Item {0}: quantity must be greater than zero.").format(item.get("item_code")),
+				frappe.ValidationError,
+			)
+		if flt(item.get("rate", 0)) < 0:
+			frappe.throw(
+				_("Item {0}: rate cannot be negative.").format(item.get("item_code")), frappe.ValidationError
+			)
+		# Verify item exists in the system
+		if not frappe.db.exists("Item", item.get("item_code")):
+			frappe.throw(
+				_("Item '{0}' not found in the system.").format(item.get("item_code")), frappe.ValidationError
+			)
 
 	if not warehouse:
+		# Try to get warehouse from active store location
 		store_loc = frappe.db.get_value("Store Location", {"is_active": 1}, "default_warehouse")
 		if store_loc:
 			warehouse = store_loc
+		else:
+			# Try to get default warehouse from company
+			company = frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
+				"Global Defaults", "default_company"
+			)
+			if company:
+				warehouse = frappe.db.get_value("Company", company, "default_warehouse")
 
-	if not warehouse or not frappe.db.exists("Warehouse", warehouse):
+	if not warehouse:
 		frappe.throw(
-			_(
-				"Warehouse '{0}' not found. Please ensure a store location has an active default warehouse."
-			).format(warehouse)
+			_("Warehouse is required. Please select a store location or configure a default warehouse."),
+			frappe.ValidationError,
+		)
+
+	if not frappe.db.exists("Warehouse", warehouse):
+		frappe.throw(
+			_("Warehouse '{0}' not found. Please ensure a valid warehouse is configured.").format(warehouse),
+			frappe.ValidationError,
 		)
 
 	salesperson_data = []
 	if salespersons:
 		salesperson_data = frappe.parse_json(salespersons) if isinstance(salespersons, str) else salespersons
+		# Validate each salesperson exists
+		for sp in salesperson_data[:4]:
+			emp = sp.get("salesperson") or sp.get("employee")
+			if emp and not frappe.db.exists("Employee", emp):
+				frappe.throw(_("Salesperson '{0}' not found.").format(emp), frappe.ValidationError)
 		total_split = sum(flt(sp.get("split")) for sp in salesperson_data[:4])
 		if salesperson_data and abs(total_split - 100) > 0.01:
-			frappe.throw(_("Salesperson splits must total 100%. Current total: {0}%").format(total_split))
+			frappe.throw(
+				_("Salesperson splits must total 100%. Current total: {0}%").format(total_split),
+				frappe.ValidationError,
+			)
 
 	is_tax_exempt = str(tax_exempt).lower() in ["true", "1", "t", "y", "yes"]
 
@@ -94,10 +128,18 @@ def create_pos_invoice(
 
 	if not frappe.db.exists("Customer", customer):
 		if customer == "Walk-In Customer":
-			from zevar_core.api.customer import quick_create_customer
-			quick_create_customer(customer_name="Walk-In Customer")
+			try:
+				from zevar_core.api.customer import quick_create_customer
+
+				quick_create_customer(customer_name="Walk-In Customer")
+			except Exception:
+				# If quick_create_customer fails, create basic customer directly
+				cust = frappe.new_doc("Customer")
+				cust.customer_name = "Walk-In Customer"
+				cust.customer_type = "Individual"
+				cust.insert(ignore_permissions=True)
 		else:
-			frappe.throw(_("Customer '{0}' not found.").format(customer))
+			frappe.throw(_("Customer '{0}' not found.").format(customer), frappe.ValidationError)
 
 	# Validate gift card before creating invoice
 	gc_payment_amount = 0
@@ -109,22 +151,27 @@ def create_pos_invoice(
 
 	if gc_payment_amount > 0:
 		if not gift_card_number:
-			frappe.throw(_("Gift Card number is required when using Gift Card payment."))
+			frappe.throw(
+				_("Gift Card number is required when using Gift Card payment."), frappe.ValidationError
+			)
 		if not frappe.db.exists("Gift Card", gift_card_number):
-			frappe.throw(_("Gift Card '{0}' not found.").format(gift_card_number))
+			frappe.throw(_("Gift Card '{0}' not found.").format(gift_card_number), frappe.ValidationError)
 
 		from frappe.utils import getdate, today
 
 		gc_doc = frappe.get_doc("Gift Card", gift_card_number)
 		if gc_doc.status != "Active":
-			frappe.throw(_("Gift Card is {0}. Cannot process payment.").format(gc_doc.status))
+			frappe.throw(
+				_("Gift Card is {0}. Cannot process payment.").format(gc_doc.status), frappe.ValidationError
+			)
 		if gc_doc.expiry_date and getdate(gc_doc.expiry_date) < getdate(today()):
-			frappe.throw(_("Gift Card has expired."))
+			frappe.throw(_("Gift Card has expired."), frappe.ValidationError)
 		if gc_payment_amount > flt(gc_doc.balance):
 			frappe.throw(
 				_("Gift Card balance insufficient. Available: {0}, Requested: {1}").format(
 					flt(gc_doc.balance), gc_payment_amount
-				)
+				),
+				frappe.ValidationError,
 			)
 
 	try:
@@ -248,12 +295,21 @@ def create_pos_invoice(
 			"message": f"Successfully created invoice {si.name}",
 		}
 
+	except frappe.ValidationError as e:
+		frappe.db.rollback()
+		frappe.log_error("POS Invoice Validation Error", frappe.get_traceback())
+		# Re-raise with clear message
+		frappe.throw(
+			str(e) or _("Validation error occurred. Please check the form data."), frappe.ValidationError
+		)
 	except Exception as e:
 		frappe.db.rollback()
 		frappe.log_error("POS Invoice Creation Failed", frappe.get_traceback())
-		if isinstance(e, frappe.ValidationError):
-			raise
-		frappe.throw(_("Failed to create POS Invoice: {0}").format(str(e)))
+		# Extract meaningful error message
+		error_msg = str(e)
+		if "ValidationError" in error_msg or "validation" in error_msg.lower():
+			frappe.throw(_("Validation error: {0}").format(error_msg), frappe.ValidationError)
+		frappe.throw(_("Failed to create POS Invoice: {0}").format(error_msg))
 
 
 @frappe.whitelist()

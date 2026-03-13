@@ -124,8 +124,7 @@ def get_chart_data(filters=None):
 
 	return {
 		"labels": hours,
-		"datasets": [{
-			"name": "Sales by Hour",
-			"values": [flt(chart_data.get(hour, 0)) for hour in range(24)]
-		}]
+		"datasets": [
+			{"name": "Sales by Hour", "values": [flt(chart_data.get(hour, 0)) for hour in range(24)]}
+		],
 	}

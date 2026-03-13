@@ -34,4 +34,4 @@ def create_required_modes_of_payment():
 			doc.enabled = 1
 			doc.save(ignore_permissions=True)
 
-	frappe.db.commit()
+	frappe.db.commit() # nosemgrep (manual commit during install)

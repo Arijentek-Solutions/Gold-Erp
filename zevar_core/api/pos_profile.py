@@ -44,9 +44,9 @@ def get_pos_profiles() -> dict:
 	for profile in profiles:
 		# Get warehouse name if available
 		if profile.warehouse:
-			profile.warehouse_name = frappe.db.get_value(
-				"Warehouse", profile.warehouse, "warehouse_name"
-			) or profile.warehouse
+			profile.warehouse_name = (
+				frappe.db.get_value("Warehouse", profile.warehouse, "warehouse_name") or profile.warehouse
+			)
 
 		# Get store location linked to this profile's warehouse
 		if profile.warehouse:
@@ -80,11 +80,7 @@ def get_active_profile() -> dict:
 	user = frappe.session.user
 
 	# Try to get from user's default
-	default_profile = frappe.db.get_value(
-		"User",
-		user,
-		"pos_profile"
-	)
+	default_profile = frappe.db.get_value("User", user, "pos_profile")
 
 	# Check if user has a store location assignment with POS profile
 	if not default_profile:
@@ -131,9 +127,9 @@ def get_active_profile() -> dict:
 
 	# Get warehouse name
 	if profile.warehouse:
-		active_profile["warehouse_name"] = frappe.db.get_value(
-			"Warehouse", profile.warehouse, "warehouse_name"
-		) or profile.warehouse
+		active_profile["warehouse_name"] = (
+			frappe.db.get_value("Warehouse", profile.warehouse, "warehouse_name") or profile.warehouse
+		)
 
 	# Get store location info
 	if profile.warehouse:
@@ -154,10 +150,12 @@ def get_active_profile() -> dict:
 	payment_modes = []
 	if hasattr(profile, "payments") and profile.payments:
 		for p in profile.payments:
-			payment_modes.append({
-				"mode_of_payment": p.mode_of_payment,
-				"default": p.default or False,
-			})
+			payment_modes.append(
+				{
+					"mode_of_payment": p.mode_of_payment,
+					"default": p.default or False,
+				}
+			)
 	active_profile["payment_modes"] = payment_modes
 
 	return {"active_profile": active_profile}
@@ -246,10 +244,12 @@ def get_profile_settings(profile_name: str) -> dict:
 	payment_modes = []
 	if hasattr(profile, "payments") and profile.payments:
 		for p in profile.payments:
-			payment_modes.append({
-				"mode_of_payment": p.mode_of_payment,
-				"default": p.default if hasattr(p, "default") else False,
-			})
+			payment_modes.append(
+				{
+					"mode_of_payment": p.mode_of_payment,
+					"default": p.default if hasattr(p, "default") else False,
+				}
+			)
 	settings["payment_modes"] = payment_modes
 
 	# Get allowed item groups

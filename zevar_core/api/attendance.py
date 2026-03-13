@@ -7,6 +7,58 @@ from frappe import _
 from frappe.utils import getdate, now_datetime, time_diff_in_hours
 
 
+def _get_default_working_hours(employment_type: str | None) -> int:
+	"""Return default shift length based on employment type."""
+	employment_type = (employment_type or "").lower()
+	if "part" in employment_type:
+		return 4
+	return 8
+
+
+def _normalize_break_note(note: str | None) -> str | None:
+	"""Normalize supported break marker values."""
+	normalized = (note or "").strip().lower()
+	if normalized == "break start":
+		return "Break Start"
+	if normalized == "break end":
+		return "Break End"
+	return None
+
+
+def _build_device_id(note: str | None = None) -> str:
+	"""Store portal break markers on device_id since Employee Checkin has no note field."""
+	break_note = _normalize_break_note(note)
+	if break_note:
+		return f"HRMS Portal - {break_note}"
+	return "HRMS Portal"
+
+
+def _extract_log_note(log) -> str | None:
+	"""Derive a synthetic note from available Employee Checkin fields."""
+	if not log:
+		return None
+
+	device_id = str(getattr(log, "device_id", None) or log.get("device_id") or "")
+	device_id_lower = device_id.lower()
+	if "break start" in device_id_lower:
+		return "Break Start"
+	if "break end" in device_id_lower:
+		return "Break End"
+	return None
+
+
+def _is_break_start_log(log) -> bool:
+	"""Return True when a log marks the start of a break."""
+	return bool(log and log.log_type == "OUT" and _extract_log_note(log) == "Break Start")
+
+
+def _is_recent_duplicate(log_time, threshold_seconds: int = 5) -> bool:
+	"""Treat repeat submissions within a few seconds as duplicate actions."""
+	if not log_time:
+		return False
+	return abs((now_datetime() - log_time).total_seconds()) <= threshold_seconds
+
+
 @frappe.whitelist()
 def get_employee_roster(employee_id: str | None = None):
 	"""
@@ -25,6 +77,7 @@ def get_employee_roster(employee_id: str | None = None):
 		frappe.throw(_("No employee record found for current user"))
 
 	today = getdate()
+	employment_type = frappe.db.get_value("Employee", employee_id, "employment_type") or "Full-time"
 
 	# Check for active shift assignment
 	shift_assignment = frappe.db.get_value(
@@ -44,6 +97,7 @@ def get_employee_roster(employee_id: str | None = None):
 		shift_type = frappe.get_doc("Shift Type", shift_assignment.shift_type)
 		return {
 			"has_roster": True,
+			"employment_type": employment_type,
 			"shift_type": shift_type.name,
 			"shift_name": shift_type.shift_name,
 			"start_time": str(shift_type.start_time) if shift_type.start_time else None,
@@ -53,15 +107,8 @@ def get_employee_roster(employee_id: str | None = None):
 		}
 
 	# No shift assignment - check employment type for default hours
-	employee = frappe.get_doc("Employee", employee_id)
-	employment_type = employee.employment_type or "Full-time"
-
 	# Default working hours based on employment type
-	default_hours = 8  # Full-time default
-	if employment_type and "Part" in employment_type:
-		default_hours = 4
-	elif employment_type and "Contract" in employment_type:
-		default_hours = 8
+	default_hours = _get_default_working_hours(employment_type)
 
 	return {
 		"has_roster": False,
@@ -140,17 +187,23 @@ def get_today_checkin_status(employee_id: str | None = None, skip_roster: bool =
 
 	# Calculate working hours for today
 	total_hours = 0
+	total_seconds = 0
 	check_in_time = None
 	for log in logs:
 		if log.log_type == "IN":
 			check_in_time = log.time
 		elif log.log_type == "OUT" and check_in_time:
 			total_hours += time_diff_in_hours(log.time, check_in_time)
+			total_seconds += max(0, int((log.time - check_in_time).total_seconds()))
 			check_in_time = None
 
 	# If currently checked in, add ongoing hours
 	if checked_in and last_log:
-		total_hours += time_diff_in_hours(now_datetime(), last_log.time)
+		current_session_seconds = max(0, int((now_datetime() - last_log.time).total_seconds()))
+		total_seconds += current_session_seconds
+		total_hours += current_session_seconds / 3600
+	else:
+		current_session_seconds = 0
 
 	# Get roster for comparison (skip if not needed for speed)
 	working_hours_target = 8
@@ -159,15 +212,31 @@ def get_today_checkin_status(employee_id: str | None = None, skip_roster: bool =
 		roster = get_employee_roster(employee_id)
 		working_hours_target = roster.get("working_hours", 8)
 		overtime = max(0, total_hours - working_hours_target)
+	else:
+		overtime = max(0, total_hours - working_hours_target)
+
+	is_on_break = _is_break_start_log(last_log)
 
 	return {
 		"checked_in": checked_in,
+		"is_on_break": is_on_break,
 		"last_log_type": last_log.log_type if last_log else None,
 		"last_log_time": str(last_log.time) if last_log else None,
+		"last_log_note": _extract_log_note(last_log),
 		"total_hours_today": round(total_hours, 2),
+		"total_seconds_today": total_seconds,
+		"current_session_seconds": current_session_seconds,
 		"overtime_hours": round(overtime, 2),
 		"working_hours_target": working_hours_target,
-		"logs": [{"log_type": l.log_type, "time": str(l.time)} for l in logs],
+		"logs": [
+			{
+				"log_type": l.log_type,
+				"time": str(l.time),
+				"device_id": l.device_id,
+				"note": _extract_log_note(l),
+			}
+			for l in logs
+		],
 	}
 
 
@@ -193,7 +262,7 @@ def clock_in(latitude: float | None = None, longitude: float | None = None, note
 	last_log = frappe.db.get_value(
 		"Employee Checkin",
 		{"employee": employee_id},
-		["log_type", "time"],
+		["name", "log_type", "time"],
 		order_by="time desc",
 		as_dict=True,
 	)
@@ -202,6 +271,15 @@ def clock_in(latitude: float | None = None, longitude: float | None = None, note
 		# Check if it's from today
 		today = getdate()
 		if getdate(last_log.time) == today:
+			if _is_recent_duplicate(last_log.time):
+				status = get_today_checkin_status(employee_id)
+				return {
+					"success": True,
+					"checkin_id": last_log.name,
+					"time": str(last_log.time),
+					"message": _("Already checked in."),
+					"status": status,
+				}
 			frappe.throw(_("Already checked in today. Please check out first."))
 
 	# Create check-in record
@@ -212,16 +290,15 @@ def clock_in(latitude: float | None = None, longitude: float | None = None, note
 				"employee": employee_id,
 				"log_type": "IN",
 				"time": now_datetime(),
-				"device_id": "HRMS Portal",
+				"device_id": _build_device_id(notes),
 				"latitude": latitude,
 				"longitude": longitude,
-				"note": notes,
 			}
 		)
-		checkin.insert()
+		checkin.insert(ignore_permissions=True)
 
-		# Get updated status (skip roster for speed)
-		status = get_today_checkin_status(employee_id, skip_roster=True)
+		# Return full status so the portal timer can stay accurate after clock actions.
+		status = get_today_checkin_status(employee_id)
 
 		return {
 			"success": True,
@@ -264,6 +341,16 @@ def clock_out(latitude: float | None = None, longitude: float | None = None, not
 	)
 
 	if not last_log or last_log.log_type == "OUT":
+		if last_log and last_log.log_type == "OUT" and _is_recent_duplicate(last_log.time):
+			status = get_today_checkin_status(employee_id)
+			return {
+				"success": True,
+				"checkout_id": last_log.name,
+				"time": str(last_log.time),
+				"hours_this_session": 0,
+				"message": _("Already checked out."),
+				"status": status,
+			}
 		frappe.throw(_("No active check-in found. Please check in first."))
 
 	try:
@@ -274,19 +361,18 @@ def clock_out(latitude: float | None = None, longitude: float | None = None, not
 				"employee": employee_id,
 				"log_type": "OUT",
 				"time": now_datetime(),
-				"device_id": "HRMS Portal",
+				"device_id": _build_device_id(notes),
 				"latitude": latitude,
 				"longitude": longitude,
-				"note": notes,
 			}
 		)
-		checkout.insert()
+		checkout.insert(ignore_permissions=True)
 
 		# Calculate hours for this session
 		hours_worked = time_diff_in_hours(checkout.time, last_log.time)
 
-		# Get updated status (skip roster for speed)
-		status = get_today_checkin_status(employee_id, skip_roster=True)
+		# Return full status so the portal timer can stay accurate after clock actions.
+		status = get_today_checkin_status(employee_id)
 
 		# Auto-generate Attendance record if this is a final clock-out (not a break)
 		is_break = notes and "Break" in notes
@@ -409,12 +495,18 @@ def get_attendance_history(employee_id: str | None = None, days: int = 30):
 	logs = frappe.get_all(
 		"Employee Checkin",
 		filters={"employee": employee_id, "time": [">=", start_date]},
-		fields=["name", "log_type", "time", "latitude", "longitude", "device_id", "note"],
+		fields=["name", "log_type", "time", "latitude", "longitude", "device_id"],
 		order_by="time desc",
 		limit=100,
 	)
 
-	return logs
+	return [
+		{
+			**log,
+			"note": _extract_log_note(log),
+		}
+		for log in logs
+	]
 
 
 @frappe.whitelist()

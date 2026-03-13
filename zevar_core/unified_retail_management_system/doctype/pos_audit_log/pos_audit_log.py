@@ -21,11 +21,24 @@ class POSAuditLog(Document):
 	def _validate_event_type_category(self) -> None:
 		"""Ensure event type matches category."""
 		event_category_map = {
-			"Sales": ["invoice_created", "invoice_submitted", "invoice_cancelled", "invoice_voided", "invoice_returned"],
+			"Sales": [
+				"invoice_created",
+				"invoice_submitted",
+				"invoice_cancelled",
+				"invoice_voided",
+				"invoice_returned",
+			],
 			"Payment": ["payment_received", "payment_refunded", "split_payment_processed", "gift_card_used"],
 			"Discount": ["discount_applied", "large_discount_applied", "discount_override_approved"],
 			"Session": ["session_opened", "session_closed", "cash_variance_detected"],
-			"Security": ["login_success", "login_failed", "manager_override_requested", "manager_override_approved", "manager_override_rejected", "permission_denied"],
+			"Security": [
+				"login_success",
+				"login_failed",
+				"manager_override_requested",
+				"manager_override_approved",
+				"manager_override_rejected",
+				"permission_denied",
+			],
 			"Layaway": ["layaway_created", "layaway_payment", "layaway_cancelled", "layaway_completed"],
 			"Customer": ["customer_created", "customer_updated"],
 			"Inventory": ["stock_adjusted", "low_stock_alert"],

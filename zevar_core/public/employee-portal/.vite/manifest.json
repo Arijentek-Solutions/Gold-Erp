@@ -1,41 +1,41 @@
 {
-  "_StandardCalendar-DGUh8Hzn.js": {
-    "file": "assets/StandardCalendar-DGUh8Hzn.js",
+  "_StandardCalendar-D9AHvOlf.js": {
+    "file": "assets/StandardCalendar-D9AHvOlf.js",
     "name": "StandardCalendar",
     "imports": [
       "index.html"
     ]
   },
-  "_attendance-0mhvof-v.js": {
-    "file": "assets/attendance-0mhvof-v.js",
+  "_attendance-BUXWP__-.js": {
+    "file": "assets/attendance-BUXWP__-.js",
     "name": "attendance",
     "imports": [
       "index.html"
     ]
   },
-  "_employee-sP_T0wgm.js": {
-    "file": "assets/employee-sP_T0wgm.js",
+  "_employee-pSvIHOkF.js": {
+    "file": "assets/employee-pSvIHOkF.js",
     "name": "employee",
     "imports": [
       "index.html"
     ]
   },
-  "_payroll-DGYNoETf.js": {
-    "file": "assets/payroll-DGYNoETf.js",
+  "_payroll-BUxy1PUg.js": {
+    "file": "assets/payroll-BUxy1PUg.js",
     "name": "payroll",
     "imports": [
       "index.html"
     ]
   },
-  "_tasks-C9-ePmsB.js": {
-    "file": "assets/tasks-C9-ePmsB.js",
+  "_tasks-BRcsXcjW.js": {
+    "file": "assets/tasks-BRcsXcjW.js",
     "name": "tasks",
     "imports": [
       "index.html"
     ]
   },
   "index.html": {
-    "file": "assets/index-Bt1DjSgo.js",
+    "file": "assets/index-B-MQlzrA.js",
     "name": "index",
     "src": "index.html",
     "isEntry": true,
@@ -52,7 +52,7 @@
       "src/views/TeamView.vue"
     ],
     "css": [
-      "assets/index-BVhiQ2tJ.css"
+      "assets/index-BdlYwZt2.css"
     ],
     "assets": [
       "assets/Inter.var-C9xDBOS3.woff2",
@@ -68,48 +68,48 @@
     "src": "node_modules/frappe-ui/src/fonts/Inter/Inter.var.woff2"
   },
   "src/views/AttendanceView.vue": {
-    "file": "assets/AttendanceView-CWqZPgBF.js",
+    "file": "assets/AttendanceView-BTePR6JT.js",
     "name": "AttendanceView",
     "src": "src/views/AttendanceView.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_employee-sP_T0wgm.js",
-      "_attendance-0mhvof-v.js",
-      "_StandardCalendar-DGUh8Hzn.js",
+      "_employee-pSvIHOkF.js",
+      "_attendance-BUXWP__-.js",
+      "_StandardCalendar-D9AHvOlf.js",
       "index.html"
     ]
   },
   "src/views/DashboardView.vue": {
-    "file": "assets/DashboardView-CEHVOWzx.js",
+    "file": "assets/DashboardView-CEe8xNXz.js",
     "name": "DashboardView",
     "src": "src/views/DashboardView.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_employee-sP_T0wgm.js",
-      "_attendance-0mhvof-v.js",
-      "_tasks-C9-ePmsB.js",
-      "_payroll-DGYNoETf.js"
+      "_employee-pSvIHOkF.js",
+      "_attendance-BUXWP__-.js",
+      "_tasks-BRcsXcjW.js",
+      "_payroll-BUxy1PUg.js"
     ],
     "css": [
       "assets/DashboardView-CnGeH9KT.css"
     ]
   },
   "src/views/ExpenseView.vue": {
-    "file": "assets/ExpenseView-CzQqrLtl.js",
+    "file": "assets/ExpenseView-DBaplVJd.js",
     "name": "ExpenseView",
     "src": "src/views/ExpenseView.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_employee-sP_T0wgm.js"
+      "_employee-pSvIHOkF.js"
     ],
     "css": [
-      "assets/ExpenseView-sNYDix0n.css"
+      "assets/ExpenseView-BOtL-P_L.css"
     ]
   },
   "src/views/IssuesView.vue": {
-    "file": "assets/IssuesView-iXgHHdtI.js",
+    "file": "assets/IssuesView-Cxw65yg4.js",
     "name": "IssuesView",
     "src": "src/views/IssuesView.vue",
     "isDynamicEntry": true,
@@ -118,18 +118,18 @@
     ]
   },
   "src/views/LeaveView.vue": {
-    "file": "assets/LeaveView-Cr9pClsc.js",
+    "file": "assets/LeaveView-BTIPZcVO.js",
     "name": "LeaveView",
     "src": "src/views/LeaveView.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_employee-sP_T0wgm.js",
-      "_StandardCalendar-DGUh8Hzn.js"
+      "_employee-pSvIHOkF.js",
+      "_StandardCalendar-D9AHvOlf.js"
     ]
   },
   "src/views/Login.vue": {
-    "file": "assets/Login-C9oTTl6t.js",
+    "file": "assets/Login-DVHyuXeR.js",
     "name": "Login",
     "src": "src/views/Login.vue",
     "isDynamicEntry": true,
@@ -138,38 +138,41 @@
     ]
   },
   "src/views/PayrollView.vue": {
-    "file": "assets/PayrollView-BffSEnbA.js",
+    "file": "assets/PayrollView-Bcf1QIsO.js",
     "name": "PayrollView",
     "src": "src/views/PayrollView.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_payroll-DGYNoETf.js",
-      "_employee-sP_T0wgm.js"
+      "_payroll-BUxy1PUg.js",
+      "_employee-pSvIHOkF.js"
     ]
   },
   "src/views/RosterView.vue": {
-    "file": "assets/RosterView-Cv2FPyYv.js",
+    "file": "assets/RosterView-3pRjUZGN.js",
     "name": "RosterView",
     "src": "src/views/RosterView.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_employee-sP_T0wgm.js",
+      "_employee-pSvIHOkF.js",
       "index.html"
     ]
   },
   "src/views/TasksView.vue": {
-    "file": "assets/TasksView-C2dYZIDQ.js",
+    "file": "assets/TasksView-DCYH4FI-.js",
     "name": "TasksView",
     "src": "src/views/TasksView.vue",
     "isDynamicEntry": true,
     "imports": [
       "index.html",
-      "_tasks-C9-ePmsB.js"
+      "_tasks-BRcsXcjW.js"
+    ],
+    "css": [
+      "assets/TasksView-BUxnD7dH.css"
     ]
   },
   "src/views/TeamView.vue": {
-    "file": "assets/TeamView-DnssqpOD.js",
+    "file": "assets/TeamView-CUs4AbUv.js",
     "name": "TeamView",
     "src": "src/views/TeamView.vue",
     "isDynamicEntry": true,

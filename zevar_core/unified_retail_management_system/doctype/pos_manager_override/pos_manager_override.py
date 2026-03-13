@@ -26,19 +26,13 @@ class POSManagerOverride(Document):
 
 		old_doc = self.get_doc_before_save()
 		if old_doc and old_doc.status != "Pending" and self.status != old_doc.status:
-			frappe.throw(
-				frappe._("Cannot change status from {0} to {1}").format(
-					old_doc.status, self.status
-				)
-			)
+			frappe.throw(frappe._("Cannot change status from {0} to {1}").format(old_doc.status, self.status))
 
 	def _validate_approval_fields(self) -> None:
 		"""Ensure approval fields are set when approved/rejected."""
 		if self.status in ("Approved", "Rejected"):
 			if not self.approved_by:
-				frappe.throw(
-					frappe._("Approved By is required when status is {0}").format(self.status)
-				)
+				frappe.throw(frappe._("Approved By is required when status is {0}").format(self.status))
 			if not self.approval_time:
 				self.approval_time = now()
 
@@ -50,17 +44,19 @@ class POSManagerOverride(Document):
 	def _log_audit_event(self) -> None:
 		"""Create audit log entry for the override."""
 		try:
-			audit_log = frappe.get_doc({
-				"doctype": "POS Audit Log",
-				"user": self.approved_by,
-				"event_type": f"manager_override_{self.status.lower()}",
-				"category": "Security",
-				"severity": "Info",
-				"timestamp": now(),
-				"reference_type": "POS Manager Override",
-				"reference_document": self.name,
-				"details": f"Manager override request for '{self.action}' was {self.status.lower()}. Reason: {self.reason}"
-			})
+			audit_log = frappe.get_doc(
+				{
+					"doctype": "POS Audit Log",
+					"user": self.approved_by,
+					"event_type": f"manager_override_{self.status.lower()}",
+					"category": "Security",
+					"severity": "Info",
+					"timestamp": now(),
+					"reference_type": "POS Manager Override",
+					"reference_document": self.name,
+					"details": f"Manager override request for '{self.action}' was {self.status.lower()}. Reason: {self.reason}",
+				}
+			)
 			audit_log.insert(ignore_permissions=True)
 		except Exception:
 			# Don't fail the main operation if audit logging fails

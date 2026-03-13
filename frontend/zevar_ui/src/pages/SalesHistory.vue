@@ -84,16 +84,17 @@
 				</thead>
 				<tbody>
 					<tr v-if="loading">
-						<td colspan="7" class="loading-cell">
-							Loading transactions...
-						</td>
+						<td colspan="7" class="loading-cell">Loading transactions...</td>
 					</tr>
 					<tr v-else-if="sales.length === 0">
-						<td colspan="7" class="empty-cell">
-							No transactions found
-						</td>
+						<td colspan="7" class="empty-cell">No transactions found</td>
 					</tr>
-					<tr v-else v-for="sale in sales" :key="sale.name" @click="viewDetails(sale.name)">
+					<tr
+						v-else
+						v-for="sale in sales"
+						:key="sale.name"
+						@click="viewDetails(sale.name)"
+					>
 						<td class="invoice-cell">{{ sale.name }}</td>
 						<td>{{ formatDate(sale.posting_date) }}</td>
 						<td>{{ sale.customer }}</td>
@@ -105,10 +106,18 @@
 							</span>
 						</td>
 						<td>
-							<button class="action-btn" @click.stop="viewDetails(sale.name)" title="View Details">
+							<button
+								class="action-btn"
+								@click.stop="viewDetails(sale.name)"
+								title="View Details"
+							>
 								👁️
 							</button>
-							<button class="action-btn" @click.stop="printInvoice(sale.name)" title="Print">
+							<button
+								class="action-btn"
+								@click.stop="printInvoice(sale.name)"
+								title="Print"
+							>
 								🖨️
 							</button>
 						</td>
@@ -127,8 +136,10 @@
 				← Prev
 			</button>
 			<span class="page-info">
-				Page {{ pagination.page }} of {{ pagination.total_pages }}
-				({{ pagination.total_count }} total)
+				Page {{ pagination.page }} of {{ pagination.total_pages }} ({{
+					pagination.total_count
+				}}
+				total)
 			</span>
 			<button
 				class="page-btn"
@@ -140,7 +151,11 @@
 		</div>
 
 		<!-- Transaction Details Modal -->
-		<div v-if="selectedTransaction" class="modal-overlay" @click.self="selectedTransaction = null">
+		<div
+			v-if="selectedTransaction"
+			class="modal-overlay"
+			@click.self="selectedTransaction = null"
+		>
 			<div class="modal-content transaction-modal">
 				<div class="modal-header">
 					<h2>Invoice {{ selectedTransaction.invoice.name }}</h2>
@@ -154,11 +169,17 @@
 						</div>
 						<div class="detail-section">
 							<h4>Date & Time</h4>
-							<p>{{ formatDate(selectedTransaction.invoice.posting_date) }} {{ selectedTransaction.invoice.posting_time }}</p>
+							<p>
+								{{ formatDate(selectedTransaction.invoice.posting_date) }}
+								{{ selectedTransaction.invoice.posting_time }}
+							</p>
 						</div>
 						<div class="detail-section">
 							<h4>Status</h4>
-							<span class="status-badge" :class="getStatusClass(selectedTransaction.invoice.status)">
+							<span
+								class="status-badge"
+								:class="getStatusClass(selectedTransaction.invoice.status)"
+							>
 								{{ selectedTransaction.invoice.status }}
 							</span>
 						</div>
@@ -199,20 +220,29 @@
 						</div>
 						<div class="total-row grand-total">
 							<span>Grand Total:</span>
-							<span>${{ formatAmount(selectedTransaction.invoice.grand_total) }}</span>
+							<span
+								>${{ formatAmount(selectedTransaction.invoice.grand_total) }}</span
+							>
 						</div>
 					</div>
 
 					<h4>Payments</h4>
 					<div class="payments-list">
-						<div v-for="payment in selectedTransaction.payments" :key="payment.mode_of_payment" class="payment-item">
+						<div
+							v-for="payment in selectedTransaction.payments"
+							:key="payment.mode_of_payment"
+							class="payment-item"
+						>
 							<span>{{ payment.mode_of_payment }}</span>
 							<span>${{ formatAmount(payment.amount) }}</span>
 						</div>
 					</div>
 				</div>
 				<div class="modal-footer">
-					<button class="btn btn-secondary" @click="printInvoice(selectedTransaction.invoice.name)">
+					<button
+						class="btn btn-secondary"
+						@click="printInvoice(selectedTransaction.invoice.name)"
+					>
 						🖨️ Print
 					</button>
 					<button class="btn btn-secondary" @click="selectedTransaction = null">
@@ -240,23 +270,23 @@ const filters = ref({
 	to_date: getDefaultDate(),
 	customer: '',
 	status: '',
-	search: ''
+	search: '',
 })
 
 // Resources
 const salesResource = createResource({
 	url: 'zevar_core.api.sales_history.get_sales_history',
-	auto: false
+	auto: false,
 })
 
 const summaryResource = createResource({
 	url: 'zevar_core.api.sales_history.get_sales_summary',
-	auto: false
+	auto: false,
 })
 
 const detailsResource = createResource({
 	url: 'zevar_core.api.sales_history.get_transaction_details',
-	auto: false
+	auto: false,
 })
 
 // Methods
@@ -283,11 +313,11 @@ function formatDate(dateStr) {
 
 function getStatusClass(status) {
 	const classes = {
-		'Paid': 'status-paid',
-		'Unpaid': 'status-unpaid',
-		'Overdue': 'status-overdue',
-		'Cancelled': 'status-cancelled',
-		'Return': 'status-return'
+		Paid: 'status-paid',
+		Unpaid: 'status-unpaid',
+		Overdue: 'status-overdue',
+		Cancelled: 'status-cancelled',
+		Return: 'status-return',
 	}
 	return classes[status] || 'status-default'
 }
@@ -299,12 +329,12 @@ async function fetchSales() {
 			salesResource.submit({
 				...filters.value,
 				page: pagination.value.page,
-				page_size: 20
+				page_size: 20,
 			}),
 			summaryResource.submit({
 				from_date: filters.value.from_date,
-				to_date: filters.value.to_date
-			})
+				to_date: filters.value.to_date,
+			}),
 		])
 
 		sales.value = salesResult.sales || []
@@ -491,10 +521,22 @@ onMounted(() => {
 	font-weight: 500;
 }
 
-.status-paid { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-.status-unpaid { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
-.status-overdue { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-.status-cancelled { background: rgba(107, 114, 128, 0.2); color: #9ca3af; }
+.status-paid {
+	background: rgba(34, 197, 94, 0.2);
+	color: #22c55e;
+}
+.status-unpaid {
+	background: rgba(251, 191, 36, 0.2);
+	color: #fbbf24;
+}
+.status-overdue {
+	background: rgba(239, 68, 68, 0.2);
+	color: #ef4444;
+}
+.status-cancelled {
+	background: rgba(107, 114, 128, 0.2);
+	color: #9ca3af;
+}
 
 .action-btn {
 	background: transparent;

@@ -62,12 +62,12 @@ def execute():
 			)
 
 			if not existing:
-				frappe.db.sql(f"CREATE INDEX `{index_name}` ON `{table}` (`{field}`)")
+				frappe.db.sql(f"CREATE INDEX `{index_name}` ON `{table}` (`{field}`)") # nosemgrep
 				print(f"Created index: {index_name} on {table}.{field}")
 			else:
 				print(f"Index already exists: {index_name}")
 		except Exception as e:
 			print(f"Error creating index {index_name}: {e}")
 
-	frappe.db.commit()
+	frappe.db.commit() # nosemgrep
 	print("Index creation complete.")

@@ -1,9 +1,7 @@
 <template>
 	<PortalLayout>
 		<div class="px-10 pb-10 flex flex-col items-center font-portal">
-			<div
-				class="w-full max-w-6xl premium-card mt-4"
-			>
+			<div class="w-full max-w-6xl premium-card mt-4">
 				<!-- Welcome Section -->
 				<div
 					class="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8"
@@ -86,25 +84,27 @@
 							<div
 								class="premium-card !p-6 border border-gray-100 dark:border-white/10 hover:border-portal-primary/30 transition-colors"
 							>
-								<span
-									class="status-label !mb-2"
-									>Vacation Left</span
-								>
+								<span class="status-label !mb-2">Vacation Left</span>
 								<div class="flex items-end gap-1">
-									<span class="text-3xl font-800 text-gray-900 dark:text-white">12</span>
-									<span class="text-gray-400 dark:text-white/40 text-sm mb-1">days</span>
+									<span class="text-3xl font-800 text-gray-900 dark:text-white"
+										>12</span
+									>
+									<span class="text-gray-400 dark:text-white/40 text-sm mb-1"
+										>days</span
+									>
 								</div>
 							</div>
 							<div
 								class="premium-card !p-6 border border-gray-100 dark:border-white/10 hover:border-portal-accent-peach/30 transition-colors"
 							>
-								<span
-									class="status-label !mb-2"
-									>Sick Leave</span
-								>
+								<span class="status-label !mb-2">Sick Leave</span>
 								<div class="flex items-end gap-1">
-									<span class="text-3xl font-800 text-gray-900 dark:text-white">05</span>
-									<span class="text-gray-400 dark:text-white/40 text-sm mb-1">days</span>
+									<span class="text-3xl font-800 text-gray-900 dark:text-white"
+										>05</span
+									>
+									<span class="text-gray-400 dark:text-white/40 text-sm mb-1"
+										>days</span
+									>
 								</div>
 							</div>
 						</div>

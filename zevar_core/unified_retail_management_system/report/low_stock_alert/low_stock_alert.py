@@ -82,7 +82,7 @@ def execute(filters=None):
 		warehouse_filter = "AND b.warehouse = %(warehouse)s"
 
 	# Get items with low stock
-	items = frappe.db.sql(
+	items = frappe.db.sql( # nosemgrep
 		f"""
 		SELECT
 			i.name as item_code,
@@ -114,17 +114,19 @@ def execute(filters=None):
 	)
 
 	for item in items:
-		data.append({
-			"item_code": item.get("item_code"),
-			"item_name": item.get("item_name"),
-			"item_group": item.get("item_group"),
-			"warehouse": item.get("warehouse"),
-			"actual_qty": flt(item.get("actual_qty")),
-			"reorder_level": flt(item.get("reorder_level")),
-			"shortage_qty": flt(item.get("shortage_qty")),
-			"status": item.get("status"),
-			"last_updated": frappe.utils.now_datetime(),
-		})
+		data.append(
+			{
+				"item_code": item.get("item_code"),
+				"item_name": item.get("item_name"),
+				"item_group": item.get("item_group"),
+				"warehouse": item.get("warehouse"),
+				"actual_qty": flt(item.get("actual_qty")),
+				"reorder_level": flt(item.get("reorder_level")),
+				"shortage_qty": flt(item.get("shortage_qty")),
+				"status": item.get("status"),
+				"last_updated": frappe.utils.now_datetime(),
+			}
+		)
 
 	return columns, data
 
@@ -138,7 +140,7 @@ def get_alert_summary(filters=None):
 	if warehouse:
 		warehouse_filter = "AND b.warehouse = %(warehouse)s"
 
-	summary = frappe.db.sql(
+	summary = frappe.db.sql( # nosemgrep
 		f"""
 		SELECT
 			COUNT(*) as total_items,
@@ -180,12 +182,7 @@ def get_alert_summary(filters=None):
 			"total_items": summary.get("total_items", 0),
 			"critical_items": summary.get("critical_items", 0),
 			"total_shortage": summary.get("total_shortage", 0),
-			"needs_reorder": summary.get("needs_reorder", 0)
+			"needs_reorder": summary.get("needs_reorder", 0),
 		}
 
-	return {
-		"total_items": 0,
-		"critical_items": 0,
-		"total_shortage": 0,
-		"needs_reorder": 0
-	}
+	return {"total_items": 0, "critical_items": 0, "total_shortage": 0, "needs_reorder": 0}

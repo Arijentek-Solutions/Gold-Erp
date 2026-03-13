@@ -72,7 +72,9 @@
 					Senior Gemologist
 				</p>
 
-				<div class="grid grid-cols-2 w-full gap-2 border-t border-gray-100 dark:border-white/5 pt-4">
+				<div
+					class="grid grid-cols-2 w-full gap-2 border-t border-gray-100 dark:border-white/5 pt-4"
+				>
 					<div class="text-left">
 						<p class="status-label !mb-0 text-[8px]">Department</p>
 						<p class="text-xs text-gray-700 dark:text-white">Appraisal</p>
@@ -113,11 +115,15 @@
 						ET
 					</div>
 				</div>
-				<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-0.5">Elena Thorne</h3>
+				<h3 class="text-lg font-bold text-gray-900 dark:text-white mb-0.5">
+					Elena Thorne
+				</h3>
 				<p class="text-primary text-xs font-bold uppercase tracking-wider mb-4">
 					Master Craftsman
 				</p>
-				<div class="grid grid-cols-2 w-full gap-2 border-t border-gray-100 dark:border-white/5 pt-4">
+				<div
+					class="grid grid-cols-2 w-full gap-2 border-t border-gray-100 dark:border-white/5 pt-4"
+				>
 					<div class="text-left">
 						<p class="status-label !mb-0 text-[8px]">Department</p>
 						<p class="text-xs text-gray-700 dark:text-white">Production</p>
@@ -151,7 +157,9 @@
 					<span class="material-symbols-outlined text-2xl">person_add</span>
 				</div>
 				<h3 class="font-bold text-gray-900 dark:text-white mb-1">Invite Member</h3>
-				<p class="text-xs text-gray-400 dark:text-white/40 text-center">Send a magic link to join Zevar</p>
+				<p class="text-xs text-gray-400 dark:text-white/40 text-center">
+					Send a magic link to join Zevar
+				</p>
 			</div>
 		</div>
 	</div>

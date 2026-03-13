@@ -178,7 +178,7 @@ describe('POS Profile Store', () => {
 		it('should load profile from localStorage on init', () => {
 			localStorageMock.store['zevar_pos_profile'] = JSON.stringify({
 				name: 'Saved Profile',
-				company: 'Test Company'
+				company: 'Test Company',
 			})
 
 			const store = usePOSProfileStore()

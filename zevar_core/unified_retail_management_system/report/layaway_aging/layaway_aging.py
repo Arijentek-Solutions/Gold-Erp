@@ -173,10 +173,9 @@ def get_chart_data(filters=None):
 	return {
 		"data": {
 			"labels": [row.get("aging_bucket", "Unknown") for row in chart_data],
-			"datasets": [{
-				"name": "Balance",
-				"values": [flt(row.get("total_balance", 0)) for row in chart_data]
-			}]
+			"datasets": [
+				{"name": "Balance", "values": [flt(row.get("total_balance", 0)) for row in chart_data]}
+			],
 		},
-		"type": "bar"
+		"type": "bar",
 	}

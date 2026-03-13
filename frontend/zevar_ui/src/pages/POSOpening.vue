@@ -12,14 +12,13 @@
 				<h3>Active Session Detected</h3>
 				<p>You already have an open session: {{ sessionStatus.session?.name }}</p>
 				<p class="session-details">
-					Opened: {{ sessionStatus.session?.opening_date }} at {{ sessionStatus.session?.opening_time }}
-					| Duration: {{ sessionStatus.session?.duration_hours }}h
-					| Sales: {{ sessionStatus.session?.sales_count }}
+					Opened: {{ sessionStatus.session?.opening_date }} at
+					{{ sessionStatus.session?.opening_time }} | Duration:
+					{{ sessionStatus.session?.duration_hours }}h | Sales:
+					{{ sessionStatus.session?.sales_count }}
 				</p>
 			</div>
-			<router-link to="/pos/closing" class="btn btn-primary">
-				Go to Closing
-			</router-link>
+			<router-link to="/pos/closing" class="btn btn-primary"> Go to Closing </router-link>
 		</div>
 
 		<!-- Opening Form -->
@@ -30,7 +29,11 @@
 					<label>POS Profile</label>
 					<select v-model="form.pos_profile" required :disabled="loading">
 						<option value="">Select a profile...</option>
-						<option v-for="profile in profiles" :key="profile.name" :value="profile.name">
+						<option
+							v-for="profile in profiles"
+							:key="profile.name"
+							:value="profile.name"
+						>
 							{{ profile.name }} - {{ profile.warehouse }}
 						</option>
 					</select>
@@ -57,7 +60,11 @@
 				<div class="form-group">
 					<label>Cash Breakdown (Optional)</label>
 					<div class="breakdown-grid">
-						<div v-for="denom in denominations" :key="denom.value" class="breakdown-item">
+						<div
+							v-for="denom in denominations"
+							:key="denom.value"
+							class="breakdown-item"
+						>
 							<label>${{ denom.value }}</label>
 							<input
 								type="number"
@@ -89,7 +96,11 @@
 
 				<!-- Submit Button -->
 				<div class="form-actions">
-					<button type="submit" class="btn btn-primary btn-lg" :disabled="loading || !form.pos_profile">
+					<button
+						type="submit"
+						class="btn btn-primary btn-lg"
+						:disabled="loading || !form.pos_profile"
+					>
 						<span v-if="loading">Opening Session...</span>
 						<span v-else>Open Cash Register</span>
 					</button>
@@ -103,9 +114,7 @@
 				<div class="success-icon">✅</div>
 				<h2>Session Opened Successfully!</h2>
 				<p>{{ successMessage }}</p>
-				<router-link to="/pos" class="btn btn-primary">
-					Start Selling
-				</router-link>
+				<router-link to="/pos" class="btn btn-primary"> Start Selling </router-link>
 			</div>
 		</div>
 	</div>
@@ -126,13 +135,20 @@ const form = ref({
 	pos_profile: '',
 	opening_balance: 0,
 	cash_breakdown: {},
-	notes: ''
+	notes: '',
 })
 
 const denominations = [
-	{ value: 100 }, { value: 50 }, { value: 20 }, { value: 10 },
-	{ value: 5 }, { value: 1 }, { value: 0.25 }, { value: 0.10 },
-	{ value: 0.05 }, { value: 0.01 }
+	{ value: 100 },
+	{ value: 50 },
+	{ value: 20 },
+	{ value: 10 },
+	{ value: 5 },
+	{ value: 1 },
+	{ value: 0.25 },
+	{ value: 0.1 },
+	{ value: 0.05 },
+	{ value: 0.01 },
 ]
 
 // Resources
@@ -145,7 +161,7 @@ const profilesResource = createResource({
 		if (profiles.value.length === 1) {
 			form.value.pos_profile = profiles.value[0].name
 		}
-	}
+	},
 })
 
 const sessionStatusResource = createResource({
@@ -153,12 +169,12 @@ const sessionStatusResource = createResource({
 	auto: true,
 	onSuccess(data) {
 		sessionStatus.value = data
-	}
+	},
 })
 
 const openSessionResource = createResource({
 	url: 'zevar_core.api.pos_session.open_pos_session',
-	auto: false
+	auto: false,
 })
 
 // Methods
@@ -189,9 +205,9 @@ async function submitOpening() {
 					mode_of_payment: 'Cash',
 					denomination: parseFloat(denom),
 					count: count,
-					amount: count * parseFloat(denom)
+					amount: count * parseFloat(denom),
 				})),
-			notes: form.value.notes
+			notes: form.value.notes,
 		})
 
 		if (result.success) {
@@ -207,7 +223,7 @@ async function submitOpening() {
 
 onMounted(() => {
 	// Initialize cash breakdown object
-	denominations.forEach(d => {
+	denominations.forEach((d) => {
 		if (form.value.cash_breakdown[d.value] === undefined) {
 			form.value.cash_breakdown[d.value] = 0
 		}
@@ -292,7 +308,7 @@ onMounted(() => {
 }
 
 .form-group select,
-.form-group input[type="number"],
+.form-group input[type='number'],
 .form-group textarea {
 	width: 100%;
 	padding: 12px 16px;

@@ -164,10 +164,12 @@ def get_chart_data(filters=None):
 	return {
 		"data": {
 			"labels": [str(row.get("date")) for row in chart_data],
-			"datasets": [{
-				"name": "Trade-In Value",
-				"values": [flt(row.get("trade_in_value", 0)) for row in chart_data]
-			}]
+			"datasets": [
+				{
+					"name": "Trade-In Value",
+					"values": [flt(row.get("trade_in_value", 0)) for row in chart_data],
+				}
+			],
 		},
-		"type": "line"
+		"type": "line",
 	}
