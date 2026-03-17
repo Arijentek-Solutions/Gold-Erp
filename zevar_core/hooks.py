@@ -7,18 +7,15 @@ app_license = "mit"
 app_logo_url = "/assets/zevar_core/images/pos_logo.svg"
 splash_image = "/assets/zevar_core/images/pos_logo.svg"
 
+# NOTE: add_to_apps_screen only supports ONE entry per app.
+# Multiple entries for the same app are ignored (only first is used).
+# For additional desk shortcuts, use Desktop Icons (imported via install.py).
 add_to_apps_screen = [
 	{
 		"name": "zevar_pos",
 		"logo": "/assets/zevar_core/images/pos_logo.svg",
 		"title": "Zevar POS",
 		"route": "/pos",
-	},
-	{
-		"name": "zevar_catalogues",
-		"logo": "/assets/zevar_core/images/pos_logo.svg",
-		"title": "Zevar Catalogues",
-		"route": "/catalogues",
 	},
 	{
 		"name": "zevar_employee_portal",
@@ -31,6 +28,7 @@ add_to_apps_screen = [
 boot_session = "zevar_core.api.desk.boot_session"
 
 app_include_js = ["/assets/zevar_core/js/desk_customization.js"]
+app_include_css = ["/assets/zevar_core/css/desk.css"]
 
 # Jinja
 jinja = {"methods": ["zevar_core.utils.assets.get_frontend_asset"]}
@@ -40,6 +38,8 @@ website_route_rules = [
 	{"from_route": "/employee-portal/<path:app_path>", "to_route": "employee-portal"},
 	{"from_route": "/pos/<path:app_path>", "to_route": "pos"},
 	{"from_route": "/catalogues/<path:app_path>", "to_route": "catalogues"},
+	{"from_route": "/zevar-desk", "to_route": "zevar-desk"},
+	{"from_route": "/zevar-desk/<path:app_path>", "to_route": "zevar-desk"},
 ]
 
 # Fixtures
@@ -61,4 +61,16 @@ doc_events = {
 scheduler_events = {"cron": {"*/15 * * * *": ["zevar_core.tasks.fetch_live_gold_rate"]}}
 
 # Installation hooks
-after_install = "zevar_core.install.create_required_modes_of_payment"
+after_install = [
+	"zevar_core.install.create_required_modes_of_payment",
+	"zevar_core.install.import_desktop_icons",
+	"zevar_core.install.import_workspaces",
+	"zevar_core.install.create_default_desk_shortcuts",
+]
+
+# Run after migrate to ensure desktop icons and shortcuts are imported
+after_migrate = [
+	"zevar_core.install.import_desktop_icons",
+	"zevar_core.install.import_workspaces",
+	"zevar_core.install.create_default_desk_shortcuts",
+]

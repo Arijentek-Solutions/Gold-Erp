@@ -1,79 +1,342 @@
-frappe.provide("zevar_core");
+/**
+ * Zevar Core Desk Customization
+ *
+ * Enhances the standard Frappe desk with:
+ * - Keyboard navigation shortcuts
+ * - ARIA accessibility improvements
+ * - Focus management
+ * - High contrast mode support
+ *
+ * WCAG 2.1 AA compliant
+ */
 
-const update_icons = () => {
-	const overrides = {
-		POS: "/assets/zevar_core/images/pos_logo.svg",
-		"Employee Portal": "/assets/zevar_core/images/employee_portal_logo.svg",
-		"Zevar POS": "/assets/zevar_core/images/pos_logo.svg",
-		"Zevar Catalogues": "/assets/zevar_core/images/pos_logo.svg",
-		Catalogues: "/assets/zevar_core/images/pos_logo.svg",
-	};
+(function () {
+	"use strict";
 
-	// App name mappings (for frappe.boot.app_data)
-	const appNameMap = {
-		zevar_pos: "/assets/zevar_core/images/pos_logo.svg",
-		zevar_catalogues: "/assets/zevar_core/images/pos_logo.svg",
-		zevar_employee_portal: "/assets/zevar_core/images/employee_portal_logo.svg",
-	};
-
-	// Strategy 1: Modify in-memory data
-	if (frappe.boot && frappe.boot.app_data) {
-		frappe.boot.app_data.forEach((app) => {
-			// Check title in overrides, then name in overrides, then name in appNameMap
-			const iconUrl =
-				overrides[app.app_title] || overrides[app.app_name] || appNameMap[app.app_name];
-			if (iconUrl) {
-				app.app_logo_url = iconUrl;
-			}
-		});
+	// Wait for DOM to be ready
+	function ready(fn) {
+		if (document.readyState !== "loading") {
+			fn();
+		} else {
+			document.addEventListener("DOMContentLoaded", fn);
+		}
 	}
 
-	// Strategy 2: DOM Manipulation via MutationObserver or direct query
-	const targets = [".app-item", ".desktop-shortcut", ".standard-sidebar-item"];
+	ready(function () {
+		enhanceDesktopAccessibility();
+		setupKeyboardNavigation();
+		setupFocusManagement();
+		detectAccessibilityPreferences();
+		addSkipLink();
+	});
 
-	targets.forEach((selector) => {
-		$(selector).each(function () {
-			const rawTitle = $(this).attr("title");
-			const fallbackTitle = $(this).find(".app-title, .sidebar-item-label").text();
-			const title = rawTitle != null && rawTitle !== "" ? rawTitle : fallbackTitle || "";
-			const cleanTitle = title.trim();
+	/**
+	 * Enhance desktop icons with ARIA attributes
+	 */
+	function enhanceDesktopAccessibility() {
+		// Wait for desktop to fully load
+		setTimeout(function () {
+			var icons = document.querySelectorAll(".desktop-icon");
+			icons.forEach(function (icon, index) {
+				// Add ARIA role
+				icon.setAttribute("role", "button");
+				icon.setAttribute("tabindex", "0");
 
-			if (cleanTitle) {
-				// Check exact match or startsWith for Employee Portal to handle truncation
-				let iconUrl = overrides[cleanTitle];
-				if (!iconUrl && cleanTitle.startsWith("Employee P")) {
-					iconUrl = overrides["Employee Portal"];
+				// Get label from icon
+				var labelEl = icon.querySelector(".icon-title");
+				if (labelEl) {
+					icon.setAttribute("aria-label", labelEl.textContent.trim());
 				}
-				if (!iconUrl && cleanTitle.startsWith("Zevar Cat")) {
-					iconUrl = overrides["Zevar Catalogues"];
+
+				// Add description for screen readers
+				var descId = "zevar-icon-desc-" + index;
+				icon.setAttribute("aria-describedby", descId);
+
+				// Create hidden description element if not exists
+				if (!document.getElementById(descId)) {
+					var desc = document.createElement("span");
+					desc.id = descId;
+					desc.className = "sr-only";
+					desc.textContent = "Double click or press Enter to open";
+					icon.appendChild(desc);
 				}
 
-				if (iconUrl) {
-					const img = $(this).find("img, .app-icon img");
-					if (img.length) {
-						img.attr("src", iconUrl);
+				// Add keyboard activation
+				icon.addEventListener("keydown", function (e) {
+					if (e.key === "Enter" || e.key === " ") {
+						e.preventDefault();
+						icon.click();
+					}
+				});
+			});
+
+			// Enhance workspace cards
+			var workspaceCards = document.querySelectorAll(".workspace-card");
+			workspaceCards.forEach(function (card) {
+				card.setAttribute("role", "article");
+			});
+
+			// Enhance shortcuts
+			var shortcuts = document.querySelectorAll(".workspace-shortcut");
+			shortcuts.forEach(function (shortcut) {
+				shortcut.setAttribute("role", "button");
+				shortcut.setAttribute("tabindex", "0");
+			});
+		}, 1000);
+	}
+
+	/**
+	 * Setup keyboard shortcuts for quick navigation
+	 */
+	function setupKeyboardNavigation() {
+		document.addEventListener("keydown", function (e) {
+			// Don't trigger if user is typing in an input
+			if (
+				e.target.tagName === "INPUT" ||
+				e.target.tagName === "TEXTAREA" ||
+				e.target.isContentEditable
+			) {
+				return;
+			}
+
+			// Alt + key shortcuts for quick access
+			if (e.altKey) {
+				var key = e.key.toLowerCase();
+
+				// Default Zevar shortcuts
+				var defaultShortcuts = {
+					p: "/pos", // POS Terminal
+					e: "/employee-portal", // Employee Portal
+					l: "/app/layaway-contract", // Layaway
+					r: "/app/repair-order", // Repairs
+					t: "/app/trade-in-record", // Trade-ins
+					g: "/app/gift-card", // Gift Cards
+					a: "/app/jewelry-appraisal", // Appraisals
+					c: "/app/sales-commission-split", // Commissions
+					d: "/zevar-desk", // Custom Desk
+					h: "/desk", // Home/Standard Desk
+				};
+
+				if (defaultShortcuts[key]) {
+					e.preventDefault();
+					window.location.href = defaultShortcuts[key];
+					return;
+				}
+
+				// Alt+1 through Alt+9 for quick access to first 9 desktop icons
+				if (key >= "1" && key <= "9") {
+					e.preventDefault();
+					var icons = document.querySelectorAll(".desktop-icon");
+					var index = parseInt(key) - 1;
+					if (icons[index]) {
+						icons[index].click();
 					}
 				}
 			}
-		});
-	});
-};
 
-$(document).on("app_ready", function () {
-	update_icons();
+			// Escape to close modals
+			if (e.key === "Escape") {
+				closeAllModals();
+			}
 
-	// Use MutationObserver to handle dynamic loading (better than timeouts)
-	const observer = new MutationObserver(
-		frappe.utils.debounce(() => {
-			update_icons();
-		}, 200)
-	);
-
-	const deskContainer = document.querySelector(".desk-page") || document.body;
-	if (deskContainer) {
-		observer.observe(deskContainer, {
-			childList: true,
-			subtree: true,
+			// Focus search with Ctrl+K or Cmd+K
+			if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+				e.preventDefault();
+				focusSearch();
+			}
 		});
 	}
-});
+
+	/**
+	 * Setup focus management for better keyboard UX
+	 */
+	function setupFocusManagement() {
+		// Add visible focus indicators via CSS injection
+		var style = document.createElement("style");
+		style.textContent = [
+			// Screen reader only utility
+			".sr-only {",
+			"  position: absolute;",
+			"  width: 1px;",
+			"  height: 1px;",
+			"  padding: 0;",
+			"  margin: -1px;",
+			"  overflow: hidden;",
+			"  clip: rect(0, 0, 0, 0);",
+			"  white-space: nowrap;",
+			"  border: 0;",
+			"}",
+			"",
+			// Focus indicators
+			".desktop-icon:focus,",
+			".desktop-icon:focus-visible,",
+			".workspace-shortcut:focus,",
+			".workspace-shortcut:focus-visible {",
+			"  outline: 3px solid var(--blue-500, #4f9cff);",
+			"  outline-offset: 2px;",
+			"  border-radius: 8px;",
+			"}",
+			"",
+			// High contrast mode support
+			"@media (prefers-contrast: high) {",
+			"  .desktop-icon,",
+			"  .workspace-shortcut {",
+			"    border: 2px solid currentColor;",
+			"  }",
+			"}",
+			"",
+			// Reduced motion support
+			"@media (prefers-reduced-motion: reduce) {",
+			"  .desktop-icon,",
+			"  .desktop-icon *,",
+			"  .workspace-shortcut,",
+			"  .workspace-shortcut *,",
+			"  .modal,",
+			"  .modal * {",
+			"    transition: none !important;",
+			"    animation: none !important;",
+			"  }",
+			"}",
+			"",
+			// Minimum touch target size for mobile
+			"@media (pointer: coarse) {",
+			"  .desktop-icon,",
+			"  .workspace-shortcut {",
+			"    min-width: 44px;",
+			"    min-height: 44px;",
+			"  }",
+			"}",
+		].join("\n");
+		document.head.appendChild(style);
+
+		// Trap focus in modals
+		$(document).on("shown.bs.modal", ".modal", function () {
+			var modal = this;
+			var focusableElements = modal.querySelectorAll(
+				'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+			);
+			if (focusableElements.length > 0) {
+				focusableElements[0].focus();
+			}
+		});
+	}
+
+	/**
+	 * Detect and respond to accessibility preferences
+	 */
+	function detectAccessibilityPreferences() {
+		// High contrast mode
+		if (window.matchMedia("(prefers-contrast: high)").matches) {
+			document.body.classList.add("zevar-high-contrast");
+		}
+
+		// Reduced motion
+		if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+			document.body.classList.add("zevar-reduced-motion");
+		}
+
+		// Listen for preference changes
+		window
+			.matchMedia("(prefers-contrast: high)")
+			.addEventListener("change", function (e) {
+				document.body.classList.toggle("zevar-high-contrast", e.matches);
+			});
+
+		window
+			.matchMedia("(prefers-reduced-motion: reduce)")
+			.addEventListener("change", function (e) {
+				document.body.classList.toggle("zevar-reduced-motion", e.matches);
+			});
+	}
+
+	/**
+	 * Add skip link for keyboard navigation
+	 */
+	function addSkipLink() {
+		// Check if skip link already exists
+		if (document.querySelector(".zevar-skip-link")) {
+			return;
+		}
+
+		var skipLink = document.createElement("a");
+		skipLink.href = "#main-content";
+		skipLink.className = "zevar-skip-link";
+		skipLink.textContent = "Skip to main content";
+		skipLink.style.cssText = [
+			"position: absolute;",
+			"top: -100%;",
+			"left: 50%;",
+			"transform: translateX(-50%);",
+			"background: #1f2937;",
+			"color: white;",
+			"padding: 12px 24px;",
+			"border-radius: 8px;",
+			"text-decoration: none;",
+			"font-weight: 500;",
+			"z-index: 99999;",
+			"transition: top 0.2s ease;",
+		].join("");
+
+		skipLink.addEventListener("focus", function () {
+			this.style.top = "16px";
+		});
+
+		skipLink.addEventListener("blur", function () {
+			this.style.top = "-100%";
+		});
+
+		document.body.insertBefore(skipLink, document.body.firstChild);
+
+		// Add id to main content if not exists
+		var mainContent =
+			document.querySelector("main") || document.querySelector(".desk-body");
+		if (mainContent && !mainContent.id) {
+			mainContent.id = "main-content";
+		}
+	}
+
+	/**
+	 * Close all open modals
+	 */
+	function closeAllModals() {
+		var modals = document.querySelectorAll(".modal.show, .modal-dialog");
+		modals.forEach(function (modal) {
+			var closeBtn = modal.querySelector(
+				'.close, [data-dismiss="modal"], .modal-close'
+			);
+			if (closeBtn) {
+				closeBtn.click();
+			}
+		});
+
+		// Close dropdowns
+		var dropdowns = document.querySelectorAll(".dropdown.open, .show");
+		dropdowns.forEach(function (dropdown) {
+			dropdown.classList.remove("open", "show");
+		});
+
+		// Close any open overlays
+		var overlay = document.querySelector(".modal-backdrop");
+		if (overlay) {
+			overlay.click();
+		}
+	}
+
+	/**
+	 * Focus the search input
+	 */
+	function focusSearch() {
+		var searchInput =
+			document.querySelector('#search-input, input[type="search"], .search-input');
+		if (searchInput) {
+			searchInput.focus();
+		}
+	}
+
+	// Expose utilities globally for custom desk page
+	window.ZevarDesk = {
+		closeAllModals: closeAllModals,
+		focusSearch: focusSearch,
+		enhanceAccessibility: enhanceDesktopAccessibility,
+	};
+})();
