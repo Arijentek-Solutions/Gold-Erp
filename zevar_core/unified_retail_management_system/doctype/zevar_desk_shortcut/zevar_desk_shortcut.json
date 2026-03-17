@@ -1,0 +1,185 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2026-03-17 00:00:00.000000",
+ "doctype": "DocType",
+ "editable_grid": 1,
+ "engine": "InnoDB",
+ "field_order": [
+  "shortcut_details_section",
+  "shortcut_name",
+  "description",
+  "column_break_link",
+  "link_type",
+  "link_to",
+  "open_in_new_tab",
+  "appearance_section",
+  "icon_name",
+  "custom_icon",
+  "column_break_color",
+  "color",
+  "sequence",
+  "keyboard_shortcut",
+  "visibility_section",
+  "show_on_desk",
+  "column_break_roles",
+  "roles"
+ ],
+ "fields": [
+  {
+   "fieldname": "shortcut_details_section",
+   "fieldtype": "Section Break",
+   "label": "Shortcut Details"
+  },
+  {
+   "fieldname": "shortcut_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Shortcut Name",
+   "reqd": 1
+  },
+  {
+   "fieldname": "description",
+   "fieldtype": "Text",
+   "label": "Description",
+   "description": "Description for screen readers (accessibility)"
+  },
+  {
+   "fieldname": "column_break_link",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "link_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Link Type",
+   "options": "URL\nDocType\nPage\nReport",
+   "reqd": 1,
+   "default": "URL"
+  },
+  {
+   "fieldname": "link_to",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Link To",
+   "reqd": 1,
+   "description": "URL path (e.g., /pos), DocType name, Page name, or Report name"
+  },
+  {
+   "fieldname": "open_in_new_tab",
+   "fieldtype": "Check",
+   "label": "Open in New Tab",
+   "default": 0
+  },
+  {
+   "fieldname": "appearance_section",
+   "fieldtype": "Section Break",
+   "label": "Appearance"
+  },
+  {
+   "fieldname": "icon_name",
+   "fieldtype": "Select",
+   "label": "Icon",
+   "options": "shopping-cart\nuser\ncredit-card\ntools\nrepeat\ngift\ngem\npercentage\nfile-text\ncalendar\nsettings\nhome\nstore\ndollar-sign\npackage\nclipboard-list\nusers\nbar-chart-2\nbell\nheart\nstar\nbookmark\nfolder\nimage\nedit\ntrash-2\nplus\nsearch\nfilter\ndownload\nupload\nprinter\nmail\nphone\nmap-pin\nglobe\nlock\nunlock\neye\neye-off\ncheck\nx\nalert-circle\ninfo\nhelp-circle\nchevron-right\narrow-right\nexternal-link",
+   "description": "Select a built-in icon or upload a custom one"
+  },
+  {
+   "fieldname": "custom_icon",
+   "fieldtype": "Attach Image",
+   "label": "Custom Icon",
+   "description": "Upload a custom SVG or PNG icon (recommended: 48x48px)"
+  },
+  {
+   "fieldname": "column_break_color",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "color",
+   "fieldtype": "Color",
+   "label": "Accent Color",
+   "default": "#2563eb",
+   "description": "Background/accent color for the shortcut card"
+  },
+  {
+   "fieldname": "sequence",
+   "fieldtype": "Int",
+   "label": "Sequence",
+   "default": 10,
+   "description": "Sort order (lower numbers appear first)"
+  },
+  {
+   "fieldname": "keyboard_shortcut",
+   "fieldtype": "Data",
+   "label": "Keyboard Shortcut",
+   "description": "e.g., alt+p for Alt+P, ctrl+shift+p for Ctrl+Shift+P"
+  },
+  {
+   "fieldname": "visibility_section",
+   "fieldtype": "Section Break",
+   "label": "Visibility"
+  },
+  {
+   "default": "1",
+   "fieldname": "show_on_desk",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Show on Desk"
+  },
+  {
+   "fieldname": "column_break_roles",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "roles",
+   "fieldtype": "Table",
+   "label": "Roles",
+   "options": "Zevar Desk Shortcut Role",
+   "description": "Leave empty to show to all users"
+  }
+ ],
+ "has_web_view": 0,
+ "index_web_pages_for_search": 1,
+ "is_calendar_and_gantt": 0,
+ "is_standard": 1,
+ "links": [],
+ "modified": "2026-03-17 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Unified Retail Management System",
+ "name": "Zevar Desk Shortcut",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "Desk Customization Manager",
+   "share": 1,
+   "write": 1
+  },
+  {
+   "read": 1,
+   "role": "All",
+   "select": 1
+  }
+ ],
+ "sort_field": "sequence",
+ "sort_order": "ASC",
+ "states": [],
+ "track_changes": 1
+}

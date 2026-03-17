@@ -1,0 +1,37 @@
+{% extends "templates/web.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block head_include %}
+<link rel="stylesheet" href="/assets/zevar_core/css/desk.css">
+{% endblock %}
+
+{% block page_content %}
+<!-- Skip Link for Accessibility -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<div id="zevar-desk" class="zevar-desk-container" role="main">
+	<!-- Loading State -->
+	<div class="loading-state" role="status" aria-live="polite">
+		<div class="loading-spinner"></div>
+		<p>Loading desk...</p>
+	</div>
+</div>
+
+<!-- Desk Footer -->
+<footer class="desk-footer" role="contentinfo">
+	<p>
+		Press <kbd>Alt</kbd> + <kbd>Key</kbd> for quick navigation.
+		<a href="/app/zevar-desk-shortcut" class="manage-link">Manage Shortcuts</a>
+	</p>
+</footer>
+
+<!-- Feather Icons -->
+<script src="/assets/frappe/node_modules/feather-icons/dist/feather.min.js"></script>
+
+<!-- Vue 3 -->
+<script src="/assets/frappe/node_modules/vue/dist/vue.global.prod.js"></script>
+
+<!-- Desk App -->
+<script src="/assets/zevar_core/js/desk.js"></script>
+{% endblock %}
