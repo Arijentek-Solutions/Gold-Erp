@@ -74,3 +74,9 @@ after_migrate = [
 	"zevar_core.install.import_workspaces",
 	"zevar_core.install.create_default_desk_shortcuts",
 ]
+
+# Bench Commands
+bench_commands = [
+	"zevar_core.migration.commands.import_legacy_data",
+	"zevar_core.migration.commands.show_mapping_info",
+]

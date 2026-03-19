@@ -3,3 +3,4 @@ cssutils==2.6.0
 whoosh==2.7.4
 ipython==8.10.0
 jedi==0.19.1
+dbfread>=2.0.7
