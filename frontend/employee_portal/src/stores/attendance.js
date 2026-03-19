@@ -1,12 +1,13 @@
 import { defineStore } from "pinia";
 import { createResource } from "frappe-ui";
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 
 export const useAttendanceStore = defineStore("attendance", () => {
 	const todayStatus = ref(null);
 	const roster = ref(null);
 	const history = ref([]);
 	const loading = ref(false);
+	const error = ref(null);
 	const workedSecondsToday = ref(0);
 	let timerInterval = null;
 
@@ -138,12 +139,16 @@ export const useAttendanceStore = defineStore("attendance", () => {
 	}
 
 	function syncTimerFromStatus() {
+		// Always clear timer first to prevent duplicates
+		clearTimerTicker();
+
+		// Sync worked seconds from backend data
 		workedSecondsToday.value = totalSecondsToday.value;
+
+		// Start timer only if checked in AND not on break
 		if (isCheckedIn.value && !isOnBreak.value) {
 			startTimerTicker();
-			return;
 		}
-		clearTimerTicker();
 	}
 
 	// Actions
@@ -167,24 +172,33 @@ export const useAttendanceStore = defineStore("attendance", () => {
 	async function clockIn(employeeId, latitude = null, longitude = null, notes = null) {
 		if (loading.value) return { success: false, status: todayStatus.value };
 		loading.value = true;
+		error.value = null;
 		try {
 			const result = await clockInResource.fetch({
 				latitude,
 				longitude,
 				notes,
 			});
-			if (result.status) {
+			if (result && result.status) {
 				todayStatus.value = result.status;
 				syncTimerFromStatus();
+				return result;
+			} else if (result && result.success) {
+				// Handle case where result has success but status might be named differently
+				if (employeeId) {
+					await fetchTodayStatus(employeeId);
+				}
+				return result;
 			}
 			return result;
-		} catch (error) {
-			const message = getErrorMessage(error);
+		} catch (err) {
+			const message = getErrorMessage(err);
+			error.value = message;
 			if (employeeId && message.includes("Already checked in")) {
 				await fetchTodayStatus(employeeId);
 				return { success: true, status: todayStatus.value, recovered: true };
 			}
-			throw error;
+			throw err;
 		} finally {
 			loading.value = false;
 		}
@@ -193,24 +207,33 @@ export const useAttendanceStore = defineStore("attendance", () => {
 	async function clockOut(employeeId, latitude = null, longitude = null, notes = null) {
 		if (loading.value) return { success: false, status: todayStatus.value };
 		loading.value = true;
+		error.value = null;
 		try {
 			const result = await clockOutResource.fetch({
 				latitude,
 				longitude,
 				notes,
 			});
-			if (result.status) {
+			if (result && result.status) {
 				todayStatus.value = result.status;
 				syncTimerFromStatus();
+				return result;
+			} else if (result && result.success) {
+				// Handle case where result has success but status might be named differently
+				if (employeeId) {
+					await fetchTodayStatus(employeeId);
+				}
+				return result;
 			}
 			return result;
-		} catch (error) {
-			const message = getErrorMessage(error);
+		} catch (err) {
+			const message = getErrorMessage(err);
+			error.value = message;
 			if (employeeId && (message.includes("No active check-in found") || message.includes("Already checked out"))) {
 				await fetchTodayStatus(employeeId);
 				return { success: true, status: todayStatus.value, recovered: true };
 			}
-			throw error;
+			throw err;
 		} finally {
 			loading.value = false;
 		}
@@ -225,15 +248,19 @@ export const useAttendanceStore = defineStore("attendance", () => {
 	async function startBreak() {
 		if (loading.value) return { success: false, status: todayStatus.value };
 		loading.value = true;
+		error.value = null;
 		try {
 			const result = await breakStartResource.fetch({
 				notes: "Break Start",
 			});
-			if (result.status) {
+			if (result && result.status) {
 				todayStatus.value = result.status;
 				syncTimerFromStatus();
 			}
 			return result;
+		} catch (err) {
+			error.value = getErrorMessage(err);
+			throw err;
 		} finally {
 			loading.value = false;
 		}
@@ -242,29 +269,30 @@ export const useAttendanceStore = defineStore("attendance", () => {
 	async function endBreak() {
 		if (loading.value) return { success: false, status: todayStatus.value };
 		loading.value = true;
+		error.value = null;
 		try {
 			const result = await breakEndResource.fetch({
 				notes: "Break End",
 			});
-			if (result.status) {
+			if (result && result.status) {
 				todayStatus.value = result.status;
 				syncTimerFromStatus();
 			}
 			return result;
+		} catch (err) {
+			error.value = getErrorMessage(err);
+			throw err;
 		} finally {
 			loading.value = false;
 		}
 	}
-
-	watch([isCheckedIn, isOnBreak, totalSecondsToday], () => {
-		syncTimerFromStatus();
-	});
 
 	return {
 		todayStatus,
 		roster,
 		history,
 		loading,
+		error,
 		workedSecondsToday,
 		isCheckedIn,
 		isOnBreak,
@@ -284,5 +312,6 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		startBreak,
 		endBreak,
 		init,
+		syncTimerFromStatus,
 	};
 });

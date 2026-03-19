@@ -1114,10 +1114,18 @@ function getLogStyle(logType) {
 // Clock in/out handlers
 async function handleClockIn() {
 	const employeeId = employeeStore.employee?.name;
-	if (!employeeId) return;
+	if (!employeeId) {
+		console.error("No employee ID found");
+		return;
+	}
 
 	try {
-		await attendance.clockIn(employeeId, null, null);
+		const result = await attendance.clockIn(employeeId, null, null);
+		console.log("Clock in result:", result);
+		// Force sync timer after successful clock in
+		if (result && (result.success || result.status)) {
+			attendance.syncTimerFromStatus();
+		}
 	} catch (error) {
 		console.error("Clock in failed:", error);
 	}
@@ -1125,10 +1133,18 @@ async function handleClockIn() {
 
 async function handleClockOut() {
 	const employeeId = employeeStore.employee?.name;
-	if (!employeeId) return;
+	if (!employeeId) {
+		console.error("No employee ID found");
+		return;
+	}
 
 	try {
-		await attendance.clockOut(employeeId, null, null, "End of Shift");
+		const result = await attendance.clockOut(employeeId, null, null, "End of Shift");
+		console.log("Clock out result:", result);
+		// Force sync timer after successful clock out
+		if (result && (result.success || result.status)) {
+			attendance.syncTimerFromStatus();
+		}
 	} catch (error) {
 		console.error("Clock out failed:", error);
 	}
@@ -1136,10 +1152,17 @@ async function handleClockOut() {
 
 async function handleBreak() {
 	try {
+		let result;
 		if (attendance.isOnBreak) {
-			await attendance.endBreak();
+			result = await attendance.endBreak();
+			console.log("End break result:", result);
 		} else {
-			await attendance.startBreak();
+			result = await attendance.startBreak();
+			console.log("Start break result:", result);
+		}
+		// Force sync timer after successful break action
+		if (result && (result.success || result.status)) {
+			attendance.syncTimerFromStatus();
 		}
 	} catch (error) {
 		console.error("Break action failed:", error);
