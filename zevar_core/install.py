@@ -4,6 +4,7 @@ Zevar Core Installation Utilities
 Functions to set up required data on app installation.
 """
 
+import json
 import os
 
 import frappe
@@ -58,11 +59,16 @@ def import_desktop_icons():
 		if fname.endswith(".json"):
 			file_path = os.path.join(icons_dir, fname)
 			try:
-				# Check if icon already exists to avoid duplicates
-				import json
-
 				with open(file_path, "r") as f:
 					icon_data = json.load(f)
+
+				# Must have doctype key to be valid
+				if not icon_data.get("doctype"):
+					frappe.log_error(
+						f"Desktop icon {fname} missing 'doctype' key",
+						"Desktop Icon Import",
+					)
+					continue
 
 				icon_name = icon_data.get("name")
 				if icon_name and not frappe.db.exists("Desktop Icon", icon_name):
@@ -83,6 +89,8 @@ def import_workspaces():
 	Workspaces are stored as JSON files and need to be imported
 	to appear in the workspace sidebar.
 	"""
+	import json
+
 	app_path = frappe.get_app_path("zevar_core")
 	workspaces_dir = os.path.join(app_path, "zevar_core", "workspace")
 
@@ -95,7 +103,12 @@ def import_workspaces():
 			json_file = os.path.join(workspace_path, f"{workspace_name}.json")
 			if os.path.exists(json_file):
 				try:
-					if not frappe.db.exists("Workspace", workspace_name):
+					# Read the JSON to get the actual workspace name (not directory name)
+					with open(json_file, "r") as f:
+						workspace_data = json.load(f)
+					actual_name = workspace_data.get("name") or workspace_data.get("label") or workspace_name
+
+					if not frappe.db.exists("Workspace", actual_name):
 						import_file_by_path(json_file)
 						frappe.db.commit()  # nosemgrep
 				except Exception as e:

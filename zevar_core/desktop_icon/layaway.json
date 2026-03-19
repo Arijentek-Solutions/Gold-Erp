@@ -1,25 +1,21 @@
 {
  "app": "zevar_core",
  "bg_color": "blue",
- "creation": "2026-03-16 05:40:00",
+ "creation": "2026-03-18 11:19:00",
  "docstatus": 0,
  "doctype": "Desktop Icon",
  "hidden": 0,
+ "icon": "retail",
  "icon_type": "App",
- "idx": 1,
- "label": "Layaway List",
+ "idx": 0,
+ "label": "Layaway",
  "link": "/app/layaway-contract",
  "link_type": "External",
- "logo_url": "/assets/zevar_core/images/layaway_logo.svg",
- "modified": "2026-03-18 08:16:51.305516",
+ "modified": "2026-03-18 06:38:43.806545",
  "modified_by": "Administrator",
- "name": "Layaway List",
+ "name": "Layaway",
  "owner": "Administrator",
  "restrict_removal": 0,
- "roles": [
-  {
-   "role": "Administrator"
-  }
- ],
+ "roles": [],
  "standard": 1
 }

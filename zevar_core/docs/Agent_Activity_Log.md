@@ -1,5 +1,7 @@
 # Agent Activity Log
 
+[2026-03-18 12:25] **Prompt:** Fix Desktop Icon creation bugs in Frappe v16.11.0. **Fix:** Fixed 3 bugs: (1) `validate()` had invalid `module_name` ref, (2) `icon.app_name` → `icon.app`, (3) `workspace.js` callback checked non-existent `r.message.status` → `r.message`. Bugs 1-2 applied by user, Bug 3 fixed in `workspace.js`.
+
 This document tracks the tasks performed by the AI agent on the Zevar Unified Retail Management System project.
 
 ### Task 1: Project Onboarding
