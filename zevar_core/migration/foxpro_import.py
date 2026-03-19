@@ -110,6 +110,27 @@ def check_dbfread():
 		)
 
 
+def find_legacy_file(
+	backup_path: str,
+	preferred_names: tuple[str, ...],
+	prefixes: tuple[str, ...],
+	extensions: tuple[str, ...],
+) -> Optional[str]:
+	"""Find the best-matching legacy file, preferring exact filenames first."""
+	available_files = {fname.upper(): fname for fname in os.listdir(backup_path)}
+
+	for preferred_name in preferred_names:
+		if preferred_name.upper() in available_files:
+			return os.path.join(backup_path, available_files[preferred_name.upper()])
+
+	for fname in os.listdir(backup_path):
+		upper_name = fname.upper()
+		if upper_name.endswith(extensions) and any(upper_name.startswith(prefix) for prefix in prefixes):
+			return os.path.join(backup_path, fname)
+
+	return None
+
+
 def read_dbf(file_path: str, encoding: str = "cp1252") -> List[Dict]:
 	"""
 	Read a DBF file and return list of records.
@@ -243,12 +264,12 @@ def import_appraisals(backup_path: str, dry_run: bool = False) -> Dict:
 	"""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
-	# Find appraisal file
-	appraisal_file = None
-	for fname in os.listdir(backup_path):
-		if fname.upper().startswith("1APTERM") and fname.upper().endswith(".DBF"):
-			appraisal_file = os.path.join(backup_path, fname)
-			break
+	appraisal_file = find_legacy_file(
+		backup_path,
+		preferred_names=("1APTERM1.DBF",),
+		prefixes=("1APTERM",),
+		extensions=(".DBF",),
+	)
 
 	if not appraisal_file:
 		stats["errors"].append("Appraisal file (1APTERM1.DBF) not found")
@@ -307,14 +328,12 @@ def import_inventory(backup_path: str, dry_run: bool = False) -> Dict:
 	"""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
-	# Find inventory file
-	inventory_file = None
-	for fname in os.listdir(backup_path):
-		if fname.upper().startswith("INVENT") and (
-			fname.upper().endswith(".BUP") or fname.upper().endswith(".DBF")
-		):
-			inventory_file = os.path.join(backup_path, fname)
-			break
+	inventory_file = find_legacy_file(
+		backup_path,
+		preferred_names=("INVENTRY.BUP", "INVENTRY.DBF"),
+		prefixes=("INVENT",),
+		extensions=(".BUP", ".DBF"),
+	)
 
 	if not inventory_file:
 		stats["errors"].append("Inventory file (Inventry.bup) not found")
@@ -385,14 +404,12 @@ def import_employees(backup_path: str, dry_run: bool = False) -> Dict:
 	"""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
-	# Find employee file
-	employee_file = None
-	for fname in os.listdir(backup_path):
-		if fname.upper().startswith("EMPLOY") and (
-			fname.upper().endswith(".BUP") or fname.upper().endswith(".DBF")
-		):
-			employee_file = os.path.join(backup_path, fname)
-			break
+	employee_file = find_legacy_file(
+		backup_path,
+		preferred_names=("EMPLOYEE.BUP", "EMPLOYEE.DBF"),
+		prefixes=("EMPLOY",),
+		extensions=(".BUP", ".DBF"),
+	)
 
 	if not employee_file:
 		stats["errors"].append("Employee file (Employee.bup) not found")
@@ -456,14 +473,12 @@ def import_customers(backup_path: str, dry_run: bool = False) -> Dict:
 	"""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
-	# Find customer file
-	customer_file = None
-	for fname in os.listdir(backup_path):
-		if fname.upper().startswith("GUEST") and (
-			fname.upper().endswith(".BUP") or fname.upper().endswith(".DBF")
-		):
-			customer_file = os.path.join(backup_path, fname)
-			break
+	customer_file = find_legacy_file(
+		backup_path,
+		preferred_names=("GUEST.BUP", "GUEST.DBF", "GUESTS.BUP", "GUESTS.DBF"),
+		prefixes=("GUEST",),
+		extensions=(".BUP", ".DBF"),
+	)
 
 	if not customer_file:
 		stats["errors"].append("Customer file (Guest.bup) not found")
@@ -540,12 +555,12 @@ def import_stores(backup_path: str, dry_run: bool = False) -> Dict:
 	"""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
-	# Find store file
-	store_file = None
-	for fname in os.listdir(backup_path):
-		if fname.upper().startswith("SHOW") and fname.upper().endswith(".DBF"):
-			store_file = os.path.join(backup_path, fname)
-			break
+	store_file = find_legacy_file(
+		backup_path,
+		preferred_names=("SHOWINFO.DBF",),
+		prefixes=("SHOW",),
+		extensions=(".DBF",),
+	)
 
 	if not store_file:
 		stats["errors"].append("Store file (showinfo.DBF) not found")

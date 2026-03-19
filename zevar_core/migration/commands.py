@@ -2,20 +2,55 @@
 Bench Commands for Zevar Migration
 
 Usage:
-    bench --site <site> zevar-import-legacy /path/to/backup [--dry-run]
+    bench --site <site> zevar-import-legacy [/path/to/backup] [--dry-run]
     bench --site <site> zevar-mapping-info
 """
 
 import json
+import os
+
 import frappe
-from frappe.commands import pass_context
+from frappe.commands import get_site, pass_context
 import click
 
 from .foxpro_import import import_all, get_mapping_info
 
 
+DEFAULT_LEGACY_BACKUP_PATHS = (
+	"~/Downloads/Zevar_HIPmall_RD",
+	"/workspace/development/Zevar_URMS/Zevar_HIPmall_RD/Zevar_HIPmall_RD",
+	"/Zevar_URMS/Zevar_HIPmall_RD",
+)
+
+
+def resolve_legacy_backup_path(backup_path: str | None = None) -> str:
+	"""Resolve the best available legacy backup path."""
+	candidate_paths: list[str] = []
+
+	if backup_path:
+		candidate_paths.append(backup_path)
+
+	configured_path = frappe.conf.get("zevar_legacy_backup_path")
+	if configured_path:
+		candidate_paths.append(configured_path)
+
+	candidate_paths.extend(DEFAULT_LEGACY_BACKUP_PATHS)
+
+	expanded_paths: list[str] = []
+	for path in candidate_paths:
+		expanded_path = os.path.abspath(os.path.expanduser(path))
+		if expanded_path not in expanded_paths:
+			expanded_paths.append(expanded_path)
+
+	for path in expanded_paths:
+		if os.path.isdir(path):
+			return path
+
+	return expanded_paths[0]
+
+
 @click.command("zevar-import-legacy")
-@click.argument("backup_path", required=True)
+@click.argument("backup_path", required=False)
 @click.option("--dry-run", is_flag=True, default=False, help="Preview import without creating records")
 @click.option("--json-output", is_flag=True, default=False, help="Output results as JSON")
 @pass_context
@@ -28,22 +63,21 @@ def import_legacy_data(context, backup_path, dry_run=False, json_output=False):
 
 	Example:
 	    bench --site hipmall.zevar zevar-import-legacy /path/to/Zevar_HIPmall_RD
-	    bench --site hipmall.zevar zevar-import-legacy /path/to/backup --dry-run
+	    bench --site hipmall.zevar zevar-import-legacy --dry-run
 	"""
-	site = context.obj.get("site")
-
-	if not site:
-		click.echo("Please specify a site with --site")
-		return
+	site = get_site(context)
 
 	frappe.init(site=site)
 	frappe.connect()
 
 	try:
-		click.echo(f"\n{'[DRY RUN] ' if dry_run else ''}Importing legacy data from: {backup_path}")
+		resolved_backup_path = resolve_legacy_backup_path(backup_path)
+		click.echo(
+			f"\n{'[DRY RUN] ' if dry_run else ''}Importing legacy data from: {resolved_backup_path}"
+		)
 		click.echo("-" * 60)
 
-		results = import_all(backup_path, dry_run=dry_run)
+		results = import_all(resolved_backup_path, dry_run=dry_run)
 
 		if json_output:
 			click.echo(json.dumps(results, indent=2, default=str))
@@ -93,11 +127,7 @@ def show_mapping_info(context):
 	Example:
 	    bench --site hipmall.zevar zevar-mapping-info
 	"""
-	site = context.obj.get("site")
-
-	if not site:
-		click.echo("Please specify a site with --site")
-		return
+	site = get_site(context)
 
 	frappe.init(site=site)
 	frappe.connect()
@@ -117,7 +147,7 @@ def show_mapping_info(context):
 
 		click.echo("\n" + "=" * 60)
 		click.echo("Usage:")
-		click.echo("  bench --site <site> zevar-import-legacy /path/to/backup")
+		click.echo("  bench --site <site> zevar-import-legacy")
 		click.echo("  bench --site <site> zevar-import-legacy /path/to/backup --dry-run")
 		click.echo("")
 
@@ -132,7 +162,7 @@ def get_legacy_backup_path():
 	Can be configured in site_config.json as:
 	    "zevar_legacy_backup_path": "/path/to/backup"
 	"""
-	return frappe.conf.get("zevar_legacy_backup_path", "/Zevar_URMS/Zevar_HIPmall_RD")
+	return resolve_legacy_backup_path()
 
 
 commands = [
