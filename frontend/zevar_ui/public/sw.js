@@ -4,11 +4,11 @@
  * Caches assets and API responses for offline functionality
  */
 
-const CACHE_NAME = 'zevar-pos-v1'
-const API_CACHE = 'zevar-api-v1'
+const CACHE_NAME = 'zevar-pos-v2'
+const API_CACHE = 'zevar-api-v2'
 
 // Assets to cache immediately on install
-const STATIC_ASSETS = ['/', '/index.html', '/manifest.json']
+const STATIC_ASSETS = ['/pos/', '/pos/index.html', '/pos/manifest.json']
 
 // Install event - cache static assets
 self.addEventListener('install', (event) => {
