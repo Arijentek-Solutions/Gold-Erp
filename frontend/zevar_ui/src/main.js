@@ -23,7 +23,7 @@ app.mount('#app')
 if ('serviceWorker' in navigator) {
 	window.addEventListener('load', () => {
 		navigator.serviceWorker
-			.register('/sw.js')
+			.register('/pos/sw.js', { scope: '/pos/' })
 			.then((registration) => {
 				console.log('[App] Service Worker registered:', registration.scope)
 			})

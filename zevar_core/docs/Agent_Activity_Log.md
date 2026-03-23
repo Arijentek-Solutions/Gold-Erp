@@ -1,5 +1,7 @@
 # Agent Activity Log
 
+[2026-03-19 08:20] **Prompt:** Set up the FoxPro migration locally using the discovered backup path and note how it was done. **Fix:** Finished the local migration wiring for v16 Bench by adding `zevar_core.commands`, promoting `dbfread` into `pyproject.toml`, adding `scripts/setup_migration_local.sh`, auto-resolving backup paths in `migration/commands.py`, and verifying with `zevar-mapping-info` plus a `zevar-import-legacy --dry-run` run against `/workspace/development/Zevar_URMS/Zevar_HIPmall_RD/Zevar_HIPmall_RD`. See `docs/FoxPro_Migration_Local_Setup.md`.
+
 [2026-03-18 12:25] **Prompt:** Fix Desktop Icon creation bugs in Frappe v16.11.0. **Fix:** Fixed 3 bugs: (1) `validate()` had invalid `module_name` ref, (2) `icon.app_name` → `icon.app`, (3) `workspace.js` callback checked non-existent `r.message.status` → `r.message`. Bugs 1-2 applied by user, Bug 3 fixed in `workspace.js`.
 
 This document tracks the tasks performed by the AI agent on the Zevar Unified Retail Management System project.
