@@ -1,0 +1,22 @@
+{
+ "app": "zevar_core",
+ "bg_color": "blue",
+ "creation": "2026-03-23 07:03:30.049643",
+ "docstatus": 0,
+ "doctype": "Desktop Icon",
+ "hidden": 0,
+ "icon_type": "App",
+ "idx": 0,
+ "label": "New-Layaway",
+ "link": "/desk/layaway-contract",
+ "link_type": "External",
+ "modified": "2026-03-23 07:26:24.525318",
+ "modified_by": "Administrator",
+ "name": "New-Layaway",
+ "owner": "Administrator",
+ "parent_icon": "",
+ "restrict_removal": 1,
+ "roles": [],
+ "sidebar": "",
+ "standard": 1
+}
