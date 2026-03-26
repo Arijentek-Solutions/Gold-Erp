@@ -9,14 +9,14 @@ Usage:
 import json
 import os
 
+import click
 import frappe
 from frappe.commands import get_site, pass_context
-import click
 
-from .foxpro_import import import_all, get_mapping_info
-
+from .foxpro_import import get_mapping_info, import_all
 
 DEFAULT_LEGACY_BACKUP_PATHS = (
+	"/workspace/development/Zevar_URMS/Zevar_HIPmall_MD_1",
 	"~/Downloads/Zevar_HIPmall_RD",
 	"/workspace/development/Zevar_URMS/Zevar_HIPmall_RD/Zevar_HIPmall_RD",
 	"/Zevar_URMS/Zevar_HIPmall_RD",
@@ -53,8 +53,9 @@ def resolve_legacy_backup_path(backup_path: str | None = None) -> str:
 @click.argument("backup_path", required=False)
 @click.option("--dry-run", is_flag=True, default=False, help="Preview import without creating records")
 @click.option("--json-output", is_flag=True, default=False, help="Output results as JSON")
+@click.option("--skip-transactions", is_flag=True, default=False, help="Skip Sales Invoice import (slow)")
 @pass_context
-def import_legacy_data(context, backup_path, dry_run=False, json_output=False):
+def import_legacy_data(context, backup_path, dry_run=False, json_output=False, skip_transactions=False):
 	"""
 	Import legacy FoxPro data into Zevar.
 
@@ -64,6 +65,7 @@ def import_legacy_data(context, backup_path, dry_run=False, json_output=False):
 	Example:
 	    bench --site hipmall.zevar zevar-import-legacy /path/to/Zevar_HIPmall_RD
 	    bench --site hipmall.zevar zevar-import-legacy --dry-run
+	    bench --site hipmall.zevar zevar-import-legacy --skip-transactions
 	"""
 	site = get_site(context)
 
@@ -72,24 +74,42 @@ def import_legacy_data(context, backup_path, dry_run=False, json_output=False):
 
 	try:
 		resolved_backup_path = resolve_legacy_backup_path(backup_path)
-		click.echo(
-			f"\n{'[DRY RUN] ' if dry_run else ''}Importing legacy data from: {resolved_backup_path}"
-		)
+		click.echo(f"\n{'[DRY RUN] ' if dry_run else ''}Importing legacy data from: {resolved_backup_path}")
 		click.echo("-" * 60)
 
-		results = import_all(resolved_backup_path, dry_run=dry_run)
+		results = import_all(resolved_backup_path, dry_run=dry_run, skip_transactions=skip_transactions)
 
 		if json_output:
 			click.echo(json.dumps(results, indent=2, default=str))
 		else:
 			# Print summary
-			for category in ["stores", "employees", "customers", "inventory", "appraisals"]:
+			for category in [
+				"stores",
+				"employees",
+				"categories",
+				"item_attributes",
+				"purities",
+				"suppliers",
+				"customers",
+				"inventory",
+				"repair_types",
+				"gold_rates",
+				"transactions",
+				"appraisals",
+			]:
 				stats = results.get(category, {})
 				doctype = {
 					"stores": "Store Location",
 					"employees": "Employee",
+					"categories": "Item Group",
+					"item_attributes": "Item Attribute (Color/Clarity)",
+					"purities": "Zevar Purity",
+					"suppliers": "Supplier",
 					"customers": "Customer",
 					"inventory": "Item",
+					"repair_types": "Repair Type",
+					"gold_rates": "Gold Rate Log",
+					"transactions": "Sales Invoice",
 					"appraisals": "Jewelry Appraisal",
 				}.get(category)
 
@@ -139,7 +159,7 @@ def show_mapping_info(context):
 		click.echo("Zevar Legacy Data Import - Field Mappings")
 		click.echo("=" * 60)
 
-		for category, info in mappings.items():
+		for _category, info in mappings.items():
 			click.echo(f"\n{info['doctype']} ({info['file']}):")
 			click.echo("-" * 40)
 			for legacy, zevar in info["fields"].items():

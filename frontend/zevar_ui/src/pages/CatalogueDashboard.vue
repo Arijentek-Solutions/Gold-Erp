@@ -1,7 +1,8 @@
 <template>
 	<div class="min-h-screen" :class="isDark ? 'bg-[#1e1e24]' : 'bg-white'">
-		<!-- Header -->
+		<!-- Header - only shown when not inside AppLayout -->
 		<Header
+			v-if="!isEmbedded"
 			:isDark="isDark"
 			:activeCategory="activeCategory"
 			@toggleTheme="ui.toggleTheme"
@@ -655,21 +656,26 @@
 		<ProductModal
 			:show="showProductModal"
 			:item-code="selectedItemCode"
-			@close="showProductModal = false; selectedItemCode = null"
+			@close="
+				showProductModal = false
+				selectedItemCode = null
+			"
 		/>
 	</div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useUIStore } from '@/stores/ui'
 import Header from '@/components/Header.vue'
 import ProductModal from '@/components/ProductModal.vue'
 
 const router = useRouter()
+const route = useRoute()
 const ui = useUIStore()
 const isDark = computed(() => ui.isDark)
+const isEmbedded = computed(() => route.meta?.fullPage === true)
 const activeCategory = ref('all')
 const showProductModal = ref(false)
 const selectedItemCode = ref(null)

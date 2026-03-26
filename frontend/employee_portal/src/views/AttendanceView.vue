@@ -45,13 +45,13 @@
 										? 'bg-emerald-500/15 text-emerald-400'
 										: 'bg-amber-500/15 text-amber-400'
 								"
-								>
-									<span
-										class="w-1.5 h-1.5 rounded-full"
-										:class="shiftComplete ? 'bg-emerald-400' : 'bg-amber-400'"
-									></span>
-									{{ shiftComplete ? "Complete" : "Active" }}
-								</span>
+							>
+								<span
+									class="w-1.5 h-1.5 rounded-full"
+									:class="shiftComplete ? 'bg-emerald-400' : 'bg-amber-400'"
+								></span>
+								{{ shiftComplete ? "Complete" : "Active" }}
+							</span>
 							<span
 								v-else-if="hasWorkedToday"
 								class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 text-white/60 text-[10px] font-bold uppercase"

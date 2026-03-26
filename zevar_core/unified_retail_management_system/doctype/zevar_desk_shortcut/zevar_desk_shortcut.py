@@ -22,16 +22,12 @@ class ZevarDeskShortcut(Document):
 			parts = shortcut.split("+")
 
 			if len(parts) < 2:
-				frappe.throw(
-					_("Keyboard shortcut must include at least one modifier key (alt, ctrl, shift)")
-				)
+				frappe.throw(_("Keyboard shortcut must include at least one modifier key (alt, ctrl, shift)"))
 
 			# Check modifiers are valid
 			for part in parts[:-1]:
 				if part.strip() not in valid_modifiers:
-					frappe.throw(
-						_("Invalid modifier key '{0}'. Use: alt, ctrl, shift, or meta").format(part)
-					)
+					frappe.throw(_("Invalid modifier key '{0}'. Use: alt, ctrl, shift, or meta").format(part))
 
 	def validate_link(self):
 		"""Validate link based on link type"""

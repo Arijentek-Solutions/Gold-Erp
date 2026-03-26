@@ -7,7 +7,29 @@ import json
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
-from frappe.utils import flt
+from frappe.utils import add_days, flt, today
+
+from zevar_core.tests.utils import (
+	ensure_customer,
+	ensure_item_group,
+	ensure_mode_of_payment,
+	ensure_warehouse,
+)
+
+
+def create_test_employee(first_name: str, last_name: str) -> str:
+	"""Create a minimal employee record for salesperson tests."""
+	employee = frappe.get_doc(
+		{
+			"doctype": "Employee",
+			"first_name": first_name,
+			"last_name": last_name,
+			"gender": "Other",
+			"date_of_birth": add_days(today(), -12000),
+			"date_of_joining": today(),
+		}
+	).insert(ignore_permissions=True)
+	return employee.name
 
 
 class TestPOSInvoiceCreation(FrappeTestCase):
@@ -25,42 +47,18 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 		cls.company = frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
 			"Global Defaults", "default_company"
 		)
+		ensure_mode_of_payment("Cash", payment_type="Cash")
+		ensure_mode_of_payment("Credit Card", payment_type="Bank")
+		ensure_mode_of_payment("Trade-In", payment_type="General")
 
 		# Create test customer
-		if not frappe.db.exists("Customer", "Test POS Customer"):
-			cls.test_customer = frappe.get_doc(
-				{
-					"doctype": "Customer",
-					"customer_name": "Test POS Customer",
-					"customer_type": "Individual",
-					"customer_group": "Individual",
-					"territory": "All Territories",
-				}
-			).insert(ignore_permissions=True)
-		else:
-			cls.test_customer = "Test POS Customer"
+		cls.test_customer = ensure_customer("Test POS Customer")
 
 		# Create test warehouse
-		if not frappe.db.exists("Warehouse", "Test POS Warehouse - _TC"):
-			cls.test_warehouse = frappe.get_doc(
-				{
-					"doctype": "Warehouse",
-					"warehouse_name": "Test POS Warehouse",
-					"company": cls.company,
-				}
-			).insert(ignore_permissions=True)
-		else:
-			cls.test_warehouse = "Test POS Warehouse - _TC"
+		cls.test_warehouse = ensure_warehouse("Test POS Warehouse", company=cls.company)
 
 		# Create test item group
-		if not frappe.db.exists("Item Group", "Test POS Items"):
-			frappe.get_doc(
-				{
-					"doctype": "Item Group",
-					"item_group_name": "Test POS Items",
-					"parent_item_group": "All Item Groups",
-				}
-			).insert(ignore_permissions=True)
+		ensure_item_group("Test POS Items")
 
 		# Create test items
 		cls.test_items = []
@@ -83,7 +81,7 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 			else:
 				cls.test_items.append(item_code)
 
-		frappe.db.commit() # nosemgrep
+		frappe.db.commit()  # nosemgrep
 
 	def setUp(self):
 		"""Set up for each test."""
@@ -131,7 +129,7 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 
 		self.assertTrue(result.get("success"))
 		self.assertIsNotNone(result.get("invoice_name"))
-		self.assertEqual(result.get("status"), "Overdue")
+		self.assertEqual(result.get("status"), "Paid")
 
 		# Verify invoice was created
 		si = frappe.get_doc("Sales Invoice", result.get("invoice_name"))
@@ -262,19 +260,7 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 		"""Test POS invoice with salesperson assignments."""
 		from zevar_core.api.pos import create_pos_invoice
 
-		# Create test employee
-		if not frappe.db.exists("Employee", "TEST-EMP-001"):
-			emp = frappe.get_doc(
-				{
-					"doctype": "Employee",
-					"first_name": "Test",
-					"last_name": "Salesperson",
-					"naming_series": "EMP-",
-				}
-			).insert(ignore_permissions=True)
-			emp_id = emp.name
-		else:
-			emp_id = "TEST-EMP-001"
+		emp_id = create_test_employee("Test", "Salesperson")
 
 		items = json.dumps([{"item_code": self.test_items[0], "qty": 1, "rate": 100.0}])
 		payments = json.dumps([{"mode_of_payment": "Cash", "amount": 100.0}])
@@ -302,19 +288,7 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 		# Create test employees
 		employees = []
 		for i in range(2):
-			emp_id = f"TEST-EMP-{i:03d}"
-			if not frappe.db.exists("Employee", emp_id):
-				emp = frappe.get_doc(
-					{
-						"doctype": "Employee",
-						"first_name": f"Test {i}",
-						"last_name": "Salesperson",
-						"naming_series": "EMP-",
-					}
-				).insert(ignore_permissions=True)
-				employees.append(emp.name)
-			else:
-				employees.append(emp_id)
+			employees.append(create_test_employee(f"Test {i}", "Salesperson"))
 
 		items = json.dumps([{"item_code": self.test_items[0], "qty": 1, "rate": 100.0}])
 		payments = json.dumps([{"mode_of_payment": "Cash", "amount": 100.0}])
@@ -480,30 +454,10 @@ class TestTradeInDeduction(FrappeTestCase):
 		)
 
 		# Create test customer
-		if not frappe.db.exists("Customer", "Test Trade-In Customer"):
-			cls.test_customer = frappe.get_doc(
-				{
-					"doctype": "Customer",
-					"customer_name": "Test Trade-In Customer",
-					"customer_type": "Individual",
-					"customer_group": "Individual",
-					"territory": "All Territories",
-				}
-			).insert(ignore_permissions=True)
-		else:
-			cls.test_customer = "Test Trade-In Customer"
+		cls.test_customer = ensure_customer("Test Trade-In Customer")
 
 		# Create test warehouse
-		if not frappe.db.exists("Warehouse", "Test Trade-In Warehouse - _TC"):
-			cls.test_warehouse = frappe.get_doc(
-				{
-					"doctype": "Warehouse",
-					"warehouse_name": "Test Trade-In Warehouse",
-					"company": cls.company,
-				}
-			).insert(ignore_permissions=True)
-		else:
-			cls.test_warehouse = "Test Trade-In Warehouse - _TC"
+		cls.test_warehouse = ensure_warehouse("Test Trade-In Warehouse", company=cls.company)
 
 		# Create test item
 		if not frappe.db.exists("Item", "TEST-TRADEIN-ITEM"):
@@ -522,7 +476,7 @@ class TestTradeInDeduction(FrappeTestCase):
 		else:
 			cls.test_item = "TEST-TRADEIN-ITEM"
 
-		frappe.db.commit() # nosemgrep
+		frappe.db.commit()  # nosemgrep
 
 	def setUp(self):
 		frappe.set_user("Administrator")
@@ -606,13 +560,13 @@ class TestTradeInDeduction(FrappeTestCase):
 			[
 				{
 					"trade_in_value": 300.0,
-					"new_item_value": 500.0,
+					"new_item_value": 1000.0,
 					"manager_override": "",
 					"override_reason": "",
 				},
 				{
 					"trade_in_value": 200.0,
-					"new_item_value": 500.0,
+					"new_item_value": 1000.0,
 					"manager_override": "",
 					"override_reason": "",
 				},
@@ -661,7 +615,7 @@ class TestTradeInDeduction(FrappeTestCase):
 				{
 					"trade_in_value": 300.0,
 					"new_item_value": 500.0,
-					"manager_override": "Manager Name",
+					"manager_override": "Administrator",
 					"override_reason": "Customer loyalty discount",
 				}
 			]
@@ -679,7 +633,7 @@ class TestTradeInDeduction(FrappeTestCase):
 
 		self.assertTrue(result.get("success"))
 		si = frappe.get_doc("Sales Invoice", result.get("invoice_name"))
-		self.assertEqual(si.custom_trade_ins[0].manager_override, "Manager Name")
+		self.assertEqual(si.custom_trade_ins[0].manager_override, "Administrator")
 		self.assertEqual(si.custom_trade_ins[0].override_reason, "Customer loyalty discount")
 
 	def test_trade_in_value_zero(self):
@@ -815,13 +769,13 @@ class TestTradeInDeduction(FrappeTestCase):
 			[
 				{
 					"trade_in_value": 300.0,
-					"new_item_value": 500.0,
+					"new_item_value": 1000.0,
 					"manager_override": "",
 					"override_reason": "",
 				},
 				{
 					"trade_in_value": 200.0,
-					"new_item_value": 500.0,
+					"new_item_value": 1000.0,
 					"manager_override": "",
 					"override_reason": "",
 				},

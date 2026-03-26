@@ -72,9 +72,7 @@
 						class="flex items-center gap-3 mb-4 p-2 bg-white/5 rounded-lg border border-white/5 shrink-0"
 					>
 						<div class="size-2.5 rounded-full bg-amber-400"></div>
-						<h3 class="text-xs font-black tracking-widest text-white/70">
-							Assigned
-						</h3>
+						<h3 class="text-xs font-black tracking-widest text-white/70">Assigned</h3>
 						<span
 							class="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/50 font-mono"
 							>{{ assignedTasks.length }}</span
@@ -264,9 +262,7 @@
 						class="flex items-center gap-3 mb-4 p-2 bg-white/5 rounded-lg border border-white/5 shrink-0"
 					>
 						<div class="size-2.5 rounded-full bg-portal-accent-teal"></div>
-						<h3 class="text-xs font-black tracking-widest text-white/70">
-							My Tasks
-						</h3>
+						<h3 class="text-xs font-black tracking-widest text-white/70">My Tasks</h3>
 						<span
 							class="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-white/50 font-mono"
 							>{{ tasksStore.openTodos.length }}</span

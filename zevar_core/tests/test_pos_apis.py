@@ -11,6 +11,8 @@ import frappe
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import now_datetime
 
+from zevar_core.tests.utils import ensure_pos_profile, ensure_warehouse
+
 
 class TestPOSProfileAPI(FrappeTestCase):
 	"""Test cases for POS Profile API"""
@@ -20,28 +22,16 @@ class TestPOSProfileAPI(FrappeTestCase):
 		super().setUpClass()
 		# Create test POS Profile if not exists
 		cls.test_profile_name = "Test POS Profile"
-
-		if not frappe.db.exists("POS Profile", cls.test_profile_name):
-			profile = frappe.new_doc("POS Profile")
-			profile.name = cls.test_profile_name
-			profile.company = frappe.db.get_single_value("Global Defaults", "default_company")
-			profile.warehouse = cls._get_test_warehouse()
-			profile.currency = "USD"
-			profile.insert(ignore_permissions=True)
-			cls.created_profile = True
-		else:
-			cls.created_profile = False
+		cls.test_profile_name = ensure_pos_profile(
+			profile_name=cls.test_profile_name,
+			warehouse_name="Test POS Warehouse",
+		)
+		cls.created_profile = False
 
 	@classmethod
 	def _get_test_warehouse(cls):
 		"""Get or create test warehouse"""
-		warehouse_name = "Test POS Warehouse - T"
-		if not frappe.db.exists("Warehouse", warehouse_name):
-			wh = frappe.new_doc("Warehouse")
-			wh.warehouse_name = "Test POS Warehouse"
-			wh.company = frappe.db.get_single_value("Global Defaults", "default_company")
-			wh.insert(ignore_permissions=True)
-		return warehouse_name
+		return ensure_warehouse("Test POS Warehouse")
 
 	@classmethod
 	def tearDownClass(cls):
@@ -115,11 +105,10 @@ class TestPOSSessionAPI(FrappeTestCase):
 	@classmethod
 	def _ensure_test_profile(cls):
 		"""Ensure test POS profile exists"""
-		if not frappe.db.exists("POS Profile", cls.test_profile):
-			profile = frappe.new_doc("POS Profile")
-			profile.name = cls.test_profile
-			profile.company = frappe.db.get_single_value("Global Defaults", "default_company")
-			profile.insert(ignore_permissions=True)
+		cls.test_profile = ensure_pos_profile(
+			profile_name=cls.test_profile,
+			warehouse_name="Test POS Session Warehouse",
+		)
 
 	def setUp(self):
 		frappe.set_user("Administrator")
@@ -134,12 +123,15 @@ class TestPOSSessionAPI(FrappeTestCase):
 		"""Clean up test sessions"""
 		sessions = frappe.get_all(
 			"POS Opening Entry",
-			filters={"user": "Administrator", "docstatus": 0},
-			pluck="name",
+			filters={"user": "Administrator", "status": "Open"},
+			fields=["name", "docstatus"],
 		)
 		for session in sessions:
 			try:
-				frappe.delete_doc("POS Opening Entry", session, ignore_permissions=True)
+				doc = frappe.get_doc("POS Opening Entry", session.name)
+				if doc.docstatus == 1:
+					doc.cancel()
+				frappe.delete_doc("POS Opening Entry", session.name, ignore_permissions=True)
 			except Exception:
 				pass
 
@@ -158,6 +150,8 @@ class TestPOSSessionAPI(FrappeTestCase):
 
 		# Clean up
 		if result.get("session_name"):
+			doc = frappe.get_doc("POS Opening Entry", result["session_name"])
+			doc.cancel()
 			frappe.delete_doc("POS Opening Entry", result["session_name"], ignore_permissions=True)
 
 	def test_get_session_status(self):
@@ -188,6 +182,8 @@ class TestPOSSessionAPI(FrappeTestCase):
 
 		# Clean up
 		if result1.get("session_name"):
+			doc = frappe.get_doc("POS Opening Entry", result1["session_name"])
+			doc.cancel()
 			frappe.delete_doc("POS Opening Entry", result1["session_name"], ignore_permissions=True)
 
 

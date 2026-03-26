@@ -109,7 +109,7 @@ def log_event(
 
 	# Commit immediately for security events
 	if event_config["severity"] == "Warning":
-		frappe.db.commit() # nosemgrep (needed for immediate security event logging)
+		frappe.db.commit()  # nosemgrep (needed for immediate security event logging)
 
 
 @frappe.whitelist()
@@ -378,7 +378,7 @@ def generate_csv_export(logs: list) -> str:
 	file_name = f"audit_log_export_{frappe.utils.now_datetime().strftime('%Y%m%d_%H%M%S')}.csv"
 	file_path = frappe.get_site_path("public", "files", file_name)
 
-	with open(file_path, "w") as f: # nosemgrep (safe site-internal file export)
+	with open(file_path, "w") as f:  # nosemgrep (safe site-internal file export)
 		f.write(output.getvalue())
 
 	return f"/files/{file_name}"

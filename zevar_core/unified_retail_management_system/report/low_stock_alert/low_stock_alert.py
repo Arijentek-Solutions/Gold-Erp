@@ -82,7 +82,7 @@ def execute(filters=None):
 		warehouse_filter = "AND b.warehouse = %(warehouse)s"
 
 	# Get items with low stock
-	items = frappe.db.sql( # nosemgrep
+	items = frappe.db.sql(  # nosemgrep
 		f"""
 		SELECT
 			i.name as item_code,
@@ -140,7 +140,7 @@ def get_alert_summary(filters=None):
 	if warehouse:
 		warehouse_filter = "AND b.warehouse = %(warehouse)s"
 
-	summary = frappe.db.sql( # nosemgrep
+	summary = frappe.db.sql(  # nosemgrep
 		f"""
 		SELECT
 			COUNT(*) as total_items,

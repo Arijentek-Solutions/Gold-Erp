@@ -50,7 +50,7 @@ def run():
 				)
 		profile.save()
 
-	frappe.db.commit() # nosemgrep (manual commit for setup)
+	frappe.db.commit()  # nosemgrep (manual commit for setup)
 	print("Done.")
 
 

@@ -49,26 +49,17 @@ def get_sales_history(
 	filters = {
 		"docstatus": 1,
 		"is_pos": 1,
-		"posting_date": [">=", cstr(from_date), "<=", cstr(to_date)],
+		"posting_date": ["between", [cstr(from_date), cstr(to_date)]],
 	}
 
 	if customer:
 		filters["customer"] = ["like", f"%{customer}%"]
 
 	if status:
-		status_map = {
-			"Paid": ["Unpaid", 0],
-			"Unpaid": ["Unpaid", ">", 0],
-			"Overdue": ["Unpaid", ">", 0],  # Would need due_date check
-			"Cancelled": ["Cancelled"],
-		}
-		if status in status_map:
-			if status == "Cancelled":
-				filters["status"] = "Cancelled"
-			else:
-				filters["status"] = status_map[status][0]
-				if status == "Overdue":
-					filters["due_date"] = ["<", getdate()]
+		if status == "Overdue":
+			filters["status"] = "Overdue"
+		else:
+			filters["status"] = status
 
 	if search:
 		filters["name"] = ["like", f"%{search}%"]

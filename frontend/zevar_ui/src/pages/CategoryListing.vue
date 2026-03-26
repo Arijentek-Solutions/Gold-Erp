@@ -4,6 +4,7 @@
 		:class="isDark ? 'bg-[#1e1e24] text-white' : 'bg-white text-gray-900'"
 	>
 		<Header
+			v-if="!isEmbedded"
 			:isDark="isDark"
 			:activeCategory="categoryId"
 			@toggleTheme="toggleTheme"
@@ -296,7 +297,10 @@
 		<ProductModal
 			:show="showModal"
 			:item-code="selectedItem"
-			@close="showModal = false; selectedItem = null"
+			@close="
+				showModal = false
+				selectedItem = null
+			"
 		/>
 	</div>
 </template>
@@ -311,6 +315,9 @@ import ProductModal from '@/components/ProductModal.vue'
 
 const route = useRoute()
 const router = useRouter()
+
+// Check if embedded inside AppLayout
+const isEmbedded = computed(() => route.meta?.fullPage === true)
 
 // Dark mode
 import { useUIStore } from '@/stores/ui'

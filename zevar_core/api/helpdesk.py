@@ -8,6 +8,298 @@ from frappe.utils import now_datetime
 
 
 @frappe.whitelist()
+def create_support_ticket(
+	subject: str,
+	description: str,
+	category: str = "Other",
+	sub_category: str | None = None,
+	priority: str = "Medium",
+	department: str | None = None,
+	reference_type: str | None = None,
+	reference_name: str | None = None,
+):
+	"""
+	Create a support ticket with enhanced business categories.
+
+	Args:
+	    subject: Ticket subject/title (required)
+	    description: Detailed description (required)
+	    category: Category ('Customer Issue', 'Jewelry Issue', 'Vendor Issue', 'Employee Issue', 'Store Issue', 'Technical', 'Other')
+	    sub_category: Sub-category based on category
+	    priority: Priority ('Low', 'Medium', 'High', 'Urgent')
+	    department: Responsible department
+	    reference_type: Type of reference ('Customer', 'Supplier', 'Employee', 'Item')
+	    reference_name: Name of the referenced document
+
+	Returns:
+	    Dict with success status and ticket ID
+	"""
+	if not subject:
+		frappe.throw(_("Subject is required"))
+	if not description:
+		frappe.throw(_("Description is required"))
+
+	# Get employee info
+	employee = frappe.db.get_value(
+		"Employee",
+		{"user_id": frappe.session.user},
+		["name", "employee_name", "department", "designation", "reports_to"],
+		as_dict=True,
+	)
+
+	# Find reporting manager user ID
+	manager_user_id = None
+	if employee and employee.get("reports_to"):
+		manager_user_id = frappe.db.get_value("Employee", {"name": employee.reports_to}, "user_id")
+
+	# Determine assigned user based on department
+	assigned_to = manager_user_id
+	if department:
+		# Try to find department manager or user with this department
+		dept_user = frappe.db.get_value(
+			"Employee",
+			{"department": department, "status": "Active"},
+			"user_id",
+			order_by="creation desc",
+		)
+		if dept_user:
+			assigned_to = dept_user
+
+	# Build full description with employee context
+	context_info = f"""**Reported by:** {employee.employee_name if employee else frappe.session.user}
+**Employee ID:** {employee.name if employee else 'N/A'}
+**Employee Department:** {employee.department if employee else 'N/A'}
+**Category:** {category}
+**Sub-Category:** {sub_category or 'N/A'}
+**Priority:** {priority}
+**Responsible Department:** {department or 'N/A'}
+**Date/Time:** {now_datetime().strftime('%Y-%m-%d %H:%M:%S')}"""
+
+	# Add reference info if provided
+	if reference_type and reference_name:
+		context_info += f"\n**Related {reference_type}:** {reference_name}"
+
+	full_description = f"""{context_info}
+
+---
+
+**Issue Description:**
+
+{description}"""
+
+	# Check if Helpdesk is installed
+	if frappe.db.exists("DocType", "HD Ticket"):
+		ticket_doc = {
+			"doctype": "HD Ticket",
+			"subject": subject,
+			"description": full_description,
+			"raised_by": frappe.session.user,
+			"priority": priority,
+			"ticket_type": category,
+			"status": "Open",
+			"custom_category": category,
+			"custom_sub_category": sub_category,
+			"custom_department": department,
+		}
+
+		# Add custom reference fields if they exist
+		if reference_type and reference_name:
+			ticket_doc["custom_reference_type"] = reference_type
+			ticket_doc["custom_reference"] = reference_name
+
+		# Assign to responsible person
+		if assigned_to:
+			ticket_doc["allocated_to"] = assigned_to
+
+		ticket = frappe.get_doc(ticket_doc)
+		ticket.insert()
+
+		return {
+			"success": True,
+			"ticket_id": ticket.name,
+			"message": _("Ticket {0} created successfully").format(ticket.name),
+			"helpdesk_installed": True,
+		}
+
+	# Fallback to Frappe Issue doctype
+	if frappe.db.exists("DocType", "Issue"):
+		issue_doc = {
+			"doctype": "Issue",
+			"subject": subject,
+			"description": full_description,
+			"raised_by": frappe.session.user,
+			"priority": priority,
+			"issue_type": category,
+			"status": "Open",
+		}
+
+		issue = frappe.get_doc(issue_doc)
+		issue.insert()
+
+		# Assign to responsible person via ToDo
+		if assigned_to:
+			todo = frappe.get_doc(
+				{
+					"doctype": "ToDo",
+					"reference_type": "Issue",
+					"reference_name": issue.name,
+					"description": f"[{category}] {subject}",
+					"allocated_to": assigned_to,
+					"status": "Open",
+				}
+			)
+			todo.insert(ignore_permissions=True)
+
+		return {
+			"success": True,
+			"ticket_id": issue.name,
+			"message": _("Issue {0} created successfully").format(issue.name),
+			"helpdesk_installed": False,
+		}
+
+	# Last resort: Create a TODO
+	allocated_to = (
+		assigned_to or frappe.db.get_value("User", {"role": "HR Manager"}, "name") or "Administrator"
+	)
+
+	todo = frappe.get_doc(
+		{
+			"doctype": "ToDo",
+			"description": f"[{category}] {subject}\n\n{full_description}",
+			"allocated_to": allocated_to,
+			"priority": priority,
+			"status": "Open",
+			"date": frappe.utils.today(),
+		}
+	)
+	todo.insert()
+
+	return {
+		"success": True,
+		"ticket_id": todo.name,
+		"message": _("Your issue has been reported. A TODO has been created."),
+		"helpdesk_installed": False,
+	}
+
+
+@frappe.whitelist()
+def get_support_categories():
+	"""
+	Get available support categories with sub-categories.
+
+	Returns:
+	    List of category objects with sub-categories
+	"""
+	return [
+		{
+			"value": "Customer Issue",
+			"label": "Customer Issue",
+			"department": "Customer Service",
+			"sub_categories": [
+				{"value": "Return Request", "label": "Return Request"},
+				{"value": "Exchange Request", "label": "Exchange Request"},
+				{"value": "Complaint", "label": "Complaint"},
+				{"value": "Billing Dispute", "label": "Billing Dispute"},
+				{"value": "Layaway Issue", "label": "Layaway Issue"},
+				{"value": "Gift Card Issue", "label": "Gift Card Issue"},
+			],
+		},
+		{
+			"value": "Jewelry Issue",
+			"label": "Jewelry Issue",
+			"department": "Quality Control",
+			"sub_categories": [
+				{"value": "Quality Defect", "label": "Quality Defect"},
+				{"value": "Sizing Issue", "label": "Sizing Issue"},
+				{"value": "Damage", "label": "Damage"},
+				{"value": "Missing Stones", "label": "Missing Stones"},
+				{"value": "Hallmark Issue", "label": "Hallmark Issue"},
+			],
+		},
+		{
+			"value": "Vendor Issue",
+			"label": "Vendor Issue",
+			"department": "Procurement",
+			"sub_categories": [
+				{"value": "Late Delivery", "label": "Late Delivery"},
+				{"value": "Quality Problem", "label": "Quality Problem"},
+				{"value": "Wrong Item", "label": "Wrong Item"},
+				{"value": "Pricing Dispute", "label": "Pricing Dispute"},
+			],
+		},
+		{
+			"value": "Employee Issue",
+			"label": "Employee Issue",
+			"department": "Human Resources",
+			"sub_categories": [
+				{"value": "Attendance", "label": "Attendance"},
+				{"value": "Payroll", "label": "Payroll"},
+				{"value": "Leave", "label": "Leave"},
+				{"value": "Manager", "label": "Manager"},
+			],
+		},
+		{
+			"value": "Store Issue",
+			"label": "Store Issue",
+			"department": "Operations",
+			"sub_categories": [
+				{"value": "Equipment", "label": "Equipment"},
+				{"value": "Security", "label": "Security"},
+				{"value": "Inventory", "label": "Inventory"},
+				{"value": "POS System", "label": "POS System"},
+			],
+		},
+		{
+			"value": "Technical",
+			"label": "Technical / IT",
+			"department": "IT Support",
+			"sub_categories": [],
+		},
+		{
+			"value": "Other",
+			"label": "Other",
+			"department": "General",
+			"sub_categories": [],
+		},
+	]
+
+
+@frappe.whitelist()
+def get_responsible_departments():
+	"""
+	Get list of departments with their managers.
+
+	Returns:
+	    List of department objects
+	"""
+	departments = frappe.get_all(
+		"Department",
+		filters={"is_group": 0},
+		fields=["name", "department_name"],
+		order_by="name",
+	)
+
+	result = []
+	for dept in departments:
+		manager = frappe.db.get_value(
+			"Employee",
+			{"department": dept.name, "designation": "Manager"},
+			["user_id", "employee_name"],
+			as_dict=True,
+		)
+		result.append(
+			{
+				"value": dept.name,
+				"label": dept.department_name or dept.name,
+				"manager": manager.employee_name if manager else None,
+				"manager_email": manager.user_id if manager else None,
+			}
+		)
+
+	return result
+
+
+@frappe.whitelist()
 def create_attendance_issue(
 	subject: str,
 	description: str,

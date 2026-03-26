@@ -4,7 +4,6 @@ POS Permissions API - Role-Based Access Control
 Provides permission checks and manager override functionality for POS operations.
 """
 
-import bcrypt
 import frappe
 from frappe import _
 from frappe.utils import now_datetime
@@ -245,6 +244,8 @@ def verify_manager_pin(pin: str) -> dict | None:
 	for manager in managers:
 		if manager.pos_manager_pin_hash:
 			try:
+				import bcrypt
+
 				# Verify PIN using bcrypt
 				if bcrypt.checkpw(pin.encode("utf-8"), manager.pos_manager_pin_hash.encode("utf-8")):
 					# Check if user has manager role
@@ -255,7 +256,7 @@ def verify_manager_pin(pin: str) -> dict | None:
 							"full_name": manager.full_name,
 							"email": manager.email,
 						}
-			except (ValueError, TypeError):
+			except (ImportError, ValueError, TypeError):
 				# Invalid hash format, skip this user
 				continue
 
@@ -281,6 +282,11 @@ def set_manager_pin(pin: str) -> dict:
 	if "Sales Manager" not in user_roles and "System Manager" not in user_roles:
 		frappe.throw(_("Only Sales Managers or System Managers can set a manager PIN."))
 
+	try:
+		import bcrypt
+	except ImportError:
+		frappe.throw(_("bcrypt is required to set a manager PIN."))
+
 	# Hash the PIN with bcrypt
 	hashed_pin = bcrypt.hashpw(pin.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
@@ -291,7 +297,7 @@ def set_manager_pin(pin: str) -> dict:
 		"pos_manager_pin_hash",
 		hashed_pin,
 	)
-	frappe.db.commit() # nosemgrep (manual commit for permission sync)
+	frappe.db.commit()  # nosemgrep (manual commit for permission sync)
 
 	return {"success": True, "message": _("Manager PIN updated successfully.")}
 

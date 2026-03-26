@@ -149,7 +149,7 @@ def generate_sales_csv(sales: list, include_items: bool, include_payments: bool)
 	file_name = f"sales_export_{now_datetime().strftime('%Y%m%d_%H%M%S')}.csv"
 	file_path = frappe.get_site_path("public", "files", file_name)
 
-	with open(file_path, "w") as f: # nosemgrep (safe site-internal file export)
+	with open(file_path, "w") as f:  # nosemgrep (safe site-internal file export)
 		f.write(output.getvalue())
 
 	return f"/files/{file_name}"
@@ -236,7 +236,7 @@ def export_customer_data(
 	file_name = f"customer_export_{now_datetime().strftime('%Y%m%d_%H%M%S')}.csv"
 	file_path = frappe.get_site_path("public", "files", file_name)
 
-	with open(file_path, "w") as f: # nosemgrep (safe site-internal file export)
+	with open(file_path, "w") as f:  # nosemgrep (safe site-internal file export)
 		f.write(output.getvalue())
 
 	return {
@@ -337,7 +337,7 @@ def export_inventory_data(
 	file_name = f"inventory_export_{now_datetime().strftime('%Y%m%d_%H%M%S')}.csv"
 	file_path = frappe.get_site_path("public", "files", file_name)
 
-	with open(file_path, "w") as f: # nosemgrep (safe site-internal file export)
+	with open(file_path, "w") as f:  # nosemgrep (safe site-internal file export)
 		f.write(output.getvalue())
 
 	return {

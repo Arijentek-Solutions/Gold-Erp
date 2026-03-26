@@ -1,262 +1,280 @@
 <template>
-	<div class="sales-history-page">
-		<div class="page-header">
-			<h1>Sales History</h1>
-			<p>View and manage past transactions</p>
-		</div>
+	<AppLayout>
+		<div class="sales-history-page">
+			<div class="page-header">
+				<h1>Sales History</h1>
+				<p>View and manage past transactions</p>
+			</div>
 
-		<!-- Filters -->
-		<div class="filters-bar">
-			<div class="filter-group">
-				<label>From</label>
-				<input type="date" v-model="filters.from_date" @change="fetchSales" />
-			</div>
-			<div class="filter-group">
-				<label>To</label>
-				<input type="date" v-model="filters.to_date" @change="fetchSales" />
-			</div>
-			<div class="filter-group">
-				<label>Customer</label>
-				<input
-					type="text"
-					v-model="filters.customer"
-					placeholder="Search customer..."
-					@keyup.enter="fetchSales"
-				/>
-			</div>
-			<div class="filter-group">
-				<label>Status</label>
-				<select v-model="filters.status" @change="fetchSales">
-					<option value="">All</option>
-					<option value="Paid">Paid</option>
-					<option value="Unpaid">Unpaid</option>
-					<option value="Overdue">Overdue</option>
-					<option value="Cancelled">Cancelled</option>
-				</select>
-			</div>
-			<div class="filter-group">
-				<label>Search</label>
-				<input
-					type="text"
-					v-model="filters.search"
-					placeholder="Invoice #..."
-					@keyup.enter="fetchSales"
-				/>
-			</div>
-			<button class="btn btn-primary" @click="fetchSales" :disabled="loading">
-				🔍 Search
-			</button>
-		</div>
-
-		<!-- Summary Cards -->
-		<div class="summary-cards" v-if="summary">
-			<div class="summary-card">
-				<span class="card-label">Transactions</span>
-				<span class="card-value">{{ summary.transaction_count }}</span>
-			</div>
-			<div class="summary-card highlight">
-				<span class="card-label">Total Sales</span>
-				<span class="card-value">${{ formatAmount(summary.total_sales) }}</span>
-			</div>
-			<div class="summary-card">
-				<span class="card-label">Average Sale</span>
-				<span class="card-value">${{ formatAmount(summary.average_sale) }}</span>
-			</div>
-			<div class="summary-card">
-				<span class="card-label">Customers</span>
-				<span class="card-value">{{ summary.unique_customers }}</span>
-			</div>
-		</div>
-
-		<!-- Sales Table -->
-		<div class="table-container">
-			<table class="sales-table">
-				<thead>
-					<tr>
-						<th>Invoice #</th>
-						<th>Date</th>
-						<th>Customer</th>
-						<th>Items</th>
-						<th>Total</th>
-						<th>Status</th>
-						<th>Actions</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-if="loading">
-						<td colspan="7" class="loading-cell">Loading transactions...</td>
-					</tr>
-					<tr v-else-if="sales.length === 0">
-						<td colspan="7" class="empty-cell">No transactions found</td>
-					</tr>
-					<tr
-						v-else
-						v-for="sale in sales"
-						:key="sale.name"
-						@click="viewDetails(sale.name)"
-					>
-						<td class="invoice-cell">{{ sale.name }}</td>
-						<td>{{ formatDate(sale.posting_date) }}</td>
-						<td>{{ sale.customer }}</td>
-						<td>{{ sale.item_count || 1 }}</td>
-						<td class="amount-cell">${{ formatAmount(sale.grand_total) }}</td>
-						<td>
-							<span class="status-badge" :class="getStatusClass(sale.status)">
-								{{ sale.status }}
-							</span>
-						</td>
-						<td>
-							<button
-								class="action-btn"
-								@click.stop="viewDetails(sale.name)"
-								title="View Details"
-							>
-								👁️
-							</button>
-							<button
-								class="action-btn"
-								@click.stop="printInvoice(sale.name)"
-								title="Print"
-							>
-								🖨️
-							</button>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-
-		<!-- Pagination -->
-		<div class="pagination" v-if="pagination.total_pages > 1">
-			<button
-				class="page-btn"
-				:disabled="pagination.page === 1"
-				@click="goToPage(pagination.page - 1)"
-			>
-				← Prev
-			</button>
-			<span class="page-info">
-				Page {{ pagination.page }} of {{ pagination.total_pages }} ({{
-					pagination.total_count
-				}}
-				total)
-			</span>
-			<button
-				class="page-btn"
-				:disabled="pagination.page === pagination.total_pages"
-				@click="goToPage(pagination.page + 1)"
-			>
-				Next →
-			</button>
-		</div>
-
-		<!-- Transaction Details Modal -->
-		<div
-			v-if="selectedTransaction"
-			class="modal-overlay"
-			@click.self="selectedTransaction = null"
-		>
-			<div class="modal-content transaction-modal">
-				<div class="modal-header">
-					<h2>Invoice {{ selectedTransaction.invoice.name }}</h2>
-					<button class="close-btn" @click="selectedTransaction = null">&times;</button>
+			<!-- Filters -->
+			<div class="filters-bar">
+				<div class="filter-group">
+					<label>From</label>
+					<input type="date" v-model="filters.from_date" @change="fetchSales" />
 				</div>
-				<div class="modal-body">
-					<div class="details-grid">
-						<div class="detail-section">
-							<h4>Customer</h4>
-							<p>{{ selectedTransaction.invoice.customer }}</p>
-						</div>
-						<div class="detail-section">
-							<h4>Date & Time</h4>
-							<p>
-								{{ formatDate(selectedTransaction.invoice.posting_date) }}
-								{{ selectedTransaction.invoice.posting_time }}
-							</p>
-						</div>
-						<div class="detail-section">
-							<h4>Status</h4>
-							<span
-								class="status-badge"
-								:class="getStatusClass(selectedTransaction.invoice.status)"
-							>
-								{{ selectedTransaction.invoice.status }}
-							</span>
-						</div>
-					</div>
+				<div class="filter-group">
+					<label>To</label>
+					<input type="date" v-model="filters.to_date" @change="fetchSales" />
+				</div>
+				<div class="filter-group">
+					<label>Customer</label>
+					<input
+						type="text"
+						v-model="filters.customer"
+						placeholder="Search customer..."
+						@keyup.enter="fetchSales"
+					/>
+				</div>
+				<div class="filter-group">
+					<label>Status</label>
+					<select v-model="filters.status" @change="fetchSales">
+						<option value="">All</option>
+						<option value="Paid">Paid</option>
+						<option value="Unpaid">Unpaid</option>
+						<option value="Overdue">Overdue</option>
+						<option value="Cancelled">Cancelled</option>
+					</select>
+				</div>
+				<div class="filter-group">
+					<label>Search</label>
+					<input
+						type="text"
+						v-model="filters.search"
+						placeholder="Invoice #..."
+						@keyup.enter="fetchSales"
+					/>
+				</div>
+				<button class="btn btn-primary" @click="fetchSales" :disabled="loading">
+					🔍 Search
+				</button>
+			</div>
 
-					<h4>Items</h4>
-					<table class="items-table">
-						<thead>
-							<tr>
-								<th>Item</th>
-								<th>Qty</th>
-								<th>Rate</th>
-								<th>Amount</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr v-for="item in selectedTransaction.items" :key="item.item_code">
-								<td>{{ item.item_name || item.item_code }}</td>
-								<td>{{ item.qty }}</td>
-								<td>${{ formatAmount(item.rate) }}</td>
-								<td>${{ formatAmount(item.amount) }}</td>
-							</tr>
-						</tbody>
-					</table>
+			<!-- Summary Cards -->
+			<div class="summary-cards" v-if="summary">
+				<div class="summary-card">
+					<span class="card-label">Transactions</span>
+					<span class="card-value">{{ summary.transaction_count }}</span>
+				</div>
+				<div class="summary-card highlight">
+					<span class="card-label">Total Sales</span>
+					<span class="card-value">${{ formatAmount(summary.total_sales) }}</span>
+				</div>
+				<div class="summary-card">
+					<span class="card-label">Average Sale</span>
+					<span class="card-value">${{ formatAmount(summary.average_sale) }}</span>
+				</div>
+				<div class="summary-card">
+					<span class="card-label">Customers</span>
+					<span class="card-value">{{ summary.unique_customers }}</span>
+				</div>
+			</div>
 
-					<div class="totals-section">
-						<div class="total-row">
-							<span>Subtotal:</span>
-							<span>${{ formatAmount(selectedTransaction.invoice.subtotal) }}</span>
-						</div>
-						<div class="total-row" v-if="selectedTransaction.invoice.discount > 0">
-							<span>Discount:</span>
-							<span>-${{ formatAmount(selectedTransaction.invoice.discount) }}</span>
-						</div>
-						<div class="total-row">
-							<span>Tax:</span>
-							<span>${{ formatAmount(selectedTransaction.invoice.tax) }}</span>
-						</div>
-						<div class="total-row grand-total">
-							<span>Grand Total:</span>
-							<span
-								>${{ formatAmount(selectedTransaction.invoice.grand_total) }}</span
-							>
-						</div>
-					</div>
-
-					<h4>Payments</h4>
-					<div class="payments-list">
-						<div
-							v-for="payment in selectedTransaction.payments"
-							:key="payment.mode_of_payment"
-							class="payment-item"
+			<!-- Sales Table -->
+			<div class="table-container">
+				<table class="sales-table">
+					<thead>
+						<tr>
+							<th>Invoice #</th>
+							<th>Date</th>
+							<th>Customer</th>
+							<th>Items</th>
+							<th>Total</th>
+							<th>Status</th>
+							<th>Actions</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-if="loading">
+							<td colspan="7" class="loading-cell">Loading transactions...</td>
+						</tr>
+						<tr v-else-if="sales.length === 0">
+							<td colspan="7" class="empty-cell">No transactions found</td>
+						</tr>
+						<tr
+							v-else
+							v-for="sale in sales"
+							:key="sale.name"
+							@click="viewDetails(sale.name)"
 						>
-							<span>{{ payment.mode_of_payment }}</span>
-							<span>${{ formatAmount(payment.amount) }}</span>
+							<td class="invoice-cell">{{ sale.name }}</td>
+							<td>{{ formatDate(sale.posting_date) }}</td>
+							<td>{{ sale.customer }}</td>
+							<td>{{ sale.item_count || 1 }}</td>
+							<td class="amount-cell">${{ formatAmount(sale.grand_total) }}</td>
+							<td>
+								<span class="status-badge" :class="getStatusClass(sale.status)">
+									{{ sale.status }}
+								</span>
+							</td>
+							<td>
+								<button
+									class="action-btn"
+									@click.stop="viewDetails(sale.name)"
+									title="View Details"
+								>
+									👁️
+								</button>
+								<button
+									class="action-btn"
+									@click.stop="printInvoice(sale.name)"
+									title="Print"
+								>
+									🖨️
+								</button>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<!-- Pagination -->
+			<div class="pagination" v-if="pagination.total_pages > 1">
+				<button
+					class="page-btn"
+					:disabled="pagination.page === 1"
+					@click="goToPage(pagination.page - 1)"
+				>
+					← Prev
+				</button>
+				<span class="page-info">
+					Page {{ pagination.page }} of {{ pagination.total_pages }} ({{
+						pagination.total_count
+					}}
+					total)
+				</span>
+				<button
+					class="page-btn"
+					:disabled="pagination.page === pagination.total_pages"
+					@click="goToPage(pagination.page + 1)"
+				>
+					Next →
+				</button>
+			</div>
+
+			<!-- Transaction Details Modal -->
+			<div
+				v-if="selectedTransaction"
+				class="modal-overlay"
+				@click.self="selectedTransaction = null"
+			>
+				<div class="modal-content transaction-modal">
+					<div class="modal-header">
+						<h2>Invoice {{ selectedTransaction.invoice.name }}</h2>
+						<button class="close-btn" @click="selectedTransaction = null">
+							&times;
+						</button>
+					</div>
+					<div class="modal-body">
+						<div class="details-grid">
+							<div class="detail-section">
+								<h4>Customer</h4>
+								<p>{{ selectedTransaction.invoice.customer }}</p>
+							</div>
+							<div class="detail-section">
+								<h4>Date & Time</h4>
+								<p>
+									{{ formatDate(selectedTransaction.invoice.posting_date) }}
+									{{ selectedTransaction.invoice.posting_time }}
+								</p>
+							</div>
+							<div class="detail-section">
+								<h4>Status</h4>
+								<span
+									class="status-badge"
+									:class="getStatusClass(selectedTransaction.invoice.status)"
+								>
+									{{ selectedTransaction.invoice.status }}
+								</span>
+							</div>
+						</div>
+
+						<h4>Items</h4>
+						<table class="items-table">
+							<thead>
+								<tr>
+									<th>Item</th>
+									<th>Qty</th>
+									<th>Rate</th>
+									<th>Amount</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr
+									v-for="item in selectedTransaction.items"
+									:key="item.item_code"
+								>
+									<td>{{ item.item_name || item.item_code }}</td>
+									<td>{{ item.qty }}</td>
+									<td>${{ formatAmount(item.rate) }}</td>
+									<td>${{ formatAmount(item.amount) }}</td>
+								</tr>
+							</tbody>
+						</table>
+
+						<div class="totals-section">
+							<div class="total-row">
+								<span>Subtotal:</span>
+								<span
+									>${{
+										formatAmount(selectedTransaction.invoice.subtotal)
+									}}</span
+								>
+							</div>
+							<div class="total-row" v-if="selectedTransaction.invoice.discount > 0">
+								<span>Discount:</span>
+								<span
+									>-${{
+										formatAmount(selectedTransaction.invoice.discount)
+									}}</span
+								>
+							</div>
+							<div class="total-row">
+								<span>Tax:</span>
+								<span>${{ formatAmount(selectedTransaction.invoice.tax) }}</span>
+							</div>
+							<div class="total-row grand-total">
+								<span>Grand Total:</span>
+								<span
+									>${{
+										formatAmount(selectedTransaction.invoice.grand_total)
+									}}</span
+								>
+							</div>
+						</div>
+
+						<h4>Payments</h4>
+						<div class="payments-list">
+							<div
+								v-for="payment in selectedTransaction.payments"
+								:key="payment.mode_of_payment"
+								class="payment-item"
+							>
+								<span>{{ payment.mode_of_payment }}</span>
+								<span>${{ formatAmount(payment.amount) }}</span>
+							</div>
 						</div>
 					</div>
-				</div>
-				<div class="modal-footer">
-					<button
-						class="btn btn-secondary"
-						@click="printInvoice(selectedTransaction.invoice.name)"
-					>
-						🖨️ Print
-					</button>
-					<button class="btn btn-secondary" @click="selectedTransaction = null">
-						Close
-					</button>
+					<div class="modal-footer">
+						<button
+							class="btn btn-secondary"
+							@click="printInvoice(selectedTransaction.invoice.name)"
+						>
+							🖨️ Print
+						</button>
+						<button class="btn btn-secondary" @click="selectedTransaction = null">
+							Close
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
+	</AppLayout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { createResource } from 'frappe-ui'
+import AppLayout from '@/components/AppLayout.vue'
 
 // State
 const loading = ref(false)

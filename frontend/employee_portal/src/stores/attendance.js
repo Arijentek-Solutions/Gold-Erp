@@ -92,7 +92,10 @@ export const useAttendanceStore = defineStore("attendance", () => {
 	});
 
 	const shiftComplete = computed(() => {
-		return workedSecondsToday.value >= workingHoursTarget.value * 3600 && workedSecondsToday.value > 0;
+		return (
+			workedSecondsToday.value >= workingHoursTarget.value * 3600 &&
+			workedSecondsToday.value > 0
+		);
 	});
 
 	const canManageBreak = computed(() => {
@@ -111,9 +114,9 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		const hours = Math.floor(totalSeconds / 3600);
 		const minutes = Math.floor((totalSeconds % 3600) / 60);
 		const seconds = totalSeconds % 60;
-		return `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds
+		return `${hours.toString().padStart(2, "0")}:${minutes
 			.toString()
-			.padStart(2, "0")}`;
+			.padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
 	});
 
 	function getErrorMessage(error) {
@@ -229,7 +232,11 @@ export const useAttendanceStore = defineStore("attendance", () => {
 		} catch (err) {
 			const message = getErrorMessage(err);
 			error.value = message;
-			if (employeeId && (message.includes("No active check-in found") || message.includes("Already checked out"))) {
+			if (
+				employeeId &&
+				(message.includes("No active check-in found") ||
+					message.includes("Already checked out"))
+			) {
 				await fetchTodayStatus(employeeId);
 				return { success: true, status: todayStatus.value, recovered: true };
 			}

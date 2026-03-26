@@ -33,7 +33,7 @@ def fix_duplicate_prices():
 		else:
 			seen.add(key)
 
-	frappe.db.commit() # nosemgrep (manual commit for cleanup script)
+	frappe.db.commit()  # nosemgrep (manual commit for cleanup script)
 	print(f"Cleanup complete! Deleted {deleted_count} duplicate prices")
 
 

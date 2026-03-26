@@ -91,7 +91,10 @@
 										? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white'
 										: 'text-gray-500'
 								"
-								@click="cart.customerType = 'Individual'; cart.clearCustomer()"
+								@click="
+									cart.customerType = 'Individual'
+									cart.clearCustomer()
+								"
 							>
 								Individual
 							</button>
@@ -102,7 +105,10 @@
 										? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white'
 										: 'text-gray-500'
 								"
-								@click="cart.customerType = 'Company'; cart.clearCustomer()"
+								@click="
+									cart.customerType = 'Company'
+									cart.clearCustomer()
+								"
 							>
 								Company
 							</button>
@@ -113,7 +119,10 @@
 										? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white'
 										: 'text-gray-500'
 								"
-								@click="cart.customerType = 'Walkin'; cart.clearCustomer()"
+								@click="
+									cart.customerType = 'Walkin'
+									cart.clearCustomer()
+								"
 							>
 								Walk-In
 							</button>
