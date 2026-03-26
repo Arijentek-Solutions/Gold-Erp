@@ -236,11 +236,9 @@
 		}
 
 		// Listen for preference changes
-		window
-			.matchMedia("(prefers-contrast: high)")
-			.addEventListener("change", function (e) {
-				document.body.classList.toggle("zevar-high-contrast", e.matches);
-			});
+		window.matchMedia("(prefers-contrast: high)").addEventListener("change", function (e) {
+			document.body.classList.toggle("zevar-high-contrast", e.matches);
+		});
 
 		window
 			.matchMedia("(prefers-reduced-motion: reduce)")
@@ -288,8 +286,7 @@
 		document.body.insertBefore(skipLink, document.body.firstChild);
 
 		// Add id to main content if not exists
-		var mainContent =
-			document.querySelector("main") || document.querySelector(".desk-body");
+		var mainContent = document.querySelector("main") || document.querySelector(".desk-body");
 		if (mainContent && !mainContent.id) {
 			mainContent.id = "main-content";
 		}
@@ -301,9 +298,7 @@
 	function closeAllModals() {
 		var modals = document.querySelectorAll(".modal.show, .modal-dialog");
 		modals.forEach(function (modal) {
-			var closeBtn = modal.querySelector(
-				'.close, [data-dismiss="modal"], .modal-close'
-			);
+			var closeBtn = modal.querySelector('.close, [data-dismiss="modal"], .modal-close');
 			if (closeBtn) {
 				closeBtn.click();
 			}
@@ -326,8 +321,9 @@
 	 * Focus the search input
 	 */
 	function focusSearch() {
-		var searchInput =
-			document.querySelector('#search-input, input[type="search"], .search-input');
+		var searchInput = document.querySelector(
+			'#search-input, input[type="search"], .search-input'
+		);
 		if (searchInput) {
 			searchInput.focus();
 		}

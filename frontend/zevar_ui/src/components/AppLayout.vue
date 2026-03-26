@@ -11,10 +11,7 @@
 				class="h-20 flex items-center border-b border-white/5 transition-all duration-300"
 				:class="ui.sidebarCollapsed ? 'px-4 justify-center' : 'px-6 justify-between'"
 			>
-				<div
-					v-if="!ui.sidebarCollapsed"
-					class="flex items-center gap-3 overflow-hidden"
-				>
+				<div v-if="!ui.sidebarCollapsed" class="flex items-center gap-3 overflow-hidden">
 					<img
 						src="/logo.svg"
 						alt="Zevar"
@@ -815,7 +812,10 @@
 					<span>Layaway</span>
 				</router-link>
 				<button
-					@click="isMobileDrawerOpen = false; showSupportModal = true"
+					@click="
+						isMobileDrawerOpen = false
+						showSupportModal = true
+					"
 					class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-[#D4AF37]"
 				>
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

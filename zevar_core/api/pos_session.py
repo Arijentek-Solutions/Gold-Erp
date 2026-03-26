@@ -25,24 +25,25 @@ def get_session_status() -> dict:
 	user = frappe.session.user
 
 	# Find active POS Opening Entry for this user
-	active_session = frappe.db.get_value(
+	active_session_name = frappe.db.get_value(
 		"POS Opening Entry",
-		filters={
-			"user": user,
-			"docstatus": 1,
-			"status": "Open",
-		},
-		fieldname=["name", "pos_profile", "period_start_date", "opening_amount", "company"],
+		filters={"user": user, "docstatus": 1, "status": "Open"},
+		fieldname="name",
 		order_by="creation desc",
 	)
 
-	if not active_session:
+	if not active_session_name:
 		return {
 			"has_active_session": False,
 			"session": None,
 		}
 
-	session_name, pos_profile, period_start, opening_amount, company = active_session
+	session = frappe.get_doc("POS Opening Entry", active_session_name)
+	session_name = session.name
+	pos_profile = session.pos_profile
+	period_start = session.period_start_date
+	company = session.company
+	opening_amount = sum(flt(row.opening_amount) for row in session.balance_details)
 
 	# Calculate session duration
 	duration_hours = 0
@@ -148,6 +149,13 @@ def open_pos_session(
 			breakdown_list = frappe.parse_json(cash_breakdown)
 		else:
 			breakdown_list = cash_breakdown
+		if isinstance(breakdown_list, dict):
+			breakdown_list = [
+				{
+					"mode_of_payment": "Cash",
+					"amount": sum(flt(amount) for amount in breakdown_list.values()),
+				}
+			]
 
 	# Get POS Profile details
 	profile = frappe.get_doc("POS Profile", pos_profile)
@@ -191,6 +199,7 @@ def open_pos_session(
 		return {
 			"success": True,
 			"session_name": opening_entry.name,
+			"status": "Open",
 			"message": _("POS Session opened successfully"),
 			"opening_balance": flt(opening_balance),
 		}
@@ -249,14 +258,21 @@ def close_pos_session(
 			breakdown_list = frappe.parse_json(cash_breakdown)
 		else:
 			breakdown_list = cash_breakdown
+		if isinstance(breakdown_list, dict):
+			breakdown_list = [
+				{
+					"mode_of_payment": "Cash",
+					"amount": sum(flt(amount) for amount in breakdown_list.values()),
+				}
+			]
 
 	# Calculate expected closing balance
-	opening_balance = flt(session.opening_amount)
+	opening_balance = sum(flt(row.opening_amount) for row in session.balance_details)
 
 	# Get total sales for this session
 	sales_data = frappe.db.sql(
 		"""
-		SELECT COALESCE(SIM(grand_total), 0) as total
+		SELECT COALESCE(SUM(grand_total), 0) as total
 		FROM `tabSales Invoice`
 		WHERE owner = %s
 		AND posting_date >= DATE(%s)

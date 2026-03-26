@@ -61,7 +61,7 @@ def get_pos_profiles() -> dict:
 				profile.store_code = store_location.store_code
 				profile.store_name = store_location.store_name
 
-	return {"profiles": profiles}
+	return {"profiles": profiles, "count": len(profiles)}
 
 
 @frappe.whitelist()
@@ -80,7 +80,9 @@ def get_active_profile() -> dict:
 	user = frappe.session.user
 
 	# Try to get from user's default
-	default_profile = frappe.db.get_value("User", user, "pos_profile")
+	default_profile = frappe.cache.hget("pos_active_profile", user)
+	if not default_profile and frappe.db.has_column("User", "pos_profile"):
+		default_profile = frappe.db.get_value("User", user, "pos_profile")
 
 	# Check if user has a store location assignment with POS profile
 	if not default_profile:
@@ -188,7 +190,8 @@ def set_active_profile(profile_name: str) -> dict:
 
 	# Store in user's session/default
 	# Using User document's custom field or session storage
-	frappe.db.set_value("User", user, "pos_profile", profile_name)
+	if frappe.db.has_column("User", "pos_profile"):
+		frappe.db.set_value("User", user, "pos_profile", profile_name)
 
 	# Also cache in session for quick access
 	frappe.cache.hset("pos_active_profile", user, profile_name)

@@ -3,16 +3,37 @@
 		<div v-if="show" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6">
 			<div class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" @click="close"></div>
 
-			<div class="relative bg-white dark:bg-[#1a1c23] rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-transparent dark:border-white/10">
+			<div
+				class="relative bg-white dark:bg-[#1a1c23] rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden border border-transparent dark:border-white/10"
+			>
 				<!-- Header -->
-				<div class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-white/5">
+				<div
+					class="flex items-center justify-between p-6 border-b border-gray-100 dark:border-white/5"
+				>
 					<div>
-						<h2 class="text-lg font-bold text-gray-900 dark:text-white">Support Center</h2>
-						<p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Create and manage support tickets</p>
+						<h2 class="text-lg font-bold text-gray-900 dark:text-white">
+							Support Center
+						</h2>
+						<p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+							Create and manage support tickets
+						</p>
 					</div>
-					<button @click="close" class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition">
-						<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+					<button
+						@click="close"
+						class="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition"
+					>
+						<svg
+							class="w-5 h-5 text-gray-400"
+							fill="none"
+							stroke="currentColor"
+							viewBox="0 0 24 24"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M6 18L18 6M6 6l12 12"
+							/>
 						</svg>
 					</button>
 				</div>
@@ -20,13 +41,22 @@
 				<!-- Content -->
 				<div class="flex flex-col md:flex-row h-[calc(90vh-140px)]">
 					<!-- Left: New Ticket Form -->
-					<div class="w-full md:w-1/2 p-6 border-r border-gray-100 dark:border-white/5 overflow-y-auto">
-						<h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4">New Ticket</h3>
+					<div
+						class="w-full md:w-1/2 p-6 border-r border-gray-100 dark:border-white/5 overflow-y-auto"
+					>
+						<h3
+							class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-4"
+						>
+							New Ticket
+						</h3>
 
 						<form @submit.prevent="submitTicket" class="space-y-4">
 							<!-- Category -->
 							<div>
-								<label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Category</label>
+								<label
+									class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+									>Category</label
+								>
 								<select
 									v-model="form.category"
 									required
@@ -35,26 +65,44 @@
 									class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
 								>
 									<option value="" disabled>Select category...</option>
-									<option v-for="cat in categories" :key="cat.value" :value="cat.value">{{ cat.label }}</option>
+									<option
+										v-for="cat in categories"
+										:key="cat.value"
+										:value="cat.value"
+									>
+										{{ cat.label }}
+									</option>
 								</select>
 							</div>
 
 							<!-- Sub-Category -->
 							<div v-if="form.category && subCategories.length > 0">
-								<label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Sub-Category</label>
+								<label
+									class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+									>Sub-Category</label
+								>
 								<select
 									v-model="form.sub_category"
 									:disabled="submitting"
 									class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
 								>
 									<option value="">Select sub-category...</option>
-									<option v-for="sub in subCategories" :key="sub.value" :value="sub.value">{{ sub.label }}</option>
+									<option
+										v-for="sub in subCategories"
+										:key="sub.value"
+										:value="sub.value"
+									>
+										{{ sub.label }}
+									</option>
 								</select>
 							</div>
 
 							<!-- Priority -->
 							<div>
-								<label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Priority</label>
+								<label
+									class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+									>Priority</label
+								>
 								<div class="grid grid-cols-4 gap-2">
 									<button
 										v-for="p in priorities"
@@ -63,7 +111,11 @@
 										@click="form.priority = p.value"
 										:disabled="submitting"
 										class="px-3 py-2 rounded-lg text-xs font-bold border transition"
-										:class="form.priority === p.value ? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#D4AF37]' : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'"
+										:class="
+											form.priority === p.value
+												? 'border-[#D4AF37] bg-[#D4AF37]/10 text-[#D4AF37]'
+												: 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'
+										"
 									>
 										{{ p.label }}
 									</button>
@@ -72,9 +124,13 @@
 
 							<!-- Responsible Department -->
 							<div>
-								<label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+								<label
+									class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+								>
 									Responsible Department
-									<span class="text-gray-400 font-normal ml-1">(auto-assigned)</span>
+									<span class="text-gray-400 font-normal ml-1"
+										>(auto-assigned)</span
+									>
 								</label>
 								<select
 									v-model="form.department"
@@ -82,16 +138,24 @@
 									class="w-full px-3 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent"
 								>
 									<option value="">Select department...</option>
-									<option v-for="dept in departments" :key="dept.value" :value="dept.value">{{ dept.label }}</option>
+									<option
+										v-for="dept in departments"
+										:key="dept.value"
+										:value="dept.value"
+									>
+										{{ dept.label }}
+									</option>
 								</select>
 							</div>
 
 							<!-- Reference (Customer/Vendor/Employee) - shown based on category -->
 							<div v-if="form.category && referenceType">
-								<label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+								<label
+									class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+								>
 									{{ referenceLabel }}
 								</label>
-							<div class="relative">
+								<div class="relative">
 									<input
 										v-model="referenceSearch"
 										type="text"
@@ -113,19 +177,32 @@
 											@click="selectReference(item)"
 											class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition"
 										>
-											<span class="font-medium text-gray-900 dark:text-white">{{ item.label }}</span>
-											<span v-if="item.detail" class="text-gray-500 text-xs ml-2">{{ item.detail }}</span>
+											<span
+												class="font-medium text-gray-900 dark:text-white"
+												>{{ item.label }}</span
+											>
+											<span
+												v-if="item.detail"
+												class="text-gray-500 text-xs ml-2"
+												>{{ item.detail }}</span
+											>
 										</button>
 									</div>
 								</div>
-								<p v-if="form.reference_name" class="mt-1 text-xs text-green-600 dark:text-green-400">
+								<p
+									v-if="form.reference_name"
+									class="mt-1 text-xs text-green-600 dark:text-green-400"
+								>
 									Selected: {{ form.reference_name }}
 								</p>
 							</div>
 
 							<!-- Subject -->
 							<div>
-								<label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Subject</label>
+								<label
+									class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+									>Subject</label
+								>
 								<input
 									v-model="form.subject"
 									type="text"
@@ -138,7 +215,10 @@
 
 							<!-- Description -->
 							<div>
-								<label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5">Description</label>
+								<label
+									class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
+									>Description</label
+								>
 								<textarea
 									v-model="form.description"
 									required
@@ -152,37 +232,85 @@
 							<!-- Submit Button -->
 							<button
 								type="submit"
-								:disabled="submitting || !form.subject || !form.description || !form.category"
+								:disabled="
+									submitting ||
+									!form.subject ||
+									!form.description ||
+									!form.category
+								"
 								class="w-full py-3 bg-[#D4AF37] text-black rounded-lg font-bold hover:bg-[#c9a432] disabled:opacity-50 disabled:cursor-not-allowed transition flex items-center justify-center gap-2"
 							>
-								<svg v-if="submitting" class="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
-									<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-									<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+								<svg
+									v-if="submitting"
+									class="w-4 h-4 animate-spin"
+									fill="none"
+									viewBox="0 0 24 24"
+								>
+									<circle
+										class="opacity-25"
+										cx="12"
+										cy="12"
+										r="10"
+										stroke="currentColor"
+										stroke-width="4"
+									></circle>
+									<path
+										class="opacity-75"
+										fill="currentColor"
+										d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+									></path>
 								</svg>
 								{{ submitting ? 'Submitting...' : 'Submit Ticket' }}
 							</button>
 						</form>
 
 						<!-- Success Message -->
-						<div v-if="successMessage" class="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30 rounded-xl">
+						<div
+							v-if="successMessage"
+							class="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/30 rounded-xl"
+						>
 							<div class="flex items-center gap-3">
-								<div class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center">
-									<svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+								<div
+									class="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center"
+								>
+									<svg
+										class="w-5 h-5 text-green-600 dark:text-green-400"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2"
+											d="M5 13l4 4L19 7"
+										/>
 									</svg>
 								</div>
 								<div>
-									<p class="font-bold text-green-800 dark:text-green-300 text-sm">Ticket Created!</p>
-									<p class="text-xs text-green-600 dark:text-green-400">{{ successMessage }}</p>
+									<p
+										class="font-bold text-green-800 dark:text-green-300 text-sm"
+									>
+										Ticket Created!
+									</p>
+									<p class="text-xs text-green-600 dark:text-green-400">
+										{{ successMessage }}
+									</p>
 								</div>
 							</div>
 						</div>
 					</div>
 
 					<!-- Right: My Tickets -->
-					<div class="w-full md:w-1/2 p-6 bg-gray-50/50 dark:bg-gray-900/30 overflow-y-auto">
+					<div
+						class="w-full md:w-1/2 p-6 bg-gray-50/50 dark:bg-gray-900/30 overflow-y-auto"
+					>
 						<div class="flex items-center justify-between mb-4">
-							<h3 class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">My Tickets</h3>
+							<h3
+								class="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider"
+							>
+								My Tickets
+							</h3>
 							<button
 								@click="fetchTickets"
 								:disabled="loadingTickets"
@@ -194,16 +322,32 @@
 
 						<!-- Loading -->
 						<div v-if="loadingTickets" class="py-12 text-center">
-							<div class="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-[#D4AF37] mx-auto mb-3"></div>
-							<span class="text-gray-500 dark:text-gray-400 text-sm">Loading tickets...</span>
+							<div
+								class="animate-spin rounded-full h-6 w-6 border-2 border-gray-300 border-t-[#D4AF37] mx-auto mb-3"
+							></div>
+							<span class="text-gray-500 dark:text-gray-400 text-sm"
+								>Loading tickets...</span
+							>
 						</div>
 
 						<!-- Empty State -->
 						<div v-else-if="tickets.length === 0" class="py-12 text-center">
-							<svg class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+							<svg
+								class="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3"
+								fill="none"
+								stroke="currentColor"
+								viewBox="0 0 24 24"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									stroke-width="1.5"
+									d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+								/>
 							</svg>
-							<span class="text-gray-500 dark:text-gray-400 text-sm">No tickets yet</span>
+							<span class="text-gray-500 dark:text-gray-400 text-sm"
+								>No tickets yet</span
+							>
 						</div>
 
 						<!-- Tickets List -->
@@ -215,7 +359,9 @@
 								@click="viewTicket(ticket.name)"
 							>
 								<div class="flex items-start justify-between mb-2">
-									<span class="font-mono text-xs text-[#D4AF37]">{{ ticket.name }}</span>
+									<span class="font-mono text-xs text-[#D4AF37]">{{
+										ticket.name
+									}}</span>
 									<span
 										class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold"
 										:class="getStatusClass(ticket.status)"
@@ -223,17 +369,43 @@
 										{{ ticket.status }}
 									</span>
 								</div>
-								<p class="text-sm font-medium text-gray-900 dark:text-white mb-1 line-clamp-1">{{ ticket.subject }}</p>
-								<div class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
+								<p
+									class="text-sm font-medium text-gray-900 dark:text-white mb-1 line-clamp-1"
+								>
+									{{ ticket.subject }}
+								</p>
+								<div
+									class="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400"
+								>
 									<span class="flex items-center gap-1">
-										<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+										<svg
+											class="w-3.5 h-3.5"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+											/>
 										</svg>
 										{{ ticket.issue_type || ticket.category || 'General' }}
 									</span>
 									<span class="flex items-center gap-1">
-										<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+										<svg
+											class="w-3.5 h-3.5"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 24 24"
+										>
+											<path
+												stroke-linecap="round"
+												stroke-linejoin="round"
+												stroke-width="2"
+												d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+											/>
 										</svg>
 										{{ formatDate(ticket.creation) }}
 									</span>
@@ -268,10 +440,30 @@ const referenceResults = ref([])
 
 // Business-specific categories
 const categories = [
-	{ value: 'Customer Issue', label: 'Customer Issue', department: 'Customer Service', referenceType: 'Customer' },
-	{ value: 'Jewelry Issue', label: 'Jewelry Issue', department: 'Quality Control', referenceType: 'Item' },
-	{ value: 'Vendor Issue', label: 'Vendor Issue', department: 'Procurement', referenceType: 'Supplier' },
-	{ value: 'Employee Issue', label: 'Employee Issue', department: 'Human Resources', referenceType: 'Employee' },
+	{
+		value: 'Customer Issue',
+		label: 'Customer Issue',
+		department: 'Customer Service',
+		referenceType: 'Customer',
+	},
+	{
+		value: 'Jewelry Issue',
+		label: 'Jewelry Issue',
+		department: 'Quality Control',
+		referenceType: 'Item',
+	},
+	{
+		value: 'Vendor Issue',
+		label: 'Vendor Issue',
+		department: 'Procurement',
+		referenceType: 'Supplier',
+	},
+	{
+		value: 'Employee Issue',
+		label: 'Employee Issue',
+		department: 'Human Resources',
+		referenceType: 'Employee',
+	},
 	{ value: 'Store Issue', label: 'Store Issue', department: 'Operations', referenceType: null },
 	{ value: 'Technical', label: 'Technical / IT', department: 'IT Support', referenceType: null },
 	{ value: 'Other', label: 'Other', department: 'General', referenceType: null },
@@ -350,7 +542,7 @@ const subCategories = computed(() => {
 })
 
 const referenceType = computed(() => {
-	const cat = categories.find(c => c.value === form.value.category)
+	const cat = categories.find((c) => c.value === form.value.category)
 	return cat?.referenceType || null
 })
 
@@ -388,7 +580,7 @@ function onCategoryChange() {
 	referenceSearch.value = ''
 
 	// Auto-fill department
-	const cat = categories.find(c => c.value === form.value.category)
+	const cat = categories.find((c) => c.value === form.value.category)
 	if (cat) {
 		form.value.department = cat.department
 		form.value.reference_type = cat.referenceType || ''
@@ -421,7 +613,7 @@ async function searchReference() {
 			limit_page_length: 10,
 		})
 
-		referenceResults.value = (result || []).map(item => ({
+		referenceResults.value = (result || []).map((item) => ({
 			value: item.name,
 			label: item[config.labelField],
 			detail: config.detailField ? item[config.detailField] : null,

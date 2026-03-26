@@ -207,9 +207,7 @@ def get_recent_activity(limit=10):
 				{
 					"type": "layaway",
 					"icon": "credit-card",
-					"message": _("Layaway Contract {0} - {1}").format(
-						layaway.name, layaway.status
-					),
+					"message": _("Layaway Contract {0} - {1}").format(layaway.name, layaway.status),
 					"time": layaway.modified,
 					"link": f"/app/layaway-contract/{layaway.name}",
 				}

@@ -258,21 +258,16 @@ const currentStockFilter = computed(() => {
 
 	return 'all'
 })
-const hasActiveFilters = computed(
-	() => {
-		const { in_stock_only, out_of_stock_only, ...otherFilters } = ui.activeFilters
-		const hasCustomFilters = Object.values(otherFilters).some((value) =>
-			Array.isArray(value) ? value.length > 0 : Boolean(value)
-		)
+const hasActiveFilters = computed(() => {
+	const { in_stock_only, out_of_stock_only, ...otherFilters } = ui.activeFilters
+	const hasCustomFilters = Object.values(otherFilters).some((value) =>
+		Array.isArray(value) ? value.length > 0 : Boolean(value)
+	)
 
-		return (
-			hasCustomFilters ||
-			Boolean(ui.searchQuery) ||
-			!in_stock_only ||
-			Boolean(out_of_stock_only)
-		)
-	}
-)
+	return (
+		hasCustomFilters || Boolean(ui.searchQuery) || !in_stock_only || Boolean(out_of_stock_only)
+	)
+})
 
 // Smart Purity Logic
 const purityOptions = computed(() => {

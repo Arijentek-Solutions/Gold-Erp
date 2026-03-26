@@ -32,7 +32,11 @@
 					<div class="grid grid-cols-2 gap-2 mt-4 w-full px-2">
 						<button
 							@click="handleClockIn()"
-							:disabled="attendance.isCheckedIn || attendance.isOnBreak || attendance.loading"
+							:disabled="
+								attendance.isCheckedIn ||
+								attendance.isOnBreak ||
+								attendance.loading
+							"
 							class="h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-colors shadow-lg"
 							:class="[
 								!attendance.isCheckedIn && !attendance.isOnBreak
@@ -230,7 +234,11 @@
 							<div class="grid grid-cols-2 gap-2 mt-4 w-full max-w-xs">
 								<button
 									@click="handleClockIn()"
-									:disabled="attendance.isCheckedIn || attendance.isOnBreak || attendance.loading"
+									:disabled="
+										attendance.isCheckedIn ||
+										attendance.isOnBreak ||
+										attendance.loading
+									"
 									class="h-11 rounded-xl flex items-center justify-center gap-2 font-bold text-[10px] uppercase transition-all shadow-lg"
 									:class="[
 										!attendance.isCheckedIn && !attendance.isOnBreak
@@ -463,7 +471,11 @@
 								<div class="pb-6 grid grid-cols-2 gap-2 w-full max-w-xs z-10 px-4">
 									<button
 										@click="handleClockIn()"
-										:disabled="attendance.isCheckedIn || attendance.isOnBreak || attendance.loading"
+										:disabled="
+											attendance.isCheckedIn ||
+											attendance.isOnBreak ||
+											attendance.loading
+										"
 										class="h-11 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-[10px] uppercase shadow-lg"
 										:class="[
 											!attendance.isCheckedIn && !attendance.isOnBreak
@@ -487,7 +499,9 @@
 									</button>
 									<button
 										@click="handleBreak"
-										:disabled="!attendance.canManageBreak || attendance.loading"
+										:disabled="
+											!attendance.canManageBreak || attendance.loading
+										"
 										class="col-span-2 h-11 rounded-xl flex items-center justify-center gap-2 transition-all relative font-bold tracking-widest text-[10px] uppercase shadow-lg"
 										:class="[
 											isOnBreak
@@ -1068,12 +1082,23 @@ const recentActivity = computed(() => {
 				title: isBreakStart
 					? "Break Started"
 					: isBreakEnd
-						? "Break Ended"
+					? "Break Ended"
+					: log.log_type === "IN"
+					? "Clocked In"
+					: "Clocked Out",
+				type:
+					isBreakStart || isBreakEnd
+						? "break"
 						: log.log_type === "IN"
-							? "Clocked In"
-							: "Clocked Out",
-				type: isBreakStart || isBreakEnd ? "break" : log.log_type === "IN" ? "info" : "clock-out",
-				icon: isBreakStart ? "pause_circle" : isBreakEnd ? "play_circle" : log.log_type === "IN" ? "login" : "logout",
+						? "info"
+						: "clock-out",
+				icon: isBreakStart
+					? "pause_circle"
+					: isBreakEnd
+					? "play_circle"
+					: log.log_type === "IN"
+					? "login"
+					: "logout",
 			};
 		})
 		.slice(0, 5);

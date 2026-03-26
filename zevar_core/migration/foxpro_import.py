@@ -20,10 +20,10 @@ Legacy File Mapping (verified against actual DBF schemas):
 - trans.dbf      → Sales Invoice (516 records)
 """
 
-import os
 import json
-from datetime import datetime, date
-from typing import Dict, List, Optional, Any
+import os
+from datetime import date, datetime
+from typing import Any
 
 import frappe
 from frappe import _
@@ -50,7 +50,7 @@ def check_dbfread():
 		)
 
 
-def find_dbf(backup_path: str, filename: str) -> Optional[str]:
+def find_dbf(backup_path: str, filename: str) -> str | None:
 	"""Find a DBF file (case-insensitive) in the backup directory."""
 	if not os.path.isdir(backup_path):
 		return None
@@ -60,7 +60,7 @@ def find_dbf(backup_path: str, filename: str) -> Optional[str]:
 	return None
 
 
-def read_dbf(file_path: str, encoding: str = "cp1252") -> List[Dict]:
+def read_dbf(file_path: str, encoding: str = "cp1252") -> list[dict]:
 	"""
 	Read a DBF file and return list of clean records.
 
@@ -112,7 +112,7 @@ def clean_int(value) -> int:
 		return 0
 
 
-def format_date(value) -> Optional[str]:
+def format_date(value) -> str | None:
 	"""Convert a date value to YYYY-MM-DD string."""
 	if value is None:
 		return None
@@ -130,7 +130,7 @@ def format_date(value) -> Optional[str]:
 	return None
 
 
-def parse_hire_date(val) -> Optional[str]:
+def parse_hire_date(val) -> str | None:
 	"""Parse FoxPro date string like '121790' → '1990-12-17'."""
 	if val is None:
 		return None
@@ -150,7 +150,7 @@ def parse_hire_date(val) -> Optional[str]:
 # ──────────────────────────────────────────────────
 
 
-def import_stores(backup_path: str, dry_run: bool = False) -> Dict:
+def import_stores(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import store locations from LOCNAME.dbf."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -218,7 +218,7 @@ def _ensure_designation(name: str):
 			pass
 
 
-def import_employees(backup_path: str, dry_run: bool = False) -> Dict:
+def import_employees(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import employees from EMPLOYEE.DBF."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -294,7 +294,7 @@ def import_employees(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_customers(backup_path: str, dry_run: bool = False) -> Dict:
+def import_customers(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import customers from CUSTSHOR.dbf."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -381,7 +381,7 @@ def import_customers(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_inventory(backup_path: str, dry_run: bool = False) -> Dict:
+def import_inventory(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import inventory items from inventor.DBF."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -477,7 +477,7 @@ def import_inventory(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_suppliers(backup_path: str, dry_run: bool = False) -> Dict:
+def import_suppliers(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import suppliers/vendors from supplier.dbf."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -552,7 +552,7 @@ def import_suppliers(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_categories(backup_path: str, dry_run: bool = False) -> Dict:
+def import_categories(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import categories from cat.dbf as Item Groups."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -599,7 +599,7 @@ def import_categories(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_purities(backup_path: str, dry_run: bool = False) -> Dict:
+def import_purities(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import karat/purity records from KARAT.DBF into Zevar Purity."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -648,7 +648,7 @@ def import_purities(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_item_attributes(backup_path: str, dry_run: bool = False) -> Dict:
+def import_item_attributes(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import Color and Clarity as Item Attributes."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -720,7 +720,7 @@ def import_item_attributes(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_gold_rates(backup_path: str, dry_run: bool = False) -> Dict:
+def import_gold_rates(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import gold price records from GOLD$.dbf."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -764,7 +764,7 @@ def import_gold_rates(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_repair_types(backup_path: str, dry_run: bool = False) -> Dict:
+def import_repair_types(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import repair type records from saletype.dbf into Repair Type."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -838,7 +838,7 @@ def import_repair_types(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_transactions(backup_path: str, dry_run: bool = False) -> Dict:
+def import_transactions(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import transaction records from trans.dbf as Sales Invoices."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -937,7 +937,7 @@ def import_transactions(backup_path: str, dry_run: bool = False) -> Dict:
 # ──────────────────────────────────────────────────
 
 
-def import_appraisals(backup_path: str, dry_run: bool = False) -> Dict:
+def import_appraisals(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import jewelry appraisals from 1APTERM1.DBF."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
@@ -1119,7 +1119,7 @@ def ensure_root_nodes():
 # ──────────────────────────────────────────────────
 
 
-def import_all(backup_path: str, dry_run: bool = False, skip_transactions: bool = False) -> Dict:
+def import_all(backup_path: str, dry_run: bool = False, skip_transactions: bool = False) -> dict:
 	"""
 	Import all legacy data from the backup directory.
 
@@ -1171,7 +1171,7 @@ def import_all(backup_path: str, dry_run: bool = False, skip_transactions: bool 
 	return results
 
 
-def get_mapping_info() -> Dict:
+def get_mapping_info() -> dict:
 	"""Return field mapping information for all migration categories."""
 	return {
 		"stores": {

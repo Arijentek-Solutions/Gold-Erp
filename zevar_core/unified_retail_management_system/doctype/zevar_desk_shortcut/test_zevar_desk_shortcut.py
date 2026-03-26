@@ -31,7 +31,7 @@ class TestZevarDeskShortcut(FrappeTestCase):
 			}
 		)
 		shortcut.insert()
-		self.assertTrue(frappe.db.exists("Zevar Desk Shortcut", self.test_shortcut_name))
+		self.assertTrue(frappe.db.exists("Zevar Desk Shortcut", shortcut.name))
 
 	def test_keyboard_shortcut_validation(self):
 		"""Test keyboard shortcut format validation"""

@@ -297,7 +297,10 @@
 		<ProductModal
 			:show="showModal"
 			:item-code="selectedItem"
-			@close="showModal = false; selectedItem = null"
+			@close="
+				showModal = false
+				selectedItem = null
+			"
 		/>
 	</div>
 </template>

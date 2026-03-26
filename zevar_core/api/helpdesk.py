@@ -158,7 +158,9 @@ def create_support_ticket(
 		}
 
 	# Last resort: Create a TODO
-	allocated_to = assigned_to or frappe.db.get_value("User", {"role": "HR Manager"}, "name") or "Administrator"
+	allocated_to = (
+		assigned_to or frappe.db.get_value("User", {"role": "HR Manager"}, "name") or "Administrator"
+	)
 
 	todo = frappe.get_doc(
 		{
@@ -279,13 +281,20 @@ def get_responsible_departments():
 
 	result = []
 	for dept in departments:
-		manager = frappe.db.get_value("Employee", {"department": dept.name, "designation": "Manager"}, ["user_id", "employee_name"], as_dict=True)
-		result.append({
-			"value": dept.name,
-			"label": dept.department_name or dept.name,
-			"manager": manager.employee_name if manager else None,
-			"manager_email": manager.user_id if manager else None,
-		})
+		manager = frappe.db.get_value(
+			"Employee",
+			{"department": dept.name, "designation": "Manager"},
+			["user_id", "employee_name"],
+			as_dict=True,
+		)
+		result.append(
+			{
+				"value": dept.name,
+				"label": dept.department_name or dept.name,
+				"manager": manager.employee_name if manager else None,
+				"manager_email": manager.user_id if manager else None,
+			}
+		)
 
 	return result
 

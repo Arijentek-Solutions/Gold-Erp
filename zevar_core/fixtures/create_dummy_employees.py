@@ -104,7 +104,7 @@ def create_employees():
 		except Exception as e:
 			print(f"Error creating {full_name}: {e}")
 
-	frappe.db.commit() # nosemgrep (manual commit for fixtures)
+	frappe.db.commit()  # nosemgrep (manual commit for fixtures)
 
 	print("\nSummary:")
 	print(f"  Created: {len(created)} employees")

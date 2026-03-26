@@ -76,9 +76,9 @@ def get_all_layaways(
 	for layaway in layaways:
 		# Get customer name
 		if layaway.customer:
-			layaway.customer_name = frappe.db.get_value(
-				"Customer", layaway.customer, "customer_name"
-			) or layaway.customer
+			layaway.customer_name = (
+				frappe.db.get_value("Customer", layaway.customer, "customer_name") or layaway.customer
+			)
 
 		# Calculate next payment due
 		if layaway.status == "Active":
@@ -94,14 +94,13 @@ def get_all_layaways(
 				layaway.next_payment_amount = flt(pending_payments[0].expected_amount)
 
 		# Get item count
-		item_count = frappe.db.count(
-			"Layaway Contract Item", filters={"parent": layaway.name}
-		)
+		item_count = frappe.db.count("Layaway Contract Item", filters={"parent": layaway.name})
 		layaway.item_count = item_count
 
 		# Check if overdue
 		if layaway.status == "Active" and layaway.target_completion_date:
 			from frappe.utils import getdate
+
 			if getdate(layaway.target_completion_date) < getdate():
 				layaway.is_overdue = True
 
@@ -299,6 +298,92 @@ def create_layaway(
 		frappe.db.rollback()
 		frappe.log_error("Layaway Creation Failed", frappe.get_traceback())
 		frappe.throw(_("Failed to create layaway: {0}").format(str(e)))
+
+
+@frappe.whitelist(methods=["POST"])
+def get_layaway_preview(
+	items: str | list,
+	customer: str | None = None,
+	down_payment_percent: float = 20,
+	term_months: int = 3,
+) -> dict:
+	"""Preview layaway totals and schedule for the legacy quick-layaway API."""
+	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
+
+	items_list = frappe.parse_json(items) if isinstance(items, str) else items
+	if not items_list:
+		frappe.throw(_("At least one item is required."))
+
+	if int(term_months) not in (3, 6, 9, 12):
+		frappe.throw(_("Duration must be 3, 6, 9, or 12 months."))
+
+	total = sum(flt(item.get("qty", 1)) * flt(item.get("rate")) for item in items_list)
+	down_payment = total * (flt(down_payment_percent) / 100)
+	balance = total - down_payment
+
+	schedule = []
+	if term_months > 0:
+		monthly_amount = balance / term_months if term_months else 0
+		for month_index in range(1, int(term_months) + 1):
+			schedule.append(
+				{
+					"payment_number": month_index,
+					"payment_date": str(add_months(today(), month_index)),
+					"amount": flt(monthly_amount),
+				}
+			)
+
+	return {
+		"preview": {
+			"customer": customer,
+			"total": flt(total),
+			"down_payment": flt(down_payment),
+			"balance": flt(balance),
+			"term_months": int(term_months),
+		},
+		"payment_schedule": schedule,
+	}
+
+
+@frappe.whitelist(methods=["POST"])
+def create_quick_layaway(
+	items: str | list,
+	customer: str,
+	down_payment_percent: float = 20,
+	term_months: int = 3,
+	initial_payment: float | None = None,
+	initial_payment_mode: str | None = None,
+	warehouse: str | None = None,
+) -> dict:
+	"""Compatibility wrapper for the legacy quick-layaway API."""
+	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
+
+	items_list = frappe.parse_json(items) if isinstance(items, str) else items
+	if not items_list:
+		frappe.throw(_("At least one item is required."))
+
+	total = sum(flt(item.get("qty", 1)) * flt(item.get("rate")) for item in items_list)
+	deposit_amount = (
+		flt(initial_payment) if initial_payment is not None else total * (flt(down_payment_percent) / 100)
+	)
+
+	if initial_payment_mode and not frappe.db.exists("Mode of Payment", initial_payment_mode):
+		frappe.throw(_("Mode of Payment '{0}' not found.").format(initial_payment_mode))
+
+	result = create_layaway(
+		customer=customer,
+		items=frappe.as_json(items_list),
+		deposit_amount=deposit_amount,
+		duration_months=int(term_months),
+		warehouse=warehouse,
+	)
+
+	return {
+		"success": result.get("success", False),
+		"contract_name": result.get("layaway_id"),
+		"layaway_id": result.get("layaway_id"),
+		"message": result.get("message"),
+	}
 
 
 @frappe.whitelist(methods=["POST"])

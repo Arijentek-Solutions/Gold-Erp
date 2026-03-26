@@ -9,12 +9,11 @@ Usage:
 import json
 import os
 
+import click
 import frappe
 from frappe.commands import get_site, pass_context
-import click
 
-from .foxpro_import import import_all, get_mapping_info
-
+from .foxpro_import import get_mapping_info, import_all
 
 DEFAULT_LEGACY_BACKUP_PATHS = (
 	"/workspace/development/Zevar_URMS/Zevar_HIPmall_MD_1",
@@ -160,7 +159,7 @@ def show_mapping_info(context):
 		click.echo("Zevar Legacy Data Import - Field Mappings")
 		click.echo("=" * 60)
 
-		for category, info in mappings.items():
+		for _category, info in mappings.items():
 			click.echo(f"\n{info['doctype']} ({info['file']}):")
 			click.echo("-" * 40)
 			for legacy, zevar in info["fields"].items():

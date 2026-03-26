@@ -179,8 +179,8 @@
 					<button
 						v-if="showCreateOption"
 						@click="
-							showCreateModal = true;
-							showDropdown = false;
+							showCreateModal = true
+							showDropdown = false
 						"
 						class="w-full px-4 py-3 text-left hover:bg-[#D4AF37]/10 flex items-center gap-3 border-t-2 border-gray-100 dark:border-white/10"
 					>
@@ -658,9 +658,9 @@
 						>
 							<button
 								@click="
-										showCreateModal = false;
-										resetCreateForm();
-									"
+									showCreateModal = false
+									resetCreateForm()
+								"
 								class="flex-1 py-2.5 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 transition"
 							>
 								Cancel

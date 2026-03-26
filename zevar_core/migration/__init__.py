@@ -13,24 +13,24 @@ Usage:
     bench --site <site> zevar-mapping-info
 """
 
+from .commands import get_legacy_backup_path
 from .foxpro_import import (
+	get_mapping_info,
 	import_all,
 	import_appraisals,
-	import_inventory,
-	import_employees,
 	import_customers,
+	import_employees,
+	import_inventory,
 	import_stores,
-	get_mapping_info,
 )
-from .commands import get_legacy_backup_path
 
 __all__ = [
+	"get_legacy_backup_path",
+	"get_mapping_info",
 	"import_all",
 	"import_appraisals",
-	"import_inventory",
-	"import_employees",
 	"import_customers",
+	"import_employees",
+	"import_inventory",
 	"import_stores",
-	"get_mapping_info",
-	"get_legacy_backup_path",
 ]

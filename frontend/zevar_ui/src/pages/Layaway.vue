@@ -14,17 +14,26 @@
 					class="px-4 py-2 bg-[#D4AF37] text-black rounded-lg text-sm font-bold hover:bg-[#c9a432] transition flex items-center gap-2"
 				>
 					<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M12 4v16m8-8H4"
+						/>
 					</svg>
 					New Layaway
 				</button>
 			</div>
 
 			<!-- Filters Bar -->
-			<div class="bg-white dark:bg-gray-800/50 rounded-xl p-4 mb-6 border border-gray-100 dark:border-gray-700/50">
+			<div
+				class="bg-white dark:bg-gray-800/50 rounded-xl p-4 mb-6 border border-gray-100 dark:border-gray-700/50"
+			>
 				<div class="flex flex-wrap gap-3 items-end">
 					<div class="flex flex-col gap-1">
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400">Status</label>
+						<label class="text-xs font-medium text-gray-500 dark:text-gray-400"
+							>Status</label
+						>
 						<select
 							v-model="filters.status"
 							@change="fetchLayaways"
@@ -38,7 +47,9 @@
 						</select>
 					</div>
 					<div class="flex flex-col gap-1">
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400">Customer</label>
+						<label class="text-xs font-medium text-gray-500 dark:text-gray-400"
+							>Customer</label
+						>
 						<input
 							type="text"
 							v-model="filters.customer"
@@ -48,7 +59,9 @@
 						/>
 					</div>
 					<div class="flex flex-col gap-1">
-						<label class="text-xs font-medium text-gray-500 dark:text-gray-400">Search</label>
+						<label class="text-xs font-medium text-gray-500 dark:text-gray-400"
+							>Search</label
+						>
 						<input
 							type="text"
 							v-model="filters.search"
@@ -69,36 +82,79 @@
 
 			<!-- Summary Cards -->
 			<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6" v-if="summary">
-				<div class="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700/50">
-					<span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Active</span>
-					<p class="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">{{ summary.active_count }}</p>
+				<div
+					class="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700/50"
+				>
+					<span
+						class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium"
+						>Active</span
+					>
+					<p class="text-2xl font-bold text-green-600 dark:text-green-400 mt-1">
+						{{ summary.active_count }}
+					</p>
 				</div>
-				<div class="bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 rounded-xl p-4 border border-[#D4AF37]/30">
-					<span class="text-xs text-[#D4AF37] uppercase tracking-wider font-medium">Total Outstanding</span>
-					<p class="text-2xl font-bold text-[#D4AF37] mt-1">{{ formatCurrency(summary.total_outstanding) }}</p>
+				<div
+					class="bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 rounded-xl p-4 border border-[#D4AF37]/30"
+				>
+					<span class="text-xs text-[#D4AF37] uppercase tracking-wider font-medium"
+						>Total Outstanding</span
+					>
+					<p class="text-2xl font-bold text-[#D4AF37] mt-1">
+						{{ formatCurrency(summary.total_outstanding) }}
+					</p>
 				</div>
-				<div class="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700/50">
-					<span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Overdue</span>
-					<p class="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">{{ summary.overdue_count }}</p>
+				<div
+					class="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700/50"
+				>
+					<span
+						class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium"
+						>Overdue</span
+					>
+					<p class="text-2xl font-bold text-red-600 dark:text-red-400 mt-1">
+						{{ summary.overdue_count }}
+					</p>
 				</div>
-				<div class="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700/50">
-					<span class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">Completed</span>
-					<p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">{{ summary.completed_count }}</p>
+				<div
+					class="bg-white dark:bg-gray-800/50 rounded-xl p-4 border border-gray-100 dark:border-gray-700/50"
+				>
+					<span
+						class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium"
+						>Completed</span
+					>
+					<p class="text-2xl font-bold text-gray-900 dark:text-white mt-1">
+						{{ summary.completed_count }}
+					</p>
 				</div>
 			</div>
 
 			<!-- Layaway Cards Grid -->
 			<div class="flex-1 overflow-y-auto">
 				<div v-if="loading" class="py-20 text-center">
-					<div class="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-[#D4AF37] mx-auto mb-4"></div>
-					<span class="text-gray-500 dark:text-gray-400 text-sm">Loading layaways...</span>
+					<div
+						class="animate-spin rounded-full h-8 w-8 border-2 border-gray-300 border-t-[#D4AF37] mx-auto mb-4"
+					></div>
+					<span class="text-gray-500 dark:text-gray-400 text-sm"
+						>Loading layaways...</span
+					>
 				</div>
 
 				<div v-else-if="layaways.length === 0" class="py-20 text-center">
-					<svg class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+					<svg
+						class="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4"
+						fill="none"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+					>
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="1.5"
+							d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+						/>
 					</svg>
-					<p class="text-gray-500 dark:text-gray-400 text-sm">No layaway contracts found</p>
+					<p class="text-gray-500 dark:text-gray-400 text-sm">
+						No layaway contracts found
+					</p>
 				</div>
 
 				<div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -111,7 +167,9 @@
 						<!-- Header -->
 						<div class="flex items-start justify-between mb-3">
 							<div>
-								<span class="font-mono text-xs text-[#D4AF37]">{{ layaway.name }}</span>
+								<span class="font-mono text-xs text-[#D4AF37]">{{
+									layaway.name
+								}}</span>
 								<p class="text-sm font-bold text-gray-900 dark:text-white mt-0.5">
 									{{ layaway.customer_name || layaway.customer || 'Unknown' }}
 								</p>
@@ -128,43 +186,66 @@
 						<div class="grid grid-cols-2 gap-3 mb-3">
 							<div>
 								<span class="text-xs text-gray-500 dark:text-gray-400">Total</span>
-								<p class="text-sm font-bold text-gray-900 dark:text-white">{{ formatCurrency(layaway.total_amount) }}</p>
+								<p class="text-sm font-bold text-gray-900 dark:text-white">
+									{{ formatCurrency(layaway.total_amount) }}
+								</p>
 							</div>
 							<div>
-								<span class="text-xs text-gray-500 dark:text-gray-400">Balance</span>
-								<p class="text-sm font-bold text-orange-600 dark:text-orange-400">{{ formatCurrency(layaway.balance_amount) }}</p>
+								<span class="text-xs text-gray-500 dark:text-gray-400"
+									>Balance</span
+								>
+								<p class="text-sm font-bold text-orange-600 dark:text-orange-400">
+									{{ formatCurrency(layaway.balance_amount) }}
+								</p>
 							</div>
 						</div>
 
 						<!-- Progress Bar -->
 						<div class="mb-3">
-							<div class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+							<div
+								class="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1"
+							>
 								<span>Paid</span>
-								<span>{{ Math.round((layaway.deposit_amount / layaway.total_amount) * 100) }}%</span>
+								<span
+									>{{
+										Math.round(
+											(layaway.deposit_amount / layaway.total_amount) * 100
+										)
+									}}%</span
+								>
 							</div>
-							<div class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+							<div
+								class="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden"
+							>
 								<div
 									class="h-full bg-[#D4AF37] transition-all duration-300"
-									:style="{ width: `${(layaway.deposit_amount / layaway.total_amount) * 100}%` }"
+									:style="{
+										width: `${
+											(layaway.deposit_amount / layaway.total_amount) * 100
+										}%`,
+									}"
 								></div>
 							</div>
 						</div>
 
 						<!-- Footer -->
-						<div class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+						<div
+							class="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400"
+						>
 							<span>{{ layaway.item_count || 0 }} items</span>
 							<span v-if="layaway.next_payment_date">
 								Next: {{ formatDate(layaway.next_payment_date) }}
 							</span>
-							<span v-else>
-								{{ layaway.maximum_duration_months }} months
-							</span>
+							<span v-else> {{ layaway.maximum_duration_months }} months </span>
 						</div>
 					</div>
 				</div>
 
 				<!-- Pagination -->
-				<div v-if="pagination.total_pages > 1" class="px-4 py-6 flex items-center justify-center gap-2">
+				<div
+					v-if="pagination.total_pages > 1"
+					class="px-4 py-6 flex items-center justify-center gap-2"
+				>
 					<button
 						@click="goToPage(pagination.page - 1)"
 						:disabled="pagination.page === 1"
@@ -228,9 +309,9 @@ const filters = ref({
 const summary = computed(() => {
 	if (!layaways.value.length) return null
 
-	const active = layaways.value.filter(l => l.status === 'Active')
-	const overdue = layaways.value.filter(l => l.is_overdue)
-	const completed = layaways.value.filter(l => l.status === 'Completed')
+	const active = layaways.value.filter((l) => l.status === 'Active')
+	const overdue = layaways.value.filter((l) => l.is_overdue)
+	const completed = layaways.value.filter((l) => l.status === 'Completed')
 
 	return {
 		active_count: active.length,

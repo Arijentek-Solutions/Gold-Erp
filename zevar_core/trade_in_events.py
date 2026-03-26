@@ -46,8 +46,13 @@ def validate_trade_in_2x_rule(doc: "frappe.model.document.Document", _method: st
 
 			# Manager override present — allow but verify authorization
 			override_user = row.manager_override
-			if "Sales Manager" not in frappe.get_roles(override_user):
-				frappe.throw(_("Row {0}: Override user must have Sales Manager role.").format(row.idx))
+			override_roles = frappe.get_roles(override_user)
+			if "Sales Manager" not in override_roles and "System Manager" not in override_roles:
+				frappe.throw(
+					_("Row {0}: Override user must have Sales Manager or System Manager role.").format(
+						row.idx
+					)
+				)
 			if not (row.override_reason or "").strip():
 				frappe.throw(
 					_("Row {0}: Override reason is required when manager override is used.").format(row.idx)

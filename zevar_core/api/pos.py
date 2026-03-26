@@ -71,9 +71,10 @@ def create_pos_invoice(
 				_("Item {0}: quantity must be greater than zero.").format(item.get("item_code")),
 				frappe.ValidationError,
 			)
-		if flt(item.get("rate", 0)) < 0:
+		if flt(item.get("rate", 0)) <= 0:
 			frappe.throw(
-				_("Item {0}: rate cannot be negative.").format(item.get("item_code")), frappe.ValidationError
+				_("Item {0}: rate must be greater than zero.").format(item.get("item_code")),
+				frappe.ValidationError,
 			)
 		# Verify item exists in the system
 		if not frappe.db.exists("Item", item.get("item_code")):

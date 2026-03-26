@@ -36,7 +36,8 @@
 					class="flex items-center gap-2 overflow-hidden transition-all duration-300"
 				>
 					<img :src="logoUrl" alt="Zevar" class="w-8 h-8 rounded shrink-0" />
-					<span class="font-bold text-gray-900 dark:text-white tracking-wide text-sm whitespace-nowrap"
+					<span
+						class="font-bold text-gray-900 dark:text-white tracking-wide text-sm whitespace-nowrap"
 						>Zevar</span
 					>
 				</div>
@@ -239,9 +240,9 @@
 		<!-- Coming Soon Modal for generic actions mapped to buttons temporarily -->
 		<Teleport to="body">
 			<Transition name="fade">
-					<div
-						v-if="showComingSoon"
-						class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"
+				<div
+					v-if="showComingSoon"
+					class="fixed inset-0 z-[100] flex items-center justify-center p-4 backdrop-blur-sm"
 					@click.self="showComingSoon = false"
 				>
 					<div class="absolute inset-0 bg-black/60"></div>
@@ -253,7 +254,9 @@
 						>
 							<span class="material-symbols-outlined text-3xl">build</span>
 						</div>
-						<h3 class="font-display font-bold text-gray-900 dark:text-white text-xl mb-2">
+						<h3
+							class="font-display font-bold text-gray-900 dark:text-white text-xl mb-2"
+						>
 							Feature Incoming
 						</h3>
 						<p class="text-sm text-gray-500 dark:text-white/50 mb-6 font-medium">
