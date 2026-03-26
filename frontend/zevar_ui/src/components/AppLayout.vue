@@ -123,10 +123,9 @@
 
 					<router-link
 						to="/catalogues"
-						target="_blank"
 						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
 						:class="
-							$route.path === '/catalogues'
+							$route.path.startsWith('/catalogues')
 								? 'bg-gradient-to-r from-[#D4AF37]/20 to-transparent text-[#D4AF37]'
 								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
@@ -196,10 +195,9 @@
 						</div>
 					</router-link>
 
-					<a
-						href="/app/issue/new"
-						target="_blank"
-						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent"
+					<button
+						@click="showSupportModal = true"
+						class="w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent"
 					>
 						<div
 							class="relative z-10 flex items-center gap-4"
@@ -224,12 +222,16 @@
 								>Support</span
 							>
 						</div>
-					</a>
+					</button>
 
-					<a
-						href="/app/layaway-contract"
-						target="_blank"
-						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent"
+					<router-link
+						to="/layaway"
+						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
+						:class="
+							$route.path === '/layaway'
+								? 'bg-gradient-to-r from-[#D4AF37]/20 to-transparent text-[#D4AF37]'
+								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
+						"
 					>
 						<div
 							class="relative z-10 flex items-center gap-4"
@@ -251,10 +253,10 @@
 							<span
 								v-show="!ui.sidebarCollapsed"
 								class="font-medium tracking-wide text-sm"
-								>Layaway Scheme</span
+								>Layaway</span
 							>
 						</div>
-					</a>
+					</router-link>
 
 					<div
 						v-if="$route.path === '/' && !ui.sidebarCollapsed"
@@ -699,6 +701,9 @@
 
 		<CartSidebar :isOpen="isCartOpen" @close="isCartOpen = false" />
 
+		<!-- Support Modal -->
+		<SupportModal :show="showSupportModal" @close="showSupportModal = false" />
+
 		<!-- MOBILE DRAWER OVERLAY (Hidden on Desktop) -->
 		<div
 			v-if="isMobileDrawerOpen"
@@ -794,6 +799,35 @@
 					</svg>
 					<span>Sales History</span>
 				</router-link>
+				<router-link
+					@click="isMobileDrawerOpen = false"
+					to="/layaway"
+					class="flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-[#D4AF37]"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+						></path>
+					</svg>
+					<span>Layaway</span>
+				</router-link>
+				<button
+					@click="isMobileDrawerOpen = false; showSupportModal = true"
+					class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-[#D4AF37]"
+				>
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path
+							stroke-linecap="round"
+							stroke-linejoin="round"
+							stroke-width="2"
+							d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"
+						></path>
+					</svg>
+					<span>Support</span>
+				</button>
 				<!-- Add Live Rates Ticker Row for Mobile inside drawer (bottom) or above nav -->
 				<div class="mt-6 pt-6 border-t border-white/5 px-2">
 					<div class="flex items-center gap-2 mb-3">
@@ -842,6 +876,7 @@ import { createResource } from 'frappe-ui'
 import { onMounted, ref, computed, watch } from 'vue'
 import CartSidebar from '@/components/CartSidebar.vue'
 import FilterSidebar from '@/components/FilterSidebar.vue'
+import SupportModal from '@/components/SupportModal.vue'
 
 const session = useSessionStore()
 const goldStore = useGoldStore()
@@ -851,6 +886,7 @@ const ui = useUIStore()
 const isCartOpen = ref(false)
 const isUserMenuOpen = ref(false)
 const isMobileDrawerOpen = ref(false)
+const showSupportModal = ref(false)
 
 const TROY_OZ_GRAMS = 31.1035
 
@@ -859,7 +895,7 @@ const sortedRates = computed(() => {
 	const priority = [
 		'Yellow Gold-24K',
 		'Yellow Gold-22K',
-		'Yellow Gold-18K',
+		'Yellow Gold-18Kt',
 		'Silver-925 Sterling',
 	]
 	// Filter out Platinum, convert per-gram to per-troy-ounce (US standard)

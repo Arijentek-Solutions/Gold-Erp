@@ -40,9 +40,9 @@ def fetch_live_metal_rates():
 		gold_purities = {
 			"24K": 0.999,
 			"22K": 0.916,
-			"18K": 0.750,
-			"14K": 0.585,
-			"10K": 0.417,
+			"18Kt": 0.750,
+			"14Kt": 0.585,
+			"10k": 0.417,
 		}
 
 		# Silver purities
@@ -68,7 +68,34 @@ def fetch_live_metal_rates():
 
 	except Exception as e:
 		frappe.logger().error(f"Metal rate fetch failed: {e!s}")
-
+		frappe.logger().info("Using fallback metal rates due to API failure.")
+		
+		# Fallback to static rates if API is down/blocking
+		gold_per_gram = 2450.0 / TROY_OZ_TO_GRAMS  # fallback $2450/oz
+		silver_per_gram = 30.0 / TROY_OZ_TO_GRAMS   # fallback $30/oz
+		
+		gold_purities = {
+			"24K": 0.999,
+			"22K": 0.916,
+			"18Kt": 0.750,
+			"14Kt": 0.585,
+			"10k": 0.417,
+		}
+		
+		silver_purities = {
+			"999 Fine": 0.999,
+			"925 Sterling": 0.925,
+		}
+		
+		for purity, multiplier in gold_purities.items():
+			rate = round(gold_per_gram * multiplier, 2)
+			_update_rate("Yellow Gold", purity, rate)
+			
+		for purity, multiplier in silver_purities.items():
+			rate = round(silver_per_gram * multiplier, 2)
+			_update_rate("Silver", purity, rate)
+			
+		frappe.db.commit()
 
 def _update_rate(metal, purity, rate):
 	"""Helper to update or create a rate entry."""

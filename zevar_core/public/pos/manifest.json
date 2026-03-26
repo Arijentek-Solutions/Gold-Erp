@@ -1,24 +1,26 @@
 {
   "index.html": {
-    "file": "assets/index.43482717.js",
+    "file": "assets/index.181027f1.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
-      "_vendor.ead3cf40.js"
+      "_vendor.157e6184.js"
     ],
     "dynamicImports": [
       "src/pages/Login.vue",
       "src/pages/POS.vue",
+      "src/pages/SalesHistory.vue",
+      "src/pages/Layaway.vue",
       "src/pages/CatalogueDashboard.vue",
       "src/pages/CategoryListing.vue",
       "src/pages/RepairTerminal.vue"
     ],
     "css": [
-      "assets/index.d6144776.css"
+      "assets/index.67dfaf05.css"
     ]
   },
-  "_vendor.ead3cf40.js": {
-    "file": "assets/vendor.ead3cf40.js",
+  "_vendor.157e6184.js": {
+    "file": "assets/vendor.157e6184.js",
     "dynamicImports": [
       "node_modules/frappe-ui/src/components/TextEditor/FontColor.vue",
       "node_modules/frappe-ui/src/components/TextEditor/InsertLink.vue",
@@ -30,118 +32,144 @@
     ]
   },
   "src/pages/Login.vue": {
-    "file": "assets/Login.2da1cd04.js",
+    "file": "assets/Login.27dab414.js",
     "src": "src/pages/Login.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.ead3cf40.js"
+      "_vendor.157e6184.js"
     ]
   },
   "src/pages/POS.vue": {
-    "file": "assets/POS.90352dd3.js",
+    "file": "assets/POS.66ecc121.js",
     "src": "src/pages/POS.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_AppLayout.39c1990d.js",
-      "_vendor.ead3cf40.js",
-      "_ui.18682d13.js"
+      "_AppLayout.f77a0ee2.js",
+      "_vendor.157e6184.js",
+      "_ui.d790a559.js"
     ],
     "css": [
       "assets/POS.3873386b.css"
     ]
   },
-  "_AppLayout.39c1990d.js": {
-    "file": "assets/AppLayout.39c1990d.js",
+  "_AppLayout.f77a0ee2.js": {
+    "file": "assets/AppLayout.f77a0ee2.js",
     "imports": [
-      "_vendor.ead3cf40.js",
-      "_ui.18682d13.js"
+      "_vendor.157e6184.js",
+      "_ui.d790a559.js"
     ],
     "css": [
-      "assets/AppLayout.f56c8c3c.css"
+      "assets/AppLayout.faa35898.css"
     ]
   },
-  "_ui.18682d13.js": {
-    "file": "assets/ui.18682d13.js",
+  "_ui.d790a559.js": {
+    "file": "assets/ui.d790a559.js",
     "imports": [
-      "_vendor.ead3cf40.js"
+      "_vendor.157e6184.js"
+    ]
+  },
+  "src/pages/SalesHistory.vue": {
+    "file": "assets/SalesHistory.55c8bd4f.js",
+    "src": "src/pages/SalesHistory.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor.157e6184.js",
+      "_AppLayout.f77a0ee2.js",
+      "_ui.d790a559.js"
+    ],
+    "css": [
+      "assets/SalesHistory.7e274396.css"
+    ]
+  },
+  "src/pages/Layaway.vue": {
+    "file": "assets/Layaway.27022d99.js",
+    "src": "src/pages/Layaway.vue",
+    "isDynamicEntry": true,
+    "imports": [
+      "_vendor.157e6184.js",
+      "_AppLayout.f77a0ee2.js",
+      "_ui.d790a559.js"
+    ],
+    "css": [
+      "assets/Layaway.57fd3810.css"
     ]
   },
   "src/pages/CatalogueDashboard.vue": {
-    "file": "assets/CatalogueDashboard.fd2ce83f.js",
+    "file": "assets/CatalogueDashboard.7bf07009.js",
     "src": "src/pages/CatalogueDashboard.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.ead3cf40.js",
-      "_ui.18682d13.js",
-      "_ProductModal.26766c6b.js"
+      "_vendor.157e6184.js",
+      "_ui.d790a559.js",
+      "_ProductModal.ba16d6b5.js"
     ],
     "css": [
-      "assets/CatalogueDashboard.8b44c16a.css"
+      "assets/CatalogueDashboard.fc217008.css"
     ]
   },
-  "_ProductModal.26766c6b.js": {
-    "file": "assets/ProductModal.26766c6b.js",
+  "_ProductModal.ba16d6b5.js": {
+    "file": "assets/ProductModal.ba16d6b5.js",
     "imports": [
-      "_vendor.ead3cf40.js",
-      "_ui.18682d13.js"
+      "_vendor.157e6184.js",
+      "_ui.d790a559.js"
     ],
     "css": [
       "assets/ProductModal.2efb8475.css"
     ]
   },
   "src/pages/CategoryListing.vue": {
-    "file": "assets/CategoryListing.10ec4e8f.js",
+    "file": "assets/CategoryListing.f7311fb8.js",
     "src": "src/pages/CategoryListing.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.ead3cf40.js",
-      "_ProductModal.26766c6b.js",
-      "_ui.18682d13.js"
+      "_vendor.157e6184.js",
+      "_ProductModal.ba16d6b5.js",
+      "_ui.d790a559.js"
     ],
     "css": [
       "assets/CategoryListing.2c09e514.css"
     ]
   },
   "src/pages/RepairTerminal.vue": {
-    "file": "assets/RepairTerminal.0ac9ba7f.js",
+    "file": "assets/RepairTerminal.31d368e6.js",
     "src": "src/pages/RepairTerminal.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.ead3cf40.js",
-      "_AppLayout.39c1990d.js",
-      "_ui.18682d13.js"
+      "_vendor.157e6184.js",
+      "_AppLayout.f77a0ee2.js",
+      "_ui.d790a559.js"
     ]
   },
   "node_modules/frappe-ui/src/components/TextEditor/FontColor.vue": {
-    "file": "assets/FontColor.fdf8626f.js",
+    "file": "assets/FontColor.4a772a00.js",
     "src": "node_modules/frappe-ui/src/components/TextEditor/FontColor.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.ead3cf40.js"
+      "_vendor.157e6184.js"
     ]
   },
   "node_modules/frappe-ui/src/components/TextEditor/InsertLink.vue": {
-    "file": "assets/InsertLink.bed28ed2.js",
+    "file": "assets/InsertLink.2fe06efa.js",
     "src": "node_modules/frappe-ui/src/components/TextEditor/InsertLink.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.ead3cf40.js"
+      "_vendor.157e6184.js"
     ]
   },
   "node_modules/frappe-ui/src/components/TextEditor/InsertImage.vue": {
-    "file": "assets/InsertImage.b1e38a2c.js",
+    "file": "assets/InsertImage.1156c92a.js",
     "src": "node_modules/frappe-ui/src/components/TextEditor/InsertImage.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.ead3cf40.js"
+      "_vendor.157e6184.js"
     ]
   },
   "node_modules/frappe-ui/src/components/TextEditor/InsertVideo.vue": {
-    "file": "assets/InsertVideo.32a867e7.js",
+    "file": "assets/InsertVideo.46f0023d.js",
     "src": "node_modules/frappe-ui/src/components/TextEditor/InsertVideo.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_vendor.ead3cf40.js"
+      "_vendor.157e6184.js"
     ]
   }
 }

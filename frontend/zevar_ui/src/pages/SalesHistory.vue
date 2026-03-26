@@ -1,9 +1,10 @@
 <template>
-	<div class="sales-history-page">
-		<div class="page-header">
-			<h1>Sales History</h1>
-			<p>View and manage past transactions</p>
-		</div>
+	<AppLayout>
+		<div class="sales-history-page">
+			<div class="page-header">
+				<h1>Sales History</h1>
+				<p>View and manage past transactions</p>
+			</div>
 
 		<!-- Filters -->
 		<div class="filters-bar">
@@ -252,11 +253,13 @@
 			</div>
 		</div>
 	</div>
+</AppLayout>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue'
 import { createResource } from 'frappe-ui'
+import AppLayout from '@/components/AppLayout.vue'
 
 // State
 const loading = ref(false)

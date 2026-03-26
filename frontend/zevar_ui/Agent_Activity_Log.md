@@ -1,0 +1,2 @@
+[2026-03-26 04:45] **Prompt:** Fix live gold rate panel in POS UI. **Fix:** Harmonized purity names ("18Kt" vs "18K") across DB and code, added missing "24K"/"22K" purities, and cleaned corrupted logs.
+[2026-03-26 06:01] **Prompt:** Fix Live Gold Rate panel in POS UI showing NULL or blank. **Fix:** Unified naming conventions, implemented API fallback for 403 Forbidden, and added POS permissions for Gold Rate Log.

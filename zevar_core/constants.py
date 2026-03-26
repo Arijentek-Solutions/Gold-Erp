@@ -16,9 +16,9 @@ METAL_TYPES = ["Yellow Gold", "White Gold", "Rose Gold", "Silver", "Platinum"]
 PURITY_VALUES = {
 	"24K": 0.999,
 	"22K": 0.916,
-	"18K": 0.750,
-	"14K": 0.585,
-	"10K": 0.417,
+	"18Kt": 0.750,
+	"14Kt": 0.585,
+	"10k": 0.417,
 	"999 Sterling": 0.999,
 	"925 Sterling": 0.925,
 }

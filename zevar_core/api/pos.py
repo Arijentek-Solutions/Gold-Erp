@@ -218,11 +218,15 @@ def create_pos_invoice(
 			si.apply_discount_on = "Grand Total"
 			si.discount_amount = flt(discount_amount)
 
-		if not is_tax_exempt and tax_template:
+		if is_tax_exempt:
+			# Clear any existing taxes and set override flag
+			si.taxes = []
+			si.custom_no_tax_override = 1
+		elif tax_template:
 			si.taxes_and_charges = tax_template
 			si.custom_no_tax_override = 0
 		else:
-			si.custom_no_tax_override = 1 if is_tax_exempt else 0
+			si.custom_no_tax_override = 0
 
 		for idx, sp in enumerate(salesperson_data[:4]):
 			si.set(f"custom_salesperson_{idx + 1}", sp.get("salesperson") or sp.get("employee"))

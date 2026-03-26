@@ -14,6 +14,18 @@ const routes = [
 		meta: { requiresAuth: true },
 	},
 	{
+		path: '/transactions',
+		name: 'Transactions',
+		component: () => import('./pages/SalesHistory.vue'),
+		meta: { requiresAuth: true },
+	},
+	{
+		path: '/layaway',
+		name: 'Layaway',
+		component: () => import('./pages/Layaway.vue'),
+		meta: { requiresAuth: true },
+	},
+	{
 		path: '/catalogues',
 		name: 'Catalogues',
 		component: () => import('./pages/CatalogueDashboard.vue'),

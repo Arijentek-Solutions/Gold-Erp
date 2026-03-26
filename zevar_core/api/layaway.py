@@ -8,6 +8,115 @@ from frappe.utils import add_months, flt, today
 
 
 @frappe.whitelist(methods=["GET"])
+def get_all_layaways(
+	status: str | None = None,
+	customer: str | None = None,
+	search: str | None = None,
+	page: int = 1,
+	page_size: int = 20,
+) -> dict:
+	"""
+	Get all layaway contracts with filtering and pagination.
+
+	Args:
+		status: Filter by status (Active, Completed, Cancelled, Defaulted)
+		customer: Filter by customer name
+		search: Search by contract number or customer name
+		page: Page number for pagination
+		page_size: Number of records per page
+
+	Returns:
+		dict: Contains 'layaways' list and 'pagination' info
+	"""
+	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
+
+	# Build filters
+	filters = {"docstatus": ["!=", 2]}
+
+	if status:
+		filters["status"] = status
+
+	if customer:
+		filters["customer"] = ["like", f"%{customer}%"]
+
+	if search:
+		filters["name"] = ["like", f"%{search}%"]
+
+	# Get total count for pagination
+	total_count = frappe.db.count("Layaway Contract", filters=filters)
+
+	# Calculate pagination
+	total_pages = (total_count + page_size - 1) // page_size if page_size > 0 else 1
+	offset = (page - 1) * page_size
+
+	# Get layaway contracts
+	layaways = frappe.get_all(
+		"Layaway Contract",
+		filters=filters,
+		fields=[
+			"name",
+			"customer",
+			"status",
+			"contract_date",
+			"target_completion_date",
+			"total_amount",
+			"deposit_amount",
+			"balance_amount",
+			"maximum_duration_months",
+			"cancellation_refund_type",
+			"store_credit_reference",
+			"creation",
+		],
+		order_by="creation desc",
+		start=offset,
+		page_length=page_size,
+	)
+
+	# Enrich layaway data
+	for layaway in layaways:
+		# Get customer name
+		if layaway.customer:
+			layaway.customer_name = frappe.db.get_value(
+				"Customer", layaway.customer, "customer_name"
+			) or layaway.customer
+
+		# Calculate next payment due
+		if layaway.status == "Active":
+			pending_payments = frappe.get_all(
+				"Layaway Payment Schedule",
+				filters={"parent": layaway.name, "status": "Pending"},
+				fields=["payment_date", "expected_amount"],
+				order_by="payment_date asc",
+				limit=1,
+			)
+			if pending_payments:
+				layaway.next_payment_date = str(pending_payments[0].payment_date)
+				layaway.next_payment_amount = flt(pending_payments[0].expected_amount)
+
+		# Get item count
+		item_count = frappe.db.count(
+			"Layaway Contract Item", filters={"parent": layaway.name}
+		)
+		layaway.item_count = item_count
+
+		# Check if overdue
+		if layaway.status == "Active" and layaway.target_completion_date:
+			from frappe.utils import getdate
+			if getdate(layaway.target_completion_date) < getdate():
+				layaway.is_overdue = True
+
+	return {
+		"layaways": layaways,
+		"pagination": {
+			"page": page,
+			"total_pages": total_pages,
+			"total_count": total_count,
+			"page_size": page_size,
+		},
+	}
+
+
+@frappe.whitelist(methods=["GET"])
 def get_layaway_details(layaway_id: str) -> dict:
 	"""Return full details of a Layaway Contract including items and schedule."""
 	frappe.only_for(["Sales User", "Sales Manager", "System Manager"])
