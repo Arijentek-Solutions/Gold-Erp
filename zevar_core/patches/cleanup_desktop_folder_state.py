@@ -1,0 +1,95 @@
+"""
+Clean up legacy desktop folder state.
+
+This patch normalizes custom Desktop Icon folders created during the broken
+edit-mode flow by renaming legacy "Untitled" folders and fixing saved layout
+references that still point to stale folder labels.
+"""
+
+from __future__ import annotations
+
+import json
+
+import frappe
+
+
+def execute() -> None:
+	rename_map = _rename_untitled_folders()
+	_update_desktop_layouts(rename_map)
+	frappe.db.commit()
+
+
+def _rename_untitled_folders() -> dict[str, str]:
+	folders = frappe.get_all(
+		"Desktop Icon",
+		fields=["name", "label"],
+		filters={"icon_type": "Folder"},
+		order_by="creation asc",
+	)
+	existing_labels = {folder.label for folder in folders if folder.label}
+	rename_map: dict[str, str] = {}
+
+	for folder in folders:
+		if not folder.label or not folder.label.startswith("Untitled"):
+			continue
+
+		new_label = _get_next_folder_label(existing_labels)
+		frappe.rename_doc(
+			"Desktop Icon",
+			folder.name,
+			new_label,
+			force=True,
+			ignore_if_exists=True,
+			show_alert=False,
+		)
+		rename_map[folder.label] = new_label
+		existing_labels.add(new_label)
+
+	return rename_map
+
+
+def _get_next_folder_label(existing_labels: set[str]) -> str:
+	index = 1
+	while f"Folder {index}" in existing_labels:
+		index += 1
+	return f"Folder {index}"
+
+
+def _update_desktop_layouts(rename_map: dict[str, str]) -> None:
+	layout_docs = frappe.get_all("Desktop Layout", fields=["name", "layout"])
+	valid_folders = set(
+		frappe.get_all(
+			"Desktop Icon",
+			filters={"icon_type": ["in", ["Folder", "App"]]},
+			pluck="label",
+		)
+	)
+
+	for layout_doc in layout_docs:
+		if not layout_doc.layout:
+			continue
+
+		try:
+			layout = json.loads(layout_doc.layout)
+		except json.JSONDecodeError:
+			continue
+
+		changed = False
+		for icon in layout:
+			old_label = icon.get("label")
+			if old_label in rename_map:
+				icon["label"] = rename_map[old_label]
+				changed = True
+
+			parent_icon = icon.get("parent_icon")
+			if parent_icon in rename_map:
+				icon["parent_icon"] = rename_map[parent_icon]
+				parent_icon = icon["parent_icon"]
+				changed = True
+
+			if parent_icon and parent_icon not in valid_folders:
+				icon["parent_icon"] = None
+				changed = True
+
+		if changed:
+			frappe.db.set_value("Desktop Layout", layout_doc.name, "layout", json.dumps(layout))

@@ -8,20 +8,15 @@ app_logo_url = "/assets/zevar_core/images/pos_logo.svg"
 splash_image = "/assets/zevar_core/images/pos_logo.svg"
 
 # NOTE: add_to_apps_screen only supports ONE entry per app.
-# Multiple entries for the same app are ignored (only first is used).
-# For additional desk shortcuts, use Desktop Icons (imported via install.py).
+# Frappe core uses apps[0] only (boot.py line 180).
+# For additional desk shortcuts (e.g. Employee Portal), create Desktop Icons
+# via install.py or a patch instead.
 add_to_apps_screen = [
 	{
 		"name": "zevar_pos",
 		"logo": "/assets/zevar_core/images/pos_logo.svg",
 		"title": "Zevar POS",
 		"route": "/pos",
-	},
-	{
-		"name": "zevar_employee_portal",
-		"logo": "/assets/zevar_core/images/employee_portal_logo.svg",
-		"title": "Employee Portal",
-		"route": "/employee-portal",
 	},
 ]
 

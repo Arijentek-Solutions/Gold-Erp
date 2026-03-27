@@ -1,6 +1,6 @@
 {
  "app": "zevar_core",
- "bg_color": "blue",
+ "bg_color": "red",
  "creation": "2026-03-16 05:40:00",
  "docstatus": 0,
  "doctype": "Desktop Icon",
@@ -10,8 +10,8 @@
  "label": "Inventory",
  "link": "/app/item",
  "link_type": "External",
- "logo_url": "/assets/zevar_core/images/inventory_logo.svg",
- "modified": "2026-03-16 02:05:41.681115",
+ "logo_url": "",
+ "modified": "2026-03-26 23:43:53.302970",
  "modified_by": "Administrator",
  "name": "Inventory",
  "owner": "Administrator",

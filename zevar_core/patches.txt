@@ -6,3 +6,6 @@
 # Patches added in this section will be executed after doctypes are migrated
 zevar_core.patches.v1_0.fix_desktop_icon_creation
 zevar_core.patches.add_catalog_indexes
+zevar_core.patches.create_employee_portal_desktop_icon
+zevar_core.patches.cleanup_desktop_folder_state
+zevar_core.patches.repair_desktop_layout_and_shortcuts
