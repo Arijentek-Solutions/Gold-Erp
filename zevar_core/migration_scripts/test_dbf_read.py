@@ -1,9 +1,17 @@
 import os
+import unittest
 
-import pandas as pd
-from dbfread import DBF
+try:
+	import pandas as pd
+	from dbfread import DBF
+except ImportError:
+	pd = None
+	DBF = None
+
+pandas_missing = unittest.skipIf(pd is None or DBF is None, "pandas or dbfread not installed")
 
 
+@pandas_missing
 def test_dbf_reading():
 	"""Test reading DBF files and show data structure"""
 

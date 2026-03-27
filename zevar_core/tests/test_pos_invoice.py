@@ -4,6 +4,7 @@ Tests: create_pos_invoice, tax calculation, trade-in deduction logic
 """
 
 import json
+import unittest
 
 import frappe
 from frappe.tests.utils import FrappeTestCase
@@ -14,6 +15,11 @@ from zevar_core.tests.utils import (
 	ensure_item_group,
 	ensure_mode_of_payment,
 	ensure_warehouse,
+)
+
+erpnext_required = unittest.skipUnless(
+	frappe.db and frappe.db.exists("DocType", "Sales Invoice"),
+	"ERPNext required (Sales Invoice DocType not found)",
 )
 
 
@@ -32,6 +38,7 @@ def create_test_employee(first_name: str, last_name: str) -> str:
 	return employee.name
 
 
+@erpnext_required
 class TestPOSInvoiceCreation(FrappeTestCase):
 	"""Test suite for POS invoice creation functionality."""
 
@@ -314,6 +321,7 @@ class TestPOSInvoiceCreation(FrappeTestCase):
 			)
 
 
+@erpnext_required
 class TestTaxCalculation(FrappeTestCase):
 	"""Test suite for POS tax calculation functionality."""
 
@@ -438,6 +446,7 @@ class TestTaxCalculation(FrappeTestCase):
 		self.assertGreaterEqual(result["tax_rate"], 0.0)
 
 
+@erpnext_required
 class TestTradeInDeduction(FrappeTestCase):
 	"""Test suite for trade-in deduction logic."""
 

@@ -21,7 +21,13 @@ from frappe.utils import add_days, flt, now_datetime, today
 
 from zevar_core.tests.utils import ensure_customer, ensure_item, ensure_pos_profile
 
+erpnext_required = unittest.skipUnless(
+	frappe.db and frappe.db.exists("DocType", "Sales Invoice"),
+	"ERPNext required (Sales Invoice DocType not found)",
+)
 
+
+@erpnext_required
 @unittest.skip("Covered by API tests; unstable in shared suite state.")
 class TestPOSSessionWorkflow(FrappeTestCase):
 	"""Test complete POS session workflow."""
@@ -102,6 +108,7 @@ class TestPOSSessionWorkflow(FrappeTestCase):
 		self.assertEqual(flt(close_result.get("variance")), -5.00)
 
 
+@erpnext_required
 class TestCompleteSaleWorkflow(FrappeTestCase):
 	"""Test complete sale workflow."""
 
@@ -145,6 +152,7 @@ class TestCompleteSaleWorkflow(FrappeTestCase):
 		self.assertEqual(invoice.customer, self.customer)
 
 
+@erpnext_required
 class TestLayawayWorkflow(FrappeTestCase):
 	"""Test layaway creation and management workflow."""
 
@@ -200,6 +208,7 @@ class TestLayawayWorkflow(FrappeTestCase):
 		self.assertIsNotNone(result.get("contract_name"))
 
 
+@erpnext_required
 @unittest.skip("Covered by API tests; unstable in shared suite state.")
 class TestReturnWorkflow(FrappeTestCase):
 	"""Test return and void processing workflow."""
@@ -266,6 +275,7 @@ class TestReturnWorkflow(FrappeTestCase):
 		self.assertIsNotNone(return_result.get("return_invoice"))
 
 
+@erpnext_required
 class TestPermissionWorkflow(FrappeTestCase):
 	"""Test permission and manager override workflow."""
 
@@ -292,6 +302,7 @@ class TestPermissionWorkflow(FrappeTestCase):
 		self.assertIn("create_invoice", permissions)
 
 
+@erpnext_required
 class TestAuditLogWorkflow(FrappeTestCase):
 	"""Test audit logging workflow."""
 
@@ -323,6 +334,7 @@ class TestAuditLogWorkflow(FrappeTestCase):
 		self.assertIn("by_category", summary)
 
 
+@erpnext_required
 class TestSalesHistoryWorkflow(FrappeTestCase):
 	"""Test sales history and reporting workflow."""
 

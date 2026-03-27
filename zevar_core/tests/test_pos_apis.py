@@ -7,13 +7,21 @@ Unit Tests for POS Profile API
 Run with: bench run-tests --app zevar_core --doctype "POS Profile" --test test_pos_profile
 """
 
+import unittest
+
 import frappe
 from frappe.tests.utils import FrappeTestCase
 from frappe.utils import now_datetime
 
 from zevar_core.tests.utils import ensure_pos_profile, ensure_warehouse
 
+erpnext_required = unittest.skipUnless(
+	frappe.db and frappe.db.exists("DocType", "POS Profile"),
+	"ERPNext required (POS Profile DocType not found)",
+)
 
+
+@erpnext_required
 class TestPOSProfileAPI(FrappeTestCase):
 	"""Test cases for POS Profile API"""
 
@@ -93,6 +101,7 @@ class TestPOSProfileAPI(FrappeTestCase):
 			set_active_profile("Non-existent Profile")
 
 
+@erpnext_required
 class TestPOSSessionAPI(FrappeTestCase):
 	"""Test cases for POS Session API"""
 
@@ -187,6 +196,7 @@ class TestPOSSessionAPI(FrappeTestCase):
 			frappe.delete_doc("POS Opening Entry", result1["session_name"], ignore_permissions=True)
 
 
+@erpnext_required
 class TestSalesHistoryAPI(FrappeTestCase):
 	"""Test cases for Sales History API"""
 
@@ -230,6 +240,7 @@ class TestSalesHistoryAPI(FrappeTestCase):
 			self.assertEqual(sale.get("status"), "Paid")
 
 
+@erpnext_required
 class TestQuickLayawayAPI(FrappeTestCase):
 	"""Test cases for Quick Layaway API"""
 
@@ -279,6 +290,7 @@ class TestQuickLayawayAPI(FrappeTestCase):
 			)
 
 
+@erpnext_required
 class TestPermissionsAPI(FrappeTestCase):
 	"""Test cases for Permissions API"""
 
@@ -317,6 +329,7 @@ class TestPermissionsAPI(FrappeTestCase):
 		self.assertTrue(result.get("allowed") or result.get("needs_override"))
 
 
+@erpnext_required
 class TestAuditLogAPI(FrappeTestCase):
 	"""Test cases for Audit Log API"""
 
