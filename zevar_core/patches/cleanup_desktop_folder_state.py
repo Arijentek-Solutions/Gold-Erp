@@ -50,12 +50,17 @@ def _rename_untitled_folders() -> dict[str, str]:
 	return rename_map
 
 
+_next_folder_index: int = 1
+
+
 def _get_next_folder_label(existing_labels: set[str]) -> str:
 	"""Return the next available 'Folder N' label not in existing_labels."""
-	index = 1
-	while f"Folder {index}" in existing_labels:
-		index += 1
-	return f"Folder {index}"
+	global _next_folder_index
+	while f"Folder {_next_folder_index}" in existing_labels:
+		_next_folder_index += 1
+	label = f"Folder {_next_folder_index}"
+	_next_folder_index += 1
+	return label
 
 
 def _update_desktop_layouts(rename_map: dict[str, str]) -> None:
@@ -80,6 +85,9 @@ def _update_desktop_layouts(rename_map: dict[str, str]) -> None:
 
 		changed = False
 		for icon in layout:
+			if not isinstance(icon, dict):
+				continue
+
 			old_label = icon.get("label")
 			if old_label in rename_map:
 				icon["label"] = rename_map[old_label]

@@ -34,7 +34,8 @@ def _repair_invalid_external_app_shortcuts() -> set[str]:
 			continue
 
 		frappe.db.set_value("Desktop Icon", icon.name, "icon_type", "Link", update_modified=False)
-		converted_labels.add(icon.label)
+		if icon.label:
+			converted_labels.add(icon.label)
 
 	return converted_labels
 
@@ -69,6 +70,10 @@ def repair_layouts(converted_labels: set[str]) -> None:
 		try:
 			layout = json.loads(layout_doc.layout)
 		except json.JSONDecodeError:
+			frappe.log_error(
+				f"Invalid JSON in Desktop Layout {layout_doc.name}",
+				"repair_desktop_layout_and_shortcuts",
+			)
 			continue
 
 		changed = False

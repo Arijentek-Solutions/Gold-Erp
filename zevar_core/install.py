@@ -19,6 +19,9 @@ def create_required_modes_of_payment():
 	The frontend checkout supports these payment methods. Each must exist
 	as a Frappe 'Mode of Payment' record for Sales Invoice validation to pass.
 	"""
+	if not frappe.db.exists("DocType", "Mode of Payment"):
+		return
+
 	modes = [
 		{"mode_of_payment": "Cash", "type": "Cash"},
 		{"mode_of_payment": "Credit Card", "type": "Bank"},
