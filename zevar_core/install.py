@@ -20,6 +20,9 @@ def create_required_modes_of_payment():
 	as a Frappe 'Mode of Payment' record for Sales Invoice validation to pass.
 	"""
 	if not frappe.db.exists("DocType", "Mode of Payment"):
+		frappe.logger().warning(
+			"Skipping Mode of Payment bootstrap: DocType 'Mode of Payment' does not exist yet."
+		)
 		return
 
 	modes = [
