@@ -9,10 +9,11 @@ rather than through the hooks mechanism.
 import frappe
 
 
-def execute():
-	if frappe.db.exists("Desktop Icon", {"label": "Employee Portal", "link_type": "External"}):
-		# Already exists, just ensure logo_url is current
-		icon = frappe.get_doc("Desktop Icon", {"label": "Employee Portal", "link_type": "External"})
+def execute() -> None:
+	"""Create or update the Employee Portal desktop icon via database."""
+	existing_name = frappe.db.exists("Desktop Icon", {"label": "Employee Portal", "link_type": "External"})
+	if existing_name:
+		icon = frappe.get_doc("Desktop Icon", existing_name)
 		if icon.logo_url != "/assets/zevar_core/images/employee_portal_logo.svg":
 			icon.logo_url = "/assets/zevar_core/images/employee_portal_logo.svg"
 			icon.save()

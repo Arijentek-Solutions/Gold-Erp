@@ -14,12 +14,14 @@ import frappe
 
 
 def execute() -> None:
+	"""Repair broken desktop layout parent state and invalid external app shortcuts."""
 	converted_labels = _repair_invalid_external_app_shortcuts()
 	repair_layouts(converted_labels)
 	frappe.db.commit()
 
 
 def _repair_invalid_external_app_shortcuts() -> set[str]:
+	"""Convert invalid external App shortcuts without backing apps into Link icons."""
 	converted_labels: set[str] = set()
 	icons = frappe.get_all(
 		"Desktop Icon",
@@ -38,6 +40,7 @@ def _repair_invalid_external_app_shortcuts() -> set[str]:
 
 
 def repair_layouts(converted_labels: set[str]) -> None:
+	"""Restore app-parent groupings in saved Desktop Layout JSON and update icon types."""
 	icon_rows = frappe.get_all(
 		"Desktop Icon",
 		fields=[
@@ -55,9 +58,7 @@ def repair_layouts(converted_labels: set[str]) -> None:
 		],
 	)
 	icon_map = {row.label: row for row in icon_rows if row.label}
-	valid_parents = {
-		row.label for row in icon_rows if row.label and row.icon_type in ("App", "Folder")
-	}
+	valid_parents = {row.label for row in icon_rows if row.label and row.icon_type in ("App", "Folder")}
 
 	layout_docs = frappe.get_all("Desktop Layout", fields=["name", "layout"])
 
@@ -91,7 +92,7 @@ def repair_layouts(converted_labels: set[str]) -> None:
 
 			if not layout_parent and record_parent and record_parent in valid_parents:
 				parent_row = icon_map.get(record_parent)
-				if parent_row and parent_row.icon_type == "App":
+				if parent_row and parent_row.icon_type in ("App", "Folder"):
 					item["parent_icon"] = record_parent
 					changed = True
 
