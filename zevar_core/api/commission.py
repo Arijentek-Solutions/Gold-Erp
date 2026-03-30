@@ -80,11 +80,9 @@ def calculate_commissions(doc, method=None):
 	frappe.db.delete("Sales Commission Split", {"sales_invoice": doc.name})
 
 	sales_persons = []
-	for i in range(1, 5):
-		sp = doc.get(f"custom_salesperson_{i}")
-		split = flt(doc.get(f"custom_salesperson_{i}_split"))
-		if sp and split > 0:
-			sales_persons.append({"employee": sp, "split_percent": split})
+	for row in doc.get("custom_salesperson_splits", []):
+		if row.employee and flt(row.split_percent) > 0:
+			sales_persons.append({"employee": row.employee, "split_percent": flt(row.split_percent)})
 
 	if not sales_persons:
 		return

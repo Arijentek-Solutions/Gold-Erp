@@ -72,37 +72,53 @@ def get_all_layaways(
 		page_length=page_size,
 	)
 
-	# Enrich layaway data
-	for layaway in layaways:
-		# Get customer name
-		if layaway.customer:
-			layaway.customer_name = (
-				frappe.db.get_value("Customer", layaway.customer, "customer_name") or layaway.customer
-			)
+	# Enrich layaway data using batched queries to avoid N+1 issues
+	if layaways:
+		layaway_names = [l.name for l in layaways]
+		active_layaways = [l.name for l in layaways if l.status == "Active"]
+		customer_ids = list({l.customer for l in layaways if l.customer})
 
-		# Calculate next payment due
-		if layaway.status == "Active":
-			pending_payments = frappe.get_all(
+		customer_names = {}
+		if customer_ids:
+			customers = frappe.get_all("Customer", filters={"name": ("in", customer_ids)}, fields=["name", "customer_name"])
+			customer_names = {c.name: c.customer_name for c in customers}
+
+		counts = frappe.db.sql(
+			"""SELECT parent, count(name) as count 
+			   FROM `tabLayaway Contract Item` 
+			   WHERE parent IN %s GROUP BY parent""",
+			(tuple(layaway_names),), as_dict=True
+		)
+		item_counts = {c.parent: c.count for c in counts}
+
+		next_payments = {}
+		if active_layaways:
+			# Group by payment_date asc ensures we see the earliest date first per parent
+			payments = frappe.get_all(
 				"Layaway Payment Schedule",
-				filters={"parent": layaway.name, "status": "Pending"},
-				fields=["payment_date", "expected_amount"],
-				order_by="payment_date asc",
-				limit=1,
+				filters={"parent": ("in", active_layaways), "status": "Pending"},
+				fields=["parent", "payment_date", "expected_amount"],
+				order_by="payment_date asc"
 			)
-			if pending_payments:
-				layaway.next_payment_date = str(pending_payments[0].payment_date)
-				layaway.next_payment_amount = flt(pending_payments[0].expected_amount)
+			for p in payments:
+				if p.parent not in next_payments:
+					next_payments[p.parent] = p
 
-		# Get item count
-		item_count = frappe.db.count("Layaway Contract Item", filters={"parent": layaway.name})
-		layaway.item_count = item_count
+		from frappe.utils import getdate
+		current_date = getdate()
 
-		# Check if overdue
-		if layaway.status == "Active" and layaway.target_completion_date:
-			from frappe.utils import getdate
+		for layaway in layaways:
+			layaway.customer_name = customer_names.get(layaway.customer) or layaway.customer
+			layaway.item_count = item_counts.get(layaway.name, 0)
 
-			if getdate(layaway.target_completion_date) < getdate():
-				layaway.is_overdue = True
+			if layaway.status == "Active":
+				np = next_payments.get(layaway.name)
+				if np:
+					layaway.next_payment_date = str(np.payment_date)
+					layaway.next_payment_amount = flt(np.expected_amount)
+
+				if layaway.target_completion_date and getdate(layaway.target_completion_date) < current_date:
+					layaway.is_overdue = True
 
 	return {
 		"layaways": layaways,

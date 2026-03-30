@@ -9,3 +9,4 @@ zevar_core.patches.add_catalog_indexes
 zevar_core.patches.create_employee_portal_desktop_icon
 zevar_core.patches.cleanup_desktop_folder_state
 zevar_core.patches.repair_desktop_layout_and_shortcuts
+zevar_core.patches.migrate_salespersons

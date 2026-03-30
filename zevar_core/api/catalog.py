@@ -151,17 +151,58 @@ def get_pos_items(
 		)
 		stock_map = {b.item_code: b.total_qty for b in bin_entries}
 
+	# Pre-fetch all standard rates
+	std_rate_map = {}
+	if item_codes:
+		item_std_rates = frappe.get_all("Item", filters={"name": ("in", item_codes)}, fields=["name", "standard_rate"])
+		std_rate_map = {r.name: r.standard_rate for r in item_std_rates}
+
+	# Pre-fetch gemstone sums
+	gem_sum_map = {}
+	if item_codes:
+		gemstones = frappe.db.sql("""
+			SELECT parent, sum(amount) as total_amount 
+			FROM `tabZevar Gemstone Detail` 
+			WHERE parenttype='Item' AND parent IN %s 
+			GROUP BY parent
+		""", (tuple(item_codes),), as_dict=True)
+		gem_sum_map = {g.parent: g.total_amount for g in gemstones}
+
+	# Pre-fetch all latest gold rates
+	gold_rate_logs = frappe.db.sql("""
+		SELECT r.metal, r.purity, r.rate_per_gram 
+		FROM `tabGold Rate Log` r
+		INNER JOIN (
+			SELECT metal, purity, MAX(timestamp) as max_var
+			FROM `tabGold Rate Log` 
+			GROUP BY metal, purity
+		) grouped 
+		ON r.metal = grouped.metal AND r.purity = grouped.purity AND r.timestamp = grouped.max_var
+	""", as_dict=True)
+	gold_rate_map = {(r.metal, r.purity): r.rate_per_gram for r in gold_rate_logs}
+
 	# Build response
 	pos_items = []
 	for item in items:
 		qty = stock_map.get(item.name, 0)
 
-		# Get price
-		try:
-			price_data = get_item_price(item.name)
-			final_price = price_data.get("final_price", 0.0)
-		except Exception:
-			final_price = item.custom_msrp or 0.0
+		# Compute price directly without expensive get_doc loop
+		if item.custom_msrp and item.custom_msrp > 0:
+			final_price = float(item.custom_msrp)
+		else:
+			metal_search = "Yellow Gold" if item.custom_metal_type in ["Rose Gold", "White Gold"] else item.custom_metal_type
+			rate_per_gram = float(gold_rate_map.get((metal_search, item.custom_purity), 0.0))
+			gold_value = float(item.custom_net_weight_g or 0) * rate_per_gram
+			gemstone_value = float(gem_sum_map.get(item.name, 0.0))
+			calculated_price = gold_value + gemstone_value
+			
+			if calculated_price > 0:
+				final_price = calculated_price
+			else:
+				final_price = float(std_rate_map.get(item.name, 0.0))
+			
+			if final_price <= 0:
+				final_price = float(item.custom_msrp or 0.0)
 
 		# Apply price filter
 		if min_price and final_price < float(min_price):

@@ -109,6 +109,31 @@ def generate_sales_csv(sales: list, include_items: bool, include_payments: bool)
 
 	writer.writerow(headers)
 
+	# Batch fetch items and payments to prevent N+1 queries during export
+	all_items_map = {}
+	all_payments_map = {}
+	
+	if sales:
+		sale_names = [s.dict().get("name") if hasattr(s, "dict") else getattr(s, "name", s.get("name")) for s in sales]
+		
+		if include_items and sale_names:
+			all_items = frappe.get_all(
+				"Sales Invoice Item",
+				filters={"parent": ("in", sale_names)},
+				fields=["parent", "item_code", "qty", "rate", "amount"],
+			)
+			for i in all_items:
+				all_items_map.setdefault(i.parent, []).append(i)
+				
+		if include_payments and sale_names:
+			all_payments = frappe.get_all(
+				"Sales Invoice Payment",
+				filters={"parent": ("in", sale_names)},
+				fields=["parent", "mode_of_payment", "amount"],
+			)
+			for p in all_payments:
+				all_payments_map.setdefault(p.parent, []).append(p)
+
 	# Data
 	for sale in sales:
 		row = [
@@ -125,21 +150,13 @@ def generate_sales_csv(sales: list, include_items: bool, include_payments: bool)
 		]
 
 		if include_items:
-			items = frappe.get_all(
-				"Sales Invoice Item",
-				filters={"parent": sale.name},
-				fields=["item_code", "qty", "rate", "amount"],
-			)
+			items = all_items_map.get(sale.name, [])
 			item_count = len(items)
 			item_details = "; ".join([f"{i.item_code} x{i.qty} @ ${i.rate}" for i in items])
 			row.extend([item_count, item_details])
 
 		if include_payments:
-			payments = frappe.get_all(
-				"Sales Invoice Payment",
-				filters={"parent": sale.name},
-				fields=["mode_of_payment", "amount"],
-			)
+			payments = all_payments_map.get(sale.name, [])
 			payment_str = "; ".join([f"{p.mode_of_payment}: ${flt(p.amount)}" for p in payments])
 			row.append(payment_str)
 
@@ -208,6 +225,22 @@ def export_customer_data(
 
 	writer.writerow(headers)
 
+	if include_transactions and customers:
+		customer_names = [c.name for c in customers]
+		all_stats = frappe.db.sql(
+			"""
+			SELECT customer, COUNT(*) as count, COALESCE(SUM(grand_total), 0) as total, MAX(posting_date) as last_date
+			FROM `tabSales Invoice`
+			WHERE customer IN %s AND docstatus = 1
+			GROUP BY customer
+			""",
+			(tuple(customer_names),),
+			as_dict=True,
+		)
+		stats_map = {s.customer: s for s in all_stats}
+	else:
+		stats_map = {}
+
 	for customer in customers:
 		row = [
 			customer.name,
@@ -220,16 +253,11 @@ def export_customer_data(
 		]
 
 		if include_transactions:
-			stats = frappe.db.sql(
-				"""
-				SELECT COUNT(*) as count, COALESCE(SUM(grand_total), 0) as total, MAX(posting_date) as last_date
-				FROM `tabSales Invoice`
-				WHERE customer = %s AND docstatus = 1
-			""",
-				(customer.name,),
-				as_dict=True,
-			)[0]
-			row.extend([stats.count, flt(stats.total), str(stats.last_date or "")])
+			stats = stats_map.get(customer.name)
+			if stats:
+				row.extend([stats.count, flt(stats.total), str(stats.last_date or "")])
+			else:
+				row.extend([0, 0.0, ""])
 
 		writer.writerow(row)
 

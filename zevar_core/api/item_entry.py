@@ -273,10 +273,6 @@ def _create_stock_entry(item_code: str, warehouse: str, qty: int) -> bool:
 			],
 		}
 	)
-	try:
-		se.insert()
-		se.submit()
-		return True
-	except Exception as e:
-		frappe.log_error(f"Stock entry failed for {item_code}: {e}", "Item Entry Warning")
-		return False
+	se.insert()
+	se.submit()
+	return True

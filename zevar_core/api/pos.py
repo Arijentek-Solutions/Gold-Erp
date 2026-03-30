@@ -229,9 +229,14 @@ def create_pos_invoice(
 		else:
 			si.custom_no_tax_override = 0
 
-		for idx, sp in enumerate(salesperson_data[:4]):
-			si.set(f"custom_salesperson_{idx + 1}", sp.get("salesperson") or sp.get("employee"))
-			si.set(f"custom_salesperson_{idx + 1}_split", flt(sp.get("split")))
+		for sp in salesperson_data:
+			si.append(
+				"custom_salesperson_splits",
+				{
+					"employee": sp.get("salesperson") or sp.get("employee"),
+					"split_percent": flt(sp.get("split")),
+				},
+			)
 
 		if layaway_reference:
 			si.custom_layaway_reference = layaway_reference
@@ -281,15 +286,16 @@ def create_pos_invoice(
 			)
 
 		si.insert(ignore_permissions=True)
-		si.submit()
 
-		# Deduct gift card balance after successful invoice submission
+		# Deduct gift card balance before invoice submission for atomicity (Issue #12)
 		if gc_payment_amount > 0 and gift_card_number:
 			gc_doc = frappe.get_doc("Gift Card", gift_card_number)
 			gc_doc.balance = flt(gc_doc.balance) - gc_payment_amount
 			if gc_doc.balance <= 0:
 				gc_doc.status = "Used"
 			gc_doc.save(ignore_permissions=True)
+
+		si.submit()
 
 		return {
 			"success": True,

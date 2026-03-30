@@ -551,6 +551,27 @@ def get_weekly_roster(employee_id: str | None = None, start_date: str | None = N
 		order_by="start_date asc",
 	)
 
+	# Batch fetch checkins for the whole week to prevent N+1 queries
+	week_checkins = frappe.get_all(
+		"Employee Checkin",
+		filters={"employee": employee_id, "time": [">=", week_start, "<", add_days(week_end, 1)]},
+		fields=["name", "log_type", "time"],
+		order_by="time asc"
+	)
+	
+	# Group checkins by date string (YYYY-MM-DD)
+	checkins_by_date = {}
+	for c in week_checkins:
+		date_str = str(c.time.date() if hasattr(c.time, "date") else getdate(c.time))
+		checkins_by_date.setdefault(date_str, []).append(c)
+	
+	# Batch fetch shift types
+	shift_type_names = list({a.shift_type for a in shift_assignments if a.shift_type})
+	shift_types_map = {}
+	if shift_type_names:
+		shifts_data = frappe.get_all("Shift Type", filters={"name": ("in", shift_type_names)}, fields=["name", "shift_name", "start_time", "end_time", "working_hours"])
+		shift_types_map = {s.name: s for s in shifts_data}
+
 	# Build daily schedule
 	schedule = []
 	current_date = week_start
@@ -575,18 +596,19 @@ def get_weekly_roster(employee_id: str | None = None, start_date: str | None = N
 			assign_end = getdate(assignment.end_date) if assignment.end_date else None
 
 			if assign_start <= current_date and (not assign_end or assign_end >= current_date):
-				if assignment.status == "Active":
+				if assignment.status == "Active" and assignment.shift_type:
 					# Get shift type details
-					shift_type = frappe.get_doc("Shift Type", assignment.shift_type)
-					day_schedule["shift"] = {
-						"name": shift_type.name,
-						"shift_name": shift_type.shift_name,
-						"start_time": str(shift_type.start_time) if shift_type.start_time else None,
-						"end_time": str(shift_type.end_time) if shift_type.end_time else None,
-						"working_hours": shift_type.working_hours or 8,
-					}
-					day_schedule["status"] = "working"
-					break
+					shift_type = shift_types_map.get(assignment.shift_type)
+					if shift_type:
+						day_schedule["shift"] = {
+							"name": shift_type.name,
+							"shift_name": shift_type.shift_name,
+							"start_time": str(shift_type.start_time) if shift_type.start_time else None,
+							"end_time": str(shift_type.end_time) if shift_type.end_time else None,
+							"working_hours": shift_type.working_hours or 8,
+						}
+						day_schedule["status"] = "working"
+						break
 
 		# If no shift assignment, check if it's a weekend or use default
 		if not day_schedule["shift"]:
@@ -610,13 +632,8 @@ def get_weekly_roster(employee_id: str | None = None, start_date: str | None = N
 			else:
 				day_schedule["status"] = "off"
 
-		# Get check-in logs for this day
-		checkins = frappe.get_all(
-			"Employee Checkin",
-			filters={"employee": employee_id, "time": [">=", current_date, "<", add_days(current_date, 1)]},
-			fields=["name", "log_type", "time"],
-			order_by="time asc",
-		)
+		# Get check-in logs for this day from batched data
+		checkins = checkins_by_date.get(str(current_date), [])
 
 		if checkins:
 			day_schedule["checkins"] = [{"log_type": c.log_type, "time": str(c.time)} for c in checkins]
