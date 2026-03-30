@@ -83,10 +83,17 @@ def process_finance_payment(account_id: str, amount: float, mode_of_payment: str
 			},
 		)
 
-		doc.current_balance -= amount_flt
-		doc.available_credit = flt(doc.credit_limit) - flt(doc.current_balance)
+		# Recalculate balances
+		running_balance = 0.0
+		for entry in doc.get("ledger_entries", []):
+			running_balance += flt(entry.debit) - flt(entry.credit)
+			entry.balance = running_balance
+
+		doc.current_balance = running_balance
+		doc.available_credit = flt(doc.credit_limit) - running_balance
 
 		doc.save(ignore_permissions=True)
+		frappe.db.commit()
 
 		return {
 			"success": True,
@@ -95,6 +102,7 @@ def process_finance_payment(account_id: str, amount: float, mode_of_payment: str
 			"message": "Finance Payment processed successfully",
 		}
 	except Exception as e:
+		frappe.db.rollback()
 		frappe.log_error("Finance Payment Error", frappe.get_traceback())
 		raise frappe.ValidationError(f"Failed to process Finance Payment: {e!s}")
 
@@ -191,9 +199,17 @@ def apply_finance_charges():
 					},
 				)
 
-				doc.current_balance += charge_amount
-				doc.available_credit = flt(doc.credit_limit) - doc.current_balance
+				# Recalculate balances
+				running_balance = 0.0
+				for entry in doc.get("ledger_entries", []):
+					running_balance += flt(entry.debit) - flt(entry.credit)
+					entry.balance = running_balance
+
+				doc.current_balance = running_balance
+				doc.available_credit = flt(doc.credit_limit) - running_balance
 
 				doc.save(ignore_permissions=True)
+				frappe.db.commit()
 			except Exception:
+				frappe.db.rollback()
 				frappe.log_error(f"Finance Charge Error for {acc.name}", frappe.get_traceback())

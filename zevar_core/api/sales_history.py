@@ -93,17 +93,34 @@ def get_sales_history(
 		page_length=page_size,
 	)
 
-	# Enrich sales data
-	for sale in sales:
-		# Get item count
-		item_count = frappe.db.count("Sales Invoice Item", filters={"parent": sale.name})
-		sale["item_count"] = item_count
+	# Enrich sales data using batch fetching to avoid N+1 queries
+	if sales:
+		sale_names = [s.name for s in sales]
+		
+		counts = frappe.db.sql(
+			"""SELECT parent, count(name) as count 
+			   FROM `tabSales Invoice Item` 
+			   WHERE parent IN %s 
+			   GROUP BY parent""",
+			(tuple(sale_names),),
+			as_dict=True,
+		)
+		item_counts = {c.parent: c.count for c in counts}
 
-		# Get customer name if not present
-		if not sale.get("customer_name"):
-			sale["customer_name"] = (
-				frappe.db.get_value("Customer", sale.customer, "customer_name") or sale.customer
+		customer_ids = list({s.customer for s in sales if not s.get("customer_name")})
+		customer_names = {}
+		if customer_ids:
+			customers = frappe.get_all(
+				"Customer", 
+				filters={"name": ("in", customer_ids)}, 
+				fields=["name", "customer_name"]
 			)
+			customer_names = {c.name: c.customer_name for c in customers}
+
+		for sale in sales:
+			sale["item_count"] = item_counts.get(sale.name, 0)
+			if not sale.get("customer_name"):
+				sale["customer_name"] = customer_names.get(sale.customer) or sale.customer
 
 	return {
 		"sales": sales,
@@ -236,20 +253,28 @@ def get_transaction_details(invoice_name: str) -> dict:
 				}
 			)
 
-	# Get salespersons if custom fields exist
+	# Get salespersons from child table or fallback to legacy custom fields if present
 	salespersons = []
-	for i in range(1, 5):
-		sp_field = f"custom_salesperson_{i}"
-		split_field = f"custom_salesperson_{i}_split"
-		if hasattr(invoice, sp_field):
-			sp = getattr(invoice, sp_field)
-			if sp:
-				salespersons.append(
-					{
-						"employee": sp,
-						"split": flt(getattr(invoice, split_field, 0)),
-					}
-				)
+	if hasattr(invoice, "custom_salesperson_splits") and invoice.custom_salesperson_splits:
+		for row in invoice.custom_salesperson_splits:
+			salespersons.append({
+				"employee": row.employee,
+				"split": flt(row.split_percent)
+			})
+	else:
+		# Fallback for old records before the migration
+		for i in range(1, 5):
+			sp_field = f"custom_salesperson_{i}"
+			split_field = f"custom_salesperson_{i}_split"
+			if hasattr(invoice, sp_field):
+				sp = getattr(invoice, sp_field)
+				if sp:
+					salespersons.append(
+						{
+							"employee": sp,
+							"split": flt(getattr(invoice, split_field, 0)),
+						}
+					)
 
 	# Get totals
 	subtotal = sum(flt(item.amount) for item in invoice.items)

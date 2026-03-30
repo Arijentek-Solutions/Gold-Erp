@@ -44,20 +44,25 @@ def get_returnable_items(invoice_name: str) -> dict:
 
 	returned_amount = sum(flt(r.grand_total) for r in existing_returns)
 
+	# Batch fetch returned quantities for all items in this invoice
+	returned_qtys = frappe.db.sql(
+		"""
+		SELECT si_item.item_code, COALESCE(SUM(si_item.qty), 0) as total_qty
+		FROM `tabSales Invoice Item` si_item
+		JOIN `tabSales Invoice` si ON si.name = si_item.parent
+		WHERE si.custom_return_against = %s
+			AND si.docstatus = 1
+		GROUP BY si_item.item_code
+		""",
+		(invoice_name,),
+		as_dict=True,
+	)
+	returned_qty_map = {r.item_code: r.total_qty for r in returned_qtys}
+
 	items = []
 	for item in invoice.items:
 		# Calculate already returned quantity
-		returned_qty = frappe.db.sql(
-			"""
-			SELECT COALESCE(SUM(si_item.qty), 0)
-			FROM `tabSales Invoice Item` si_item
-			JOIN `tabSales Invoice` si ON si.name = si_item.parent
-			WHERE si.custom_return_against = %s
-				AND si.docstatus = 1
-				AND si_item.item_code = %s
-		""",
-			(invoice_name, item.item_code),
-		)[0][0]
+		returned_qty = returned_qty_map.get(item.item_code, 0)
 
 		remaining_qty = flt(item.qty) - flt(returned_qty)
 

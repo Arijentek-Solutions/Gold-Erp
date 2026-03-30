@@ -75,14 +75,31 @@ def get_repair_orders(
 		page_length=int(page_length),
 	)
 
-	# Enrichment
-	for o in orders:
-		if o.get("customer"):
-			o["customer_name"] = frappe.db.get_value("Customer", o["customer"], "customer_name")
-		if o.get("repair_type"):
-			o["repair_type_name"] = frappe.db.get_value("Repair Type", o["repair_type"], "repair_name")
-		if o.get("handled_by"):
-			o["handled_by_name"] = frappe.db.get_value("User", o["handled_by"], "full_name")
+	# Enrichment using batch queries to avoid N+1
+	if orders:
+		customers = list({o["customer"] for o in orders if o.get("customer")})
+		repair_types = list({o["repair_type"] for o in orders if o.get("repair_type")})
+		handlers = list({o["handled_by"] for o in orders if o.get("handled_by")})
+
+		customer_map = {}
+		if customers:
+			customer_map = {c.name: c.customer_name for c in frappe.get_all("Customer", filters={"name": ("in", customers)}, fields=["name", "customer_name"])}
+
+		type_map = {}
+		if repair_types:
+			type_map = {t.name: t.repair_name for t in frappe.get_all("Repair Type", filters={"name": ("in", repair_types)}, fields=["name", "repair_name"])}
+
+		handler_map = {}
+		if handlers:
+			handler_map = {u.name: u.full_name for u in frappe.get_all("User", filters={"name": ("in", handlers)}, fields=["name", "full_name"])}
+
+		for o in orders:
+			if o.get("customer"):
+				o["customer_name"] = customer_map.get(o["customer"])
+			if o.get("repair_type"):
+				o["repair_type_name"] = type_map.get(o["repair_type"])
+			if o.get("handled_by"):
+				o["handled_by_name"] = handler_map.get(o["handled_by"])
 
 	return orders
 
@@ -106,10 +123,30 @@ def get_repair_stats(warehouse: str | None = None) -> dict[str, int]:
 		"Delivered",
 		"Cancelled",
 	]
-	counts = {}
-	for s in statuses:
-		counts[s] = frappe.db.count("Repair Order", filters={**filters, "status": s})
-	counts["total"] = frappe.db.count("Repair Order", filters=filters)
+	
+	# Fetch all counts in a single query using GROUP BY
+	where_clause = ""
+	values = []
+	if warehouse:
+		where_clause = "WHERE warehouse = %s"
+		values.append(warehouse)
+
+	query = f"""
+		SELECT status, count(*) as count
+		FROM `tabRepair Order`
+		{where_clause}
+		GROUP BY status
+	"""
+	results = frappe.db.sql(query, tuple(values), as_dict=True)
+	
+	counts = {s: 0 for s in statuses}
+	total = 0
+	for r in results:
+		if r.status in counts:
+			counts[r.status] = r.count
+		total += r.count
+		
+	counts["total"] = total
 	return counts
 
 

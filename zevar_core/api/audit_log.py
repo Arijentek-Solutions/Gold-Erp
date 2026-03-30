@@ -190,15 +190,22 @@ def get_audit_logs(
 		page_length=page_size,
 	)
 
-	# Parse details JSON
-	for log in logs:
-		try:
-			log["details"] = json.loads(log.get("details", "{}"))
-		except (json.JSONDecodeError, TypeError):
-			log["details"] = {}
+	# Parse details JSON and batch fetch user full names to avoid N+1
+	if logs:
+		user_ids = list({log.user for log in logs if log.user})
+		user_names = {}
+		if user_ids:
+			users = frappe.get_all("User", filters={"name": ("in", user_ids)}, fields=["name", "full_name"])
+			user_names = {u.name: u.full_name for u in users}
 
-		# Get user full name
-		log["user_full_name"] = frappe.db.get_value("User", log.user, "full_name")
+		for log in logs:
+			try:
+				log["details"] = json.loads(log.get("details", "{}"))
+			except (json.JSONDecodeError, TypeError):
+				log["details"] = {}
+
+			# Get user full name
+			log["user_full_name"] = user_names.get(log.user) or log.user
 
 	return {
 		"logs": logs,

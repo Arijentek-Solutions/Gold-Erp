@@ -54,11 +54,23 @@ def filter_by_roles(shortcuts):
 	user_roles = set(frappe.get_roles())
 	filtered = []
 
+	if not shortcuts:
+		return []
+
+	shortcut_names = [s.name for s in shortcuts]
+	all_roles = frappe.get_all(
+		"Zevar Desk Shortcut Role", 
+		filters={"parent": ("in", shortcut_names)}, 
+		fields=["parent", "role"]
+	)
+	
+	role_map = {}
+	for r in all_roles:
+		role_map.setdefault(r.parent, []).append(r.role)
+
 	for shortcut in shortcuts:
-		# Get roles for this shortcut
-		shortcut_roles = frappe.get_all(
-			"Zevar Desk Shortcut Role", filters={"parent": shortcut.name}, pluck="role"
-		)
+		# Get roles for this shortcut from the pre-fetched map
+		shortcut_roles = role_map.get(shortcut.name, [])
 
 		# If no roles defined, show to everyone
 		if not shortcut_roles:
