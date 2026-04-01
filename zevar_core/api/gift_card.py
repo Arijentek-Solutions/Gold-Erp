@@ -7,6 +7,45 @@ from frappe import _
 from frappe.utils import flt, getdate, today
 
 
+def log_gift_card_issued(gift_card, source_reference: str | None = None) -> None:
+	"""Record issuance of a gift card without interrupting the main transaction."""
+	from zevar_core.api.audit_log import log_event_safely
+
+	log_event_safely(
+		event_type="gift_card_issued",
+		details={
+			"gift_card": gift_card.name,
+			"customer": gift_card.customer,
+			"initial_value": flt(gift_card.initial_value),
+			"balance": flt(gift_card.balance),
+			"source": gift_card.source,
+			"issue_date": str(gift_card.issue_date),
+			"status": gift_card.status,
+		},
+		reference_document=source_reference or gift_card.name,
+		reference_type="Gift Card",
+	)
+
+
+def log_gift_card_used(gift_card, amount: float, source_reference: str | None = None) -> None:
+	"""Record usage of a gift card without interrupting the main transaction."""
+	from zevar_core.api.audit_log import log_event_safely
+
+	log_event_safely(
+		event_type="gift_card_used",
+		details={
+			"gift_card": gift_card.name,
+			"customer": gift_card.customer,
+			"used_amount": flt(amount),
+			"remaining_balance": flt(gift_card.balance),
+			"status": gift_card.status,
+			"source": gift_card.source,
+		},
+		reference_document=source_reference or gift_card.name,
+		reference_type="Gift Card",
+	)
+
+
 @frappe.whitelist(methods=["GET"])
 def get_gift_card_balance(gift_card_number: str) -> dict:
 	"""Fetch balance and validate status of a Gift Card."""
@@ -66,6 +105,7 @@ def process_gift_card_payment(gift_card_number: str, amount: float) -> dict:
 			doc.status = "Used"
 
 		doc.save(ignore_permissions=True)
+		log_gift_card_used(doc, amount_flt)
 
 		return {
 			"success": True,

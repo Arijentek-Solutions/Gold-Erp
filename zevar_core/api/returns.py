@@ -11,6 +11,15 @@ from frappe import _
 from frappe.utils import flt, getdate, now_datetime
 
 
+def _get_return_reference_field() -> str:
+	"""Prefer the custom return link when available, otherwise use ERPNext's standard field."""
+	return (
+		"custom_return_against"
+		if frappe.get_meta("Sales Invoice").get_field("custom_return_against")
+		else "return_against"
+	)
+
+
 @frappe.whitelist()
 def get_returnable_items(invoice_name: str) -> dict:
 	"""
@@ -36,9 +45,10 @@ def get_returnable_items(invoice_name: str) -> dict:
 		frappe.throw(_("This invoice has been cancelled."))
 
 	# Check if already returned
+	return_reference_field = _get_return_reference_field()
 	existing_returns = frappe.get_all(
 		"Sales Invoice",
-		filters={"custom_return_against": invoice_name, "docstatus": 1},
+		filters={return_reference_field: invoice_name, "docstatus": 1},
 		fields=["name", "grand_total"],
 	)
 
@@ -46,11 +56,11 @@ def get_returnable_items(invoice_name: str) -> dict:
 
 	# Batch fetch returned quantities for all items in this invoice
 	returned_qtys = frappe.db.sql(
-		"""
+		f"""
 		SELECT si_item.item_code, COALESCE(SUM(si_item.qty), 0) as total_qty
 		FROM `tabSales Invoice Item` si_item
 		JOIN `tabSales Invoice` si ON si.name = si_item.parent
-		WHERE si.custom_return_against = %s
+		WHERE si.{return_reference_field} = %s
 			AND si.docstatus = 1
 		GROUP BY si_item.item_code
 		""",
@@ -134,14 +144,19 @@ def create_return_invoice(
 		frappe.throw(_("Only submitted invoices can be returned."))
 
 	try:
+		meta = frappe.get_meta("Sales Invoice")
+
 		# Create return invoice (Sales Invoice with negative quantities)
 		return_invoice = frappe.copy_doc(original)
 
 		return_invoice.is_return = 1
 		return_invoice.return_against = original_invoice
-		return_invoice.custom_return_against = original_invoice
-		return_invoice.custom_return_reason = reason
-		return_invoice.custom_return_type = return_type
+		if meta.get_field("custom_return_against"):
+			return_invoice.custom_return_against = original_invoice
+		if meta.get_field("custom_return_reason"):
+			return_invoice.custom_return_reason = reason
+		if meta.get_field("custom_return_type"):
+			return_invoice.custom_return_type = return_type
 		return_invoice.set_posting_time = 1
 		return_invoice.posting_date = getdate()
 		return_invoice.posting_time = now_datetime().strftime("%H:%M:%S")
@@ -186,12 +201,24 @@ def create_return_invoice(
 
 			# Calculate refund amount
 			refund_amount = sum(flt(item.get("qty", 0)) * flt(item.get("rate", 0)) for item in items_list)
+			refund_account = frappe.db.get_value(
+				"Mode of Payment Account",
+				{"parent": refund_mode, "company": return_invoice.company},
+				"default_account",
+			)
+			if not refund_account:
+				refund_account = original.cash_bank_account or original.debit_to
+			if not refund_account:
+				frappe.throw(_("No refund account configured for mode of payment '{0}'.").format(refund_mode))
+
+			return_invoice.cash_bank_account = refund_account
 
 			return_invoice.append(
 				"payments",
 				{
 					"mode_of_payment": refund_mode,
 					"amount": -refund_amount,  # Negative for refund
+					"account": refund_account,
 				},
 			)
 

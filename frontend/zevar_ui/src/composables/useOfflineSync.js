@@ -1,7 +1,7 @@
 /**
  * Offline Sync Composable
  *
- * Manages offline data and sync queue
+ * Manages offline data and sync queue with actual server reconciliation.
  */
 import { ref, computed } from 'vue'
 import {
@@ -9,6 +9,9 @@ import {
 	loadCart,
 	savePendingTransaction,
 	getPendingTransactions,
+	removePendingTransaction,
+	markTransactionSynced,
+	clearPendingTransactions,
 } from '@/utils/offlineDB'
 
 export function useOfflineSync() {
@@ -25,58 +28,37 @@ export function useOfflineSync() {
 		isOnline.value = false
 	}
 
-	// Monitor online/offline status
 	window.addEventListener('online', handleOnline)
 	window.addEventListener('offline', handleOffline)
 
-	// Cleanup function — caller should invoke on component unmount
 	const cleanup = () => {
 		window.removeEventListener('online', handleOnline)
 		window.removeEventListener('offline', handleOffline)
 	}
 
-	/**
-	 * Save cart to IndexedDB
-	 */
 	const persistCart = async (cartData) => {
 		try {
 			await saveCart(cartData)
 			return true
 		} catch (error) {
-			console.error('[Offline] Failed to persist cart:', error)
 			return false
 		}
 	}
 
-	/**
-	 * Load cart from IndexedDB
-	 */
 	const restoreCart = async () => {
 		try {
 			return await loadCart()
 		} catch (error) {
-			console.error('[Offline] Failed to restore cart:', error)
 			return { items: [], customer: null }
 		}
 	}
 
-	/**
-	 * Queue transaction for offline sync
-	 */
 	const queueTransaction = async (transactionData) => {
-		try {
-			const id = await savePendingTransaction(transactionData)
-			await updatePendingCount()
-			return id
-		} catch (error) {
-			console.error('[Offline] Failed to queue transaction:', error)
-			throw error
-		}
+		const id = await savePendingTransaction(transactionData)
+		await updatePendingCount()
+		return id
 	}
 
-	/**
-	 * Sync pending transactions
-	 */
 	const syncPendingTransactions = async () => {
 		if (syncInProgress.value || !isOnline.value) return
 
@@ -84,30 +66,37 @@ export function useOfflineSync() {
 			syncInProgress.value = true
 			const pending = await getPendingTransactions()
 
-			// TODO: Implement actual sync logic
-			console.log('[Offline] Syncing', pending.length, 'transactions')
+			for (const tx of pending) {
+				if (tx.synced) continue
+				try {
+					const method = tx.method || 'zevar_core.api.pos.create_pos_invoice'
+					const args = tx.args || tx
+					await frappe.call(method, args)
+					await markTransactionSynced(tx.id)
+				} catch (error) {
+					frappe.log_error(
+						`[Offline Sync] Failed to sync transaction ${tx.id}: ${error.message}`
+					)
+				}
+			}
 
 			await updatePendingCount()
 		} catch (error) {
-			console.error('[Offline] Sync failed:', error)
+			frappe.log_error(`[Offline Sync] Sync batch failed: ${error.message}`)
 		} finally {
 			syncInProgress.value = false
 		}
 	}
 
-	/**
-	 * Update pending transaction count
-	 */
 	const updatePendingCount = async () => {
 		try {
 			const pending = await getPendingTransactions()
-			pendingCount.value = pending.length
+			pendingCount.value = pending.filter((t) => !t.synced).length
 		} catch (error) {
-			console.error('[Offline] Failed to update pending count:', error)
+			pendingCount.value = 0
 		}
 	}
 
-	// Initialize
 	updatePendingCount()
 
 	return {

@@ -26,7 +26,6 @@ def execute():
 	"""
 	_patch_validate_method()
 	_patch_create_desktop_icons_from_workspace()
-	print("Desktop icon creation bugs patched successfully!")
 
 
 def _patch_validate_method():
@@ -51,12 +50,10 @@ def _patch_validate_method():
 		source = inspect.getsource(DesktopIcon.validate)
 	except (TypeError, OSError):
 		# Method might already be patched or unavailable
-		print("  validate(): Already patched or unavailable, skipping")
 		return
 
 	# Check if bug exists (look for module_name reference)
 	if "self.module_name" not in source:
-		print("  validate(): Bug not found (already fixed), skipping")
 		return
 
 	# Apply monkey patch
@@ -66,7 +63,6 @@ def _patch_validate_method():
 		pass
 
 	DesktopIcon.validate = patched_validate
-	print("  validate(): Patched to skip module_name reference")
 
 
 def _patch_create_desktop_icons_from_workspace():
@@ -87,12 +83,10 @@ def _patch_create_desktop_icons_from_workspace():
 	try:
 		source = inspect.getsource(desktop_icon_module.create_desktop_icons_from_workspace)
 	except (TypeError, OSError):
-		print("  create_desktop_icons_from_workspace(): Already patched or unavailable, skipping")
 		return
 
 	# Check if bug exists (look for app_name assignment)
 	if "icon.app_name = app_name" not in source:
-		print("  create_desktop_icons_from_workspace(): Bug not found (already fixed), skipping")
 		return
 
 	# Define patched function with same logic but fixed field name
@@ -144,4 +138,3 @@ def _patch_create_desktop_icons_from_workspace():
 
 	# Apply monkey patch
 	desktop_icon_module.create_desktop_icons_from_workspace = patched_create_desktop_icons_from_workspace
-	print("  create_desktop_icons_from_workspace(): Patched to use 'app' instead of 'app_name'")

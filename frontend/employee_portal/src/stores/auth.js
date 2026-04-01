@@ -11,7 +11,6 @@ export const useAuthStore = defineStore("auth", () => {
 		url: "frappe.auth.get_logged_user",
 		auto: true,
 		onSuccess(data) {
-			console.log("Auth Success:", data);
 			if (typeof data === "string") {
 				if (data === "Guest") {
 					user.value = null;

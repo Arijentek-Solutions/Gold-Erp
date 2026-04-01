@@ -96,11 +96,11 @@ def get_sales_history(
 	# Enrich sales data using batch fetching to avoid N+1 queries
 	if sales:
 		sale_names = [s.name for s in sales]
-		
+
 		counts = frappe.db.sql(
-			"""SELECT parent, count(name) as count 
-			   FROM `tabSales Invoice Item` 
-			   WHERE parent IN %s 
+			"""SELECT parent, count(name) as count
+			   FROM `tabSales Invoice Item`
+			   WHERE parent IN %s
 			   GROUP BY parent""",
 			(tuple(sale_names),),
 			as_dict=True,
@@ -111,9 +111,7 @@ def get_sales_history(
 		customer_names = {}
 		if customer_ids:
 			customers = frappe.get_all(
-				"Customer", 
-				filters={"name": ("in", customer_ids)}, 
-				fields=["name", "customer_name"]
+				"Customer", filters={"name": ("in", customer_ids)}, fields=["name", "customer_name"]
 			)
 			customer_names = {c.name: c.customer_name for c in customers}
 
@@ -257,10 +255,7 @@ def get_transaction_details(invoice_name: str) -> dict:
 	salespersons = []
 	if hasattr(invoice, "custom_salesperson_splits") and invoice.custom_salesperson_splits:
 		for row in invoice.custom_salesperson_splits:
-			salespersons.append({
-				"employee": row.employee,
-				"split": flt(row.split_percent)
-			})
+			salespersons.append({"employee": row.employee, "split": flt(row.split_percent)})
 	else:
 		# Fallback for old records before the migration
 		for i in range(1, 5):

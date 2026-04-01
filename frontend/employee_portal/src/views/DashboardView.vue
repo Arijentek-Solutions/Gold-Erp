@@ -1146,7 +1146,6 @@ async function handleClockIn() {
 
 	try {
 		const result = await attendance.clockIn(employeeId, null, null);
-		console.log("Clock in result:", result);
 		// Force sync timer after successful clock in
 		if (result && (result.success || result.status)) {
 			attendance.syncTimerFromStatus();
@@ -1165,7 +1164,6 @@ async function handleClockOut() {
 
 	try {
 		const result = await attendance.clockOut(employeeId, null, null, "End of Shift");
-		console.log("Clock out result:", result);
 		// Force sync timer after successful clock out
 		if (result && (result.success || result.status)) {
 			attendance.syncTimerFromStatus();
@@ -1180,10 +1178,8 @@ async function handleBreak() {
 		let result;
 		if (attendance.isOnBreak) {
 			result = await attendance.endBreak();
-			console.log("End break result:", result);
 		} else {
 			result = await attendance.startBreak();
-			console.log("Start break result:", result);
 		}
 		// Force sync timer after successful break action
 		if (result && (result.success || result.status)) {

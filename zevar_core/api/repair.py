@@ -83,15 +83,30 @@ def get_repair_orders(
 
 		customer_map = {}
 		if customers:
-			customer_map = {c.name: c.customer_name for c in frappe.get_all("Customer", filters={"name": ("in", customers)}, fields=["name", "customer_name"])}
+			customer_map = {
+				c.name: c.customer_name
+				for c in frappe.get_all(
+					"Customer", filters={"name": ("in", customers)}, fields=["name", "customer_name"]
+				)
+			}
 
 		type_map = {}
 		if repair_types:
-			type_map = {t.name: t.repair_name for t in frappe.get_all("Repair Type", filters={"name": ("in", repair_types)}, fields=["name", "repair_name"])}
+			type_map = {
+				t.name: t.repair_name
+				for t in frappe.get_all(
+					"Repair Type", filters={"name": ("in", repair_types)}, fields=["name", "repair_name"]
+				)
+			}
 
 		handler_map = {}
 		if handlers:
-			handler_map = {u.name: u.full_name for u in frappe.get_all("User", filters={"name": ("in", handlers)}, fields=["name", "full_name"])}
+			handler_map = {
+				u.name: u.full_name
+				for u in frappe.get_all(
+					"User", filters={"name": ("in", handlers)}, fields=["name", "full_name"]
+				)
+			}
 
 		for o in orders:
 			if o.get("customer"):
@@ -123,7 +138,7 @@ def get_repair_stats(warehouse: str | None = None) -> dict[str, int]:
 		"Delivered",
 		"Cancelled",
 	]
-	
+
 	# Fetch all counts in a single query using GROUP BY
 	where_clause = ""
 	values = []
@@ -138,14 +153,14 @@ def get_repair_stats(warehouse: str | None = None) -> dict[str, int]:
 		GROUP BY status
 	"""
 	results = frappe.db.sql(query, tuple(values), as_dict=True)
-	
+
 	counts = {s: 0 for s in statuses}
 	total = 0
 	for r in results:
 		if r.status in counts:
 			counts[r.status] = r.count
 		total += r.count
-		
+
 	counts["total"] = total
 	return counts
 

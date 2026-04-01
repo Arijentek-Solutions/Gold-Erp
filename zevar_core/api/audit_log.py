@@ -22,7 +22,9 @@ AUDIT_EVENTS = {
 	"payment_received": {"category": "Payment", "severity": "Info"},
 	"payment_refunded": {"category": "Payment", "severity": "Warning"},
 	"split_payment_processed": {"category": "Payment", "severity": "Info"},
+	"finance_payment": {"category": "Payment", "severity": "Info"},
 	"gift_card_used": {"category": "Payment", "severity": "Info"},
+	"gift_card_issued": {"category": "Payment", "severity": "Info"},
 	"trade_in_processed": {"category": "Payment", "severity": "Info"},
 	# Discount events
 	"discount_applied": {"category": "Discount", "severity": "Info"},
@@ -110,6 +112,24 @@ def log_event(
 	# Commit immediately for security events
 	if event_config["severity"] == "Warning":
 		frappe.db.commit()  # nosemgrep (needed for immediate security event logging)
+
+
+def log_event_safely(
+	event_type: str,
+	details: str | dict | None = None,
+	reference_document: str | None = None,
+	reference_type: str | None = None,
+) -> None:
+	"""Best-effort audit logging that never interrupts the primary business flow."""
+	try:
+		log_event(
+			event_type=event_type,
+			details=details,
+			reference_document=reference_document,
+			reference_type=reference_type,
+		)
+	except Exception:
+		frappe.log_error(frappe.get_traceback(), f"Failed to log audit event: {event_type}")
 
 
 @frappe.whitelist()

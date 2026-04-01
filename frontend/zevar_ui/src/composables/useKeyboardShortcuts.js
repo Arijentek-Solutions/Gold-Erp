@@ -69,7 +69,6 @@ export function useKeyboardShortcuts(customShortcuts = [], options = {}) {
 
 	function toggleCart() {
 		// Emit event or call store action
-		console.log('Toggle cart')
 	}
 
 	function focusCustomer() {
@@ -79,22 +78,18 @@ export function useKeyboardShortcuts(customShortcuts = [], options = {}) {
 
 	function applyDiscount() {
 		// Open discount modal
-		console.log('Apply discount')
 	}
 
 	function holdOrder() {
 		// Hold current order
-		console.log('Hold order')
 	}
 
 	function voidOrder() {
 		// Void current order
-		console.log('Void order')
 	}
 
 	function openSettings() {
 		// Open settings modal
-		console.log('Open settings')
 	}
 
 	function closeModal() {
@@ -105,17 +100,14 @@ export function useKeyboardShortcuts(customShortcuts = [], options = {}) {
 
 	function saveCurrent() {
 		// Save current form
-		console.log('Save')
 	}
 
 	function printCurrent() {
 		// Print current document
-		console.log('Print')
 	}
 
 	function createNew() {
 		// Create new document
-		console.log('Create new')
 	}
 
 	function handleKeyDown(event) {

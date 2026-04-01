@@ -18,8 +18,6 @@ def fix_duplicate_prices():
 		as_dict=True,
 	)
 
-	print(f"Found {len(prices)} item prices to check")
-
 	# Keep only the first one for each item_code + price_list combination
 	seen = set()
 	deleted_count = 0
@@ -27,14 +25,12 @@ def fix_duplicate_prices():
 	for price in prices:
 		key = (price.item_code, price.price_list)
 		if key in seen:
-			print(f"Deleting duplicate: {price.name} ({price.item_code} / {price.price_list})")
 			frappe.delete_doc("Item Price", price.name, ignore_permissions=True)
 			deleted_count += 1
 		else:
 			seen.add(key)
 
 	frappe.db.commit()  # nosemgrep (manual commit for cleanup script)
-	print(f"Cleanup complete! Deleted {deleted_count} duplicate prices")
 
 
 def execute():

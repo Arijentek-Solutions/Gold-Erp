@@ -133,7 +133,6 @@ def create_default_desk_shortcuts():
 	"""
 	# Check if DocType exists (may not exist before migration)
 	if not frappe.db.exists("DocType", "Zevar Desk Shortcut"):
-		print("Zevar Desk Shortcut DocType not found. Run migrate first.")
 		return
 
 	shortcuts = [

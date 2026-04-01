@@ -1,6 +1,6 @@
 {
   "index.html": {
-    "file": "assets/index.181027f1.js",
+    "file": "assets/index.16e0f8ed.js",
     "src": "index.html",
     "isEntry": true,
     "imports": [
@@ -40,11 +40,11 @@
     ]
   },
   "src/pages/POS.vue": {
-    "file": "assets/POS.66ecc121.js",
+    "file": "assets/POS.8e1b5d28.js",
     "src": "src/pages/POS.vue",
     "isDynamicEntry": true,
     "imports": [
-      "_AppLayout.f77a0ee2.js",
+      "_AppLayout.b526f93f.js",
       "_vendor.157e6184.js",
       "_ui.d790a559.js"
     ],
@@ -52,14 +52,14 @@
       "assets/POS.3873386b.css"
     ]
   },
-  "_AppLayout.f77a0ee2.js": {
-    "file": "assets/AppLayout.f77a0ee2.js",
+  "_AppLayout.b526f93f.js": {
+    "file": "assets/AppLayout.b526f93f.js",
     "imports": [
       "_vendor.157e6184.js",
       "_ui.d790a559.js"
     ],
     "css": [
-      "assets/AppLayout.faa35898.css"
+      "assets/AppLayout.0171257a.css"
     ]
   },
   "_ui.d790a559.js": {
@@ -69,29 +69,29 @@
     ]
   },
   "src/pages/SalesHistory.vue": {
-    "file": "assets/SalesHistory.55c8bd4f.js",
+    "file": "assets/SalesHistory.cb85da5f.js",
     "src": "src/pages/SalesHistory.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vendor.157e6184.js",
-      "_AppLayout.f77a0ee2.js",
+      "_AppLayout.b526f93f.js",
       "_ui.d790a559.js"
     ],
     "css": [
-      "assets/SalesHistory.7e274396.css"
+      "assets/SalesHistory.0223ec51.css"
     ]
   },
   "src/pages/Layaway.vue": {
-    "file": "assets/Layaway.27022d99.js",
+    "file": "assets/Layaway.7a7bac04.js",
     "src": "src/pages/Layaway.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vendor.157e6184.js",
-      "_AppLayout.f77a0ee2.js",
+      "_AppLayout.b526f93f.js",
       "_ui.d790a559.js"
     ],
     "css": [
-      "assets/Layaway.57fd3810.css"
+      "assets/Layaway.072c51fd.css"
     ]
   },
   "src/pages/CatalogueDashboard.vue": {
@@ -131,12 +131,12 @@
     ]
   },
   "src/pages/RepairTerminal.vue": {
-    "file": "assets/RepairTerminal.31d368e6.js",
+    "file": "assets/RepairTerminal.7d23309a.js",
     "src": "src/pages/RepairTerminal.vue",
     "isDynamicEntry": true,
     "imports": [
       "_vendor.157e6184.js",
-      "_AppLayout.f77a0ee2.js",
+      "_AppLayout.b526f93f.js",
       "_ui.d790a559.js"
     ]
   },

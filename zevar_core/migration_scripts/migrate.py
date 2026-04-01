@@ -19,18 +19,13 @@ def migrate():
 	# Migrate gold prices
 	migrate_gold_prices(legacy_dir)
 
-	print("All migrations completed!")
-
 
 def migrate_items(legacy_dir):
 	"""Migrate inventory items from inventor.DBF"""
 	dbf_path = os.path.join(legacy_dir, "inventor.DBF")
 
 	if not os.path.exists(dbf_path):
-		print("ERROR: inventor.DBF not found")
 		return
-
-	print("Reading inventor.DBF...")
 
 	# Read the DBF file using dbfread
 	import pandas as pd
@@ -40,10 +35,8 @@ def migrate_items(legacy_dir):
 	table = DBF(dbf_path, load=True)
 	df = pd.DataFrame(iter(table))
 
-	print(f"Found {len(df)} inventory items")
-
 	# Process items
-	for index, row in df.iterrows():
+	for _index, row in df.iterrows():
 		try:
 			doc = frappe.new_doc("Item")
 			doc.item_code = row.get("SKU", "")
@@ -76,14 +69,11 @@ def migrate_items(legacy_dir):
 			doc.custom_inventory_status = row.get("STATUS", "")
 
 			doc.insert()
-			print(f"Created Item: {doc.item_code}")
 
-		except Exception as e:
-			print(f"ERROR processing row {index}: {e!s}")
+		except Exception:
 			continue
 
 	frappe.db.commit()
-	print("Item migration completed!")
 
 
 def migrate_employees(legacy_dir):
@@ -91,10 +81,7 @@ def migrate_employees(legacy_dir):
 	dbf_path = os.path.join(legacy_dir, "EMPLOYEE.DBF")
 
 	if not os.path.exists(dbf_path):
-		print("ERROR: EMPLOYEE.DBF not found")
 		return
-
-	print("Reading EMPLOYEE.DBF...")
 
 	# Read the DBF file using dbfread
 	import pandas as pd
@@ -104,10 +91,8 @@ def migrate_employees(legacy_dir):
 	table = DBF(dbf_path, load=True)
 	df = pd.DataFrame(iter(table))
 
-	print(f"Found {len(df)} employees")
-
 	# Process employees
-	for index, row in df.iterrows():
+	for _index, row in df.iterrows():
 		try:
 			doc = frappe.new_doc("Employee")
 			doc.employee = row.get("EMPID", "")
@@ -124,14 +109,11 @@ def migrate_employees(legacy_dir):
 			doc.commission_rate = row.get("COMMISSION", 0)
 
 			doc.insert()
-			print(f"Created Employee: {doc.employee}")
 
-		except Exception as e:
-			print(f"ERROR processing row {index}: {e!s}")
+		except Exception:
 			continue
 
 	frappe.db.commit()
-	print("Employee migration completed!")
 
 
 def migrate_gold_prices(legacy_dir):
@@ -139,10 +121,7 @@ def migrate_gold_prices(legacy_dir):
 	dbf_path = os.path.join(legacy_dir, "GOLD$.dbf")
 
 	if not os.path.exists(dbf_path):
-		print("ERROR: GOLD$.dbf not found")
 		return
-
-	print("Reading GOLD$.dbf...")
 
 	# Read the DBF file using dbfread
 	import pandas as pd
@@ -152,10 +131,8 @@ def migrate_gold_prices(legacy_dir):
 	table = DBF(dbf_path, load=True)
 	df = pd.DataFrame(iter(table))
 
-	print(f"Found {len(df)} gold price records")
-
 	# Process gold prices
-	for index, row in df.iterrows():
+	for _index, row in df.iterrows():
 		try:
 			doc = frappe.new_doc("Gold Price")
 			doc.date = row.get("INVOICE", "")
@@ -165,14 +142,11 @@ def migrate_gold_prices(legacy_dir):
 			doc.notes = row.get("MEMOS", "")
 
 			doc.insert()
-			print(f"Created Gold Price: {doc.date}")
 
-		except Exception as e:
-			print(f"ERROR processing row {index}: {e!s}")
+		except Exception:
 			continue
 
 	frappe.db.commit()
-	print("Gold price migration completed!")
 
 
 if __name__ == "__main__":

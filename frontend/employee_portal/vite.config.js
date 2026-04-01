@@ -35,4 +35,13 @@ export default defineConfig({
 	optimizeDeps: {
 		include: ["frappe-ui > feather-icons", "showdown", "engine.io-client"],
 	},
+	test: {
+		globals: true,
+		environment: "jsdom",
+		setupFiles: ["./tests/setup.js"],
+		include: ["tests/**/*.spec.js"],
+		alias: {
+			"@": path.resolve(__dirname, "./src"),
+		},
+	},
 });

@@ -59,11 +59,9 @@ def filter_by_roles(shortcuts):
 
 	shortcut_names = [s.name for s in shortcuts]
 	all_roles = frappe.get_all(
-		"Zevar Desk Shortcut Role", 
-		filters={"parent": ("in", shortcut_names)}, 
-		fields=["parent", "role"]
+		"Zevar Desk Shortcut Role", filters={"parent": ("in", shortcut_names)}, fields=["parent", "role"]
 	)
-	
+
 	role_map = {}
 	for r in all_roles:
 		role_map.setdefault(r.parent, []).append(r.role)

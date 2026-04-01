@@ -1,44 +1,31 @@
 /**
  * POS Profile Store Unit Tests
  * Tests: Profile state management, active profile, localStorage persistence
+ *
+ * Key source details:
+ *   - Export: usePosProfileStore (lowercase 'p' in Pos)
+ *   - profileName default: 'No Profile Selected'
+ *   - localStorage key: 'pos_profile'
+ *   - No storeLocation property
+ *   - setActiveProfile(profileName) takes a string, calls API resource
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { usePOSProfileStore } from '../../src/stores/posProfile.js'
+import { usePosProfileStore } from '../../src/stores/posProfile.js'
 
 // Mock frappe-ui
 vi.mock('frappe-ui', () => ({
 	createResource: vi.fn(() => ({
 		fetch: vi.fn(() => Promise.resolve({ profiles: [], active_profile: null })),
+		submit: vi.fn(() => Promise.resolve({ success: true })),
 	})),
 }))
-
-// Mock localStorage
-const localStorageMock = {
-	store: {},
-	getItem(key) {
-		return this.store[key] || null
-	},
-	setItem(key, value) {
-		this.store[key] = value
-	},
-	removeItem(key) {
-		delete this.store[key]
-	},
-	clear() {
-		this.store = {}
-	},
-}
-
-Object.defineProperty(global, 'localStorage', {
-	value: localStorageMock,
-})
 
 describe('POS Profile Store', () => {
 	beforeEach(() => {
 		setActivePinia(createPinia())
-		localStorageMock.clear()
+		localStorage.clear()
 	})
 
 	// ==========================================================================
@@ -47,93 +34,81 @@ describe('POS Profile Store', () => {
 
 	describe('State Initialization', () => {
 		it('should initialize with empty profiles array', () => {
-			const store = usePOSProfileStore()
+			const store = usePosProfileStore()
 			expect(store.profiles).toEqual([])
 		})
 
 		it('should initialize with null active profile', () => {
-			const store = usePOSProfileStore()
+			const store = usePosProfileStore()
 			expect(store.activeProfile).toBeNull()
 		})
 
-		it('should initialize with null store location', () => {
-			const store = usePOSProfileStore()
-			expect(store.storeLocation).toBeNull()
+		it('should initialize with loading false', () => {
+			const store = usePosProfileStore()
+			expect(store.loading).toBe(false)
 		})
 
-		it('should initialize with loading false', () => {
-			const store = usePOSProfileStore()
-			expect(store.loading).toBe(false)
+		it('should initialize with null error', () => {
+			const store = usePosProfileStore()
+			expect(store.error).toBeNull()
 		})
 	})
 
 	// ==========================================================================
-	// ACTIVE PROFILE COMPUTED TESTS
+	// COMPUTED PROPERTIES TESTS
 	// ==========================================================================
 
 	describe('Computed Properties', () => {
 		it('should return true when active profile is set', () => {
-			const store = usePOSProfileStore()
+			const store = usePosProfileStore()
 			store.activeProfile = { name: 'Main POS', company: 'Zevar Jewelry' }
 
 			expect(store.hasActiveProfile).toBe(true)
 		})
 
 		it('should return false when no active profile', () => {
-			const store = usePOSProfileStore()
+			const store = usePosProfileStore()
 
 			expect(store.hasActiveProfile).toBe(false)
 		})
 
 		it('should return profile name when active', () => {
-			const store = usePOSProfileStore()
+			const store = usePosProfileStore()
 			store.activeProfile = { name: 'Main POS' }
 
 			expect(store.profileName).toBe('Main POS')
 		})
 
-		it('should return default text when no active profile', () => {
-			const store = usePOSProfileStore()
+		it('should return "No Profile Selected" when no active profile', () => {
+			const store = usePosProfileStore()
 
-			expect(store.profileName).toBe('Select Profile')
+			expect(store.profileName).toBe('No Profile Selected')
 		})
 
 		it('should return warehouse from active profile', () => {
-			const store = usePOSProfileStore()
+			const store = usePosProfileStore()
 			store.activeProfile = { warehouse: 'Main Warehouse' }
 
 			expect(store.warehouse).toBe('Main Warehouse')
 		})
 
 		it('should return null warehouse when no active profile', () => {
-			const store = usePOSProfileStore()
+			const store = usePosProfileStore()
 
 			expect(store.warehouse).toBeNull()
 		})
-	})
 
-	// ==========================================================================
-	// SET ACTIVE PROFILE TESTS
-	// ==========================================================================
+		it('should return company from active profile', () => {
+			const store = usePosProfileStore()
+			store.activeProfile = { company: 'Zevar Jewelry' }
 
-	describe('setActiveProfile', () => {
-		it('should set active profile', () => {
-			const store = usePOSProfileStore()
-			const profile = { name: 'Main POS', company: 'Zevar Jewelry' }
-
-			store.setActiveProfile(profile)
-
-			expect(store.activeProfile).toEqual(profile)
+			expect(store.company).toBe('Zevar Jewelry')
 		})
 
-		it('should save to localStorage', () => {
-			const store = usePOSProfileStore()
-			const profile = { name: 'Main POS' }
+		it('should return null company when no active profile', () => {
+			const store = usePosProfileStore()
 
-			store.setActiveProfile(profile)
-
-			const stored = JSON.parse(localStorageMock.store['zevar_pos_profile'])
-			expect(stored.name).toBe('Main POS')
+			expect(store.company).toBeNull()
 		})
 	})
 
@@ -143,7 +118,7 @@ describe('POS Profile Store', () => {
 
 	describe('clearProfile', () => {
 		it('should clear active profile', () => {
-			const store = usePOSProfileStore()
+			const store = usePosProfileStore()
 			store.activeProfile = { name: 'Main POS' }
 
 			store.clearProfile()
@@ -151,22 +126,13 @@ describe('POS Profile Store', () => {
 			expect(store.activeProfile).toBeNull()
 		})
 
-		it('should clear store location', () => {
-			const store = usePOSProfileStore()
-			store.storeLocation = { name: 'Main Store' }
-
-			store.clearProfile()
-
-			expect(store.storeLocation).toBeNull()
-		})
-
 		it('should clear localStorage', () => {
-			const store = usePOSProfileStore()
-			localStorageMock.store['zevar_pos_profile'] = JSON.stringify({ name: 'Main POS' })
+			const store = usePosProfileStore()
+			localStorage.setItem('pos_profile', JSON.stringify({ name: 'Main POS' }))
 
 			store.clearProfile()
 
-			expect(localStorageMock.store['zevar_pos_profile']).toBeUndefined()
+			expect(localStorage.getItem('pos_profile')).toBeNull()
 		})
 	})
 
@@ -176,22 +142,61 @@ describe('POS Profile Store', () => {
 
 	describe('LocalStorage Persistence', () => {
 		it('should load profile from localStorage on init', () => {
-			localStorageMock.store['zevar_pos_profile'] = JSON.stringify({
+			localStorage.setItem(
+				'pos_profile',
+				JSON.stringify({
+					name: 'Saved Profile',
+					company: 'Test Company',
+				})
+			)
+
+			// Create a fresh pinia + store — initFromStorage runs in the store constructor
+			setActivePinia(createPinia())
+			const store = usePosProfileStore()
+
+			expect(store.activeProfile).toEqual({
 				name: 'Saved Profile',
 				company: 'Test Company',
 			})
-
-			const store = usePOSProfileStore()
-
-			// Check if loaded from storage
-			expect(store.activeProfile).toBeNull() // Will be null until fetch
 		})
 
-		it('should handle corrupted localStorage data', () => {
-			localStorageMock.store['zevar_pos_profile'] = 'invalid json'
+		it('should handle corrupted localStorage data gracefully', () => {
+			localStorage.setItem('pos_profile', 'invalid json')
 
-			const store = usePOSProfileStore()
+			setActivePinia(createPinia())
+			const store = usePosProfileStore()
+
 			expect(store.activeProfile).toBeNull()
+		})
+
+		it('should not set activeProfile when localStorage is empty', () => {
+			const store = usePosProfileStore()
+
+			expect(store.activeProfile).toBeNull()
+		})
+	})
+
+	// ==========================================================================
+	// RESOURCE EXISTENCE TESTS
+	// ==========================================================================
+
+	describe('Resources', () => {
+		it('should expose profilesResource', () => {
+			const store = usePosProfileStore()
+			expect(store.profilesResource).toBeDefined()
+			expect(typeof store.profilesResource.fetch).toBe('function')
+		})
+
+		it('should expose activeProfileResource', () => {
+			const store = usePosProfileStore()
+			expect(store.activeProfileResource).toBeDefined()
+			expect(typeof store.activeProfileResource.fetch).toBe('function')
+		})
+
+		it('should expose setActiveProfileResource', () => {
+			const store = usePosProfileStore()
+			expect(store.setActiveProfileResource).toBeDefined()
+			expect(typeof store.setActiveProfileResource.submit).toBe('function')
 		})
 	})
 })

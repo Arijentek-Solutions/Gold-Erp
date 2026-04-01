@@ -80,14 +80,17 @@ def get_all_layaways(
 
 		customer_names = {}
 		if customer_ids:
-			customers = frappe.get_all("Customer", filters={"name": ("in", customer_ids)}, fields=["name", "customer_name"])
+			customers = frappe.get_all(
+				"Customer", filters={"name": ("in", customer_ids)}, fields=["name", "customer_name"]
+			)
 			customer_names = {c.name: c.customer_name for c in customers}
 
 		counts = frappe.db.sql(
-			"""SELECT parent, count(name) as count 
-			   FROM `tabLayaway Contract Item` 
+			"""SELECT parent, count(name) as count
+			   FROM `tabLayaway Contract Item`
 			   WHERE parent IN %s GROUP BY parent""",
-			(tuple(layaway_names),), as_dict=True
+			(tuple(layaway_names),),
+			as_dict=True,
 		)
 		item_counts = {c.parent: c.count for c in counts}
 
@@ -98,13 +101,14 @@ def get_all_layaways(
 				"Layaway Payment Schedule",
 				filters={"parent": ("in", active_layaways), "status": "Pending"},
 				fields=["parent", "payment_date", "expected_amount"],
-				order_by="payment_date asc"
+				order_by="payment_date asc",
 			)
 			for p in payments:
 				if p.parent not in next_payments:
 					next_payments[p.parent] = p
 
 		from frappe.utils import getdate
+
 		current_date = getdate()
 
 		for layaway in layaways:
@@ -305,6 +309,23 @@ def create_layaway(
 		doc.insert(ignore_permissions=True)
 		doc.submit()
 
+		from zevar_core.api.audit_log import log_event_safely
+
+		log_event_safely(
+			event_type="layaway_created",
+			details={
+				"layaway_id": doc.name,
+				"customer": doc.customer,
+				"total_amount": flt(doc.total_amount),
+				"deposit_amount": flt(doc.deposit_amount),
+				"balance_amount": flt(doc.balance_amount),
+				"duration_months": int(duration_months),
+				"item_count": len(doc.items),
+			},
+			reference_document=doc.name,
+			reference_type="Layaway Contract",
+		)
+
 		return {
 			"success": True,
 			"layaway_id": doc.name,
@@ -446,6 +467,33 @@ def process_layaway_payment(layaway_id: str, payment_amount: float, mode_of_paym
 
 		doc.save(ignore_permissions=True)
 
+		from zevar_core.api.audit_log import log_event_safely
+
+		log_event_safely(
+			event_type="layaway_payment",
+			details={
+				"layaway_id": doc.name,
+				"payment_amount": flt(amount),
+				"mode_of_payment": mode_of_payment,
+				"new_balance": flt(doc.balance_amount),
+				"status": doc.status,
+			},
+			reference_document=doc.name,
+			reference_type="Layaway Contract",
+		)
+
+		if doc.status == "Completed":
+			log_event_safely(
+				event_type="layaway_completed",
+				details={
+					"layaway_id": doc.name,
+					"customer": doc.customer,
+					"final_payment_amount": flt(amount),
+				},
+				reference_document=doc.name,
+				reference_type="Layaway Contract",
+			)
+
 		return {
 			"success": True,
 			"new_balance": doc.balance_amount,
@@ -488,6 +536,22 @@ def cancel_layaway(layaway_id: str) -> dict:
 		doc.status = "Cancelled"
 		doc.store_credit_reference = gc.name
 		doc.save(ignore_permissions=True)
+
+		from zevar_core.api.audit_log import log_event_safely
+		from zevar_core.api.gift_card import log_gift_card_issued
+
+		log_event_safely(
+			event_type="layaway_cancelled",
+			details={
+				"layaway_id": doc.name,
+				"customer": doc.customer,
+				"refund_amount": flt(doc.deposit_amount),
+				"store_credit_id": gc.name,
+			},
+			reference_document=doc.name,
+			reference_type="Layaway Contract",
+		)
+		log_gift_card_issued(gc, source_reference=doc.name)
 
 		return {
 			"success": True,

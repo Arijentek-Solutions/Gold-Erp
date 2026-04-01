@@ -556,20 +556,24 @@ def get_weekly_roster(employee_id: str | None = None, start_date: str | None = N
 		"Employee Checkin",
 		filters={"employee": employee_id, "time": [">=", week_start, "<", add_days(week_end, 1)]},
 		fields=["name", "log_type", "time"],
-		order_by="time asc"
+		order_by="time asc",
 	)
-	
+
 	# Group checkins by date string (YYYY-MM-DD)
 	checkins_by_date = {}
 	for c in week_checkins:
 		date_str = str(c.time.date() if hasattr(c.time, "date") else getdate(c.time))
 		checkins_by_date.setdefault(date_str, []).append(c)
-	
+
 	# Batch fetch shift types
 	shift_type_names = list({a.shift_type for a in shift_assignments if a.shift_type})
 	shift_types_map = {}
 	if shift_type_names:
-		shifts_data = frappe.get_all("Shift Type", filters={"name": ("in", shift_type_names)}, fields=["name", "shift_name", "start_time", "end_time", "working_hours"])
+		shifts_data = frappe.get_all(
+			"Shift Type",
+			filters={"name": ("in", shift_type_names)},
+			fields=["name", "shift_name", "start_time", "end_time", "working_hours"],
+		)
 		shift_types_map = {s.name: s for s in shifts_data}
 
 	# Build daily schedule
