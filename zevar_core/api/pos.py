@@ -40,25 +40,6 @@ def create_pos_invoice(
 	if not items_list:
 		frappe.throw(_("At least one item is required."), frappe.ValidationError)
 
-	# Debug logging
-	frappe.log_error(
-		"POS Invoice Debug Params",
-		frappe.as_json(
-			{
-				"items": items,
-				"payments": payments,
-				"customer": customer,
-				"warehouse": warehouse,
-				"discount_amount": discount_amount,
-				"tax_exempt": tax_exempt,
-				"salespersons": salespersons,
-				"layaway_reference": layaway_reference,
-				"trade_ins": trade_ins,
-				"gift_card_number": gift_card_number,
-			}
-		),
-	)
-
 	if not payments_list:
 		frappe.throw(_("At least one payment mode is required."), frappe.ValidationError)
 
@@ -182,6 +163,9 @@ def create_pos_invoice(
 		si.customer = customer
 		si.set_posting_time = 1
 
+		if frappe.db.get_single_value("POS Settings", "invoice_type") == "Sales Invoice":
+			si.is_created_using_pos = 1
+
 		company = frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(
 			"Global Defaults", "default_company"
 		)
@@ -202,6 +186,16 @@ def create_pos_invoice(
 			if store_info.get("pos_profile"):
 				si.pos_profile = store_info.get("pos_profile")
 			tax_template = store_info.get("tax_template")
+
+		if not si.pos_profile:
+			active_pos_profile = frappe.db.get_value(
+				"POS Opening Entry",
+				filters={"user": frappe.session.user, "docstatus": 1, "status": "Open"},
+				fieldname="pos_profile",
+				order_by="creation desc",
+			)
+			if active_pos_profile:
+				si.pos_profile = active_pos_profile
 
 		for item in items_list:
 			si.append(
@@ -296,6 +290,34 @@ def create_pos_invoice(
 			gc_doc.save(ignore_permissions=True)
 
 		si.submit()
+
+		from zevar_core.api.audit_log import log_event_safely
+		from zevar_core.api.gift_card import log_gift_card_used
+
+		log_event_safely(
+			event_type="invoice_created",
+			details={
+				"invoice_name": si.name,
+				"customer": si.customer,
+				"grand_total": flt(si.grand_total),
+				"outstanding_amount": flt(si.outstanding_amount),
+				"item_count": len(si.items),
+				"payment_modes": [
+					{
+						"mode_of_payment": payment.mode_of_payment,
+						"amount": flt(payment.amount),
+					}
+					for payment in si.payments
+				],
+				"layaway_reference": layaway_reference,
+				"gift_card_number": gift_card_number,
+			},
+			reference_document=si.name,
+			reference_type="Sales Invoice",
+		)
+
+		if gc_payment_amount > 0 and gift_card_number:
+			log_gift_card_used(gc_doc, gc_payment_amount, source_reference=si.name)
 
 		return {
 			"success": True,

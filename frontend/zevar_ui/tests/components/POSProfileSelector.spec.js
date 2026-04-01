@@ -1,6 +1,16 @@
 /**
  * POS Profile Selector Component Unit Tests
  * Tests: Dropdown rendering, profile selection, active profile display
+ *
+ * Key source details:
+ *   - Uses .pos-profile-selector root class
+ *   - Uses showDropdown ref (not isOpen)
+ *   - Uses emoji 🏪 and ▼ (not SVG icons)
+ *   - Loading shows text "Loading profiles..." (not .animate-spin)
+ *   - Empty state shows "No profiles available"
+ *   - Close via .dropdown-backdrop click (not handleClickOutside)
+ *   - selectProfile(profileName) takes a string, calls store.setActiveProfile, no emit
+ *   - profile-btn is disabled when loading=true — so we must force showDropdown for loading test
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest'
@@ -12,12 +22,13 @@ import POSProfileSelector from '../../src/components/POSProfileSelector.vue'
 vi.mock('frappe-ui', () => ({
 	createResource: vi.fn(() => ({
 		fetch: vi.fn(),
+		submit: vi.fn(),
 	})),
 }))
 
-// Mock posProfile store
-vi.mock('../../src/stores/posProfile.js', () => ({
-	usePOSProfileStore: vi.fn(() => ({
+// Helper to create a mock store return value
+function createMockStore(overrides = {}) {
+	return {
 		profiles: [
 			{ name: 'Main POS', company: 'Zevar Jewelry', warehouse: 'Main Warehouse' },
 			{ name: 'Outlet POS', company: 'Zevar Jewelry', warehouse: 'Outlet Warehouse' },
@@ -25,15 +36,26 @@ vi.mock('../../src/stores/posProfile.js', () => ({
 		activeProfile: { name: 'Main POS', company: 'Zevar Jewelry' },
 		profileName: 'Main POS',
 		hasActiveProfile: true,
-		setActiveProfile: vi.fn(),
-		fetchProfiles: vi.fn(),
-	})),
+		loading: false,
+		error: null,
+		setActiveProfile: vi.fn(() => Promise.resolve()),
+		loadProfiles: vi.fn(() => Promise.resolve()),
+		...overrides,
+	}
+}
+
+// Mock posProfile store — note: usePosProfileStore (lowercase 'p')
+vi.mock('../../src/stores/posProfile.js', () => ({
+	usePosProfileStore: vi.fn(),
 }))
+
+import { usePosProfileStore } from '../../src/stores/posProfile.js'
 
 describe('POSProfileSelector', () => {
 	beforeEach(() => {
 		setActivePinia(createPinia())
 		vi.clearAllMocks()
+		usePosProfileStore.mockReturnValue(createMockStore())
 	})
 
 	// ==========================================================================
@@ -44,7 +66,7 @@ describe('POSProfileSelector', () => {
 		it('should render profile selector container', () => {
 			const wrapper = mount(POSProfileSelector)
 
-			expect(wrapper.find('.profile-selector').exists()).toBe(true)
+			expect(wrapper.find('.pos-profile-selector').exists()).toBe(true)
 		})
 
 		it('should display current profile name', () => {
@@ -53,18 +75,22 @@ describe('POSProfileSelector', () => {
 			expect(wrapper.text()).toContain('Main POS')
 		})
 
-		it('should show dropdown icon', () => {
+		it('should show profile icon (emoji)', () => {
 			const wrapper = mount(POSProfileSelector)
 
-			expect(wrapper.find('svg').exists()).toBe(true)
+			expect(wrapper.text()).toContain('🏪')
 		})
 
-		it('should show active indicator when profile is set', () => {
+		it('should show dropdown arrow', () => {
 			const wrapper = mount(POSProfileSelector)
 
-			// Active profile should show green indicator
-			const indicator = wrapper.find('.bg-green-500')
-			expect(indicator.exists()).toBe(true)
+			expect(wrapper.text()).toContain('▼')
+		})
+
+		it('should render profile button', () => {
+			const wrapper = mount(POSProfileSelector)
+
+			expect(wrapper.find('.profile-btn').exists()).toBe(true)
 		})
 	})
 
@@ -73,25 +99,47 @@ describe('POSProfileSelector', () => {
 	// ==========================================================================
 
 	describe('Dropdown Interaction', () => {
-		it('should toggle dropdown on click', async () => {
+		it('should toggle dropdown on button click', async () => {
 			const wrapper = mount(POSProfileSelector)
 
 			// Initially dropdown should be closed
-			expect(wrapper.vm.isOpen).toBe(false)
+			expect(wrapper.vm.showDropdown).toBe(false)
 
-			// Click to open
-			await wrapper.find('.profile-selector').trigger('click')
-			expect(wrapper.vm.isOpen).toBe(true)
+			// Click button to open
+			await wrapper.find('.profile-btn').trigger('click')
+			expect(wrapper.vm.showDropdown).toBe(true)
 		})
 
-		it('should close dropdown when clicking outside', async () => {
+		it('should close dropdown when clicking backdrop', async () => {
 			const wrapper = mount(POSProfileSelector)
-			wrapper.vm.isOpen = true
 
-			// Trigger click outside
-			await wrapper.vm.handleClickOutside({ target: document.body })
+			// Open the dropdown
+			await wrapper.find('.profile-btn').trigger('click')
+			expect(wrapper.vm.showDropdown).toBe(true)
 
-			expect(wrapper.vm.isOpen).toBe(false)
+			// Click the backdrop to close
+			await wrapper.find('.dropdown-backdrop').trigger('click')
+			expect(wrapper.vm.showDropdown).toBe(false)
+		})
+
+		it('should show dropdown-menu when showDropdown is true', async () => {
+			const wrapper = mount(POSProfileSelector)
+
+			expect(wrapper.find('.dropdown-menu').exists()).toBe(false)
+
+			await wrapper.find('.profile-btn').trigger('click')
+
+			expect(wrapper.find('.dropdown-menu').exists()).toBe(true)
+		})
+
+		it('should show dropdown-backdrop when showDropdown is true', async () => {
+			const wrapper = mount(POSProfileSelector)
+
+			expect(wrapper.find('.dropdown-backdrop').exists()).toBe(false)
+
+			await wrapper.find('.profile-btn').trigger('click')
+
+			expect(wrapper.find('.dropdown-backdrop').exists()).toBe(true)
 		})
 	})
 
@@ -100,27 +148,48 @@ describe('POSProfileSelector', () => {
 	// ==========================================================================
 
 	describe('Profile Selection', () => {
-		it('should emit change event when profile selected', async () => {
-			const mockSetActive = vi.fn()
-			const mockUsePOSProfileStore = await import('../../src/stores/posProfile.js')
-			mockUsePOSProfileStore.usePOSProfileStore.mockReturnValue({
-				profiles: [
-					{ name: 'Main POS', company: 'Zevar Jewelry' },
-					{ name: 'Outlet POS', company: 'Zevar Jewelry' },
-				],
-				activeProfile: { name: 'Main POS' },
-				profileName: 'Main POS',
-				hasActiveProfile: true,
+		it('should call store.setActiveProfile when profile selected', async () => {
+			const mockSetActive = vi.fn(() => Promise.resolve())
+			usePosProfileStore.mockReturnValue(createMockStore({
 				setActiveProfile: mockSetActive,
-				fetchProfiles: vi.fn(),
-			})
+			}))
 
 			const wrapper = mount(POSProfileSelector)
 
-			// Select a profile
-			await wrapper.vm.selectProfile({ name: 'Outlet POS' })
+			// Open dropdown
+			await wrapper.find('.profile-btn').trigger('click')
 
-			expect(wrapper.emitted('change')).toBeTruthy()
+			// Click on a profile option
+			const options = wrapper.findAll('.profile-option')
+			await options[1].trigger('click') // Click "Outlet POS"
+
+			expect(mockSetActive).toHaveBeenCalledWith('Outlet POS')
+		})
+
+		it('should close dropdown after selecting a profile', async () => {
+			const wrapper = mount(POSProfileSelector)
+
+			// Open dropdown
+			await wrapper.find('.profile-btn').trigger('click')
+			expect(wrapper.vm.showDropdown).toBe(true)
+
+			// Click on a profile option
+			const options = wrapper.findAll('.profile-option')
+			await options[0].trigger('click')
+
+			expect(wrapper.vm.showDropdown).toBe(false)
+		})
+
+		it('should show check mark on active profile', async () => {
+			const wrapper = mount(POSProfileSelector)
+
+			// Open dropdown
+			await wrapper.find('.profile-btn').trigger('click')
+
+			// First option (Main POS) is active
+			const options = wrapper.findAll('.profile-option')
+			expect(options[0].find('.check-mark').exists()).toBe(true)
+			expect(options[1].find('.check-mark').exists()).toBe(false)
 		})
 	})
 
@@ -130,21 +199,19 @@ describe('POSProfileSelector', () => {
 
 	describe('No Profiles State', () => {
 		it('should show message when no profiles available', async () => {
-			const mockUsePOSProfileStore = await import('../../src/stores/posProfile.js')
-			mockUsePOSProfileStore.usePOSProfileStore.mockReturnValue({
+			usePosProfileStore.mockReturnValue(createMockStore({
 				profiles: [],
 				activeProfile: null,
-				profileName: 'Select Profile',
+				profileName: 'No Profile Selected',
 				hasActiveProfile: false,
-				setActiveProfile: vi.fn(),
-				fetchProfiles: vi.fn(),
-			})
+			}))
 
 			const wrapper = mount(POSProfileSelector)
-			wrapper.vm.isOpen = true
-			await wrapper.vm.$nextTick()
 
-			expect(wrapper.text()).toContain('No profiles')
+			// Open dropdown
+			await wrapper.find('.profile-btn').trigger('click')
+
+			expect(wrapper.text()).toContain('No profiles available')
 		})
 	})
 
@@ -153,21 +220,46 @@ describe('POSProfileSelector', () => {
 	// ==========================================================================
 
 	describe('Loading State', () => {
-		it('should show loading spinner when loading', async () => {
-			const mockUsePOSProfileStore = await import('../../src/stores/posProfile.js')
-			mockUsePOSProfileStore.usePOSProfileStore.mockReturnValue({
+		it('should show loading text when loading', async () => {
+			usePosProfileStore.mockReturnValue(createMockStore({
+				loading: true,
 				profiles: [],
 				activeProfile: null,
-				profileName: 'Select Profile',
+				profileName: 'No Profile Selected',
 				hasActiveProfile: false,
-				loading: true,
-				setActiveProfile: vi.fn(),
-				fetchProfiles: vi.fn(),
-			})
+			}))
 
 			const wrapper = mount(POSProfileSelector)
 
-			expect(wrapper.find('.animate-spin').exists()).toBe(true)
+			// Loading=true disables the button, so we can't click to open.
+			// Force showDropdown open instead.
+			wrapper.vm.showDropdown = true
+			await wrapper.vm.$nextTick()
+
+			expect(wrapper.text()).toContain('Loading profiles...')
+		})
+	})
+
+	// ==========================================================================
+	// ERROR STATE TESTS
+	// ==========================================================================
+
+	describe('Error State', () => {
+		it('should show error message when error exists', async () => {
+			usePosProfileStore.mockReturnValue(createMockStore({
+				error: 'Failed to load profiles',
+				profiles: [],
+				activeProfile: null,
+				profileName: 'No Profile Selected',
+				hasActiveProfile: false,
+			}))
+
+			const wrapper = mount(POSProfileSelector)
+
+			// Open dropdown
+			await wrapper.find('.profile-btn').trigger('click')
+
+			expect(wrapper.text()).toContain('Failed to load profiles')
 		})
 	})
 })

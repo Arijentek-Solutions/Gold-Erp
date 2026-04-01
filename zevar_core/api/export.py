@@ -112,10 +112,12 @@ def generate_sales_csv(sales: list, include_items: bool, include_payments: bool)
 	# Batch fetch items and payments to prevent N+1 queries during export
 	all_items_map = {}
 	all_payments_map = {}
-	
+
 	if sales:
-		sale_names = [s.dict().get("name") if hasattr(s, "dict") else getattr(s, "name", s.get("name")) for s in sales]
-		
+		sale_names = [
+			s.dict().get("name") if hasattr(s, "dict") else getattr(s, "name", s.get("name")) for s in sales
+		]
+
 		if include_items and sale_names:
 			all_items = frappe.get_all(
 				"Sales Invoice Item",
@@ -124,7 +126,7 @@ def generate_sales_csv(sales: list, include_items: bool, include_payments: bool)
 			)
 			for i in all_items:
 				all_items_map.setdefault(i.parent, []).append(i)
-				
+
 		if include_payments and sale_names:
 			all_payments = frappe.get_all(
 				"Sales Invoice Payment",

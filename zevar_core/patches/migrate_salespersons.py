@@ -1,5 +1,6 @@
 import frappe
 
+
 def execute():
 	"""
 	Migrate legacy custom_salesperson_{1..4} fields into the new Salesperson Split child table
@@ -24,14 +25,19 @@ def execute():
 	count = 0
 	for invoice in invoices:
 		doc = frappe.get_doc("Sales Invoice", invoice.name)
-		
+
 		# Skip if already migrated
 		if len(doc.get("custom_salesperson_splits", [])) > 0:
 			continue
 
 		# Collect unique salespersons from the legacy fields
 		salespersons = []
-		for field in ["custom_salesperson_1", "custom_salesperson_2", "custom_salesperson_3", "custom_salesperson_4"]:
+		for field in [
+			"custom_salesperson_1",
+			"custom_salesperson_2",
+			"custom_salesperson_3",
+			"custom_salesperson_4",
+		]:
 			sp = invoice.get(field)
 			if sp and sp not in salespersons:
 				salespersons.append(sp)
@@ -58,10 +64,12 @@ def execute():
 		doc.flags.ignore_links = True
 		doc.save(ignore_version=True)
 		count += 1
-		
+
 		# Commit every 500 records
 		if count % 500 == 0:
 			frappe.db.commit()
 
 	frappe.db.commit()
-	frappe.log_error(f"Migrated salespersons for {count} Sales Invoices to the new child table", "Zevar Core Patch")
+	frappe.log_error(
+		f"Migrated salespersons for {count} Sales Invoices to the new child table", "Zevar Core Patch"
+	)

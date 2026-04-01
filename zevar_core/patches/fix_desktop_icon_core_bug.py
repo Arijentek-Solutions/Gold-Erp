@@ -26,8 +26,6 @@ def execute():
 		core_file_path, "frappe", "desk", "doctype", "desktop_icon", "desktop_icon.py"
 	)
 
-	print(f"Patching core file: {core_file_path}")
-
 	# Read the current content
 	with open(core_file_path) as f:
 		content = f.read()
@@ -40,7 +38,6 @@ def execute():
 			"self.label = self.module_name",
 			"# self.label = self.module_name  # BUG FIX: module_name field doesn't exist in v16",
 		)
-		print("Fix 1 applied: Removed module_name reference")
 
 	# Fix 2: Change app_name to app in create_desktop_icons_from_workspace
 	# Original line 250:
@@ -50,20 +47,10 @@ def execute():
 			"icon.app_name = app_name",
 			"icon.app = app_name  # BUG FIX: app_name field doesn't exist, use 'app'",
 		)
-		print("Fix 2 applied: Changed app_name to app")
 
 	# Write the patched content back
 	with open(core_file_path, "w") as f:
 		f.write(content)
-
-	print("Core file patched successfully!")
-	print("")
-	print("BUGS FIXED:")
-	print("1. Line 46: self.module_name reference removed")
-	print("2. Line 250: icon.app_name changed to icon.app")
-	print("")
-	print("This confirms the bugs exist in Frappe core.")
-	print("Revert this patch after official fix is released.")
 
 	# Reload the DocType to apply changes
 	frappe.reload_doc("Desk", "doctype", "Desktop Icon")

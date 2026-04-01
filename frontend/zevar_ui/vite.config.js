@@ -27,12 +27,21 @@ export default defineConfig({
 		},
 	},
 	build: {
-		outDir: `../../zevar_core/public/pos`,
+		outDir: path.resolve(__dirname, '../../zevar_core/public/pos'),
 		emptyOutDir: true,
 		target: 'es2015',
 		manifest: true,
 	},
 	optimizeDeps: {
 		include: ['frappe-ui > feather-icons', 'showdown', 'engine.io-client'],
+	},
+	test: {
+		globals: true,
+		environment: 'jsdom',
+		setupFiles: ['./tests/setup.js'],
+		include: ['tests/**/*.spec.js'],
+		alias: {
+			'@': path.resolve(__dirname, './src'),
+		},
 	},
 })

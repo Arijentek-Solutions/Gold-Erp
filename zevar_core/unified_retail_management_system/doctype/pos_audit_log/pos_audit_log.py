@@ -28,7 +28,14 @@ class POSAuditLog(Document):
 				"invoice_voided",
 				"invoice_returned",
 			],
-			"Payment": ["payment_received", "payment_refunded", "split_payment_processed", "gift_card_used"],
+			"Payment": [
+				"payment_received",
+				"payment_refunded",
+				"split_payment_processed",
+				"finance_payment",
+				"gift_card_used",
+				"gift_card_issued",
+			],
 			"Discount": ["discount_applied", "large_discount_applied", "discount_override_approved"],
 			"Session": ["session_opened", "session_closed", "cash_variance_detected"],
 			"Security": [

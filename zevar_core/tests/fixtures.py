@@ -23,9 +23,8 @@ def create_test_fixtures():
 			wh.warehouse_name = "Test POS Warehouse"
 			wh.company = "_Test Company"
 			wh.insert(ignore_permissions=True, ignore_mandatory=True)
-		except Exception as e:
-			# Warehouse might already exist with different name format
-			print(f"Warehouse creation note: {e}")
+		except Exception:
+			pass  # Warehouse might already exist with different name format
 
 	# 2. Create test items
 	test_items = [
@@ -48,8 +47,8 @@ def create_test_fixtures():
 				item.is_stock_item = 0  # Non-stock item to avoid stock entry issues
 				item.standard_rate = item_data["standard_rate"]
 				item.insert(ignore_permissions=True, ignore_mandatory=True)
-			except Exception as e:
-				print(f"Item {item_data['item_code']} creation skipped: {e}")
+			except Exception:
+				pass
 
 	# 3. Create test customer
 	if not frappe.db.exists("Customer", "Test Customer"):
@@ -58,8 +57,8 @@ def create_test_fixtures():
 			customer.customer_name = "Test Customer"
 			customer.customer_type = "Individual"
 			customer.insert(ignore_permissions=True, ignore_mandatory=True)
-		except Exception as e:
-			print(f"Customer creation skipped: {e}")
+		except Exception:
+			pass
 
 	# 4. Create test POS Profile (warehouse must exist)
 	if not frappe.db.exists("POS Profile", "Test POS Profile"):
@@ -69,7 +68,7 @@ def create_test_fixtures():
 			profile.company = "_Test Company"
 			profile.currency = "USD"
 			profile.insert(ignore_permissions=True, ignore_mandatory=True)
-		except Exception as e:
-			print(f"POS Profile creation skipped: {e}")
+		except Exception:
+			pass
 
 	return True

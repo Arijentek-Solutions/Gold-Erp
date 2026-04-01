@@ -4,9 +4,15 @@ import { fileURLToPath, URL } from 'node:url'
 
 export default defineConfig({
 	plugins: [vue()],
+	css: {
+		postcss: {
+			plugins: [],  // Override postcss.config.cjs — prevents tailwind.config.js from loading frappe-ui
+		},
+	},
 	test: {
 		globals: true,
 		environment: 'jsdom',
+		css: false,
 		include: ['tests/**/*.{test,spec}.{js,ts}'],
 		coverage: {
 			provider: 'v8',

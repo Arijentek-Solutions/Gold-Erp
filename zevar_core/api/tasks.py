@@ -351,7 +351,9 @@ def get_task_detail(task_id: str):
 		owner_ids = list({c.owner for c in comments if c.owner})
 		user_info_map = {}
 		if owner_ids:
-			users = frappe.get_all("User", filters={"name": ("in", owner_ids)}, fields=["name", "full_name", "user_image"])
+			users = frappe.get_all(
+				"User", filters={"name": ("in", owner_ids)}, fields=["name", "full_name", "user_image"]
+			)
 			user_info_map = {u.name: u for u in users}
 
 		for comment in comments:

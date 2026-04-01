@@ -97,6 +97,35 @@ def get_session_status() -> dict:
 	}
 
 
+def _mark_opening_entry_closed(session_name: str, closing_entry_name: str) -> None:
+	"""Close the opening entry without hitting ERPNext's stale-save edge case."""
+	frappe.db.set_value(
+		"POS Opening Entry",
+		session_name,
+		"pos_closing_entry",
+		closing_entry_name,
+		update_modified=False,
+	)
+	opening_entry = frappe.get_doc("POS Opening Entry", session_name)
+	opening_entry.reload()
+	opening_entry.set_status(update=True, update_modified=False)
+
+
+def _normalize_cash_breakdown(cash_breakdown: str | list | dict | None) -> list[dict]:
+	"""Convert legacy JSON breakdown payloads into payment rows."""
+	if not cash_breakdown:
+		return []
+
+	breakdown_list = frappe.parse_json(cash_breakdown) if isinstance(cash_breakdown, str) else cash_breakdown
+	if isinstance(breakdown_list, dict):
+		total_amount = 0
+		for denomination, count in breakdown_list.items():
+			total_amount += flt(denomination) * flt(count)
+		return [{"mode_of_payment": "Cash", "amount": total_amount}]
+
+	return breakdown_list or []
+
+
 @frappe.whitelist(methods=["POST"])
 def open_pos_session(
 	pos_profile: str,
@@ -143,19 +172,7 @@ def open_pos_session(
 		)
 
 	# Parse cash breakdown if provided
-	breakdown_list = []
-	if cash_breakdown:
-		if isinstance(cash_breakdown, str):
-			breakdown_list = frappe.parse_json(cash_breakdown)
-		else:
-			breakdown_list = cash_breakdown
-		if isinstance(breakdown_list, dict):
-			breakdown_list = [
-				{
-					"mode_of_payment": "Cash",
-					"amount": sum(flt(amount) for amount in breakdown_list.values()),
-				}
-			]
+	breakdown_list = _normalize_cash_breakdown(cash_breakdown)
 
 	# Get POS Profile details
 	profile = frappe.get_doc("POS Profile", pos_profile)
@@ -195,6 +212,21 @@ def open_pos_session(
 
 		opening_entry.insert(ignore_permissions=True)
 		opening_entry.submit()
+
+		from zevar_core.api.audit_log import log_event_safely
+
+		log_event_safely(
+			event_type="session_opened",
+			details={
+				"session_name": opening_entry.name,
+				"pos_profile": pos_profile,
+				"opening_balance": flt(opening_balance),
+				"cash_breakdown": breakdown_list,
+				"notes": notes,
+			},
+			reference_document=opening_entry.name,
+			reference_type="POS Opening Entry",
+		)
 
 		return {
 			"success": True,
@@ -252,19 +284,7 @@ def close_pos_session(
 		frappe.throw(_("Session is already closed."))
 
 	# Parse cash breakdown if provided
-	breakdown_list = []
-	if cash_breakdown:
-		if isinstance(cash_breakdown, str):
-			breakdown_list = frappe.parse_json(cash_breakdown)
-		else:
-			breakdown_list = cash_breakdown
-		if isinstance(breakdown_list, dict):
-			breakdown_list = [
-				{
-					"mode_of_payment": "Cash",
-					"amount": sum(flt(amount) for amount in breakdown_list.values()),
-				}
-			]
+	breakdown_list = _normalize_cash_breakdown(cash_breakdown)
 
 	# Calculate expected closing balance
 	opening_balance = sum(flt(row.opening_amount) for row in session.balance_details)
@@ -293,20 +313,17 @@ def close_pos_session(
 	variance = flt(closing_balance) - expected_balance
 
 	try:
-		# Create POS Closing Entry
-		closing_entry = frappe.new_doc("POS Closing Entry")
-		closing_entry.pos_opening_entry = session_name
-		closing_entry.pos_profile = session.pos_profile
-		closing_entry.user = user
-		closing_entry.company = session.company
+		from erpnext.accounts.doctype.pos_closing_entry.pos_closing_entry import (
+			make_closing_entry_from_opening,
+		)
+
+		closing_entry = make_closing_entry_from_opening(session)
 		closing_entry.period_end_date = now_datetime()
-		closing_entry.grand_total = flt(closing_balance)
-		closing_entry.net_total = flt(closing_balance)
-		closing_entry.closing_amount = flt(closing_balance)
-		closing_entry.opening_amount = opening_balance
 
 		if notes:
 			closing_entry.remarks = notes
+
+		closing_entry.set("payment_reconciliation", [])
 
 		# Add cash breakdown details
 		for item in breakdown_list:
@@ -334,10 +351,16 @@ def close_pos_session(
 			)
 
 		closing_entry.insert(ignore_permissions=True)
+
+		def _safe_update_opening_entry(for_cancel: bool = False) -> None:
+			if for_cancel:
+				return
+			_mark_opening_entry_closed(session_name, closing_entry.name)
+
+		closing_entry.update_opening_entry = _safe_update_opening_entry
 		closing_entry.submit()
 
-		# Update session status
-		session.db_set("status", "Closed")
+		from zevar_core.api.audit_log import log_event_safely
 
 		# Determine variance status
 		variance_status = "balanced"
@@ -345,6 +368,39 @@ def close_pos_session(
 			variance_status = "excess"
 		elif variance < 0:
 			variance_status = "shortage"
+
+		log_event_safely(
+			event_type="session_closed",
+			details={
+				"session_name": session_name,
+				"closing_entry": closing_entry.name,
+				"pos_profile": session.pos_profile,
+				"opening_balance": flt(opening_balance),
+				"closing_balance": flt(closing_balance),
+				"expected_balance": flt(expected_balance),
+				"total_sales": flt(total_sales),
+				"variance": flt(variance),
+				"variance_status": variance_status,
+				"notes": notes,
+			},
+			reference_document=closing_entry.name,
+			reference_type="POS Closing Entry",
+		)
+
+		if variance != 0:
+			log_event_safely(
+				event_type="cash_variance_detected",
+				details={
+					"session_name": session_name,
+					"closing_entry": closing_entry.name,
+					"variance": flt(variance),
+					"variance_status": variance_status,
+					"expected_balance": flt(expected_balance),
+					"closing_balance": flt(closing_balance),
+				},
+				reference_document=closing_entry.name,
+				reference_type="POS Closing Entry",
+			)
 
 		return {
 			"success": True,

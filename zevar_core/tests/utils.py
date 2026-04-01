@@ -26,15 +26,28 @@ def ensure_customer(customer_name: str) -> str:
 	return customer.name
 
 
-def ensure_item_group(item_group_name: str = "Zevar Test Items") -> str:
-	"""Create a dedicated item group for tests."""
+def ensure_item_group(
+	item_group_name: str = "Zevar Test Items",
+	parent_item_group: str = "Products",
+) -> str:
+	"""Create a dedicated item group hierarchy for tests."""
+	if (
+		parent_item_group
+		and parent_item_group != "All Item Groups"
+		and not frappe.db.exists("Item Group", parent_item_group)
+	):
+		parent_group = frappe.new_doc("Item Group")
+		parent_group.item_group_name = parent_item_group
+		parent_group.parent_item_group = "All Item Groups"
+		parent_group.insert(ignore_permissions=True)
+
 	existing = frappe.db.exists("Item Group", item_group_name)
 	if existing:
 		return existing
 
 	item_group = frappe.new_doc("Item Group")
 	item_group.item_group_name = item_group_name
-	item_group.parent_item_group = "All Item Groups"
+	item_group.parent_item_group = parent_item_group or "All Item Groups"
 	item_group.insert(ignore_permissions=True)
 	return item_group.name
 
@@ -64,14 +77,18 @@ def ensure_item(
 	item_group_name: str = "Zevar Test Items",
 ) -> str:
 	"""Create a stock sales item and return its name."""
+	item_group = ensure_item_group(item_group_name)
 	existing = frappe.db.exists("Item", item_code)
 	if existing:
+		current_group = frappe.db.get_value("Item", item_code, "item_group")
+		if not current_group or not frappe.db.exists("Item Group", current_group):
+			frappe.db.set_value("Item", item_code, "item_group", item_group)
 		return existing
 
 	item = frappe.new_doc("Item")
 	item.item_code = item_code
 	item.item_name = item_name
-	item.item_group = ensure_item_group(item_group_name)
+	item.item_group = item_group
 	item.stock_uom = "Nos"
 	item.is_stock_item = 1
 	item.is_sales_item = 1

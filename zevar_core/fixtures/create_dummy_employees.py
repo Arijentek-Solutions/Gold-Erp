@@ -82,7 +82,6 @@ def create_employees():
 		)
 		if existing:
 			skipped.append(full_name)
-			print(f"Skipped: {full_name} (already exists with ID: {existing})")
 			continue
 
 		try:
@@ -100,15 +99,10 @@ def create_employees():
 			emp.insert(ignore_permissions=True)
 
 			created.append({"name": emp.name, "employee_name": emp.employee_name})
-			print(f"Created: {emp.employee_name} (ID: {emp.name})")
-		except Exception as e:
-			print(f"Error creating {full_name}: {e}")
+		except Exception:
+			pass
 
 	frappe.db.commit()  # nosemgrep (manual commit for fixtures)
-
-	print("\nSummary:")
-	print(f"  Created: {len(created)} employees")
-	print(f"  Skipped: {len(skipped)} employees")
 
 	return {"created": created, "skipped": skipped}
 

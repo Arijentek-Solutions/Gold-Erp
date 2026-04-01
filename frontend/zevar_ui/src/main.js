@@ -25,7 +25,7 @@ if ('serviceWorker' in navigator) {
 		navigator.serviceWorker
 			.register('/pos/sw.js', { scope: '/pos/' })
 			.then((registration) => {
-				console.log('[App] Service Worker registered:', registration.scope)
+				// Service Worker registered
 			})
 			.catch((error) => {
 				console.error('[App] Service Worker registration failed:', error)

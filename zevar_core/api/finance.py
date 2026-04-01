@@ -93,6 +93,23 @@ def process_finance_payment(account_id: str, amount: float, mode_of_payment: str
 		doc.available_credit = flt(doc.credit_limit) - running_balance
 
 		doc.save(ignore_permissions=True)
+
+		from zevar_core.api.audit_log import log_event_safely
+
+		log_event_safely(
+			event_type="finance_payment",
+			details={
+				"account_id": doc.name,
+				"customer": doc.customer,
+				"payment_amount": amount_flt,
+				"mode_of_payment": mode_of_payment,
+				"new_balance": flt(doc.current_balance),
+				"available_credit": flt(doc.available_credit),
+			},
+			reference_document=doc.name,
+			reference_type="In-House Finance Account",
+		)
+
 		frappe.db.commit()
 
 		return {

@@ -11,10 +11,7 @@ def migrate_items():
 	dbf_path = os.path.join(legacy_dir, "inventor.DBF")
 
 	if not os.path.exists(dbf_path):
-		print("ERROR: inventor.DBF not found")
 		return
-
-	print("Reading inventor.DBF...")
 
 	# Read the DBF file using dbfread
 	import pandas as pd
@@ -24,10 +21,8 @@ def migrate_items():
 	table = DBF(dbf_path, load=True)
 	df = pd.DataFrame(iter(table))
 
-	print(f"Found {len(df)} inventory items")
-
 	# Process items
-	for index, row in df.iterrows():
+	for _index, row in df.iterrows():
 		try:
 			doc = frappe.new_doc("Item")
 			doc.item_code = row.get("SKU", "")
@@ -60,14 +55,11 @@ def migrate_items():
 			doc.custom_inventory_status = row.get("STATUS", "")
 
 			doc.insert()
-			print(f"Created Item: {doc.item_code}")
 
-		except Exception as e:
-			print(f"ERROR processing row {index}: {e!s}")
+		except Exception:
 			continue
 
 	frappe.db.commit()
-	print("Item migration completed!")
 
 
 if __name__ == "__main__":

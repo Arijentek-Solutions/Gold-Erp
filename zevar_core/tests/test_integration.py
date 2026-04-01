@@ -28,12 +28,13 @@ erpnext_required = unittest.skipUnless(
 
 
 @erpnext_required
-@unittest.skip("Covered by API tests; unstable in shared suite state.")
 class TestPOSSessionWorkflow(FrappeTestCase):
 	"""Test complete POS session workflow."""
 
 	def setUp(self):
 		"""Set up test data."""
+		frappe.set_user("Administrator")
+		self._cleanup_sessions()
 		self.test_user = "test@example.com"
 		self.test_customer = (
 			frappe.get_value("Customer", {"customer_name": "Test Customer"}) or self.create_test_customer()
@@ -54,6 +55,29 @@ class TestPOSSessionWorkflow(FrappeTestCase):
 	def create_test_pos_profile(self):
 		"""Create a test POS profile."""
 		return ensure_pos_profile(profile_name="Test POS", warehouse_name="Test POS Warehouse")
+
+	def tearDown(self):
+		"""Reset session state after each test."""
+		self._cleanup_sessions()
+		frappe.set_user("Administrator")
+
+	def _cleanup_sessions(self):
+		"""Remove open Administrator POS sessions left by other tests."""
+		sessions = frappe.get_all(
+			"POS Opening Entry",
+			filters={"user": "Administrator", "status": "Open"},
+			fields=["name", "docstatus"],
+		)
+		for session in sessions:
+			try:
+				doc = frappe.get_doc("POS Opening Entry", session.name)
+				if doc.docstatus == 1:
+					doc.cancel()
+				frappe.delete_doc("POS Opening Entry", session.name, ignore_permissions=True)
+			except Exception:
+				frappe.log_error(
+					frappe.get_traceback(), f"Failed to clean up test POS session {session.name}"
+				)
 
 	def test_complete_session_workflow(self):
 		"""Test opening session, processing sale, closing session."""
@@ -209,12 +233,12 @@ class TestLayawayWorkflow(FrappeTestCase):
 
 
 @erpnext_required
-@unittest.skip("Covered by API tests; unstable in shared suite state.")
 class TestReturnWorkflow(FrappeTestCase):
 	"""Test return and void processing workflow."""
 
 	def setUp(self):
 		"""Set up test data."""
+		frappe.set_user("Administrator")
 		self.customer = self.get_or_create_customer()
 		self.item = self.get_or_create_item()
 
@@ -225,6 +249,10 @@ class TestReturnWorkflow(FrappeTestCase):
 	def get_or_create_item(self):
 		"""Get or create test item."""
 		return ensure_item("RETURN-TEST-001", "Return Test Item")
+
+	def tearDown(self):
+		"""Keep integration tests pinned to the default privileged user."""
+		frappe.set_user("Administrator")
 
 	def test_get_returnable_items(self):
 		"""Test getting returnable items from invoice."""

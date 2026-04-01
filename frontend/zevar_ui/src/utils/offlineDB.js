@@ -90,3 +90,82 @@ export async function savePendingTransaction(transactionData) {
 		request.onerror = () => reject(request.error)
 	})
 }
+
+export async function getPendingTransactions() {
+	const db = await initDB()
+	return new Promise((resolve, reject) => {
+		const transaction = db.transaction([STORES.PENDING_TRANSACTIONS], 'readonly')
+		const store = transaction.objectStore(STORES.PENDING_TRANSACTIONS)
+		const request = store.getAll()
+		request.onsuccess = () => resolve(request.result || [])
+		request.onerror = () => reject(request.error)
+	})
+}
+
+export async function removePendingTransaction(id) {
+	const db = await initDB()
+	return new Promise((resolve, reject) => {
+		const transaction = db.transaction([STORES.PENDING_TRANSACTIONS], 'readwrite')
+		const store = transaction.objectStore(STORES.PENDING_TRANSACTIONS)
+		const request = store.delete(id)
+		request.onsuccess = () => resolve()
+		request.onerror = () => reject(request.error)
+	})
+}
+
+export async function markTransactionSynced(id) {
+	const db = await initDB()
+	return new Promise((resolve, reject) => {
+		const transaction = db.transaction([STORES.PENDING_TRANSACTIONS], 'readwrite')
+		const store = transaction.objectStore(STORES.PENDING_TRANSACTIONS)
+		const getReq = store.get(id)
+		getReq.onsuccess = () => {
+			const data = getReq.result
+			if (data) {
+				data.synced = true
+				data.syncedAt = Date.now()
+				const putReq = store.put(data)
+				putReq.onsuccess = () => resolve()
+				putReq.onerror = () => reject(putReq.error)
+			} else {
+				resolve()
+			}
+		}
+		getReq.onerror = () => reject(getReq.error)
+	})
+}
+
+export async function cacheItems(items) {
+	const db = await initDB()
+	return new Promise((resolve, reject) => {
+		const transaction = db.transaction([STORES.CACHED_ITEMS], 'readwrite')
+		const store = transaction.objectStore(STORES.CACHED_ITEMS)
+		transaction.oncomplete = () => resolve()
+		transaction.onerror = () => reject(transaction.error)
+		for (const item of items) {
+			store.put({ ...item, timestamp: Date.now() })
+		}
+	})
+}
+
+export async function getCachedItems() {
+	const db = await initDB()
+	return new Promise((resolve, reject) => {
+		const transaction = db.transaction([STORES.CACHED_ITEMS], 'readonly')
+		const store = transaction.objectStore(STORES.CACHED_ITEMS)
+		const request = store.getAll()
+		request.onsuccess = () => resolve(request.result || [])
+		request.onerror = () => reject(request.error)
+	})
+}
+
+export async function clearPendingTransactions() {
+	const db = await initDB()
+	return new Promise((resolve, reject) => {
+		const transaction = db.transaction([STORES.PENDING_TRANSACTIONS], 'readwrite')
+		const store = transaction.objectStore(STORES.PENDING_TRANSACTIONS)
+		const request = store.clear()
+		request.onsuccess = () => resolve()
+		request.onerror = () => reject(request.error)
+	})
+}

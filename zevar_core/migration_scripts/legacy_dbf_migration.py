@@ -80,10 +80,6 @@ def migrate_legacy_data():
 		},
 	}
 
-	print("Starting legacy DBF data migration...")
-	print(f"Source directory: {legacy_dir}")
-	print("Target system: Zevar Core")
-
 	# Create a log file
 	log_file = f"legacy_migration_{now_datetime().strftime('%Y%m%d_%H%M%S')}.log"
 	with open(log_file, "w") as log:
@@ -95,18 +91,15 @@ def migrate_legacy_data():
 
 			if not os.path.exists(dbf_path):
 				log.write(f"WARNING: File not found - {dbf_file}\n")
-				print(f"WARNING: File not found - {dbf_file}")
 				continue
 
 			try:
-				print(f"\nProcessing {dbf_file} -> {config['doctype']}")
 				log.write(f"\nProcessing {dbf_file} -> {config['doctype']}\n")
 
 				# Read the DBF file
 				table = DBF(dbf_path, load=True)
 				df = pd.DataFrame(iter(table))
 
-				print(f"Found {len(df)} records in {dbf_file}")
 				log.write(f"Found {len(df)} records in {dbf_file}\n")
 
 				# Process each record
@@ -132,18 +125,14 @@ def migrate_legacy_data():
 
 					except Exception as e:
 						log.write(f"ERROR processing row {index}: {e!s}\n")
-						print(f"ERROR processing row {index}: {e!s}")
 						continue
 
-				print(f"Successfully processed {len(df)} records from {dbf_file}")
 				log.write(f"Successfully processed {len(df)} records from {dbf_file}\n")
 
 			except Exception as e:
 				log.write(f"ERROR processing {dbf_file}: {e!s}\n")
-				print(f"ERROR processing {dbf_file}: {e!s}")
 				continue
 
-	print(f"\nMigration completed. Log file: {log_file}")
 	log.write(f"\nMigration completed at {now_datetime()}\n")
 
 
