@@ -71,9 +71,9 @@ export function useAttendance() {
 
 			let totalHours = 0;
 			let activeClockIn = null;
-			const sortedLogs = [...dayData.logs].sort(
-				(a, b) => new Date(a.time) - new Date(b.time),
-			);
+		const sortedLogs = [...dayData.logs].sort(
+			(a, b) => new Date(a.time) - new Date(b.time)
+		);
 			for (const log of sortedLogs) {
 				if (log.log_type === "IN") {
 					activeClockIn = new Date(log.time);
@@ -127,7 +127,7 @@ export function useAttendance() {
 
 	const onTimeRate = computed(() => {
 		const present = dailyRecords.value.filter((r) =>
-			["present", "late", "complete"].includes(r.status),
+			["present", "late", "complete"].includes(r.status)
 		);
 		const onTime = present.filter((r) => r.status !== "late");
 		return present.length > 0 ? Math.round((onTime.length / present.length) * 100) : 100;

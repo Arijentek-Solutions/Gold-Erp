@@ -35,7 +35,7 @@ export function useLeave() {
 			(b) =>
 				b.leave_type?.toLowerCase().includes("annual") ||
 				b.leave_type?.toLowerCase().includes("casual") ||
-				b.leave_type?.toLowerCase().includes("privilege"),
+				b.leave_type?.toLowerCase().includes("privilege")
 		);
 		return annual?.balance || annual?.leaves || 0;
 	});
@@ -44,7 +44,7 @@ export function useLeave() {
 		const sick = leaveBalances.value?.find(
 			(b) =>
 				b.leave_type?.toLowerCase().includes("sick") ||
-				b.leave_type?.toLowerCase().includes("medical"),
+				b.leave_type?.toLowerCase().includes("medical")
 		);
 		return sick?.balance || sick?.leaves || 0;
 	});

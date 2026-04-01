@@ -150,9 +150,11 @@ describe('POSProfileSelector', () => {
 	describe('Profile Selection', () => {
 		it('should call store.setActiveProfile when profile selected', async () => {
 			const mockSetActive = vi.fn(() => Promise.resolve())
-			usePosProfileStore.mockReturnValue(createMockStore({
-				setActiveProfile: mockSetActive,
-			}))
+			usePosProfileStore.mockReturnValue(
+				createMockStore({
+					setActiveProfile: mockSetActive,
+				})
+			)
 
 			const wrapper = mount(POSProfileSelector)
 
@@ -199,12 +201,14 @@ describe('POSProfileSelector', () => {
 
 	describe('No Profiles State', () => {
 		it('should show message when no profiles available', async () => {
-			usePosProfileStore.mockReturnValue(createMockStore({
-				profiles: [],
-				activeProfile: null,
-				profileName: 'No Profile Selected',
-				hasActiveProfile: false,
-			}))
+			usePosProfileStore.mockReturnValue(
+				createMockStore({
+					profiles: [],
+					activeProfile: null,
+					profileName: 'No Profile Selected',
+					hasActiveProfile: false,
+				})
+			)
 
 			const wrapper = mount(POSProfileSelector)
 
@@ -221,13 +225,15 @@ describe('POSProfileSelector', () => {
 
 	describe('Loading State', () => {
 		it('should show loading text when loading', async () => {
-			usePosProfileStore.mockReturnValue(createMockStore({
-				loading: true,
-				profiles: [],
-				activeProfile: null,
-				profileName: 'No Profile Selected',
-				hasActiveProfile: false,
-			}))
+			usePosProfileStore.mockReturnValue(
+				createMockStore({
+					loading: true,
+					profiles: [],
+					activeProfile: null,
+					profileName: 'No Profile Selected',
+					hasActiveProfile: false,
+				})
+			)
 
 			const wrapper = mount(POSProfileSelector)
 
@@ -246,13 +252,15 @@ describe('POSProfileSelector', () => {
 
 	describe('Error State', () => {
 		it('should show error message when error exists', async () => {
-			usePosProfileStore.mockReturnValue(createMockStore({
-				error: 'Failed to load profiles',
-				profiles: [],
-				activeProfile: null,
-				profileName: 'No Profile Selected',
-				hasActiveProfile: false,
-			}))
+			usePosProfileStore.mockReturnValue(
+				createMockStore({
+					error: 'Failed to load profiles',
+					profiles: [],
+					activeProfile: null,
+					profileName: 'No Profile Selected',
+					hasActiveProfile: false,
+				})
+			)
 
 			const wrapper = mount(POSProfileSelector)
 

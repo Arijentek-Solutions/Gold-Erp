@@ -142,10 +142,13 @@ describe('POS Profile Store', () => {
 
 	describe('LocalStorage Persistence', () => {
 		it('should load profile from localStorage on init', () => {
-			localStorage.setItem('pos_profile', JSON.stringify({
-				name: 'Saved Profile',
-				company: 'Test Company',
-			}))
+			localStorage.setItem(
+				'pos_profile',
+				JSON.stringify({
+					name: 'Saved Profile',
+					company: 'Test Company',
+				})
+			)
 
 			// Create a fresh pinia + store — initFromStorage runs in the store constructor
 			setActivePinia(createPinia())

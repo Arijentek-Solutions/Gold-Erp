@@ -6,7 +6,7 @@ export default defineConfig({
 	plugins: [vue()],
 	css: {
 		postcss: {
-			plugins: [],  // Override postcss.config.cjs — prevents tailwind.config.js from loading frappe-ui
+			plugins: [], // Override postcss.config.cjs — prevents tailwind.config.js from loading frappe-ui
 		},
 	},
 	test: {

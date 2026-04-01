@@ -11,6 +11,8 @@ class TestGoldSettings(FrappeTestCase):
 		self.cleanup_test_data()
 
 	def cleanup_test_data(self):
+		if not frappe.db.table_exists("Gold Settings"):
+			return
 		if frappe.db.exists("Gold Settings", "Gold Settings"):
 			frappe.db.sql("DELETE FROM `tabGold Settings` WHERE name = 'Gold Settings'")
 			frappe.db.commit()
