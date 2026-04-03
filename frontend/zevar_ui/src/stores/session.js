@@ -15,7 +15,13 @@ export const useSessionStore = defineStore('session', () => {
 	// State
 	const user = ref(null)
 	const isLoggedIn = ref(false)
-	const currentWarehouse = ref(localStorage.getItem('active_warehouse') || null)
+	const currentWarehouse = ref(
+		localStorage.getItem('active_warehouse') &&
+			localStorage.getItem('active_warehouse') !== 'null' &&
+			localStorage.getItem('active_warehouse') !== ''
+			? localStorage.getItem('active_warehouse')
+			: null
+	)
 
 	// Resources
 	const userResource = createResource({
@@ -57,11 +63,12 @@ export const useSessionStore = defineStore('session', () => {
 
 	// Actions
 	function setWarehouse(warehouseID) {
-		currentWarehouse.value = warehouseID
-		if (warehouseID) {
-			localStorage.setItem('active_warehouse', warehouseID)
-		} else {
+		if (!warehouseID || warehouseID === '') {
+			currentWarehouse.value = null
 			localStorage.removeItem('active_warehouse')
+		} else {
+			currentWarehouse.value = warehouseID
+			localStorage.setItem('active_warehouse', warehouseID)
 		}
 	}
 

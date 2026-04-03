@@ -67,13 +67,13 @@ def create_support_ticket(
 
 	# Build full description with employee context
 	context_info = f"""**Reported by:** {employee.employee_name if employee else frappe.session.user}
-**Employee ID:** {employee.name if employee else 'N/A'}
-**Employee Department:** {employee.department if employee else 'N/A'}
+**Employee ID:** {employee.name if employee else "N/A"}
+**Employee Department:** {employee.department if employee else "N/A"}
 **Category:** {category}
-**Sub-Category:** {sub_category or 'N/A'}
+**Sub-Category:** {sub_category or "N/A"}
 **Priority:** {priority}
-**Responsible Department:** {department or 'N/A'}
-**Date/Time:** {now_datetime().strftime('%Y-%m-%d %H:%M:%S')}"""
+**Responsible Department:** {department or "N/A"}
+**Date/Time:** {now_datetime().strftime("%Y-%m-%d %H:%M:%S")}"""
 
 	# Add reference info if provided
 	if reference_type and reference_name:
@@ -98,11 +98,11 @@ def create_support_ticket(
 			"ticket_type": category,
 			"status": "Open",
 			"custom_category": category,
-			"custom_sub_category": sub_category,
-			"custom_department": department,
+			"custom_sub_category": sub_category or "",
+			"custom_department": department or "",
 		}
 
-		# Add custom reference fields if they exist
+		# Add custom reference fields only if both type and name are valid
 		if reference_type and reference_name:
 			ticket_doc["custom_reference_type"] = reference_type
 			ticket_doc["custom_reference"] = reference_name
@@ -338,10 +338,10 @@ def create_attendance_issue(
 
 	# Build full description with employee context
 	full_description = f"""**Reported by Employee:** {employee.employee_name if employee else frappe.session.user}
-**Employee ID:** {employee.name if employee else 'N/A'}
-**Department:** {employee.department if employee else 'N/A'}
-**Designation:** {employee.designation if employee else 'N/A'}
-**Date/Time:** {now_datetime().strftime('%Y-%m-%d %H:%M:%S')}
+**Employee ID:** {employee.name if employee else "N/A"}
+**Department:** {employee.department if employee else "N/A"}
+**Designation:** {employee.designation if employee else "N/A"}
+**Date/Time:** {now_datetime().strftime("%Y-%m-%d %H:%M:%S")}
 
 ---
 

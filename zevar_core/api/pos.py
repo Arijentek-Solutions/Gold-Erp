@@ -4,6 +4,7 @@ POS API - Invoice creation and settings
 
 import frappe
 from frappe import _
+from frappe.utils import flt
 
 from zevar_core.constants import DEFAULT_TAX_RATES, PAYMENT_MODES
 
@@ -356,15 +357,23 @@ def get_pos_settings(warehouse: str | None = None):
 	Returns:
 	    POS settings dictionary
 	"""
-	# Determine tax rate based on warehouse location
+	# Determine tax rate: Store Location > hardcoded fallback
 	tax_rate = 0.0
 	if warehouse:
-		# Simple location detection (enhance with actual warehouse location field)
-		warehouse_lower = warehouse.lower()
-		for location, rate in DEFAULT_TAX_RATES.items():
-			if location.lower() in warehouse_lower:
-				tax_rate = rate
-				break
+		store_loc = frappe.db.get_value(
+			"Store Location",
+			{"default_warehouse": warehouse, "is_active": 1},
+			["county_tax_rate", "tax_template"],
+			as_dict=True,
+		)
+		if store_loc and store_loc.county_tax_rate:
+			tax_rate = flt(store_loc.county_tax_rate)
+		else:
+			warehouse_lower = warehouse.lower()
+			for location, rate in DEFAULT_TAX_RATES.items():
+				if location.lower() in warehouse_lower:
+					tax_rate = rate
+					break
 
 	# Default company
 	company = frappe.defaults.get_user_default("Company") or frappe.db.get_single_value(

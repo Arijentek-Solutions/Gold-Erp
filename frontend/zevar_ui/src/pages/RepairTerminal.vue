@@ -31,7 +31,7 @@
 				<button
 					v-for="statusItem in statusTabs"
 					:key="statusItem.value"
-					@click="handleStatusChange(statusItem.value)"
+					@click="selectStatusTab(statusItem.value)"
 					class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition whitespace-nowrap"
 					:class="
 						statusFilter === statusItem.value
@@ -504,12 +504,33 @@
 									class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1.5"
 									>Customer</label
 								>
-								<Autocomplete
-									v-model="newForm.customer"
-									:options="customerOptions"
-									placeholder="Search customer..."
-									@input="onCustomerSearch"
-								/>
+								<div class="relative">
+									<input
+										v-model="customerSearchText"
+										type="text"
+										placeholder="Search customer..."
+										@input="onCustomerSearchInput"
+										@focus="showCustomerDropdown = true"
+										class="w-full px-3 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 text-sm text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent placeholder-gray-400"
+									/>
+									<div
+										v-if="showCustomerDropdown && customerOptions.length > 0"
+										class="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto"
+									>
+										<button
+											v-for="opt in customerOptions"
+											:key="opt.value"
+											type="button"
+											@click="selectCustomerOption(opt)"
+											class="w-full px-3 py-2 text-left text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition border-b border-gray-100 dark:border-gray-700 last:border-0"
+										>
+											<span class="font-medium text-gray-900 dark:text-white">{{ opt.label }}</span>
+										</button>
+									</div>
+								</div>
+								<p v-if="newForm.customer" class="mt-1 text-xs text-green-600 dark:text-green-400">
+									Selected: {{ newForm.customer.label }}
+								</p>
 							</div>
 
 							<!-- Repair Type -->
@@ -605,7 +626,7 @@
 <script setup>
 import AppLayout from '@/components/AppLayout.vue'
 import { useSessionStore } from '@/stores/session.js'
-import { createResource, call, toast, Autocomplete } from 'frappe-ui'
+import { createResource, call, toast } from 'frappe-ui'
 import { ref, watch, onMounted, computed } from 'vue'
 
 const session = useSessionStore()
@@ -619,6 +640,8 @@ const detailStatus = ref('')
 const showHistory = ref([])
 const showAdvancedSearch = ref(false)
 const customerQuery = ref('')
+const customerSearchText = ref('')
+const showCustomerDropdown = ref(false)
 
 const newForm = ref({
 	customer: null,
@@ -691,12 +714,23 @@ const customerOptions = computed(() => {
 })
 
 let customerSearchTimer
-function onCustomerSearch(q) {
+function onCustomerSearchInput() {
+	showCustomerDropdown.value = true
+	const q = customerSearchText.value
+	if (!q || q.length < 2) {
+		return
+	}
 	customerQuery.value = q
 	clearTimeout(customerSearchTimer)
 	customerSearchTimer = setTimeout(() => {
 		customersResource.fetch()
 	}, 300)
+}
+
+function selectCustomerOption(opt) {
+	newForm.value.customer = opt
+	customerSearchText.value = opt.label
+	showCustomerDropdown.value = false
 }
 
 const ordersResource = createResource({
@@ -725,8 +759,8 @@ function loadOrders() {
 	statsResource.fetch()
 }
 
-function handleStatusChange(status) {
-	statusFilter.value = status
+function selectStatusTab(value) {
+	statusFilter.value = value
 	loadOrders()
 }
 
@@ -776,10 +810,19 @@ function getStatusBadgeClass(status) {
 }
 
 async function submitNewRepair() {
-	if (!newForm.value.customer || !newForm.value.repair_type) {
+	if (!newForm.value.customer || !newForm.value.customer.value) {
 		toast({
 			title: 'Missing Information',
-			message: 'Customer and Repair Type are required.',
+			message: 'Please select a customer.',
+			icon: 'alert-circle',
+			intent: 'error',
+		})
+		return
+	}
+	if (!newForm.value.repair_type) {
+		toast({
+			title: 'Missing Information',
+			message: 'Please select a repair type.',
 			icon: 'alert-circle',
 			intent: 'error',
 		})
@@ -787,9 +830,8 @@ async function submitNewRepair() {
 	}
 
 	try {
-		const customerValue = newForm.value.customer?.value || newForm.value.customer
 		await call('zevar_core.api.create_repair_order', {
-			customer: customerValue,
+			customer: newForm.value.customer.value,
 			repair_type: newForm.value.repair_type,
 			item_description: newForm.value.item_description || undefined,
 			customer_phone: newForm.value.customer_phone || undefined,
@@ -798,6 +840,7 @@ async function submitNewRepair() {
 			handled_by: session.user?.email || undefined,
 		})
 		showNewModal.value = false
+		customerSearchText.value = ''
 		newForm.value = {
 			customer: null,
 			repair_type: '',

@@ -297,7 +297,7 @@
 		<ProductModal
 			:show="showModal"
 			:item-code="selectedItem"
-			@close="handleClose"
+			@close="closeModal"
 		/>
 	</div>
 </template>
@@ -456,14 +456,14 @@ function handleCategorySelect(cat) {
 	router.push(`/catalogues/${cat}`)
 }
 
-function handleClose() {
-	showModal.value = false
-	selectedItem.value = null
-}
-
 function openProduct(product) {
 	selectedItem.value = product.item_code
 	showModal.value = true
+}
+
+function closeModal() {
+	showModal.value = false
+	selectedItem.value = null
 }
 
 function performSearch(q) {

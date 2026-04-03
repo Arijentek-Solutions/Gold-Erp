@@ -295,35 +295,38 @@ def import_employees(backup_path: str, dry_run: bool = False) -> dict:
 
 
 def import_customers(backup_path: str, dry_run: bool = False) -> dict:
-	"""Import customers from CUSTSHOR.dbf."""
+	"""Import customers from customer.DBF or CUSTSHOR.dbf."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
 
-	dbf_path = find_dbf(backup_path, "CUSTSHOR.dbf")
+	dbf_path = find_dbf(backup_path, "customer.DBF") or find_dbf(backup_path, "CUSTSHOR.dbf")
 	if not dbf_path:
-		stats["errors"].append("CUSTSHOR.dbf not found")
+		stats["errors"].append("customer.DBF / CUSTSHOR.dbf not found")
 		return stats
 
 	records = read_dbf(dbf_path)
 	stats["total"] = len(records)
 
-	for record in records:
+	for idx, record in enumerate(records):
 		try:
 			accountno = clean_str(record.get("accountno"))
 			first = clean_str(record.get("first"))
 			last = clean_str(record.get("last"))
 			company = clean_str(record.get("company"))
 
-			if not accountno:
+			if not accountno and not first and not last:
 				stats["skipped"] += 1
 				continue
 
-			# Build customer name
 			if first or last:
 				customer_name = f"{first} {last}".strip()
 			elif company:
 				customer_name = company
 			else:
 				customer_name = f"Customer {accountno}"
+
+			if len(customer_name) < 2:
+				stats["skipped"] += 1
+				continue
 
 			if frappe.db.exists("Customer", {"customer_name": customer_name}):
 				stats["skipped"] += 1
@@ -339,32 +342,40 @@ def import_customers(backup_path: str, dry_run: bool = False) -> dict:
 			doc.customer_group = "Individual"
 			doc.territory = "All Territories"
 
-			# Custom fields if they exist
-			if frappe.get_meta("Customer").has_field("custom_legacy_account_no"):
-				doc.custom_legacy_account_no = accountno
-			if frappe.get_meta("Customer").has_field("custom_company"):
-				doc.custom_company = company
+			email = clean_str(record.get("email"))
+			if email:
+				doc.email_id = email
+
+			_set_custom_field(doc, "custom_legacy_account_no", accountno)
+			_set_custom_field(doc, "custom_company", company)
 
 			doc.insert(ignore_permissions=True, ignore_mandatory=True)
 
-			# Create linked address
 			address = clean_str(record.get("address"))
 			city = clean_str(record.get("city"))
 			state = clean_str(record.get("state"))
 			zipcode = clean_str(record.get("zip"))
 			phone = clean_str(record.get("phone"))
+			phone2 = clean_str(record.get("phone2"))
 
 			if any([address, city, state]):
-				addr = frappe.new_doc("Address")
-				addr.address_title = customer_name
-				addr.address_type = "Billing"
-				addr.address_line1 = address
-				addr.city = city
-				addr.state = state
-				addr.pincode = zipcode
-				addr.phone = phone
-				addr.append("links", {"link_doctype": "Customer", "link_name": doc.name})
-				addr.insert(ignore_permissions=True, ignore_mandatory=True)
+				try:
+					addr = frappe.new_doc("Address")
+					addr.address_title = customer_name[:140]
+					addr.address_type = "Billing"
+					addr.address_line1 = address[:140] if address else "N/A"
+					addr.city = city
+					addr.state = state
+					addr.pincode = zipcode
+					addr.phone = phone or phone2
+					addr.email_id = email
+					addr.append("links", {"link_doctype": "Customer", "link_name": doc.name})
+					addr.insert(ignore_permissions=True, ignore_mandatory=True)
+				except Exception:
+					pass
+
+			if (idx + 1) % 200 == 0:
+				frappe.db.commit()
 
 			stats["imported"] += 1
 
@@ -381,6 +392,78 @@ def import_customers(backup_path: str, dry_run: bool = False) -> dict:
 # ──────────────────────────────────────────────────
 
 
+GOLDTYPE_TO_METAL = {
+	"10KYG": "Yellow Gold",
+	"14KYG": "Yellow Gold",
+	"18KYG": "Yellow Gold",
+	"22KYG": "Yellow Gold",
+	"10KWG": "White Gold",
+	"14KWG": "White Gold",
+	"18KWG": "White Gold",
+	"10KRG": "Rose Gold",
+	"14KRG": "Rose Gold",
+	"SS": "Silver",
+	"PLAT": "Platinum",
+}
+
+GOLDTYPE_TO_PURITY = {
+	"10KYG": "10k",
+	"10KWG": "10k",
+	"10KRG": "10k",
+	"14KYG": "14Kt",
+	"14KWG": "14Kt",
+	"14KRG": "14Kt",
+	"18KYG": "18Kt",
+	"18KWG": "18Kt",
+	"22KYG": "22K",
+	"SS": "925 Sterling",
+	"PLAT": "999 Fine",
+}
+
+CATEGORY_KEYWORDS_TO_JWTYPE = {
+	"ring": "Rings",
+	"chain": "Chains",
+	"necklace": "Necklaces",
+	"pendant": "Pendants",
+	"earring": "Earrings",
+	"bracelet": "Bracelets",
+	"watch": "Watches",
+	"bangle": "Bracelets",
+}
+
+CATEGORY_KEYWORDS_TO_PRODUCT_TYPE = {
+	"watch": "Watch",
+	"accessor": "Accessory",
+}
+
+
+def _map_jwtype(category: str, jwtype: str) -> str:
+	if jwtype and jwtype in (
+		"Rings",
+		"Chains",
+		"Necklaces",
+		"Earrings",
+		"Bracelets",
+		"Pendants",
+		"Watches",
+		"Other",
+	):
+		return jwtype
+	cat_lower = (category or "").lower()
+	for kw, val in CATEGORY_KEYWORDS_TO_JWTYPE.items():
+		if kw in cat_lower:
+			return val
+	return "Other"
+
+
+def _map_product_type(category: str) -> str:
+	cat_lower = (category or "").lower()
+	for kw, val in CATEGORY_KEYWORDS_TO_PRODUCT_TYPE.items():
+		if kw in cat_lower:
+			return val
+	return "Jewelry"
+
+
 def import_inventory(backup_path: str, dry_run: bool = False) -> dict:
 	"""Import inventory items from inventor.DBF."""
 	stats = {"total": 0, "imported": 0, "skipped": 0, "errors": []}
@@ -393,19 +476,19 @@ def import_inventory(backup_path: str, dry_run: bool = False) -> dict:
 	records = read_dbf(dbf_path)
 	stats["total"] = len(records)
 
-	for record in records:
+	for idx, record in enumerate(records):
 		try:
 			barcode = clean_str(record.get("barcode"))
 			stockno = clean_str(record.get("stockno"))
-			descript = clean_str(record.get("dscript"))
+			descript = clean_str(record.get("descript"))
+			abr = clean_str(record.get("abr"))
 
 			if not barcode and not stockno:
 				stats["skipped"] += 1
 				continue
 
-			# Use barcode as item_code
-			item_code = barcode or stockno
-			item_name = descript or item_code
+			item_code = barcode if barcode else f"{abr}-{stockno}" if abr and stockno else stockno
+			item_name = descript if descript else item_code
 
 			if frappe.db.exists("Item", item_code):
 				stats["skipped"] += 1
@@ -415,24 +498,27 @@ def import_inventory(backup_path: str, dry_run: bool = False) -> dict:
 				stats["imported"] += 1
 				continue
 
+			category = clean_str(record.get("category"))
+			goldtype = clean_str(record.get("goldtype"))
+			jwtype = clean_str(record.get("jwtype"))
+			gender = clean_str(record.get("gender"))
+
 			doc = frappe.new_doc("Item")
 			doc.item_code = item_code
-			doc.item_name = item_name
-			doc.description = descript or item_name
+			doc.item_name = item_name[:140]
+
+			desc_parts = [p for p in [descript, clean_str(record.get("desc2"))] if p]
+			doc.description = " ".join(desc_parts)[:140] if desc_parts else item_name
 			doc.stock_uom = "Nos"
 			doc.is_stock_item = 1
 
-			# Map category to item_group
-			category = clean_str(record.get("category"))
 			if category:
 				doc.item_group = _get_or_create_item_group(category)
 
-			# Map manufacturer/brand
 			mfrid = clean_str(record.get("mfrid"))
 			if mfrid:
 				doc.brand = _get_or_create_brand(mfrid)
 
-			# Pricing
 			cost = clean_float(record.get("cost"))
 			asklow = clean_float(record.get("asklow"))
 			askhigh = clean_float(record.get("askhigh"))
@@ -443,26 +529,60 @@ def import_inventory(backup_path: str, dry_run: bool = False) -> dict:
 			if cost > 0:
 				doc.valuation_rate = cost
 
-			# Custom fields (if they exist)
-			_set_custom_field(doc, "custom_barcode", barcode)
-			_set_custom_field(doc, "custom_stock_no", stockno)
-			_set_custom_field(doc, "custom_style", clean_str(record.get("style")))
-			_set_custom_field(doc, "custom_tag_type", clean_str(record.get("tagtype")))
-			_set_custom_field(doc, "custom_abr", clean_str(record.get("abr")))
-			_set_custom_field(doc, "custom_store_code", clean_str(record.get("storecode")))
+			_set_custom_field(doc, "custom_source", "JCSWIN")
+			_set_custom_field(doc, "custom_vendor_sku", clean_str(record.get("style")))
+			_set_custom_field(
+				doc, "custom_vendor", _get_or_create_supplier_link(clean_str(record.get("abr")))
+			)
+			_set_custom_field(doc, "custom_barcode", clean_str(record.get("venbarcod")) or barcode)
 
-			# Weight
+			metal_name = GOLDTYPE_TO_METAL.get(goldtype)
+			if metal_name:
+				_set_custom_field(doc, "custom_metal_type", metal_name)
+			purity_name = GOLDTYPE_TO_PURITY.get(goldtype)
+			if purity_name:
+				_set_custom_field(doc, "custom_purity", purity_name)
+
+			mapped_jwtype = _map_jwtype(category, jwtype)
+			_set_custom_field(doc, "custom_jewelry_type", mapped_jwtype)
+			_set_custom_field(doc, "custom_product_type", _map_product_type(category))
+
+			if gender:
+				gender_map = {
+					"M": "Men's",
+					"F": "Women's",
+					"MEN": "Men's",
+					"WOMEN": "Women's",
+					"MENS": "Men's",
+					"LADIES": "Women's",
+					"UNISEX": "Unisex",
+				}
+				_set_custom_field(doc, "custom_gender", gender_map.get(gender.upper(), "Unisex"))
+			else:
+				_set_custom_field(doc, "custom_gender", "Unisex")
+
 			goldwght = clean_float(record.get("goldwght"))
-			if goldwght > 0:
-				_set_custom_field(doc, "custom_gold_weight", goldwght)
+			weight = clean_float(record.get("weight"))
+			gross_w = goldwght if goldwght > 0 else (weight if weight > 0 else 0)
+			if gross_w > 0:
+				_set_custom_field(doc, "custom_gross_weight_g", gross_w)
 
-			# Dates
-			datebuy = format_date(record.get("datebuy"))
-			if datebuy:
-				_set_custom_field(doc, "custom_date_purchased", datebuy)
+			msrp_val = clean_float(record.get("maskhigh"))
+			if msrp_val > 0:
+				_set_custom_field(doc, "custom_msrp", msrp_val)
+
+			_set_custom_field(doc, "custom_cost_price", cost if cost > 0 else None)
+
+			_set_custom_field(doc, "custom_size", clean_str(record.get("size")))
+
+			if goldtype:
+				_set_custom_field(doc, "custom_material_color", _map_material_color(goldtype))
 
 			doc.insert(ignore_permissions=True, ignore_mandatory=True)
 			stats["imported"] += 1
+
+			if (idx + 1) % 200 == 0:
+				frappe.db.commit()
 
 		except Exception as e:
 			stats["errors"].append(f"Item {record.get('barcode', '?')}: {str(e)[:100]}")
@@ -470,6 +590,27 @@ def import_inventory(backup_path: str, dry_run: bool = False) -> dict:
 	if not dry_run:
 		frappe.db.commit()
 	return stats
+
+
+def _map_material_color(goldtype: str) -> str:
+	if "YG" in goldtype:
+		return "Yellow"
+	elif "WG" in goldtype:
+		return "White"
+	elif "RG" in goldtype:
+		return "Rose"
+	elif goldtype == "SS":
+		return "White"
+	return "Yellow"
+
+
+def _get_or_create_supplier_link(abr: str) -> str | None:
+	if not abr:
+		return None
+	existing = frappe.db.get_value("Supplier", {"supplier_name": ["like", f"%{abr}%"]}, "name")
+	if existing:
+		return existing
+	return None
 
 
 # ──────────────────────────────────────────────────

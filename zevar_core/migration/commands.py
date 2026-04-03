@@ -16,6 +16,8 @@ from frappe.commands import get_site, pass_context
 from .foxpro_import import get_mapping_info, import_all
 
 DEFAULT_LEGACY_BACKUP_PATHS = (
+	"/workspace/development/Zevar_URMS/JCSWIN 1(1)/JCSWIN",
+	"/workspace/development/Zevar_URMS/Zevar_URMS/JCSWIN 1(1)/JCSWIN",
 	"/workspace/development/Zevar_URMS/Zevar_HIPmall_MD_1",
 	"~/Downloads/Zevar_HIPmall_RD",
 	"/workspace/development/Zevar_URMS/Zevar_HIPmall_RD/Zevar_HIPmall_RD",

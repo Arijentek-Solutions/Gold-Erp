@@ -72,57 +72,37 @@ def get_all_layaways(
 		page_length=page_size,
 	)
 
-	# Enrich layaway data using batched queries to avoid N+1 issues
-	if layaways:
-		layaway_names = [l.name for l in layaways]
-		active_layaways = [l.name for l in layaways if l.status == "Active"]
-		customer_ids = list({l.customer for l in layaways if l.customer})
-
-		customer_names = {}
-		if customer_ids:
-			customers = frappe.get_all(
-				"Customer", filters={"name": ("in", customer_ids)}, fields=["name", "customer_name"]
+	# Enrich layaway data
+	for layaway in layaways:
+		# Get customer name
+		if layaway.customer:
+			layaway.customer_name = (
+				frappe.db.get_value("Customer", layaway.customer, "customer_name") or layaway.customer
 			)
-			customer_names = {c.name: c.customer_name for c in customers}
 
-		counts = frappe.db.sql(
-			"""SELECT parent, count(name) as count
-			   FROM `tabLayaway Contract Item`
-			   WHERE parent IN %s GROUP BY parent""",
-			(tuple(layaway_names),),
-			as_dict=True,
-		)
-		item_counts = {c.parent: c.count for c in counts}
-
-		next_payments = {}
-		if active_layaways:
-			# Group by payment_date asc ensures we see the earliest date first per parent
-			payments = frappe.get_all(
+		# Calculate next payment due
+		if layaway.status == "Active":
+			pending_payments = frappe.get_all(
 				"Layaway Payment Schedule",
-				filters={"parent": ("in", active_layaways), "status": "Pending"},
-				fields=["parent", "payment_date", "expected_amount"],
+				filters={"parent": layaway.name, "status": "Pending"},
+				fields=["payment_date", "expected_amount"],
 				order_by="payment_date asc",
+				limit=1,
 			)
-			for p in payments:
-				if p.parent not in next_payments:
-					next_payments[p.parent] = p
+			if pending_payments:
+				layaway.next_payment_date = str(pending_payments[0].payment_date)
+				layaway.next_payment_amount = flt(pending_payments[0].expected_amount)
 
-		from frappe.utils import getdate
+		# Get item count
+		item_count = frappe.db.count("Layaway Contract Item", filters={"parent": layaway.name})
+		layaway.item_count = item_count
 
-		current_date = getdate()
+		# Check if overdue
+		if layaway.status == "Active" and layaway.target_completion_date:
+			from frappe.utils import getdate
 
-		for layaway in layaways:
-			layaway.customer_name = customer_names.get(layaway.customer) or layaway.customer
-			layaway.item_count = item_counts.get(layaway.name, 0)
-
-			if layaway.status == "Active":
-				np = next_payments.get(layaway.name)
-				if np:
-					layaway.next_payment_date = str(np.payment_date)
-					layaway.next_payment_amount = flt(np.expected_amount)
-
-				if layaway.target_completion_date and getdate(layaway.target_completion_date) < current_date:
-					layaway.is_overdue = True
+			if getdate(layaway.target_completion_date) < getdate():
+				layaway.is_overdue = True
 
 	return {
 		"layaways": layaways,
@@ -223,7 +203,12 @@ def create_layaway(
 	if not customer or not frappe.db.exists("Customer", customer):
 		frappe.throw(_("Customer '{0}' not found.").format(customer))
 
-	if int(duration_months) not in (3, 6, 9, 12):
+	try:
+		duration = int(duration_months)
+	except (ValueError, TypeError):
+		frappe.throw(_("Duration must be a valid number (3, 6, 9, or 12 months)."))
+
+	if duration not in (3, 6, 9, 12):
 		frappe.throw(_("Duration must be 3, 6, 9, or 12 months."))
 
 	if not warehouse:
@@ -258,8 +243,8 @@ def create_layaway(
 		doc = frappe.new_doc("Layaway Contract")
 		doc.customer = customer
 		doc.contract_date = today()
-		doc.maximum_duration_months = str(duration_months)
-		doc.target_completion_date = add_months(today(), int(duration_months))
+		doc.maximum_duration_months = str(duration)
+		doc.target_completion_date = add_months(today(), duration)
 		doc.cancellation_refund_type = "Store Credit Only"
 
 		for item in items_list:
@@ -291,7 +276,7 @@ def create_layaway(
 		)
 
 		# Generate remaining monthly schedule
-		remaining_months = int(duration_months) - 1
+		remaining_months = duration - 1
 		if remaining_months > 0 and doc.balance_amount > 0:
 			monthly_payment = doc.balance_amount / remaining_months
 			for i in range(1, remaining_months + 1):
@@ -308,23 +293,6 @@ def create_layaway(
 		doc.status = "Active"
 		doc.insert(ignore_permissions=True)
 		doc.submit()
-
-		from zevar_core.api.audit_log import log_event_safely
-
-		log_event_safely(
-			event_type="layaway_created",
-			details={
-				"layaway_id": doc.name,
-				"customer": doc.customer,
-				"total_amount": flt(doc.total_amount),
-				"deposit_amount": flt(doc.deposit_amount),
-				"balance_amount": flt(doc.balance_amount),
-				"duration_months": int(duration_months),
-				"item_count": len(doc.items),
-			},
-			reference_document=doc.name,
-			reference_type="Layaway Contract",
-		)
 
 		return {
 			"success": True,
@@ -467,33 +435,6 @@ def process_layaway_payment(layaway_id: str, payment_amount: float, mode_of_paym
 
 		doc.save(ignore_permissions=True)
 
-		from zevar_core.api.audit_log import log_event_safely
-
-		log_event_safely(
-			event_type="layaway_payment",
-			details={
-				"layaway_id": doc.name,
-				"payment_amount": flt(amount),
-				"mode_of_payment": mode_of_payment,
-				"new_balance": flt(doc.balance_amount),
-				"status": doc.status,
-			},
-			reference_document=doc.name,
-			reference_type="Layaway Contract",
-		)
-
-		if doc.status == "Completed":
-			log_event_safely(
-				event_type="layaway_completed",
-				details={
-					"layaway_id": doc.name,
-					"customer": doc.customer,
-					"final_payment_amount": flt(amount),
-				},
-				reference_document=doc.name,
-				reference_type="Layaway Contract",
-			)
-
 		return {
 			"success": True,
 			"new_balance": doc.balance_amount,
@@ -536,22 +477,6 @@ def cancel_layaway(layaway_id: str) -> dict:
 		doc.status = "Cancelled"
 		doc.store_credit_reference = gc.name
 		doc.save(ignore_permissions=True)
-
-		from zevar_core.api.audit_log import log_event_safely
-		from zevar_core.api.gift_card import log_gift_card_issued
-
-		log_event_safely(
-			event_type="layaway_cancelled",
-			details={
-				"layaway_id": doc.name,
-				"customer": doc.customer,
-				"refund_amount": flt(doc.deposit_amount),
-				"store_credit_id": gc.name,
-			},
-			reference_document=doc.name,
-			reference_type="Layaway Contract",
-		)
-		log_gift_card_issued(gc, source_reference=doc.name)
 
 		return {
 			"success": True,
