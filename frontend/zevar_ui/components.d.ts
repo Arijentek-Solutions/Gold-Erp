@@ -26,6 +26,7 @@ declare module 'vue' {
     LayawayPaymentModal: typeof import('./src/components/LayawayPaymentModal.vue')['default']
     LiveGoldPrice: typeof import('./src/components/LiveGoldPrice.vue')['default']
     PortalLayout: typeof import('./src/components/PortalLayout.vue')['default']
+    POSCatalog: typeof import('./src/components/POSCatalog.vue')['default']
     POSProductModal: typeof import('./src/components/POSProductModal.vue')['default']
     POSProfileSelector: typeof import('./src/components/POSProfileSelector.vue')['default']
     PreferencesModal: typeof import('./src/components/PreferencesModal.vue')['default']

@@ -656,7 +656,7 @@
 		<ProductModal
 			:show="showProductModal"
 			:item-code="selectedItemCode"
-			@close="handleProductModalClose"
+			@close="closeProductModal"
 		/>
 	</div>
 </template>
@@ -678,6 +678,11 @@ const showProductModal = ref(false)
 const selectedItemCode = ref(null)
 const currentSlide = ref(0)
 let slideTimer = null
+
+function closeProductModal() {
+	showProductModal.value = false
+	selectedItemCode.value = null
+}
 
 // ---- HERO SLIDES ----
 const heroSlides = [
@@ -952,11 +957,6 @@ function handleCategorySelect(id) {
 	} else {
 		router.push(`/catalogues/${id}`)
 	}
-}
-
-function handleProductModalClose() {
-	showProductModal.value = false
-	selectedItemCode.value = null
 }
 
 function openProduct(item) {

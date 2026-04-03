@@ -100,11 +100,16 @@ def fetch_live_metal_rates():
 
 def _update_rate(metal, purity, rate):
 	"""Helper to update or create a rate entry."""
+	from frappe.utils import now_datetime
+
 	existing = frappe.db.exists("Gold Rate Log", {"metal": metal, "purity": purity})
 
 	if existing:
-		frappe.db.set_value("Gold Rate Log", existing, "rate_per_gram", rate)
-		frappe.db.set_value("Gold Rate Log", existing, "source", "goldprice.org")
+		frappe.db.set_value(
+			"Gold Rate Log",
+			existing,
+			{"rate_per_gram": rate, "source": "goldprice.org", "timestamp": now_datetime()},
+		)
 	else:
 		frappe.get_doc(
 			{
