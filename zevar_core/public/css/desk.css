@@ -660,3 +660,159 @@
 		display: none;
 	}
 }
+
+
+.shortcut-section {
+	margin-bottom: var(--zevar-space-8);
+}
+
+.btn-secondary {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	height: 40px;
+	padding: 0 var(--zevar-space-4);
+	border: 1px solid var(--zevar-gray-200, #e5e7eb);
+	background: white;
+	border-radius: var(--zevar-radius-md);
+	cursor: pointer;
+	color: var(--zevar-gray-700, #374151);
+	font-weight: 600;
+	transition: all var(--zevar-transition-fast);
+}
+
+.btn-secondary:hover {
+	background: var(--zevar-gray-50, #f9fafb);
+	color: var(--zevar-primary, #2563eb);
+}
+
+.btn-secondary:focus {
+	outline: none;
+	box-shadow: var(--zevar-focus-ring);
+}
+
+.zevar-workspace-shortcuts {
+	margin-bottom: var(--zevar-space-6);
+}
+
+.workspace-shortcuts-shell {
+	background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+	border: 1px solid rgba(148, 163, 184, 0.18);
+	border-radius: var(--zevar-radius-lg);
+	box-shadow: var(--zevar-shadow-sm);
+	padding: var(--zevar-space-6);
+}
+
+.workspace-shortcuts-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--zevar-space-4);
+	margin-bottom: var(--zevar-space-6);
+}
+
+.workspace-shortcuts-title {
+	font-size: 1.25rem;
+	font-weight: 700;
+	margin: 0;
+	color: var(--zevar-gray-900, #111827);
+}
+
+.workspace-shortcuts-manage {
+	color: var(--zevar-primary, #2563eb);
+	font-weight: 600;
+	text-decoration: none;
+}
+
+.workspace-shortcuts-manage:hover {
+	text-decoration: underline;
+}
+
+.workspace-shortcut-section .section-title {
+	font-size: 1rem;
+	margin-bottom: var(--zevar-space-3);
+}
+
+.workspace-shortcut-card {
+	text-decoration: none;
+}
+
+.workspace-shortcut-description {
+	font-size: 0.75rem;
+	line-height: 1.4;
+	color: var(--zevar-gray-500, #6b7280);
+	text-align: center;
+}
+
+.workspace-shortcuts-loading {
+	padding: var(--zevar-space-4);
+	color: var(--zevar-gray-500, #6b7280);
+	font-weight: 500;
+}
+
+
+/* ============================================
+   Zevar Desktop Shortcuts Injection
+   ============================================ */
+.zevar-shortcuts-section {
+	margin: 20px 0;
+}
+
+.zevar-shortcut-group {
+	clear: both;
+}
+
+.zevar-shortcut-group-title {
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	border-bottom: 1px solid #e5e7eb;
+	padding-bottom: 8px;
+}
+
+.desktop-icon-wrapper {
+	display: inline-block;
+	width: 100px;
+	text-align: center;
+	vertical-align: top;
+}
+
+.desktop-icon-wrapper .desktop-icon {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	width: 90px;
+	height: 90px;
+	border-radius: 8px;
+	color: white;
+	text-decoration: none;
+	transition: transform 0.2s, box-shadow 0.2s;
+	cursor: pointer;
+	margin: 0 auto;
+}
+
+.desktop-icon-wrapper .desktop-icon:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.desktop-icon-wrapper .icon-box {
+	font-size: 32px;
+	margin-bottom: 8px;
+}
+
+.desktop-icon-wrapper .icon-inner {
+	font-weight: 700;
+	font-size: 28px;
+}
+
+.desktop-icon-wrapper .icon-title {
+	font-size: 12px;
+	font-weight: 500;
+	text-align: center;
+	color: #374151;
+	margin-top: 8px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}

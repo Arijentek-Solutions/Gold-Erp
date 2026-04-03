@@ -31,10 +31,7 @@
 				<button
 					v-for="statusItem in statusTabs"
 					:key="statusItem.value"
-					@click="
-						statusFilter = statusItem.value
-						loadOrders()
-					"
+					@click="handleStatusChange(statusItem.value)"
 					class="flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition whitespace-nowrap"
 					:class="
 						statusFilter === statusItem.value
@@ -726,6 +723,11 @@ const statsResource = createResource({
 function loadOrders() {
 	ordersResource.fetch()
 	statsResource.fetch()
+}
+
+function handleStatusChange(status) {
+	statusFilter.value = status
+	loadOrders()
 }
 
 let debounceTimer

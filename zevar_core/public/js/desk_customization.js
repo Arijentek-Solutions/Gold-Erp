@@ -113,7 +113,7 @@
 					g: "/app/gift-card", // Gift Cards
 					a: "/app/jewelry-appraisal", // Appraisals
 					c: "/app/sales-commission-split", // Commissions
-					d: "/zevar-desk", // Custom Desk
+					z: "/zevar-desk", // Zevar Custom Desk
 					h: "/desk", // Home/Standard Desk
 				};
 
@@ -329,7 +329,7 @@
 		}
 	}
 
-	// Expose utilities globally for custom desk page
+	// Expose utilities globally
 	window.ZevarDesk = {
 		closeAllModals: closeAllModals,
 		focusSearch: focusSearch,

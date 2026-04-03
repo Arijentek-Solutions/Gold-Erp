@@ -6,6 +6,24 @@ def execute():
 	Migrate legacy custom_salesperson_{1..4} fields into the new Salesperson Split child table
 	across all Sales Invoices.
 	"""
+	frappe.reload_doc("unified_retail_management_system", "doctype", "salesperson_split_detail")
+	from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
+
+	create_custom_fields(
+		{
+			"Sales Invoice": [
+				{
+					"fieldname": "custom_salesperson_splits",
+					"fieldtype": "Table",
+					"label": "Salesperson Splits",
+					"options": "Salesperson Split Detail",
+					"insert_after": "custom_salesperson_4_split",
+					"is_system_generated": 1,
+					"description": "Salesperson commission split assignments for this invoice",
+				}
+			]
+		}
+	)
 	frappe.reload_doc("accounts", "doctype", "sales_invoice")
 
 	# Fetch all invoices that have at least one of the legacy salesperson fields set
@@ -27,7 +45,7 @@ def execute():
 		doc = frappe.get_doc("Sales Invoice", invoice.name)
 
 		# Skip if already migrated
-		if len(doc.get("custom_salesperson_splits", [])) > 0:
+		if len(doc.get("custom_salesperson_splits") or []) > 0:
 			continue
 
 		# Collect unique salespersons from the legacy fields
@@ -52,8 +70,8 @@ def execute():
 			doc.append(
 				"custom_salesperson_splits",
 				{
-					"salesperson": sp,
-					"allocated_percentage": split_percent,
+					"employee": sp,
+					"split_percent": split_percent,
 				},
 			)
 

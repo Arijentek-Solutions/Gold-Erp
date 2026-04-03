@@ -812,10 +812,7 @@
 					<span>Layaway</span>
 				</router-link>
 				<button
-					@click="
-						isMobileDrawerOpen = false
-						showSupportModal = true
-					"
+					@click="handleSupportClick"
 					class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-[#D4AF37]"
 				>
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -887,6 +884,11 @@ const isCartOpen = ref(false)
 const isUserMenuOpen = ref(false)
 const isMobileDrawerOpen = ref(false)
 const showSupportModal = ref(false)
+
+function handleSupportClick() {
+	isMobileDrawerOpen.value = false
+	showSupportModal.value = true
+}
 
 const TROY_OZ_GRAMS = 31.1035
 

@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:shortcut_name",
  "creation": "2026-03-17 00:00:00.000000",
  "doctype": "DocType",
  "editable_grid": 1,
@@ -8,6 +9,7 @@
  "field_order": [
   "shortcut_details_section",
   "shortcut_name",
+  "section_name",
   "description",
   "column_break_link",
   "link_type",
@@ -22,6 +24,7 @@
   "keyboard_shortcut",
   "visibility_section",
   "show_on_desk",
+  "show_on_workspace",
   "column_break_roles",
   "roles"
  ],
@@ -37,6 +40,14 @@
    "in_list_view": 1,
    "label": "Shortcut Name",
    "reqd": 1
+  },
+  {
+   "default": "Quick Access",
+   "fieldname": "section_name",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Section",
+   "description": "Desk and workspace section heading used to group shortcuts"
   },
   {
    "fieldname": "description",
@@ -126,6 +137,13 @@
    "label": "Show on Desk"
   },
   {
+   "default": "0",
+   "fieldname": "show_on_workspace",
+   "fieldtype": "Check",
+   "in_list_view": 1,
+   "label": "Show on Workspace"
+  },
+  {
    "fieldname": "column_break_roles",
    "fieldtype": "Column Break"
   },
@@ -142,7 +160,7 @@
  "is_calendar_and_gantt": 0,
  "is_standard": 1,
  "links": [],
- "modified": "2026-03-17 00:00:00.000000",
+ "modified": "2026-04-02 00:00:00.000000",
  "modified_by": "Administrator",
  "module": "Unified Retail Management System",
  "name": "Zevar Desk Shortcut",

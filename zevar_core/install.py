@@ -11,6 +11,64 @@ import frappe
 from frappe import _
 from frappe.modules.import_file import import_file_by_path
 
+from zevar_core.shortcut_seed import get_default_shortcuts
+
+
+def _shortcut_target_exists(shortcut_data):
+	link_type = shortcut_data.get("link_type")
+	link_to = shortcut_data.get("link_to")
+
+	if link_type == "DocType":
+		return frappe.db.exists("DocType", link_to)
+	if link_type == "Page":
+		return frappe.db.exists("Page", link_to)
+	if link_type == "Report":
+		return frappe.db.exists("Report", link_to)
+	return True
+
+
+LEGACY_DEFAULT_SHORTCUTS = {
+	"POS Terminal",
+	"Employee Portal",
+	"Layaway Contracts",
+	"Repair Orders",
+	"Trade-Ins",
+	"Gift Cards",
+	"Jewelry Appraisal",
+	"Commission Tracking",
+	"Gold Rate Log",
+	"Customer Ledger",
+	"Store Locations",
+	"Inventory",
+}
+
+
+def _cleanup_managed_shortcuts(default_shortcuts):
+	managed_names = {shortcut["shortcut_name"] for shortcut in default_shortcuts}
+	target_names = managed_names | LEGACY_DEFAULT_SHORTCUTS
+	if not target_names:
+		return
+
+	records = frappe.get_all(
+		"Zevar Desk Shortcut",
+		filters={"shortcut_name": ("in", list(target_names))},
+		fields=["name", "shortcut_name", "modified"],
+		order_by="shortcut_name asc, modified desc",
+	)
+
+	grouped = {}
+	for record in records:
+		grouped.setdefault(record.shortcut_name, []).append(record)
+
+	for shortcut_name, items in grouped.items():
+		if shortcut_name not in managed_names:
+			for item in items:
+				frappe.delete_doc("Zevar Desk Shortcut", item.name, ignore_permissions=True, force=True)
+			continue
+
+		for duplicate in items[1:]:
+			frappe.delete_doc("Zevar Desk Shortcut", duplicate.name, ignore_permissions=True, force=True)
+
 
 def create_required_modes_of_payment():
 	"""
@@ -124,194 +182,68 @@ def import_workspaces():
 					)
 
 
+
 def create_default_desk_shortcuts():
 	"""
-	Create default desk shortcuts for Zevar Core features.
+	Create or update the default desk shortcuts for Zevar Core.
 
-	These shortcuts appear on the custom Zevar desk page and can be
-	managed via the Zevar Desk Shortcut DocType.
+	The custom shortcut registry powers both the custom Zevar desk page and
+	the injected workspace shortcuts, so we keep it synchronized during install
+	and migrate.
 	"""
-	# Check if DocType exists (may not exist before migration)
 	if not frappe.db.exists("DocType", "Zevar Desk Shortcut"):
 		return
 
-	shortcuts = [
-		{
-			"shortcut_name": "POS Terminal",
-			"link_type": "URL",
-			"link_to": "/pos",
-			"icon_name": "shopping-cart",
-			"color": "#2563eb",
-			"description": "Point of Sale terminal for processing transactions",
-			"sequence": 10,
-			"keyboard_shortcut": "alt+p",
-			"show_on_desk": True,
-			"roles": [{"role": "Sales User"}, {"role": "POS Manager"}, {"role": "Store Manager"}],
-		},
-		{
-			"shortcut_name": "Employee Portal",
-			"link_type": "URL",
-			"link_to": "/employee-portal",
-			"icon_name": "user",
-			"color": "#6b7280",
-			"description": "Employee self-service portal",
-			"sequence": 20,
-			"keyboard_shortcut": "alt+e",
-			"show_on_desk": True,
-			"roles": [{"role": "Employee"}, {"role": "HR Manager"}],
-		},
-		{
-			"shortcut_name": "Layaway Contracts",
-			"link_type": "DocType",
-			"link_to": "Layaway Contract",
-			"icon_name": "credit-card",
-			"color": "#8b5cf6",
-			"description": "Manage customer layaway contracts",
-			"sequence": 30,
-			"keyboard_shortcut": "alt+l",
-			"show_on_desk": True,
-			"roles": [{"role": "Sales User"}, {"role": "Store Manager"}],
-		},
-		{
-			"shortcut_name": "Repair Orders",
-			"link_type": "DocType",
-			"link_to": "Repair Order",
-			"icon_name": "tools",
-			"color": "#f59e0b",
-			"description": "Jewelry repair tracking and management",
-			"sequence": 40,
-			"keyboard_shortcut": "alt+r",
-			"show_on_desk": True,
-			"roles": [{"role": "Sales User"}, {"role": "Technician"}, {"role": "Store Manager"}],
-		},
-		{
-			"shortcut_name": "Trade-Ins",
-			"link_type": "DocType",
-			"link_to": "Trade In Record",
-			"icon_name": "repeat",
-			"color": "#14b8a6",
-			"description": "Customer trade-in transactions",
-			"sequence": 50,
-			"keyboard_shortcut": "alt+t",
-			"show_on_desk": True,
-			"roles": [{"role": "Sales User"}, {"role": "Store Manager"}],
-		},
-		{
-			"shortcut_name": "Gift Cards",
-			"link_type": "DocType",
-			"link_to": "Gift Card",
-			"icon_name": "gift",
-			"color": "#ec4899",
-			"description": "Gift card management and redemption",
-			"sequence": 60,
-			"keyboard_shortcut": "alt+g",
-			"show_on_desk": True,
-			"roles": [{"role": "Sales User"}, {"role": "Store Manager"}],
-		},
-		{
-			"shortcut_name": "Jewelry Appraisal",
-			"link_type": "DocType",
-			"link_to": "Jewelry Appraisal",
-			"icon_name": "gem",
-			"color": "#d97706",
-			"description": "Professional jewelry appraisals",
-			"sequence": 70,
-			"keyboard_shortcut": "alt+a",
-			"show_on_desk": True,
-			"roles": [{"role": "Appraiser"}, {"role": "Store Manager"}],
-		},
-		{
-			"shortcut_name": "Commission Tracking",
-			"link_type": "DocType",
-			"link_to": "Sales Commission Split",
-			"icon_name": "percentage",
-			"color": "#10b981",
-			"description": "Sales commission splits and tracking",
-			"sequence": 80,
-			"keyboard_shortcut": "alt+c",
-			"show_on_desk": True,
-			"roles": [{"role": "Store Manager"}, {"role": "System Manager"}],
-		},
-		{
-			"shortcut_name": "Gold Rate Log",
-			"link_type": "DocType",
-			"link_to": "Gold Rate Log",
-			"icon_name": "dollar-sign",
-			"color": "#fbbf24",
-			"description": "Live gold price tracking",
-			"sequence": 90,
-			"show_on_desk": True,
-			"roles": [{"role": "Sales User"}, {"role": "Store Manager"}],
-		},
-		{
-			"shortcut_name": "Customer Ledger",
-			"link_type": "DocType",
-			"link_to": "Customer Ledger Entry",
-			"icon_name": "file-text",
-			"color": "#6366f1",
-			"description": "Customer transaction history",
-			"sequence": 100,
-			"show_on_desk": True,
-			"roles": [{"role": "Store Manager"}, {"role": "Accounts Manager"}],
-		},
-		{
-			"shortcut_name": "Store Locations",
-			"link_type": "DocType",
-			"link_to": "Store Location",
-			"icon_name": "map-pin",
-			"color": "#0ea5e9",
-			"description": "Multi-store location management",
-			"sequence": 110,
-			"show_on_desk": True,
-			"roles": [{"role": "Store Manager"}, {"role": "System Manager"}],
-		},
-		{
-			"shortcut_name": "Inventory",
-			"link_type": "DocType",
-			"link_to": "Item",
-			"icon_name": "package",
-			"color": "#8b5cf6",
-			"description": "Jewelry inventory management",
-			"sequence": 120,
-			"show_on_desk": True,
-			"roles": [{"role": "Stock Manager"}, {"role": "Store Manager"}],
-		},
-	]
+	default_shortcuts = get_default_shortcuts()
+	_cleanup_managed_shortcuts(default_shortcuts)
+	existing_roles = set(frappe.get_all("Role", pluck="name"))
 
-	for shortcut_data in shortcuts:
-		shortcut_name = shortcut_data.get("shortcut_name")
-
-		# Check if shortcut already exists
-		if frappe.db.exists("Zevar Desk Shortcut", shortcut_name):
+	for shortcut_data in default_shortcuts:
+		shortcut_name = shortcut_data["shortcut_name"]
+		if not _shortcut_target_exists(shortcut_data):
+			frappe.logger().warning("Skipping desk shortcut %s because target %s (%s) is missing", shortcut_name, shortcut_data.get("link_to"), shortcut_data.get("link_type"))
 			continue
-
-		try:
+		existing_name = frappe.db.get_value(
+			"Zevar Desk Shortcut",
+			{"shortcut_name": shortcut_name},
+			"name",
+		)
+		if existing_name:
+			doc = frappe.get_doc("Zevar Desk Shortcut", existing_name)
+		else:
 			doc = frappe.new_doc("Zevar Desk Shortcut")
+			doc.shortcut_name = shortcut_name
 
-			# Set basic fields
-			doc.shortcut_name = shortcut_data.get("shortcut_name")
-			doc.link_type = shortcut_data.get("link_type")
-			doc.link_to = shortcut_data.get("link_to")
+		managed_fields = {
+			"section_name": shortcut_data.get("section_name") or "Quick Access",
+			"link_type": shortcut_data.get("link_type"),
+			"link_to": shortcut_data.get("link_to"),
+			"description": shortcut_data.get("description", ""),
+			"sequence": shortcut_data.get("sequence", 100),
+			"keyboard_shortcut": shortcut_data.get("keyboard_shortcut", ""),
+			"show_on_desk": 1,
+			"show_on_workspace": 1,
+		}
+		for fieldname, value in managed_fields.items():
+			setattr(doc, fieldname, value)
+
+		# Preserve manual visual changes on existing shortcuts where possible.
+		if not doc.get("icon_name") or not existing_name:
 			doc.icon_name = shortcut_data.get("icon_name", "star")
+		if not doc.get("color") or not existing_name:
 			doc.color = shortcut_data.get("color", "#2563eb")
-			doc.description = shortcut_data.get("description", "")
-			doc.sequence = shortcut_data.get("sequence", 100)
-			doc.keyboard_shortcut = shortcut_data.get("keyboard_shortcut", "")
-			doc.show_on_desk = shortcut_data.get("show_on_desk", True)
 
-			# Add roles
-			roles = shortcut_data.get("roles", [])
-			for role_data in roles:
-				doc.append("roles", role_data)
+		doc.open_in_new_tab = shortcut_data.get("open_in_new_tab", 0)
+		doc.set("roles", [])
+		for role in shortcut_data.get("roles", []):
+			if role in existing_roles:
+				doc.append("roles", {"role": role})
 
+		if existing_name:
+			doc.save(ignore_permissions=True)
+		else:
 			doc.insert(ignore_permissions=True)
 
-		except Exception as e:
-			frappe.log_error(
-				f"Failed to create desk shortcut '{shortcut_name}': {e}",
-				"Desk Shortcut Creation",
-			)
-
-	# Clear cache to ensure shortcuts appear
+	frappe.cache.delete_key("zevar_shortcuts_registry")
 	frappe.cache.delete_key("zevar_desk_shortcuts")
 	frappe.db.commit()  # nosemgrep

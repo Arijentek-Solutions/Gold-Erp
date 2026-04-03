@@ -33,8 +33,6 @@ website_route_rules = [
 	{"from_route": "/employee-portal/<path:app_path>", "to_route": "employee-portal"},
 	{"from_route": "/pos/<path:app_path>", "to_route": "pos"},
 	{"from_route": "/catalogues/<path:app_path>", "to_route": "catalogues"},
-	{"from_route": "/zevar-desk", "to_route": "zevar-desk"},
-	{"from_route": "/zevar-desk/<path:app_path>", "to_route": "zevar-desk"},
 ]
 
 # Fixtures
@@ -65,6 +63,7 @@ after_install = [
 
 # Run after migrate to ensure desktop icons and shortcuts are imported
 after_migrate = [
+	"zevar_core.fix_desktop_icons.execute",
 	"zevar_core.install.import_desktop_icons",
 	"zevar_core.install.import_workspaces",
 	"zevar_core.install.create_default_desk_shortcuts",

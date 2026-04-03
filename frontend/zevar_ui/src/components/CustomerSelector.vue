@@ -178,10 +178,7 @@
 					<!-- Create New Customer Option -->
 					<button
 						v-if="showCreateOption"
-						@click="
-							showCreateModal = true
-							showDropdown = false
-						"
+						@click="openCreateModal"
 						class="w-full px-4 py-3 text-left hover:bg-[#D4AF37]/10 flex items-center gap-3 border-t-2 border-gray-100 dark:border-white/10"
 					>
 						<div
@@ -657,10 +654,7 @@
 							class="p-6 pt-4 border-t border-gray-100 dark:border-white/10 flex gap-3 flex-shrink-0"
 						>
 							<button
-								@click="
-									showCreateModal = false
-									resetCreateForm()
-								"
+								@click="handleCancelCreate"
 								class="flex-1 py-2.5 rounded-lg font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 transition"
 							>
 								Cancel
@@ -787,6 +781,16 @@ const newCustomer = ref({
 	anniversary: '',
 	tax_exempt: false,
 })
+
+function openCreateModal() {
+	showCreateModal.value = true
+	showDropdown.value = false
+}
+
+function handleCancelCreate() {
+	showCreateModal.value = false
+	resetCreateForm()
+}
 
 // Computed
 const customer = computed(() => cart.customer)

@@ -91,10 +91,7 @@
 										? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white'
 										: 'text-gray-500'
 								"
-								@click="
-									cart.customerType = 'Individual'
-									cart.clearCustomer()
-								"
+								@click="setCustomerType('Individual')"
 							>
 								Individual
 							</button>
@@ -105,10 +102,7 @@
 										? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white'
 										: 'text-gray-500'
 								"
-								@click="
-									cart.customerType = 'Company'
-									cart.clearCustomer()
-								"
+								@click="setCustomerType('Company')"
 							>
 								Company
 							</button>
@@ -119,10 +113,7 @@
 										? 'bg-white dark:bg-[#1a1c23] shadow-sm text-gray-900 dark:text-white'
 										: 'text-gray-500'
 								"
-								@click="
-									cart.customerType = 'Walkin'
-									cart.clearCustomer()
-								"
+								@click="setCustomerType('Walkin')"
 							>
 								Walk-In
 							</button>
@@ -401,6 +392,11 @@ const checkoutButtonText = computed(() => {
 	if (cart.customerType !== 'Walkin' && !cart.customer) return 'Select Customer'
 	return 'Checkout'
 })
+
+function setCustomerType(type) {
+	cart.customerType = type
+	cart.clearCustomer()
+}
 
 // Trade-in form state
 const showTradeInForm = ref(false)

@@ -656,10 +656,7 @@
 		<ProductModal
 			:show="showProductModal"
 			:item-code="selectedItemCode"
-			@close="
-				showProductModal = false
-				selectedItemCode = null
-			"
+			@close="handleProductModalClose"
 		/>
 	</div>
 </template>
@@ -955,6 +952,11 @@ function handleCategorySelect(id) {
 	} else {
 		router.push(`/catalogues/${id}`)
 	}
+}
+
+function handleProductModalClose() {
+	showProductModal.value = false
+	selectedItemCode.value = null
 }
 
 function openProduct(item) {
