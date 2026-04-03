@@ -26,6 +26,12 @@ const routes = [
 		meta: { requiresAuth: true },
 	},
 	{
+		path: '/pos-catalogue',
+		name: 'POSCatalogue',
+		component: () => import('./pages/POSCatalogue.vue'),
+		meta: { requiresAuth: true },
+	},
+	{
 		path: '/catalogues',
 		name: 'Catalogues',
 		component: () => import('./pages/CatalogueDashboard.vue'),

@@ -119,10 +119,10 @@
 					</router-link>
 
 					<router-link
-						to="/catalogues"
+						to="/pos-catalogue"
 						class="flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-300 group relative overflow-hidden"
 						:class="
-							$route.path.startsWith('/catalogues')
+							$route.path.startsWith('/pos-catalogue')
 								? 'bg-gradient-to-r from-[#D4AF37]/20 to-transparent text-[#D4AF37]'
 								: 'text-gray-400 hover:text-[#D4AF37] hover:bg-gradient-to-r hover:from-[#D4AF37]/10 hover:to-transparent'
 						"
@@ -319,7 +319,7 @@
 							@change="session.setWarehouse($event.target.value)"
 							class="h-8 sm:h-9 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 pl-2 pr-6 rounded-lg text-xs font-bold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] cursor-pointer max-w-[110px] sm:max-w-[140px] appearance-none overflow-hidden text-ellipsis whitespace-nowrap"
 						>
-							<option value="" disabled>Store...</option>
+							<option value="null" disabled>Store...</option>
 							<option v-for="wh in warehouses.data" :key="wh.name" :value="wh.name">
 								{{
 									wh.name.replace('Zevar US Stores - ', '').replace(' - ZUS', '')
@@ -350,7 +350,7 @@
 							@change="session.setWarehouse($event.target.value)"
 							class="h-11 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 pl-4 pr-10 rounded-lg text-sm font-bold text-gray-800 dark:text-gray-200 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] cursor-pointer min-w-[200px] transition-all hover:bg-gray-100 dark:hover:bg-gray-700 shadow-sm outline-none"
 						>
-						<option value="" disabled>Select Store Location</option>
+							<option value="null" disabled>Select Store Location</option>
 							<option v-for="wh in warehouses.data" :key="wh.name" :value="wh.name">
 								{{ wh.name }}
 							</option>
@@ -736,7 +736,7 @@
 						@change="session.setWarehouse($event.target.value)"
 						class="h-11 w-full bg-gray-800 border border-gray-700 text-gray-200 rounded-lg px-3 focus:ring-2 focus:ring-[#D4AF37]"
 					>
-						<option value="" disabled>Select Store Location</option>
+						<option value="null" disabled>Select Store Location</option>
 						<option v-for="wh in warehouses.data" :key="wh.name" :value="wh.name">
 							{{ wh.name }}
 						</option>
@@ -812,7 +812,7 @@
 					<span>Layaway</span>
 				</router-link>
 				<button
-					@click="handleSupportClick"
+					@click="handle_isMobileDrawerOpen"
 					class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-gray-400 hover:text-[#D4AF37]"
 				>
 					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -885,11 +885,6 @@ const isUserMenuOpen = ref(false)
 const isMobileDrawerOpen = ref(false)
 const showSupportModal = ref(false)
 
-function handleSupportClick() {
-	isMobileDrawerOpen.value = false
-	showSupportModal.value = true
-}
-
 const TROY_OZ_GRAMS = 31.1035
 
 const sortedRates = computed(() => {
@@ -918,11 +913,31 @@ const warehouses = createResource({
 	url: 'frappe.client.get_list',
 	params: {
 		doctype: 'Warehouse',
-		filters: { is_group: 0, disabled: 0 },
+		filters: { is_group: 0, parent_warehouse: ['like', '%Zevar US Stores%'] },
 		fields: ['name'],
-		limit_page_length: 100,
 	},
 	auto: true,
+	onSuccess(data) {
+		// Fallback: if strict filter returns nothing, fetch all non-group warehouses
+		if (!data || data.length === 0) {
+			warehouseFallback.fetch()
+		}
+	},
+})
+
+const warehouseFallback = createResource({
+	url: 'frappe.client.get_list',
+	params: {
+		doctype: 'Warehouse',
+		filters: { is_group: 0 },
+		fields: ['name'],
+		limit_page_length: 50,
+	},
+	onSuccess(data) {
+		if (data && data.length > 0) {
+			warehouses.data = data
+		}
+	},
 })
 
 onMounted(() => {
@@ -942,6 +957,11 @@ watch(
 		}
 	}
 )
+
+function handle_isMobileDrawerOpen() {
+	isMobileDrawerOpen.value = false
+	showSupportModal.value = true
+}
 </script>
 
 <style scoped>
